@@ -63,6 +63,7 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
           `}>
             <item.icon className={`h-5 w-5 transition-all duration-200
               ${isActive && 'filter drop-shadow(0 0 3px rgba(255, 255, 255, 0.5))'}
+              ${!isActive && 'group-hover:text-white'}
             `} />
           </div>
           
@@ -110,6 +111,7 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
             `}>
               <item.icon className={`h-5 w-5 transition-all duration-200
                 ${isSubMenuActive && 'filter drop-shadow(0 0 3px rgba(255, 255, 255, 0.5))'}
+                ${!isSubMenuActive && 'group-hover:text-white'}
               `} />
             </div>
             
@@ -128,7 +130,7 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
           {!isCollapsed && (
             <ChevronRight 
               className={`h-3.5 w-3.5 transition-transform duration-200 ${submenuOpen ? 'rotate-90' : ''} 
-                ${isSubMenuActive ? 'text-white' : 'text-blue-lightest'}
+                ${isSubMenuActive ? 'text-white' : 'text-blue-lightest group-hover:text-white'}
               `} 
             />
           )}
