@@ -1,0 +1,327 @@
+
+/* Base cursor style */
+.custom-cursor * {
+  cursor: none !important;
+}
+
+.custom-cursor .cursor-interactive {
+  cursor: none !important;
+}
+
+/* Exception for form elements */
+.custom-cursor input,
+.custom-cursor textarea,
+.custom-cursor select,
+.custom-cursor [contenteditable] {
+  cursor: text !important;
+}
+
+/* Base cursor styles */
+.futuristic-cursor {
+  position: fixed;
+  z-index: 10000;
+  pointer-events: none;
+  width: 24px;
+  height: 24px;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.2s ease;
+  opacity: 1;
+  will-change: transform;
+}
+
+.futuristic-cursor.hidden {
+  opacity: 0;
+}
+
+/* Cursor dot in the center */
+.cursor-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 4px;
+  background-color: var(--color-highlight-interactive, #00F0FF);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--color-highlight-interactive, #00F0FF),
+              0 0 10px var(--color-highlight-interactive-lighter, #4FF8FF);
+  transition: transform 0.15s ease-out, opacity 0.15s ease-out, box-shadow 0.15s ease-out;
+  animation: pulseGlow 3s infinite alternate;
+}
+
+/* Ring around the cursor */
+.cursor-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--color-highlight-interactive, #00F0FF);
+  border-radius: 50%;
+  opacity: 0.5;
+  box-shadow: 0 0 8px var(--color-highlight-interactive, #00F0FF);
+  transition: all 0.15s ease-out;
+  animation: ringPulse 4s infinite alternate;
+}
+
+/* Hover state styles */
+.futuristic-cursor.hovering .cursor-ring {
+  width: 32px;
+  height: 32px;
+  opacity: 0.8;
+  box-shadow: 0 0 15px var(--color-highlight-interactive, #00F0FF);
+}
+
+.futuristic-cursor.hovering .cursor-dot {
+  transform: translate(-50%, -50%) scale(1.5);
+  box-shadow: 0 0 12px var(--color-highlight-interactive, #00F0FF),
+              0 0 16px var(--color-highlight-interactive-lighter, #4FF8FF);
+}
+
+/* Target bracket styles for hover state */
+.cursor-target {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 26px;
+  height: 26px;
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+.futuristic-cursor.hovering .cursor-target {
+  opacity: 0.9;
+  animation: targetFade 2s infinite alternate;
+}
+
+.target-bracket {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: var(--color-highlight-interactive, #00F0FF);
+  border-style: solid;
+  border-width: 0;
+}
+
+.target-bracket.left {
+  top: 0;
+  left: 0;
+  border-top-width: 1.5px;
+  border-left-width: 1.5px;
+}
+
+.target-bracket.right {
+  bottom: 0;
+  right: 0;
+  border-bottom-width: 1.5px;
+  border-right-width: 1.5px;
+}
+
+/* Active/click state */
+.futuristic-cursor.active .cursor-ring {
+  transform: translate(-50%, -50%) scale(0.8);
+  opacity: 1;
+  box-shadow: 0 0 20px var(--color-highlight-interactive, #00F0FF);
+  animation: ringFlash 0.2s ease-out;
+}
+
+.futuristic-cursor.active .cursor-dot {
+  transform: translate(-50%, -50%) scale(0.8);
+  box-shadow: 0 0 20px var(--color-highlight-interactive, #00F0FF);
+  animation: dotFlash 0.2s ease-out;
+}
+
+/* Loading state */
+.cursor-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 24px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.futuristic-cursor.loading .cursor-loading {
+  opacity: 1;
+}
+
+.futuristic-cursor.loading .cursor-ring {
+  width: 26px;
+  height: 26px;
+  opacity: 0.6;
+}
+
+.loading-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background-color: var(--color-highlight-interactive, #00F0FF);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--color-highlight-interactive, #00F0FF);
+}
+
+.loading-dot.dot1 {
+  animation: orbit 1.5s infinite linear;
+}
+
+.loading-dot.dot2 {
+  animation: orbit 1.5s infinite linear 0.5s;
+}
+
+.loading-dot.dot3 {
+  animation: orbit 1.5s infinite linear 1s;
+}
+
+/* Particle effects */
+.cursor-particles {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background-color: var(--color-highlight-interactive, #00F0FF);
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow: 0 0 4px var(--color-highlight-interactive, #00F0FF);
+}
+
+.futuristic-cursor.active .particle {
+  animation: particleEmit 0.8s ease-out forwards;
+}
+
+.particle.p1 {
+  top: 0;
+  left: 50%;
+  animation-delay: 0s;
+}
+
+.particle.p2 {
+  top: 50%;
+  right: 0;
+  animation-delay: 0.05s;
+}
+
+.particle.p3 {
+  bottom: 0;
+  left: 50%;
+  animation-delay: 0.1s;
+}
+
+.particle.p4 {
+  top: 50%;
+  left: 0;
+  animation-delay: 0.15s;
+}
+
+/* Animations */
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.9;
+    box-shadow: 0 0 6px var(--color-highlight-interactive, #00F0FF),
+                0 0 10px var(--color-highlight-interactive-lighter, #4FF8FF);
+  }
+  50% {
+    opacity: 0.7;
+    box-shadow: 0 0 4px var(--color-highlight-interactive, #00F0FF),
+                0 0 8px var(--color-highlight-interactive-lighter, #4FF8FF);
+  }
+}
+
+@keyframes ringPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0.3;
+  }
+}
+
+@keyframes targetFade {
+  0%, 100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes ringFlash {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 1;
+    box-shadow: 0 0 20px var(--color-highlight-interactive, #00F0FF);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+    box-shadow: 0 0 30px var(--color-highlight-interactive, #00F0FF);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+    box-shadow: 0 0 15px var(--color-highlight-interactive, #00F0FF);
+  }
+}
+
+@keyframes dotFlash {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    box-shadow: 0 0 20px var(--color-highlight-interactive, #00F0FF);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(2);
+    box-shadow: 0 0 30px var(--color-highlight-interactive, #00F0FF);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    box-shadow: 0 0 12px var(--color-highlight-interactive, #00F0FF);
+  }
+}
+
+@keyframes orbit {
+  0% {
+    transform: rotate(0deg) translateX(10px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(10px) rotate(-360deg);
+  }
+}
+
+@keyframes particleEmit {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(
+      calc(var(--random-x, 0) * 30px),
+      calc(var(--random-y, 0) * 30px)
+    );
+    opacity: 0;
+  }
+}
+
+/* Mobile device adjustments */
+@media (max-width: 768px) {
+  .futuristic-cursor {
+    display: none;
+  }
+  
+  .custom-cursor * {
+    cursor: auto !important;
+  }
+}

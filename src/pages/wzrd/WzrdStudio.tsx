@@ -23,7 +23,7 @@ const WzrdStudio = () => {
           </div>
           
           {/* 3D Hover Card with Glassmorphism */}
-          <motion.div className="mt-8 mb-8 relative group perspective-1000" whileHover={{
+          <motion.div className="mt-8 mb-8 relative group perspective-1000 cursor-interactive" whileHover={{
             scale: 1.02,
             rotateX: 5,
             rotateY: 5
@@ -49,7 +49,7 @@ const WzrdStudio = () => {
                     <span className="inline-block h-3 w-3 rounded-full bg-studio-clay"></span>
                   </div>
                   
-                  <Button variant="outline" className="bg-white/50 hover:bg-white/70 backdrop-blur-sm border border-white/30 text-studio-charcoal" onClick={() => window.open("https://wzrdflow.lovable.app", "_blank")}>
+                  <Button variant="outline" className="cursor-interactive bg-white/50 hover:bg-white/70 backdrop-blur-sm border border-white/30 text-studio-charcoal" onClick={() => window.open("https://wzrdflow.lovable.app", "_blank")}>
                     <span>Visit WZRD.tech</span>
                     <ExternalLink className="ml-2 h-4 w-4" />
                   </Button>
@@ -62,15 +62,15 @@ const WzrdStudio = () => {
           </motion.div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-            <div className="bg-white p-6 rounded-xl border border-studio-sand/30">
+            <div className="bg-white p-6 rounded-xl border border-studio-sand/30 cursor-interactive hover:shadow-lg transition-shadow">
               <h3 className="text-lg font-medium mb-2">Visual Design Tools</h3>
               <p className="text-sm text-studio-clay">Create stunning visuals with AI-powered design tools</p>
             </div>
-            <div className="bg-white p-6 rounded-xl border border-studio-sand/30">
+            <div className="bg-white p-6 rounded-xl border border-studio-sand/30 cursor-interactive hover:shadow-lg transition-shadow">
               <h3 className="text-lg font-medium mb-2">Audio Engineering</h3>
               <p className="text-sm text-studio-clay">Craft immersive soundscapes with magical audio tools</p>
             </div>
-            <div className="bg-white p-6 rounded-xl border border-studio-sand/30">
+            <div className="bg-white p-6 rounded-xl border border-studio-sand/30 cursor-interactive hover:shadow-lg transition-shadow">
               <h3 className="text-lg font-medium mb-2">Interactive Experiences</h3>
               <p className="text-sm text-studio-clay">Build engaging interactive content with no-code wizardry</p>
             </div>
