@@ -1,3 +1,4 @@
+
 import React, { ReactNode, useState, useEffect, useCallback, useRef } from "react";
 import Header from "../header";
 import { motion, AnimatePresence } from "framer-motion";
@@ -44,9 +45,6 @@ const MainContent: React.FC<MainContentProps> = ({ children }) => {
       layout
       transition={{ duration: 0.25, ease: "easeOut" }}
     >
-      {/* Ambient background - includes the cosmic shader */}
-      <Ambient />
-      
       <Header />
       
       {/* Matrix ASCII Animation Transition */}

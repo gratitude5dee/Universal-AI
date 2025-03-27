@@ -51,15 +51,15 @@ const CosmicShader: React.FC = () => {
       
       vec4 o = vec4(0.0, 0.0, 0.0, 1.0); // Output color
       
-      // Initialize variables outside the loop
+      // Initialize variables
       float i = 0.0;
       float g = 0.0;
       float e = 0.0;
       float s = 0.0;
       
-      // Main loop
-      for(; i < 99.0; i += 1.0) {
-        i += 1.0; // This mimics the ++i behavior
+      // Main loop - fixed for WebGL compatibility
+      for(int ii = 0; ii < 99; ii++) {
+        i += 1.0;
         if(i >= 99.0) break;
         
         vec3 p = vec3((FC.xy - 0.5 * r) / r.y * 7.0 + vec2(-2.0, 8.0), g + 4.0) * 
@@ -67,7 +67,7 @@ const CosmicShader: React.FC = () => {
         
         s = 1.8;
         
-        // Inner loop with explicit counter
+        // Inner loop
         for(int j = 0; j < 19; j++) {
           p = vec3(0.05, 4.0, -1.0) - abs(abs(p) * e - vec3(3.1, 4.0, 2.9));
           s *= e = 7.1 / dot(p, p * 0.5);
