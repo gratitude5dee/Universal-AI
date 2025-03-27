@@ -1,71 +1,36 @@
 
-import React, { ReactNode, useState, useEffect, useCallback, useRef } from "react";
-import Header from "../header";
-import { motion, AnimatePresence } from "framer-motion";
-import { useLocation } from "react-router-dom";
-import MatrixAnimation from "../animations/matrix-animation";
+import React, { ReactNode } from "react";
+import Header from "@/components/ui/header";
+import CloudShader from "@/components/ui/shaders/CloudShader";
 
 interface MainContentProps {
   children: ReactNode;
 }
 
-const MainContent: React.FC<MainContentProps> = ({ children }) => {
-  const location = useLocation();
-  const [isPageTransition, setIsPageTransition] = useState(false);
-  const [isAnimationComplete, setIsAnimationComplete] = useState(true);
-  const previousPathRef = useRef(location.pathname);
-  
-  useEffect(() => {
-    if (previousPathRef.current !== location.pathname && isAnimationComplete) {
-      previousPathRef.current = location.pathname;
-      setIsAnimationComplete(false);
-      setIsPageTransition(true);
-      console.log("Starting page transition animation");
-    }
-  }, [location.pathname, isAnimationComplete]);
-
-  const handleAnimationComplete = useCallback(() => {
-    console.log("Animation complete, setting isPageTransition to false");
-    setIsPageTransition(false);
-    setTimeout(() => {
-      setIsAnimationComplete(true);
-      console.log("Animation reset, ready for next transition");
-    }, 800);
-  }, []);
-
-  const handleExitComplete = useCallback(() => {
-    console.log("Exit animation completed");
-    setIsPageTransition(false);
-  }, []);
-
+const MainContent = ({ children }: MainContentProps) => {
   return (
-    <motion.div 
-      className="flex-1 min-h-screen flex flex-col w-full overflow-hidden relative bg-transparent"
-      layout
-      transition={{ duration: 0.25, ease: "easeOut" }}
-    >
+    <div className="flex-1 min-h-screen flex flex-col w-full overflow-hidden relative bg-transparent">
+      {/* Cloud GLSL Shader Background */}
+      <CloudShader />
+      
+      {/* Overlay to add slight darkening and better text contrast */}
+      <div className="absolute inset-0 bg-blue-darker/20 z-1"></div>
+      
+      {/* Noise texture overlay */}
+      <div 
+        className="absolute inset-0 opacity-10 mix-blend-overlay pointer-events-none z-2" 
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          backgroundSize: '200px'
+        }} 
+      />
+      
+      {/* Header and content are positioned above the background layers */}
       <Header />
-      
-      {/* Matrix ASCII Animation Transition */}
-      <AnimatePresence 
-        mode="wait" 
-        onExitComplete={handleExitComplete}
-        initial={false}
-      >
-        {isPageTransition && (
-          <MatrixAnimation onComplete={handleAnimationComplete} />
-        )}
-      </AnimatePresence>
-      
-      <motion.main 
-        className="px-4 pb-8 mt-2 flex-1 overflow-hidden z-10 text-white"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3 }}
-      >
+      <div className="flex-grow p-6 relative z-10">
         {children}
-      </motion.main>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 
