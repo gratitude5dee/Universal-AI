@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import "./cursor/index.css";
+import "./FuturisticCursor.css";
 
 interface FuturisticCursorProps {
   isLoading?: boolean;
@@ -13,12 +14,9 @@ const FuturisticCursor: React.FC<FuturisticCursorProps> = ({
   const [isHovering, setIsHovering] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const cursorRef = useRef<HTMLDivElement>(null);
-  const trailRef = useRef<HTMLDivElement>(null);
   const lastKnownPos = useRef({ x: 0, y: 0 });
-  const particles = useRef<HTMLDivElement[]>([]);
-  const [particleCount, setParticleCount] = useState(0);
 
-  // Track mouse movement with improved performance
+  // Track mouse movement
   useEffect(() => {
     const updateCursorPosition = (e: MouseEvent) => {
       lastKnownPos.current = { x: e.clientX, y: e.clientY };
@@ -28,7 +26,7 @@ const FuturisticCursor: React.FC<FuturisticCursorProps> = ({
         setPosition({ x: lastKnownPos.current.x, y: lastKnownPos.current.y });
       });
 
-      // Check if hovering over an interactive element with improved detection
+      // Check if hovering over an interactive element
       const targetElement = document.elementFromPoint(e.clientX, e.clientY);
       const isInteractive = 
         targetElement?.closest('.cursor-interactive') !== null || 
@@ -41,18 +39,12 @@ const FuturisticCursor: React.FC<FuturisticCursorProps> = ({
         targetElement?.tagName === 'A' ||
         targetElement?.tagName === 'INPUT' ||
         targetElement?.tagName === 'SELECT' ||
-        targetElement?.tagName === 'TEXTAREA' ||
-        targetElement?.getAttribute('role') === 'button';
+        targetElement?.tagName === 'TEXTAREA';
 
       setIsHovering(isInteractive);
-      
-      // Emit particles on movement when hovering
-      if (isInteractive && !isLoading && Math.random() > 0.92) {
-        createParticle(e.clientX, e.clientY);
-      }
     };
 
-    // Handle mouse clicks with better state management
+    // Handle mouse clicks
     const handleMouseDown = () => {
       setIsActive(true);
     };
@@ -61,10 +53,10 @@ const FuturisticCursor: React.FC<FuturisticCursorProps> = ({
       setIsActive(false);
     };
 
-    // Add event listeners with passive option for better performance
-    window.addEventListener('mousemove', updateCursorPosition, { passive: true });
-    window.addEventListener('mousedown', handleMouseDown, { passive: true });
-    window.addEventListener('mouseup', handleMouseUp, { passive: true });
+    // Add event listeners
+    window.addEventListener('mousemove', updateCursorPosition);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
     
     // Hide the default cursor on the body
     document.body.classList.add('futuristic-cursor-active');
@@ -78,20 +70,12 @@ const FuturisticCursor: React.FC<FuturisticCursorProps> = ({
       // Restore the default cursor
       document.body.classList.remove('futuristic-cursor-active');
     };
-  }, [isLoading]);
-
-  // Create particles for enhanced visual feedback
-  const createParticle = (x: number, y: number) => {
-    setParticleCount(prev => prev + 1);
-    setTimeout(() => {
-      setParticleCount(prev => prev - 1);
-    }, 600); // Duration for particle to exist
-  };
+  }, []);
 
   // Determine cursor class based on state
   const getCursorClassName = () => {
     if (isLoading) return "futuristic-cursor loading";
-    if (isActive && isHovering) return "futuristic-cursor active hovering";
+    if (isActive && isHovering) return "futuristic-cursor active";
     if (isHovering) return "futuristic-cursor hovering";
     return "futuristic-cursor";
   };
@@ -103,7 +87,10 @@ const FuturisticCursor: React.FC<FuturisticCursorProps> = ({
         ref={cursorRef}
         className={getCursorClassName()}
         style={{
-          transform: `translate(${position.x}px, ${position.y}px) translate(-50%, -50%)`
+          translateX: position.x,
+          translateY: position.y,
+          x: "-50%",
+          y: "-50%",
         }}
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -147,43 +134,21 @@ const FuturisticCursor: React.FC<FuturisticCursorProps> = ({
         )}
       </motion.div>
       
-      {/* Larger trailing cursor with improved animation */}
+      {/* Larger trailing cursor (optional) */}
       <motion.div
-        ref={trailRef}
         className="futuristic-cursor-trail"
         style={{
-          transform: `translate(${position.x}px, ${position.y}px) translate(-50%, -50%)`
+          translateX: position.x,
+          translateY: position.y,
+          x: "-50%",
+          y: "-50%",
         }}
         animate={{
           scale: isHovering ? 1.5 : 1,
           opacity: isHovering ? 0.2 : 0.1,
         }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
+        transition={{ duration: 0.3 }}
       />
-      
-      {/* Particle system for enhanced feedback */}
-      <AnimatePresence>
-        {Array.from({ length: particleCount }).map((_, i) => (
-          <motion.div
-            key={`particle-${i}-${Date.now()}`}
-            className="cursor-float-particle"
-            initial={{ 
-              x: position.x, 
-              y: position.y,
-              opacity: 0.8,
-              scale: 0.8
-            }}
-            animate={{ 
-              x: position.x + (Math.random() * 40 - 20),
-              y: position.y + (Math.random() * 40 - 20) - 10,
-              opacity: 0,
-              scale: 0.2
-            }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-          />
-        ))}
-      </AnimatePresence>
     </>
   );
 };
