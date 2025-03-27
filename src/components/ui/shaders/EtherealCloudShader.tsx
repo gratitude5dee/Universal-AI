@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 
 interface EtherealCloudShaderProps {
@@ -15,12 +14,15 @@ const EtherealCloudShader: React.FC<EtherealCloudShaderProps> = ({ className = "
     const canvas = canvasRef.current;
     if (!canvas) return;
     
-    // Setup WebGL - properly type the context as WebGLRenderingContext
-    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-    if (!gl) {
+    // Setup WebGL with proper typing
+    const context = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!context) {
       console.error('WebGL not supported');
       return;
     }
+    
+    // Explicitly type gl as WebGLRenderingContext
+    const gl = context as WebGLRenderingContext;
     
     // Create shader program
     const program = createShaderProgram(gl);
