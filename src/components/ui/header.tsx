@@ -1,9 +1,11 @@
+
 import React from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@crossmint/client-sdk-react-ui";
 import { WalletInfo } from "./WalletInfo";
 import { Settings } from "./Settings";
+
 const Header: React.FC = () => {
   const location = useLocation();
   const {
@@ -22,15 +24,22 @@ const Header: React.FC = () => {
     // Convert kebab-case to Title Case
     return lastPart.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   };
-  return <motion.header className="px-4 py-2 flex items-center justify-between bg-transparent z-10" initial={{
-    opacity: 0,
-    y: -20
-  }} animate={{
-    opacity: 1,
-    y: 0
-  }} transition={{
-    duration: 0.3
-  }}>
+  
+  return (
+    <motion.header 
+      className="px-4 py-2 flex items-center justify-between bg-transparent z-10" 
+      initial={{
+        opacity: 0,
+        y: -20
+      }} 
+      animate={{
+        opacity: 1,
+        y: 0
+      }} 
+      transition={{
+        duration: 0.3
+      }}
+    >
       <div className="flex items-center">
         <Link to="/" className="flex items-center mr-4">
           <div className="text-lg font-semibold tracking-tight">
@@ -45,6 +54,8 @@ const Header: React.FC = () => {
         {user && <WalletInfo />}
         <Settings />
       </div>
-    </motion.header>;
+    </motion.header>
+  );
 };
+
 export default Header;
