@@ -14,7 +14,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   return (
     <div className="mt-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-medium">Transaction History</h3>
+        <h3 className="text-lg font-medium text-blue-dark">Transaction History</h3>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" className="text-xs h-8">
             <Filter className="h-3 w-3 mr-1" /> Filter
@@ -30,20 +30,20 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
           <table className="w-full">
             <thead>
               <tr className="border-b border-studio-sand/20 bg-studio-sand/10">
-                <th className="text-left px-4 py-3 text-xs font-medium text-studio-charcoal/70">Date</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-studio-charcoal/70">Description</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-studio-charcoal/70">Counterparty</th>
-                <th className="text-right px-4 py-3 text-xs font-medium text-studio-charcoal/70">Amount</th>
-                <th className="text-center px-4 py-3 text-xs font-medium text-studio-charcoal/70">Status</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-blue-dark">Date</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-blue-dark">Description</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-blue-dark">Counterparty</th>
+                <th className="text-right px-4 py-3 text-xs font-medium text-blue-dark">Amount</th>
+                <th className="text-center px-4 py-3 text-xs font-medium text-blue-dark">Status</th>
               </tr>
             </thead>
             <tbody>
               {transactions.map((transaction) => (
                 <tr key={transaction.id} className="border-b border-studio-sand/10 hover:bg-studio-sand/5">
-                  <td className="px-4 py-3 text-sm">{formatDate(transaction.date)}</td>
-                  <td className="px-4 py-3 text-sm">{transaction.description}</td>
-                  <td className="px-4 py-3 text-sm">{transaction.counterparty}</td>
-                  <td className={`px-4 py-3 text-sm text-right ${transaction.type === 'incoming' ? 'text-green-600' : ''}`}>
+                  <td className="px-4 py-3 text-sm text-blue-dark">{formatDate(transaction.date)}</td>
+                  <td className="px-4 py-3 text-sm text-blue-dark">{transaction.description}</td>
+                  <td className="px-4 py-3 text-sm text-blue-dark">{transaction.counterparty}</td>
+                  <td className={`px-4 py-3 text-sm text-right ${transaction.type === 'incoming' ? 'text-green-600' : 'text-blue-dark'}`}>
                     {transaction.type === 'incoming' ? '+' : '-'}{formatCurrency(transaction.amount)}
                   </td>
                   <td className="px-4 py-3 text-sm">

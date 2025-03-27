@@ -42,14 +42,14 @@ const DirectoryOfAgents: React.FC = () => {
         </TabsContent>
         
         <TabsContent value="virtuals" className="space-y-4">
-          <div className="text-center py-6 text-muted-foreground">
+          <div className="text-center py-6 text-blue-dark">
             <Computer className="w-12 h-12 mx-auto mb-2 opacity-50" />
             <p>Virtual agents will appear here soon</p>
           </div>
         </TabsContent>
         
         <TabsContent value="zerepy" className="space-y-4">
-          <div className="text-center py-6 text-muted-foreground">
+          <div className="text-center py-6 text-blue-dark">
             <Smartphone className="w-12 h-12 mx-auto mb-2 opacity-50" />
             <p>Zerepy agents will appear here soon</p>
           </div>

@@ -17,7 +17,7 @@ const LiquidityAgents = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <div className="bg-white/80 rounded-xl p-5 border border-studio-sand/20">
-            <h3 className="font-medium mb-4">Active Liquidity Positions</h3>
+            <h3 className="font-medium mb-4 text-blue-dark">Active Liquidity Positions</h3>
             
             <div className="space-y-4">
               {[
@@ -28,11 +28,11 @@ const LiquidityAgents = () => {
                 <div key={position.pair} className="bg-muted/30 p-3 rounded-lg">
                   <div className="flex justify-between">
                     <div>
-                      <p className="font-medium">{position.pair}</p>
-                      <p className="text-xs text-muted-foreground">{position.platform}</p>
+                      <p className="font-medium text-blue-dark">{position.pair}</p>
+                      <p className="text-xs text-blue-dark/70">{position.platform}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium">{position.value}</p>
+                      <p className="font-medium text-blue-dark">{position.value}</p>
                       <p className="text-xs text-green-600">{position.apr} APR</p>
                     </div>
                   </div>
@@ -46,7 +46,7 @@ const LiquidityAgents = () => {
           </div>
           
           <div className="bg-white/80 rounded-xl p-5 border border-studio-sand/20">
-            <h3 className="font-medium mb-4">Liquidity Automation</h3>
+            <h3 className="font-medium mb-4 text-blue-dark">Liquidity Automation</h3>
             
             <div className="space-y-4">
               {[
@@ -64,8 +64,8 @@ const LiquidityAgents = () => {
                 <div key={agent.name} className="bg-muted/30 p-3 rounded-lg">
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="font-medium">{agent.name}</p>
-                      <p className="text-xs text-muted-foreground">{agent.description}</p>
+                      <p className="font-medium text-blue-dark">{agent.name}</p>
+                      <p className="text-xs text-blue-dark/70">{agent.description}</p>
                     </div>
                     <span className={`text-xs px-2 py-1 rounded-full ${
                       agent.status === "Active" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
@@ -78,10 +78,10 @@ const LiquidityAgents = () => {
             </div>
             
             <div className="mt-6">
-              <h3 className="font-medium mb-3">Risk Management</h3>
+              <h3 className="font-medium mb-3 text-blue-dark">Risk Management</h3>
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span>Impermanent Loss Protection</span>
+                  <span className="text-blue-dark">Impermanent Loss Protection</span>
                   <span className="font-medium text-yellow-600">Medium</span>
                 </div>
                 <div className="h-2 bg-gray-100 rounded-full overflow-hidden">

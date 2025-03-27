@@ -7,9 +7,9 @@ const AccountStats: React.FC = () => {
   return (
     <div className="grid grid-cols-2 gap-6">
       <div className="glass-card p-5">
-        <h3 className="text-lg font-medium mb-4">Income & Expenditure</h3>
+        <h3 className="text-lg font-medium mb-4 text-blue-dark">Income & Expenditure</h3>
         <div className="aspect-video flex items-center justify-center bg-studio-sand/10 rounded-xl">
-          <div className="text-center text-muted-foreground">
+          <div className="text-center text-blue-dark">
             <BarChart3 className="h-10 w-10 mx-auto mb-2 text-studio-accent/50" />
             <p>Income vs. Expenditure Chart</p>
           </div>
@@ -18,7 +18,7 @@ const AccountStats: React.FC = () => {
       
       <div className="glass-card p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-medium">Pending Approvals</h3>
+          <h3 className="text-lg font-medium text-blue-dark">Pending Approvals</h3>
           <Badge className="bg-yellow-500">{2}</Badge>
         </div>
         
@@ -27,8 +27,8 @@ const AccountStats: React.FC = () => {
             <div className="flex items-start">
               <AlertTriangle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
               <div className="flex-1">
-                <h4 className="font-medium text-sm">Large Transfer Pending</h4>
-                <p className="text-xs text-muted-foreground mb-2">$2,500.00 to DataVault Pro</p>
+                <h4 className="font-medium text-sm text-blue-dark">Large Transfer Pending</h4>
+                <p className="text-xs text-blue-dark/80 mb-2">$2,500.00 to DataVault Pro</p>
                 <div className="flex gap-2">
                   <Button size="sm" className="h-7 text-xs">Approve</Button>
                   <Button variant="outline" size="sm" className="h-7 text-xs">Deny</Button>
@@ -41,8 +41,8 @@ const AccountStats: React.FC = () => {
             <div className="flex items-start">
               <AlertTriangle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
               <div className="flex-1">
-                <h4 className="font-medium text-sm">New Recipient</h4>
-                <p className="text-xs text-muted-foreground mb-2">$350.00 to Cloud Hosting LLC</p>
+                <h4 className="font-medium text-sm text-blue-dark">New Recipient</h4>
+                <p className="text-xs text-blue-dark/80 mb-2">$350.00 to Cloud Hosting LLC</p>
                 <div className="flex gap-2">
                   <Button size="sm" className="h-7 text-xs">Approve</Button>
                   <Button variant="outline" size="sm" className="h-7 text-xs">Deny</Button>

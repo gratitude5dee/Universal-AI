@@ -48,8 +48,8 @@ const WizardView: React.FC<WizardViewProps> = ({
   return (
     <div className="bg-white rounded-xl border p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">AI Agent Wizard</h2>
-        <div className="text-sm font-medium">Step {wizardStep} of 6</div>
+        <h2 className="text-xl font-semibold text-blue-dark">AI Agent Wizard</h2>
+        <div className="text-sm font-medium text-blue-dark">Step {wizardStep} of 6</div>
       </div>
       
       <div className="mb-6">
@@ -60,8 +60,8 @@ const WizardView: React.FC<WizardViewProps> = ({
           ></div>
         </div>
         <div className="flex justify-between mt-2">
-          <span className="text-xs">Purpose</span>
-          <span className="text-xs">Economics</span>
+          <span className="text-xs text-blue-dark">Purpose</span>
+          <span className="text-xs text-blue-dark">Economics</span>
         </div>
       </div>
       
