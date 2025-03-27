@@ -38,7 +38,7 @@
   }
   
   .sidebar-menu-icon-active {
-    @apply text-white filter drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+    @apply text-white;
   }
   
   .sidebar-menu-icon-inactive {
@@ -107,6 +107,11 @@
   
   .text-glow-white {
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+  }
+  
+  /* Custom filter utility for icon glow effect */
+  .icon-glow-white {
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
   }
 }
 

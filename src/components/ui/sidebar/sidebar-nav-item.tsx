@@ -62,7 +62,7 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
             ${isActive ? 'sidebar-menu-icon-active' : 'sidebar-menu-icon-inactive'}
           `}>
             <item.icon className={`h-5 w-5 transition-all duration-200
-              ${isActive && 'filter drop-shadow(0 0 3px rgba(255, 255, 255, 0.5))'}
+              ${isActive ? 'icon-glow-white' : ''}
               ${!isActive && 'group-hover:text-white'}
             `} />
           </div>
@@ -110,7 +110,7 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
               ${isSubMenuActive ? 'sidebar-menu-icon-active' : 'sidebar-menu-icon-inactive'}
             `}>
               <item.icon className={`h-5 w-5 transition-all duration-200
-                ${isSubMenuActive && 'filter drop-shadow(0 0 3px rgba(255, 255, 255, 0.5))'}
+                ${isSubMenuActive ? 'icon-glow-white' : ''}
                 ${!isSubMenuActive && 'group-hover:text-white'}
               `} />
             </div>
