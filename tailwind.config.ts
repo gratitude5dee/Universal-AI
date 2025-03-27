@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -32,9 +33,9 @@ export default {
 					accent: "#D98F64",
 					highlight: "#F9D7C0"
 				},
-				// Add blue theme colors
+				// Enhanced blue theme colors with better contrast
 				blue: {
-					darker: "#1e3a8a",
+					darker: "#1a2d69", // Darkened for better contrast
 					dark: "#1e40af",
 					primary: "#3b82f6",
 					light: "#60a5fa",
@@ -162,9 +163,9 @@ export default {
 				'card-glow': '0 4px 20px -2px rgba(30, 64, 175, 0.25)'
 			},
 			backgroundImage: {
-				'blue-gradient': 'linear-gradient(to bottom right, #1e3a8a, #3b82f6)',
+				'blue-gradient': 'linear-gradient(135deg, #1a2d69 0%, #1e40af 100%)',
 				'blue-card': 'linear-gradient(to bottom right, rgba(96, 165, 250, 0.3), rgba(59, 130, 246, 0.3))',
-				'sidebar-gradient': 'linear-gradient(to bottom, #1e3a8a, #1e40af)',
+				'sidebar-gradient': 'linear-gradient(to bottom, #1a2d69, #1e40af)',
 				'card-gradient': 'linear-gradient(to bottom right, rgba(96, 165, 250, 0.2), rgba(59, 130, 246, 0.2))'
 			}
 		}

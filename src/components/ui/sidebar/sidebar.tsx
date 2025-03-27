@@ -128,7 +128,10 @@ const Sidebar: React.FC<SidebarProps> = ({ navItems }) => {
       )}
       
       <motion.aside 
-        className="fixed left-0 top-0 h-screen flex flex-col bg-sidebar-gradient bg-blue-darker backdrop-blur-md border-r border-blue-primary/20 shadow-blue-glow transition-all duration-300 overflow-hidden z-30"
+        className="fixed left-0 top-0 h-screen flex flex-col backdrop-blur-md border-r border-blue-primary/40 shadow-blue-glow transition-all duration-300 overflow-hidden z-30"
+        style={{
+          background: 'linear-gradient(to bottom, rgba(30, 58, 138, 0.95), rgba(30, 64, 175, 0.95))'
+        }}
         initial={false}
         animate={{ 
           width: isCollapsed ? (isHovered || pinned ? '16rem' : '4.5rem') : '16rem',
@@ -152,7 +155,7 @@ const Sidebar: React.FC<SidebarProps> = ({ navItems }) => {
             variant="ghost" 
             size="icon" 
             onClick={togglePin}
-            className={`absolute right-4 top-5 h-6 w-6 rounded-full transition-all duration-200 ${pinned ? 'bg-blue-primary text-white' : 'bg-transparent text-white hover:bg-blue-primary/30'}`}
+            className={`absolute right-4 top-5 h-6 w-6 rounded-full transition-all duration-200 ${pinned ? 'bg-blue-primary text-white shadow-blue-glow' : 'bg-transparent text-white hover:bg-blue-primary/30'}`}
             aria-label={pinned ? "Unpin sidebar" : "Pin sidebar"}
           >
             <Pin className="h-3.5 w-3.5" />
@@ -164,7 +167,7 @@ const Sidebar: React.FC<SidebarProps> = ({ navItems }) => {
           variant="outline" 
           size="icon" 
           onClick={toggleSidebar} 
-          className="absolute -right-3 top-24 h-6 w-6 rounded-full bg-blue-dark border-blue-primary/30 text-white shadow-blue-glow z-10" 
+          className="absolute -right-3 top-24 h-6 w-6 rounded-full bg-blue-dark border-blue-primary/50 text-white shadow-blue-glow z-10" 
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {isCollapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
@@ -175,7 +178,7 @@ const Sidebar: React.FC<SidebarProps> = ({ navItems }) => {
           variant="outline" 
           size="icon" 
           onClick={toggleHidden}
-          className="absolute -right-3 top-36 h-6 w-6 rounded-full bg-blue-dark border-blue-primary/30 text-white shadow-blue-glow z-10" 
+          className="absolute -right-3 top-36 h-6 w-6 rounded-full bg-blue-dark border-blue-primary/50 text-white shadow-blue-glow z-10" 
           aria-label={isHidden ? "Show sidebar" : "Hide sidebar"}
         >
           {isHidden ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}

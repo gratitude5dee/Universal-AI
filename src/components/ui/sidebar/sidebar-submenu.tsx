@@ -45,12 +45,12 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
     return (
       <div className="absolute left-full top-0 ml-1 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
         <motion.div 
-          className="bg-white/95 backdrop-blur-sm rounded-lg shadow-md p-2 min-w-48 border border-studio-sand/20"
+          className="glass-card p-2 min-w-48"
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <div className="text-xs font-medium text-studio-accent mb-2 px-2 uppercase tracking-wider">
+          <div className="text-xs font-medium text-blue-lightest text-glow-blue mb-2 px-2 uppercase tracking-wider">
             {parentName}
           </div>
           <div className="space-y-0.5">
@@ -73,14 +73,12 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
                   <Link 
                     to={subItem.path} 
                     className={`
-                      flex items-center px-2.5 py-1.5 rounded-md text-xs transition-all duration-200
-                      ${isSubItemActive 
-                        ? 'bg-studio-accent/10 text-studio-accent font-medium' 
-                        : 'text-studio-charcoal hover:bg-studio-sand/30'}
+                      sidebar-submenu-item
+                      ${isSubItemActive ? 'sidebar-submenu-item-active' : 'sidebar-submenu-item-inactive'}
                     `}
                   >
-                    <subItem.icon className={`h-3.5 w-3.5 mr-2 ${isSubItemActive ? 'text-studio-accent' : 'text-studio-clay'}`} />
-                    {subItem.name}
+                    <subItem.icon className={`h-3.5 w-3.5 mr-2 ${isSubItemActive ? 'text-white' : 'text-blue-lighter'}`} />
+                    <span className="text-shadow-sm">{subItem.name}</span>
                   </Link>
                 </motion.div>
               );
@@ -120,14 +118,12 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
                 <Link 
                   to={subItem.path} 
                   className={`
-                    flex items-center px-2.5 py-1.5 rounded-md text-xs transition-all duration-200
-                    ${isSubItemActive 
-                      ? 'bg-studio-accent/10 text-studio-accent font-medium' 
-                      : 'text-studio-charcoal hover:bg-studio-sand/30'}
+                    sidebar-submenu-item
+                    ${isSubItemActive ? 'sidebar-submenu-item-active' : 'sidebar-submenu-item-inactive'}
                   `}
                 >
-                  <subItem.icon className={`h-3.5 w-3.5 mr-2 ${isSubItemActive ? 'text-studio-accent' : 'text-studio-clay'}`} />
-                  {subItem.name}
+                  <subItem.icon className={`h-3.5 w-3.5 mr-2 ${isSubItemActive ? 'text-white' : 'text-blue-lighter'}`} />
+                  <span className="text-shadow-sm">{subItem.name}</span>
                 </Link>
               </motion.div>
             );

@@ -54,14 +54,12 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
     return (
       <Link to={item.path} className="relative block" title={isCollapsed ? item.name : ""}>
         <div className={`
-          flex items-center ${isCollapsed ? 'justify-center' : 'px-3'} py-2.5 my-1 rounded-lg text-sm font-medium transition-all duration-200 group
-          ${isActive 
-            ? 'text-white bg-blue-primary/90 shadow-blue-glow' 
-            : 'text-white hover:bg-blue-primary/30'}
+          sidebar-menu-item
+          ${isActive ? 'sidebar-menu-item-active' : 'sidebar-menu-item-inactive'}
         `}>
           <div className={`
             ${isCollapsed ? 'flex justify-center w-full' : 'mr-3'}
-            ${isActive ? 'text-white' : 'text-blue-lighter group-hover:text-white'}
+            ${isActive ? 'sidebar-menu-icon-active' : 'sidebar-menu-icon-inactive'}
           `}>
             <item.icon className={`h-5 w-5 transition-all duration-200
               ${isActive && 'filter drop-shadow(0 0 3px rgba(255, 255, 255, 0.5))'}
@@ -73,7 +71,7 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
               initial="hidden"
               animate="visible"
               variants={textVariants}
-              className="flex-1 text-[13px]"
+              className="flex-1 text-[13px] font-medium text-shadow-sm"
             >
               {item.name}
             </motion.span>
@@ -102,15 +100,13 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
         title={isCollapsed ? item.name : ""}
       >
         <div className={`
-          flex items-center justify-between ${isCollapsed ? 'justify-center' : 'px-3'} py-2.5 my-1 rounded-lg text-sm font-medium transition-all duration-200 group
-          ${isSubMenuActive 
-            ? 'text-white bg-blue-primary/90 shadow-blue-glow' 
-            : 'text-white hover:bg-blue-primary/30'}
+          sidebar-menu-item
+          ${isSubMenuActive ? 'sidebar-menu-item-active' : 'sidebar-menu-item-inactive'}
         `}>
           <div className="flex items-center flex-1">
             <div className={`
               ${isCollapsed ? 'flex justify-center w-full' : 'mr-3'}
-              ${isSubMenuActive ? 'text-white' : 'text-blue-lighter group-hover:text-white'}
+              ${isSubMenuActive ? 'sidebar-menu-icon-active' : 'sidebar-menu-icon-inactive'}
             `}>
               <item.icon className={`h-5 w-5 transition-all duration-200
                 ${isSubMenuActive && 'filter drop-shadow(0 0 3px rgba(255, 255, 255, 0.5))'}
@@ -122,7 +118,7 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
                 initial="hidden"
                 animate="visible"
                 variants={textVariants}
-                className="text-[13px]"
+                className="text-[13px] font-medium text-shadow-sm"
               >
                 {item.name}
               </motion.span>
@@ -132,7 +128,7 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
           {!isCollapsed && (
             <ChevronRight 
               className={`h-3.5 w-3.5 transition-transform duration-200 ${submenuOpen ? 'rotate-90' : ''} 
-                ${isSubMenuActive ? 'text-white' : 'text-blue-lighter'}
+                ${isSubMenuActive ? 'text-white' : 'text-blue-lightest'}
               `} 
             />
           )}

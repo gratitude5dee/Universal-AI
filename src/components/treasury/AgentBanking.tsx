@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AccountSetupWizard from "@/components/treasury/banking/AccountSetupWizard";
@@ -30,8 +31,8 @@ const AgentBanking: React.FC = () => {
   return (
     <div className="mt-6">
       <div className="mb-5">
-        <h2 className="text-2xl font-bold mb-1">Agent Banking Portal</h2>
-        <p className="text-muted-foreground">
+        <h2 className="text-2xl font-bold mb-1 text-shadow-sm">Agent Banking Portal</h2>
+        <p className="text-blue-lightest">
           Empower your AI agents with autonomous financial capabilities
         </p>
       </div>
@@ -46,17 +47,17 @@ const AgentBanking: React.FC = () => {
         />
       ) : (
         <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
-          <TabsList className="mb-6 bg-white/80 backdrop-blur-md border border-studio-sand/30 rounded-xl p-1 shadow-sm">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-studio-accent data-[state=active]:text-white">
+          <TabsList className="mb-6 bg-white/10 backdrop-blur-md border border-blue-primary/30 rounded-xl p-1 shadow-blue-glow">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-blue-primary data-[state=active]:text-white data-[state=active]:shadow-blue-glow font-medium text-blue-lightest">
               Account Overview
             </TabsTrigger>
-            <TabsTrigger value="controls" className="data-[state=active]:bg-studio-accent data-[state=active]:text-white">
+            <TabsTrigger value="controls" className="data-[state=active]:bg-blue-primary data-[state=active]:text-white data-[state=active]:shadow-blue-glow font-medium text-blue-lightest">
               Banking Controls
             </TabsTrigger>
-            <TabsTrigger value="activity" className="data-[state=active]:bg-studio-accent data-[state=active]:text-white">
+            <TabsTrigger value="activity" className="data-[state=active]:bg-blue-primary data-[state=active]:text-white data-[state=active]:shadow-blue-glow font-medium text-blue-lightest">
               Transaction Activity
             </TabsTrigger>
-            <TabsTrigger value="integration" className="data-[state=active]:bg-studio-accent data-[state=active]:text-white">
+            <TabsTrigger value="integration" className="data-[state=active]:bg-blue-primary data-[state=active]:text-white data-[state=active]:shadow-blue-glow font-medium text-blue-lightest">
               API Integration
             </TabsTrigger>
           </TabsList>
