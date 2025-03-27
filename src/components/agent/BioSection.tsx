@@ -24,8 +24,8 @@ const BioSection: React.FC = () => {
 
   return (
     <div className="py-6" id="bio">
-      <h2 className="text-2xl font-bold mb-2">Bio</h2>
-      <p className="text-muted-foreground mb-4">
+      <h2 className="text-2xl font-bold mb-2 white-bg-heading">Bio</h2>
+      <p className="white-bg-subheading mb-4">
         Background information for your character. Includes biographical details about the character, either as one complete biography or several statements that vary.
       </p>
 

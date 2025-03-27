@@ -12,8 +12,8 @@ const BasicInfoSection: React.FC = () => {
   return (
     <>
       <div className="py-6" id="startTemplate">
-        <h2 className="text-4xl font-bold mb-4">Start with a template</h2>
-        <p className="text-muted-foreground mb-6">
+        <h2 className="text-4xl font-bold mb-4 white-bg-heading">Start with a template</h2>
+        <p className="white-bg-subheading mb-6">
           Using the inputs below, craft a unique and engaging personality for your AI agent. Check our <a href="#" className="text-studio-accent">guide</a> for this step.
         </p>
 
@@ -39,8 +39,8 @@ const BasicInfoSection: React.FC = () => {
       </div>
 
       <div className="py-6 border-t border-gray-800/10" id="name">
-        <h2 className="text-2xl font-bold mb-2">Name</h2>
-        <p className="text-muted-foreground mb-4">
+        <h2 className="text-2xl font-bold mb-2 white-bg-heading">Name</h2>
+        <p className="white-bg-subheading mb-4">
           The character's display name for identification and in conversations
         </p>
         <input
@@ -52,8 +52,8 @@ const BasicInfoSection: React.FC = () => {
       </div>
 
       <div className="py-6 border-t border-gray-800/10" id="avatar">
-        <h2 className="text-2xl font-bold mb-2">Avatar</h2>
-        <p className="text-muted-foreground mb-4">
+        <h2 className="text-2xl font-bold mb-2 white-bg-heading">Avatar</h2>
+        <p className="white-bg-subheading mb-4">
           Update your avatar effortlessly by simply clicking on it.
         </p>
         <div className="flex items-center gap-4">
@@ -62,13 +62,13 @@ const BasicInfoSection: React.FC = () => {
               <span className="text-3xl">😎</span>
             </div>
           </div>
-          <p className="text-muted-foreground">Click to upload or change</p>
+          <p className="text-blue-dark/70">Click to upload or change</p>
         </div>
       </div>
 
       <div className="py-6 border-t border-gray-800/10" id="modelProvider">
-        <h2 className="text-2xl font-bold mb-2">Model provider</h2>
-        <p className="text-muted-foreground mb-4">
+        <h2 className="text-2xl font-bold mb-2 white-bg-heading">Model provider</h2>
+        <p className="white-bg-subheading mb-4">
           The AI model provider, such as OpenAI or Anthropic
         </p>
         <select
@@ -85,8 +85,8 @@ const BasicInfoSection: React.FC = () => {
       </div>
 
       <div className="py-6 border-t border-gray-800/10" id="clients">
-        <h2 className="text-2xl font-bold mb-2">Clients</h2>
-        <p className="text-muted-foreground mb-4">
+        <h2 className="text-2xl font-bold mb-2 white-bg-heading">Clients</h2>
+        <p className="white-bg-subheading mb-4">
           Supported client types, such as Discord or X
         </p>
         <select
@@ -103,8 +103,8 @@ const BasicInfoSection: React.FC = () => {
       </div>
 
       <div className="py-6 border-t border-gray-800/10" id="plugins">
-        <h2 className="text-2xl font-bold mb-2">Plugins <span className="text-xs text-gray-400 font-normal">Optional</span></h2>
-        <p className="text-muted-foreground mb-4">
+        <h2 className="text-2xl font-bold mb-2 white-bg-heading">Plugins <span className="text-xs text-gray-400 font-normal">Optional</span></h2>
+        <p className="white-bg-subheading mb-4">
           Plugins extend Eliza's core functionality with additional features.
         </p>
         <select

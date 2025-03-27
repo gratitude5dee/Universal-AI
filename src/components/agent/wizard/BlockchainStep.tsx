@@ -12,8 +12,8 @@ const BlockchainStep: React.FC<BlockchainStepProps> = ({ blockchain, setBlockcha
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <h2 className="text-2xl font-bold">Blockchain Deployment</h2>
-        <p className="text-muted-foreground">Choose where your agent's outputs will be stored</p>
+        <h2 className="text-2xl font-bold white-bg-heading">Blockchain Deployment</h2>
+        <p className="white-bg-subheading">Choose where your agent's outputs will be stored</p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -34,9 +34,9 @@ const BlockchainStep: React.FC<BlockchainStepProps> = ({ blockchain, setBlockcha
             </div>
             <div className="bg-white px-2 py-1 rounded text-xs font-medium text-indigo-600">Popular</div>
           </div>
-          <h3 className="font-medium mt-4 mb-1">Ethereum</h3>
-          <p className="text-sm text-muted-foreground">Mainstream blockchain with wide adoption and established standards</p>
-          <div className="mt-4 text-xs text-gray-500 flex items-center">
+          <h3 className="font-medium mt-4 mb-1 text-blue-dark">Ethereum</h3>
+          <p className="text-sm text-blue-dark/70">Mainstream blockchain with wide adoption and established standards</p>
+          <div className="mt-4 text-xs text-blue-dark/60 flex items-center">
             <span className="mr-4">Gas: High</span>
             <span>Speed: Medium</span>
           </div>
@@ -54,9 +54,9 @@ const BlockchainStep: React.FC<BlockchainStepProps> = ({ blockchain, setBlockcha
             </div>
             <div className="bg-white px-2 py-1 rounded text-xs font-medium text-blue-600">L2</div>
           </div>
-          <h3 className="font-medium mt-4 mb-1">Base</h3>
-          <p className="text-sm text-muted-foreground">Ethereum L2 with lower fees and faster transactions</p>
-          <div className="mt-4 text-xs text-gray-500 flex items-center">
+          <h3 className="font-medium mt-4 mb-1 text-blue-dark">Base</h3>
+          <p className="text-sm text-blue-dark/70">Ethereum L2 with lower fees and faster transactions</p>
+          <div className="mt-4 text-xs text-blue-dark/60 flex items-center">
             <span className="mr-4">Gas: Low</span>
             <span>Speed: Fast</span>
           </div>

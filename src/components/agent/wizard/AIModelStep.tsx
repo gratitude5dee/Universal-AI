@@ -15,8 +15,8 @@ const AIModelStep: React.FC<AIModelStepProps> = ({ aiModel, setAiModel, agentPur
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <h2 className="text-2xl font-bold">AI Model Selection</h2>
-        <p className="text-muted-foreground">Choose the AI models and configure their parameters</p>
+        <h2 className="text-2xl font-bold white-bg-heading">AI Model Selection</h2>
+        <p className="white-bg-subheading">Choose the AI models and configure their parameters</p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -27,9 +27,9 @@ const AIModelStep: React.FC<AIModelStepProps> = ({ aiModel, setAiModel, agentPur
           <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
             <Cpu className="h-5 w-5 text-emerald-500" />
           </div>
-          <h3 className="font-medium mt-4 mb-1">GPT-4o</h3>
-          <p className="text-sm text-muted-foreground">Advanced multimodal model with deep knowledge and reasoning</p>
-          <div className="mt-4 text-xs text-gray-500 flex items-center">
+          <h3 className="font-medium mt-4 mb-1 text-blue-dark">GPT-4o</h3>
+          <p className="text-sm text-blue-dark/70">Advanced multimodal model with deep knowledge and reasoning</p>
+          <div className="mt-4 text-xs text-blue-dark/60 flex items-center">
             <span className="mr-4">Cost: $$$</span>
             <span>Quality: Very High</span>
           </div>
@@ -82,16 +82,16 @@ const AIModelStep: React.FC<AIModelStepProps> = ({ aiModel, setAiModel, agentPur
       </div>
       
       <div className="bg-white p-6 rounded-xl border border-gray-200">
-        <h3 className="font-medium mb-3">Parameter Configuration</h3>
+        <h3 className="font-medium mb-3 text-blue-dark">Parameter Configuration</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
           <div>
             <div className="flex justify-between">
-              <Label htmlFor="temperature" className="text-sm">Temperature</Label>
-              <span className="text-xs text-gray-500">0.7</span>
+              <Label htmlFor="temperature" className="text-sm text-blue-dark">Temperature</Label>
+              <span className="text-xs text-blue-dark/60">0.7</span>
             </div>
             <input type="range" min="0" max="2" step="0.1" defaultValue="0.7" id="temperature" className="w-full mt-1" />
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <div className="flex justify-between text-xs text-blue-dark/60 mt-1">
               <span>Precise</span>
               <span>Creative</span>
             </div>
@@ -99,33 +99,33 @@ const AIModelStep: React.FC<AIModelStepProps> = ({ aiModel, setAiModel, agentPur
           
           <div>
             <div className="flex justify-between">
-              <Label htmlFor="max-tokens" className="text-sm">Max Tokens</Label>
-              <span className="text-xs text-gray-500">2048</span>
+              <Label htmlFor="max-tokens" className="text-sm text-blue-dark">Max Tokens</Label>
+              <span className="text-xs text-blue-dark/60">2048</span>
             </div>
             <input type="range" min="512" max="8192" step="512" defaultValue="2048" id="max-tokens" className="w-full mt-1" />
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <div className="flex justify-between text-xs text-blue-dark/60 mt-1">
               <span>Brief</span>
               <span>Detailed</span>
             </div>
           </div>
           
           <div>
-            <Label htmlFor="system-prompt" className="text-sm">System Prompt</Label>
+            <Label htmlFor="system-prompt" className="text-sm text-blue-dark">System Prompt</Label>
             <Textarea 
               id="system-prompt" 
-              className="mt-1 h-20"
+              className="mt-1 h-20 text-blue-dark"
               placeholder="You are an AI assistant that specializes in..."
             />
           </div>
           
           <div>
-            <Label htmlFor="stop-sequences" className="text-sm">Stop Sequences (Optional)</Label>
+            <Label htmlFor="stop-sequences" className="text-sm text-blue-dark">Stop Sequences (Optional)</Label>
             <Input 
               id="stop-sequences" 
-              className="mt-1"
+              className="mt-1 text-blue-dark"
               placeholder="END, STOP, etc. (comma separated)"
             />
-            <p className="text-xs text-gray-500 mt-1">These sequences will signal the AI to stop generating content</p>
+            <p className="text-xs text-blue-dark/60 mt-1">These sequences will signal the AI to stop generating content</p>
           </div>
         </div>
       </div>

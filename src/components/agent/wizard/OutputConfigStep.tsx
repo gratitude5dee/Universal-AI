@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Paintbrush, Music, FileText, Layers, Sparkles } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -13,22 +12,22 @@ const OutputConfigStep: React.FC<OutputConfigStepProps> = ({ outputFormat, setOu
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <h2 className="text-2xl font-bold">Output Configuration</h2>
-        <p className="text-muted-foreground">Define where your agent's creations will be published</p>
+        <h2 className="text-2xl font-bold white-bg-heading">Output Configuration</h2>
+        <p className="white-bg-subheading">Define where your agent's creations will be published</p>
       </div>
       
       <div className="bg-white p-6 rounded-xl border border-gray-200">
-        <h3 className="font-medium mb-3">Output Destinations</h3>
+        <h3 className="font-medium mb-3 text-blue-dark">Output Destinations</h3>
         
         <div className="space-y-3">
           <div className="flex items-center">
             <input type="checkbox" id="dest-nft" className="mr-2" defaultChecked />
-            <label htmlFor="dest-nft" className="text-sm">NFT Marketplace</label>
+            <label htmlFor="dest-nft" className="text-sm text-blue-dark">NFT Marketplace</label>
           </div>
           
           <div className="ml-6 mb-4">
             <Select defaultValue="opensea">
-              <SelectTrigger>
+              <SelectTrigger className="text-blue-dark">
                 <SelectValue placeholder="Select marketplace" />
               </SelectTrigger>
               <SelectContent>
@@ -42,34 +41,34 @@ const OutputConfigStep: React.FC<OutputConfigStepProps> = ({ outputFormat, setOu
           
           <div className="flex items-center">
             <input type="checkbox" id="dest-social" className="mr-2" defaultChecked />
-            <label htmlFor="dest-social" className="text-sm">Social Media</label>
+            <label htmlFor="dest-social" className="text-sm text-blue-dark">Social Media</label>
           </div>
           
           <div className="ml-6 mb-4 grid grid-cols-2 gap-2">
             <div className="flex items-center">
               <input type="checkbox" id="social-twitter" className="mr-2" defaultChecked />
-              <label htmlFor="social-twitter" className="text-sm">Twitter</label>
+              <label htmlFor="social-twitter" className="text-sm text-blue-dark">Twitter</label>
             </div>
             <div className="flex items-center">
               <input type="checkbox" id="social-instagram" className="mr-2" />
-              <label htmlFor="social-instagram" className="text-sm">Instagram</label>
+              <label htmlFor="social-instagram" className="text-sm text-blue-dark">Instagram</label>
             </div>
           </div>
           
           <div className="flex items-center">
             <input type="checkbox" id="dest-storage" className="mr-2" />
-            <label htmlFor="dest-storage" className="text-sm">Decentralized Storage</label>
+            <label htmlFor="dest-storage" className="text-sm text-blue-dark">Decentralized Storage</label>
           </div>
           
           <div className="flex items-center">
             <input type="checkbox" id="dest-api" className="mr-2" />
-            <label htmlFor="dest-api" className="text-sm">API Endpoint (Webhook)</label>
+            <label htmlFor="dest-api" className="text-sm text-blue-dark">API Endpoint (Webhook)</label>
           </div>
         </div>
       </div>
       
       <div className="bg-white p-6 rounded-xl border border-gray-200">
-        <h3 className="font-medium mb-3">Output Format</h3>
+        <h3 className="font-medium mb-3 text-blue-dark">Output Format</h3>
         
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div 
@@ -77,7 +76,7 @@ const OutputConfigStep: React.FC<OutputConfigStepProps> = ({ outputFormat, setOu
             onClick={() => setOutputFormat('image')}
           >
             <Paintbrush className="h-5 w-5 mx-auto mb-1 text-purple-500" />
-            <span className="text-sm">Image</span>
+            <span className="text-sm text-blue-dark">Image</span>
           </div>
           
           <div 
@@ -85,7 +84,7 @@ const OutputConfigStep: React.FC<OutputConfigStepProps> = ({ outputFormat, setOu
             onClick={() => setOutputFormat('audio')}
           >
             <Music className="h-5 w-5 mx-auto mb-1 text-blue-500" />
-            <span className="text-sm">Audio</span>
+            <span className="text-sm text-blue-dark">Audio</span>
           </div>
           
           <div 
@@ -93,7 +92,7 @@ const OutputConfigStep: React.FC<OutputConfigStepProps> = ({ outputFormat, setOu
             onClick={() => setOutputFormat('text')}
           >
             <FileText className="h-5 w-5 mx-auto mb-1 text-green-500" />
-            <span className="text-sm">Text</span>
+            <span className="text-sm text-blue-dark">Text</span>
           </div>
           
           <div 
@@ -101,19 +100,19 @@ const OutputConfigStep: React.FC<OutputConfigStepProps> = ({ outputFormat, setOu
             onClick={() => setOutputFormat('multi')}
           >
             <Layers className="h-5 w-5 mx-auto mb-1 text-amber-500" />
-            <span className="text-sm">Multi</span>
+            <span className="text-sm text-blue-dark">Multi</span>
           </div>
         </div>
       </div>
       
       <div className="bg-white p-6 rounded-xl border border-gray-200">
-        <h3 className="font-medium mb-3">Personalization Options</h3>
+        <h3 className="font-medium mb-3 text-blue-dark">Personalization Options</h3>
         
         <div className="space-y-4">
           <div>
-            <Label htmlFor="style-options" className="text-sm">Style Profile</Label>
+            <Label htmlFor="style-options" className="text-sm text-blue-dark">Style Profile</Label>
             <Select defaultValue="modern">
-              <SelectTrigger id="style-options" className="mt-1">
+              <SelectTrigger id="style-options" className="mt-1 text-blue-dark">
                 <SelectValue placeholder="Select style" />
               </SelectTrigger>
               <SelectContent>
@@ -126,9 +125,9 @@ const OutputConfigStep: React.FC<OutputConfigStepProps> = ({ outputFormat, setOu
           </div>
           
           <div>
-            <Label htmlFor="content-filter" className="text-sm">Content Filter</Label>
+            <Label htmlFor="content-filter" className="text-sm text-blue-dark">Content Filter</Label>
             <Select defaultValue="moderate">
-              <SelectTrigger id="content-filter" className="mt-1">
+              <SelectTrigger id="content-filter" className="mt-1 text-blue-dark">
                 <SelectValue placeholder="Select filter level" />
               </SelectTrigger>
               <SelectContent>

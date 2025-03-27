@@ -9,25 +9,25 @@ const EventTriggersStep: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <h2 className="text-2xl font-bold">Event Triggers & Conditions</h2>
-        <p className="text-muted-foreground">Define when your agent will activate and take action</p>
+        <h2 className="text-2xl font-bold white-bg-heading">Event Triggers & Conditions</h2>
+        <p className="white-bg-subheading">Define when your agent will activate and take action</p>
       </div>
       
       <div className="bg-white p-6 rounded-xl border border-gray-200">
-        <h3 className="font-medium mb-3">Activation Triggers</h3>
+        <h3 className="font-medium mb-3 text-blue-dark">Activation Triggers</h3>
         
         <div className="space-y-3">
           <div className="flex items-center">
             <input type="checkbox" id="trigger-schedule" className="mr-2" defaultChecked />
-            <label htmlFor="trigger-schedule" className="text-sm">Schedule-based</label>
+            <label htmlFor="trigger-schedule" className="text-sm text-blue-dark">Schedule-based</label>
           </div>
           
           <div className="ml-6 mb-4">
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <Label htmlFor="frequency" className="text-xs">Frequency</Label>
+                <Label htmlFor="frequency" className="text-xs text-blue-dark">Frequency</Label>
                 <Select defaultValue="daily">
-                  <SelectTrigger id="frequency">
+                  <SelectTrigger id="frequency" className="text-blue-dark">
                     <SelectValue placeholder="Select frequency" />
                   </SelectTrigger>
                   <SelectContent>
@@ -39,8 +39,8 @@ const EventTriggersStep: React.FC = () => {
                 </Select>
               </div>
               <div>
-                <Label htmlFor="time" className="text-xs">Time</Label>
-                <Input type="time" id="time" defaultValue="09:00" />
+                <Label htmlFor="time" className="text-xs text-blue-dark">Time</Label>
+                <Input type="time" id="time" defaultValue="09:00" className="text-blue-dark" />
               </div>
             </div>
           </div>
@@ -63,13 +63,13 @@ const EventTriggersStep: React.FC = () => {
       </div>
       
       <div className="bg-white p-6 rounded-xl border border-gray-200">
-        <h3 className="font-medium mb-3">Conditions & Logic</h3>
+        <h3 className="font-medium mb-3 text-blue-dark">Conditions & Logic</h3>
         
         <div className="space-y-4">
           <div>
-            <Label htmlFor="condition-source" className="text-xs">Data Source</Label>
+            <Label htmlFor="condition-source" className="text-xs text-blue-dark">Data Source</Label>
             <Select defaultValue="social">
-              <SelectTrigger id="condition-source" className="mt-1">
+              <SelectTrigger id="condition-source" className="mt-1 text-blue-dark">
                 <SelectValue placeholder="Select data source" />
               </SelectTrigger>
               <SelectContent>
