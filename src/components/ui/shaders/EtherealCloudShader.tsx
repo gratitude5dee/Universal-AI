@@ -15,7 +15,7 @@ const EtherealCloudShader: React.FC<EtherealCloudShaderProps> = ({ className = "
     const canvas = canvasRef.current;
     if (!canvas) return;
     
-    // Setup WebGL
+    // Setup WebGL - properly type the context as WebGLRenderingContext
     const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
     if (!gl) {
       console.error('WebGL not supported');
