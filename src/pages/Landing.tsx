@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useMotionValue, useTransform, useAnimation } from "framer-motion";
@@ -143,7 +144,7 @@ const Landing = () => {
                          =:         .....::....:::.:::::--=-:::.:.:.:.::::::::-=****==------==*%@@@@@@@#++==:::.:.:.:=+:.:.-::..::--=                         
                           =..        ..:.:.:.::.:::.:-.:--:.:.:.::.:.:.:::-=+=**=---=====+#@@@@@@@*=--::::.:.::-%=.:::---:.:---+                          
                            +:       ..:..:::----:---:--=----:.:.:.:..:.:::-=+=+++=-==-====+*%@@@@@#=-:::.:.::.:=-:.::----:::::-*                           
-                            #:       .........::----=-=-=---:.:.:.:.:..:.:::-=**=*+++==+=+=*@@@@@%=:::.::.:::--:.::--------:--#                            
+                            #:       .........::----=-=---:.:.:.:.:..:.:::-=**=*+++==+=+=*@@@@@%=:::.::.:::--:.::--------:--#                            
                              @-:      ..:.::.:...::::-----::.:.:.:.:.:::::::=**=*+++==+==+=++@@@@#=:::::.:::::.:.:--------::-=@                             
                               +-:.     ...:::.:::.:...::.:::.:.:.:.:.:.:::=*#+**=++**+=+-=+@%+--:::.:.--:::.:.:.::-------:--=+                              
                                 +:::.    ::-*=-=-:..:.......:..:.:.::--::-+#******##*==+#+===-:::.::-+:::.::.::--------:-+#                               
@@ -443,15 +444,424 @@ const Landing = () => {
                     className="bg-[#1E1E2E]/70 backdrop-blur-md rounded-xl p-3 sm:p-4 mb-4 sm:mb-5 relative" 
                     style={{transformStyle: 'preserve-3d'}}
                   >
-                    {/* Inner noise texture */}
-                    <div 
-                      className="absolute inset-0 opacity-[0.05] mix-blend-overlay rounded-xl" 
-                      style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                      }} 
-                    />
-
-                    <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                    {/* Interface header */}
+                    <div className="flex items-center justify-between mb-3 sm:mb-4">
                       <div className="flex space-x-1.5">
                         <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-400"></div>
-                        <div
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-400"></div>
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-400"></div>
+                      </div>
+                      <div className="text-xs sm:text-sm text-gray-400">UniversalAI Studio</div>
+                    </div>
+                    
+                    {/* Interface content */}
+                    <div className="space-y-3 sm:space-y-4">
+                      <div className="h-5 sm:h-6 bg-white/5 rounded w-3/4"></div>
+                      <div className="h-5 sm:h-6 bg-white/5 rounded w-1/2"></div>
+                      <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                        <div className="h-12 sm:h-16 bg-cyan-400/10 rounded flex items-center justify-center">
+                          <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-cyan-400/70" />
+                        </div>
+                        <div className="h-12 sm:h-16 bg-purple-400/10 rounded flex items-center justify-center">
+                          <Brain className="h-4 w-4 sm:h-5 sm:w-5 text-purple-400/70" />
+                        </div>
+                        <div className="h-12 sm:h-16 bg-amber-400/10 rounded flex items-center justify-center">
+                          <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 text-amber-400/70" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Secondary cards with data visualizations */}
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                    <div className="bg-[#1E1E2E]/70 backdrop-blur-md rounded-xl p-3 sm:p-4 relative">
+                      <h4 className="text-xs sm:text-sm text-gray-300 mb-2">AI Agents</h4>
+                      <div className="flex space-x-1 mb-3">
+                        <div className="h-1 rounded-full bg-cyan-400 w-4/12"></div>
+                        <div className="h-1 rounded-full bg-cyan-400/50 w-2/12"></div>
+                        <div className="h-1 rounded-full bg-cyan-400/20 w-6/12"></div>
+                      </div>
+                      <div className="text-lg sm:text-xl font-semibold text-white">82<span className="text-xs text-cyan-400 ml-1">Active</span></div>
+                    </div>
+                    
+                    <div className="bg-[#1E1E2E]/70 backdrop-blur-md rounded-xl p-3 sm:p-4 relative">
+                      <h4 className="text-xs sm:text-sm text-gray-300 mb-2">Spells Cast</h4>
+                      <div className="flex justify-between items-end">
+                        <div className="space-y-1">
+                          <div className="h-4 w-1 bg-purple-500/20 rounded-t"></div>
+                          <div className="h-6 w-1 bg-purple-500/40 rounded-t"></div>
+                          <div className="h-8 w-1 bg-purple-500/60 rounded-t"></div>
+                          <div className="h-10 w-1 bg-purple-500/80 rounded-t"></div>
+                          <div className="h-12 w-1 bg-purple-500 rounded-t"></div>
+                        </div>
+                        <div className="text-lg sm:text-xl font-semibold text-white">124<span className="text-xs text-purple-400 ml-1">Today</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+              
+              {/* Decorative elements floating around the card */}
+              <motion.div
+                className="absolute -right-4 top-1/4 h-8 w-8 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full blur-sm"
+                animate={{ y: [0, 10, 0], opacity: [0.5, 0.8, 0.5] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <motion.div
+                className="absolute -left-4 top-1/3 h-6 w-6 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full blur-sm"
+                animate={{ y: [0, -10, 0], opacity: [0.5, 0.7, 0.5] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              />
+              <motion.div
+                className="absolute right-1/4 -bottom-2 h-5 w-5 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full blur-sm"
+                animate={{ x: [0, 8, 0], opacity: [0.4, 0.6, 0.4] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+              />
+            </div>
+          </motion.div>
+        </main>
+        
+        {/* Section 1: The Nexus */}
+        <section className="py-16 sm:py-24 max-w-7xl mx-auto">
+          <motion.div 
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">The Genesis Engine for Digital Creation</h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              UniversalAI unifies advanced AI tools, secure asset management, and new forms of creative expression into a seamless ecosystem for the modern creator.
+            </p>
+          </motion.div>
+          
+          <div className="flex justify-center">
+            <motion.div 
+              className="relative w-64 h-64 sm:w-80 sm:h-80"
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8 }}
+            >
+              {/* Center nexus */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="relative">
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 bg-cyan-400/10 rounded-full flex items-center justify-center animate-pulse">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-cyan-400/20 rounded-full flex items-center justify-center">
+                      <div className="w-8 h-8 sm:w-12 sm:h-12 bg-cyan-400/30 rounded-full" />
+                    </div>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Sparkles className="h-10 w-10 text-cyan-400" />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Orbiting elements */}
+              <motion.div 
+                className="absolute w-full h-full"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+              >
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                  <div className="w-8 h-8 bg-purple-400/30 rounded-full flex items-center justify-center">
+                    <Brain className="h-4 w-4 text-purple-400" />
+                  </div>
+                </div>
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2">
+                  <div className="w-8 h-8 bg-teal-400/30 rounded-full flex items-center justify-center">
+                    <Code className="h-4 w-4 text-teal-400" />
+                  </div>
+                </div>
+                <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                  <div className="w-8 h-8 bg-amber-400/30 rounded-full flex items-center justify-center">
+                    <Palette className="h-4 w-4 text-amber-400" />
+                  </div>
+                </div>
+                <div className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2">
+                  <div className="w-8 h-8 bg-pink-400/30 rounded-full flex items-center justify-center">
+                    <Cpu className="h-4 w-4 text-pink-400" />
+                  </div>
+                </div>
+              </motion.div>
+              
+              {/* Connection lines */}
+              <div className="absolute inset-0">
+                <svg className="w-full h-full" viewBox="0 0 200 200">
+                  <line x1="100" y1="100" x2="100" y2="0" stroke="rgba(79, 209, 197, 0.2)" strokeWidth="1" strokeDasharray="5,5" />
+                  <line x1="100" y1="100" x2="100" y2="200" stroke="rgba(79, 209, 197, 0.2)" strokeWidth="1" strokeDasharray="5,5" />
+                  <line x1="100" y1="100" x2="0" y2="100" stroke="rgba(79, 209, 197, 0.2)" strokeWidth="1" strokeDasharray="5,5" />
+                  <line x1="100" y1="100" x2="200" y2="100" stroke="rgba(79, 209, 197, 0.2)" strokeWidth="1" strokeDasharray="5,5" />
+                </svg>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+        
+        {/* Section 2: Creative Singularity */}
+        <section className="py-16 sm:py-24 max-w-7xl mx-auto">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Forge Reality in the Infinite Studio</h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Craft your vision with next-generation tools powered by AI and built for creative professionals.
+            </p>
+          </motion.div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+            <FeatureCard 
+              icon={Palette} 
+              title="WZRD.tech Studio" 
+              description="Build immersive digital experiences with our intuitive visual development environment." 
+              colorClass="from-blue-400 to-cyan-400"
+            />
+            <FeatureCard 
+              icon={Brain} 
+              title="Generative Engines" 
+              description="Create limitless content with AI-powered generation for audio, video, images, and text." 
+              colorClass="from-purple-400 to-pink-400"
+            />
+            <FeatureCard 
+              icon={Database} 
+              title="Unified Asset Library" 
+              description="Manage your digital DNA with a central repository for all created and imported assets." 
+              colorClass="from-amber-400 to-orange-500"
+            />
+          </div>
+        </section>
+        
+        {/* Section 3: Autonomous Artistry */}
+        <section className="py-16 sm:py-24 max-w-7xl mx-auto">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Collaborate with Autonomous Intelligence</h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              AI agents that assist your creative process, manage workflows, and execute tasks with unprecedented efficiency.
+            </p>
+          </motion.div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <motion.div 
+              className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6 relative overflow-hidden"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.7 }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-blue-500/10" />
+              
+              <div className="relative z-10">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="p-3 bg-gradient-to-br from-purple-400 to-blue-500 rounded-lg">
+                    <Brain className="h-6 w-6 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold">AI Creation Assistants</h3>
+                </div>
+                
+                <ul className="space-y-3">
+                  <motion.li 
+                    className="flex items-center gap-3"
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: 0.1 }}
+                  >
+                    <div className="h-2 w-2 rounded-full bg-cyan-400"></div>
+                    <span className="text-gray-300">Generate and refine ideas based on your input</span>
+                  </motion.li>
+                  <motion.li 
+                    className="flex items-center gap-3"
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: 0.2 }}
+                  >
+                    <div className="h-2 w-2 rounded-full bg-cyan-400"></div>
+                    <span className="text-gray-300">Co-create content with personalized AI models</span>
+                  </motion.li>
+                  <motion.li 
+                    className="flex items-center gap-3"
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: 0.3 }}
+                  >
+                    <div className="h-2 w-2 rounded-full bg-cyan-400"></div>
+                    <span className="text-gray-300">Learn from your style and preferences</span>
+                  </motion.li>
+                </ul>
+              </div>
+            </motion.div>
+            
+            <motion.div 
+              className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6 relative overflow-hidden"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-orange-500/10" />
+              
+              <div className="relative z-10">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="p-3 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg">
+                    <Workflow className="h-6 w-6 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold">On-Chain Agent Operations</h3>
+                </div>
+                
+                <ul className="space-y-3">
+                  <motion.li 
+                    className="flex items-center gap-3"
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: 0.1 }}
+                  >
+                    <div className="h-2 w-2 rounded-full bg-orange-400"></div>
+                    <span className="text-gray-300">Secure blockchain transactions with AI oversight</span>
+                  </motion.li>
+                  <motion.li 
+                    className="flex items-center gap-3"
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: 0.2 }}
+                  >
+                    <div className="h-2 w-2 rounded-full bg-orange-400"></div>
+                    <span className="text-gray-300">Autonomous digital asset management</span>
+                  </motion.li>
+                  <motion.li 
+                    className="flex items-center gap-3"
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: 0.3 }}
+                  >
+                    <div className="h-2 w-2 rounded-full bg-orange-400"></div>
+                    <span className="text-gray-300">Smart contract automation and monitoring</span>
+                  </motion.li>
+                </ul>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+        
+        {/* Section 4: Hyperliquid Assets */}
+        <section className="py-16 sm:py-24 max-w-7xl mx-auto">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">True Ownership in the Digital Age</h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Secure your creations with blockchain technology that ensures verifiable ownership, transparent transactions, and new economic opportunities.
+            </p>
+          </motion.div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <FeatureCard 
+              icon={Shield} 
+              title="Verifiable IP Management" 
+              description="Protect your intellectual property with blockchain-backed verification and tracking." 
+              colorClass="from-teal-400 to-emerald-500"
+            />
+            <FeatureCard 
+              icon={CreditCard} 
+              title="Secure Asset Treasury" 
+              description="Store and manage your digital assets in a secure, blockchain-based treasury." 
+              colorClass="from-blue-400 to-indigo-500"
+            />
+            <FeatureCard 
+              icon={Headphones} 
+              title="Decentralized Distribution" 
+              description="Distribute your work through decentralized channels with built-in royalty systems." 
+              colorClass="from-purple-400 to-violet-500"
+            />
+            <FeatureCard 
+              icon={BookOpenCheck} 
+              title="Programmable Actions" 
+              description="Create automated, on-chain workflows for your digital assets and revenue streams." 
+              colorClass="from-amber-400 to-red-500"
+            />
+          </div>
+        </section>
+        
+        {/* Section 5: Showcase */}
+        <section className="py-16 sm:py-24 max-w-7xl mx-auto">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Creations Without Limits</h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Discover what creators are building with UniversalAI.
+            </p>
+          </motion.div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <ShowcaseItem 
+              title="Generative Podcast Network" 
+              image="/placeholder.svg" 
+              tag="Audio"
+            />
+            <ShowcaseItem 
+              title="Interactive NFT Collection" 
+              image="/placeholder.svg" 
+              tag="Visual Art"
+            />
+            <ShowcaseItem 
+              title="AI-Powered Story Universe" 
+              image="/placeholder.svg" 
+              tag="Narrative"
+            />
+          </div>
+        </section>
+        
+        {/* Section 6: Call to Action */}
+        <section className="py-16 sm:py-24 max-w-3xl mx-auto text-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to Cultivate Your Creator?</h2>
+            <p className="text-xl text-gray-300 mb-8">Join the next generation of digital creators and shape the future of AI-powered creativity.</p>
+            
+            <motion.div 
+              whileHover={{ scale: 1.05 }} 
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button 
+                onClick={() => navigate("/wzrd/studio")} 
+                className="bg-gradient-to-r from-orange-500 to-amber-400 hover:from-orange-600 hover:to-amber-500 text-white px-8 py-4 rounded-lg text-lg font-medium border border-orange-300/30 shadow-[0_0_25px_rgba(249,115,22,0.3)] transition-all hover:shadow-[0_0_35px_rgba(249,115,22,0.5)]"
+              >
+                Explore Platform
+              </Button>
+            </motion.div>
+          </motion.div>
+        </section>
+      </div>
+    </div>
+  );
+};
+
+export default Landing;
