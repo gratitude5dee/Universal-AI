@@ -5,7 +5,7 @@ import CloudShader from "./shaders/CloudShader";
 const Ambient = () => {
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-      {/* Use the cosmic shader as the background */}
+      {/* Use the CloudShader as the background across the entire app */}
       <CloudShader />
       
       {/* Subtle noise overlay for texture */}

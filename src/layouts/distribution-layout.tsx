@@ -1,4 +1,3 @@
-
 import React, { ReactNode } from "react";
 import DashboardLayout from "@/layouts/dashboard-layout";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
