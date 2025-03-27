@@ -63,16 +63,16 @@ const WzrdStudio = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
             <div className="bg-white p-6 rounded-xl border border-studio-sand/30 cursor-interactive hover:shadow-lg transition-shadow">
-              <h3 className="text-lg font-medium mb-2">Visual Design Tools</h3>
-              <p className="text-sm text-studio-clay">Create stunning visuals with AI-powered design tools</p>
+              <h3 className="text-lg font-medium mb-2 text-studio-charcoal">Visual Design Tools</h3>
+              <p className="text-sm text-studio-charcoal/80">Create stunning visuals with AI-powered design tools</p>
             </div>
             <div className="bg-white p-6 rounded-xl border border-studio-sand/30 cursor-interactive hover:shadow-lg transition-shadow">
-              <h3 className="text-lg font-medium mb-2">Audio Engineering</h3>
-              <p className="text-sm text-studio-clay">Craft immersive soundscapes with magical audio tools</p>
+              <h3 className="text-lg font-medium mb-2 text-studio-charcoal">Audio Engineering</h3>
+              <p className="text-sm text-studio-charcoal/80">Craft immersive soundscapes with magical audio tools</p>
             </div>
             <div className="bg-white p-6 rounded-xl border border-studio-sand/30 cursor-interactive hover:shadow-lg transition-shadow">
-              <h3 className="text-lg font-medium mb-2">Interactive Experiences</h3>
-              <p className="text-sm text-studio-clay">Build engaging interactive content with no-code wizardry</p>
+              <h3 className="text-lg font-medium mb-2 text-studio-charcoal">Interactive Experiences</h3>
+              <p className="text-sm text-studio-charcoal/80">Build engaging interactive content with no-code wizardry</p>
             </div>
           </div>
         </div>

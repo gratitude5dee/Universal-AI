@@ -20,16 +20,16 @@ const WzrdResearch = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
             <div className="bg-white p-6 rounded-xl border border-studio-sand/30">
-              <h3 className="text-lg font-medium mb-2">Quantum Enchantment</h3>
-              <p className="text-sm text-studio-clay">Breakthrough research on quantum-powered enchantment technologies</p>
+              <h3 className="text-lg font-medium mb-2 text-studio-charcoal">Quantum Enchantment</h3>
+              <p className="text-sm text-studio-charcoal/80">Breakthrough research on quantum-powered enchantment technologies</p>
             </div>
             <div className="bg-white p-6 rounded-xl border border-studio-sand/30">
-              <h3 className="text-lg font-medium mb-2">Neural Spellcraft</h3>
-              <p className="text-sm text-studio-clay">Innovative approaches to neural network-based spell creation</p>
+              <h3 className="text-lg font-medium mb-2 text-studio-charcoal">Neural Spellcraft</h3>
+              <p className="text-sm text-studio-charcoal/80">Innovative approaches to neural network-based spell creation</p>
             </div>
             <div className="bg-white p-6 rounded-xl border border-studio-sand/30">
-              <h3 className="text-lg font-medium mb-2">Arcane Analytics</h3>
-              <p className="text-sm text-studio-clay">Advanced data analytics for magical performance optimization</p>
+              <h3 className="text-lg font-medium mb-2 text-studio-charcoal">Arcane Analytics</h3>
+              <p className="text-sm text-studio-charcoal/80">Advanced data analytics for magical performance optimization</p>
             </div>
           </div>
         </div>
