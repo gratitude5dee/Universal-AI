@@ -40,7 +40,7 @@ const MainContent: React.FC<MainContentProps> = ({ children }) => {
 
   return (
     <motion.div 
-      className="flex-1 min-h-screen flex flex-col w-full overflow-hidden relative"
+      className="flex-1 min-h-screen flex flex-col w-full overflow-hidden relative bg-transparent"
       layout
       transition={{ duration: 0.25, ease: "easeOut" }}
     >

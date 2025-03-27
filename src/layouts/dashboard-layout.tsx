@@ -11,8 +11,8 @@ interface DashboardLayoutProps {
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
-    <div className="min-h-screen flex flex-col bg-blue-darker overflow-hidden">
-      {/* Place Ambient first so it's behind everything */}
+    <div className="min-h-screen flex flex-col bg-transparent overflow-hidden">
+      {/* Place Ambient component for the CloudShader background */}
       <Ambient />
       
       <div className="flex flex-1 z-10 relative">
