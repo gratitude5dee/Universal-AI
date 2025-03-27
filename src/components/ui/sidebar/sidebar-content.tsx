@@ -120,14 +120,18 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   };
 
   return <>
-      <div className={`mb-6 mt-2 ${isCollapsed ? 'justify-center' : 'px-2'} flex items-center transition-all duration-300`}>
+      <div className={`mb-8 mt-2 ${isCollapsed ? 'justify-center' : 'px-2'} flex items-center transition-all duration-300`}>
         <motion.div initial={false} animate={isCollapsed ? "collapsed" : "expanded"} variants={logoVariants} className="flex items-center">
-          <span className="bg-blue-primary/30 w-8 h-8 rounded-full flex items-center justify-center mr-2 transition-all duration-300 shadow-blue-glow">
-            <span className="text-blue-lightest font-semibold text-glow-blue">5</span>
-          </span>
+          <div className="relative">
+            <span className="bg-gradient-to-r from-blue-primary/50 to-blue-primary/30 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-300 shadow-[0_0_15px_rgba(59,130,246,0.5)] border border-blue-primary/30">
+              <span className="text-blue-lightest font-semibold text-glow-blue text-xl">5</span>
+            </span>
+            <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-cyan-400 rounded-full shadow-[0_0_8px_rgba(0,240,255,0.8)] border border-white/30"></span>
+          </div>
 
-          {!isCollapsed && <motion.div className="flex flex-col" variants={textVariants}>
+          {!isCollapsed && <motion.div className="flex flex-col ml-3" variants={textVariants}>
               <span className="text-blue-lightest font-medium leading-tight text-xl text-shadow-sm text-glow-blue">UniversalAI</span>
+              <span className="text-xs text-blue-lighter/80">Next-Gen Platform</span>
             </motion.div>}
         </motion.div>
       </div>
@@ -162,10 +166,13 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
         })}
       </nav>
         
-      <div className="mt-auto pt-2 border-t border-blue-primary/30">
+      <div className="mt-auto pt-3 border-t border-blue-primary/30">
         {/* Log Out button */}
-        <Link to="/logout" className={`flex items-center ${isCollapsed ? 'justify-center' : 'px-3'} py-2.5 text-sm text-blue-lightest hover:bg-blue-primary/30 hover:text-white rounded-lg transition-all duration-200`} title={isCollapsed ? "Log Out" : ""}>
-          <LogOut className={`${isCollapsed ? '' : 'mr-3'} h-5 w-5 text-blue-lighter`} />
+        <Link to="/logout" className={`flex items-center ${isCollapsed ? 'justify-center' : 'px-3'} py-2.5 text-sm text-blue-lightest hover:bg-blue-primary/30 hover:text-white rounded-lg transition-all duration-200 group`} title={isCollapsed ? "Log Out" : ""}>
+          <div className={`${isCollapsed ? '' : 'mr-3'} h-5 w-5 text-blue-lighter flex items-center justify-center relative group-hover:text-white transition-colors duration-200`}>
+            <LogOut className="h-5 w-5" />
+            <span className="absolute inset-0 bg-transparent group-hover:bg-blue-primary/20 rounded-full transition-all duration-300 -z-10"></span>
+          </div>
           {!isCollapsed && <motion.span initial="collapsed" animate="expanded" variants={textVariants} className="text-[13px] font-medium text-shadow-sm">
               Log Out
             </motion.span>}

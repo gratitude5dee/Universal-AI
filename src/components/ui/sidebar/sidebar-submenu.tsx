@@ -45,12 +45,12 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
     return (
       <div className="absolute left-full top-0 ml-1 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
         <motion.div 
-          className="glass-card p-2 min-w-48"
+          className="bg-gradient-to-br from-blue-darker/90 to-blue-dark/90 backdrop-blur-md p-2 min-w-48 border border-blue-primary/30 rounded-lg shadow-[0_0_20px_rgba(30,64,175,0.3)]"
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <div className="text-xs font-medium text-blue-lightest text-glow-blue mb-2 px-2 uppercase tracking-wider">
+          <div className="text-xs font-medium text-cyan-400 text-glow-cyan mb-2 px-2 uppercase tracking-wider">
             {parentName}
           </div>
           <div className="space-y-0.5">
@@ -73,11 +73,17 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
                   <Link 
                     to={subItem.path} 
                     className={`
-                      sidebar-submenu-item
-                      ${isSubItemActive ? 'sidebar-submenu-item-active' : 'sidebar-submenu-item-inactive'}
+                      flex items-center px-2.5 py-1.5 rounded-md text-xs transition-all duration-200
+                      ${isSubItemActive 
+                        ? 'bg-cyan-500/20 text-white font-medium' 
+                        : 'text-blue-lightest hover:bg-cyan-500/10 hover:text-white'}
                     `}
                   >
-                    <subItem.icon className={`h-3.5 w-3.5 mr-2 ${isSubItemActive ? 'text-white' : 'text-blue-lighter'}`} />
+                    <subItem.icon 
+                      className={`h-3.5 w-3.5 mr-2 ${isSubItemActive ? 'text-cyan-400 icon-glow-cyan' : 'text-blue-lighter'}`}
+                      isGlowing={isSubItemActive}
+                      glowColor="highlight" 
+                    />
                     <span className="text-shadow-sm">{subItem.name}</span>
                   </Link>
                 </motion.div>
@@ -118,16 +124,23 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
                 <Link 
                   to={subItem.path} 
                   className={`
-                    sidebar-submenu-item
-                    ${isSubItemActive ? 'sidebar-submenu-item-active' : 'sidebar-submenu-item-inactive'}
+                    flex items-center px-2.5 py-1.5 rounded-md text-xs transition-all duration-200 relative group
+                    ${isSubItemActive 
+                      ? 'bg-cyan-500/20 text-white font-medium' 
+                      : 'text-blue-lightest hover:bg-cyan-500/10 hover:text-white'}
                   `}
                 >
                   <subItem.icon 
-                    className={`h-3.5 w-3.5 mr-2 ${isSubItemActive ? 'text-white' : 'text-blue-lighter'}`} 
+                    className={`h-3.5 w-3.5 mr-2 ${isSubItemActive ? 'text-cyan-400 icon-glow-cyan' : 'text-blue-lighter group-hover:text-blue-lightest'}`} 
                     isGlowing={isSubItemActive} 
-                    glowColor={isSubItemActive ? "white" : "highlight"}
+                    glowColor={isSubItemActive ? "highlight" : "highlight"}
                   />
                   <span className="text-shadow-sm">{subItem.name}</span>
+                  
+                  {/* Subtle active indicator */}
+                  {isSubItemActive && (
+                    <span className="absolute right-1 w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_5px_rgba(0,240,255,0.5)]"></span>
+                  )}
                 </Link>
               </motion.div>
             );

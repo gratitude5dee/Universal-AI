@@ -62,12 +62,16 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
         onMouseLeave={() => setIsHovered(false)}
       >
         <div className={`
-          sidebar-menu-item
-          ${isActive ? 'sidebar-menu-item-active' : 'sidebar-menu-item-inactive'}
+          flex items-center py-2.5 my-1 rounded-lg text-sm font-medium transition-all duration-200
+          ${isActive 
+            ? 'bg-gradient-to-r from-accent-primary/80 to-accent-primary/60 text-white shadow-[0_0_10px_rgba(255,107,0,0.3)]' 
+            : 'text-blue-lightest hover:bg-blue-primary/30 hover:text-white'}
+          ${isCollapsed ? 'px-2 justify-center' : 'px-3'}
         `}>
           <div className={`
-            ${isCollapsed ? 'flex justify-center w-full' : 'mr-3'}
-            ${isActive ? 'sidebar-menu-icon-active' : 'sidebar-menu-icon-inactive'}
+            relative flex items-center justify-center
+            ${isCollapsed ? 'w-full' : 'mr-3'}
+            ${isActive ? 'text-white' : 'text-blue-lightest group-hover:text-white'}
           `}>
             <item.icon 
               className={`h-5 w-5 transition-all duration-200
@@ -77,6 +81,11 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
               isGlowing={isActive || isHovered}
               glowColor={isActive ? "white" : "highlight"}
             />
+
+            {/* Subtle icon background effect */}
+            <span className={`absolute inset-0 rounded-full -z-10 transition-all duration-200
+              ${isActive ? 'bg-white/10' : 'bg-transparent group-hover:bg-white/5'}
+            `}></span>
           </div>
           
           {!isCollapsed && (
@@ -93,7 +102,7 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
           {isActive && (
             <motion.div 
               layoutId="sidebar-indicator" 
-              className={`absolute ${isCollapsed ? 'right-1.5' : 'right-2.5'} w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_5px_rgba(255,255,255,0.8)]`} 
+              className={`absolute ${isCollapsed ? 'right-1.5' : 'right-3'} w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_5px_rgba(255,255,255,0.8)]`} 
               initial="initial"
               animate="animate"
               variants={indicatorVariants}
@@ -115,13 +124,17 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
         onMouseLeave={() => setIsHovered(false)}
       >
         <div className={`
-          sidebar-menu-item
-          ${isSubMenuActive ? 'sidebar-menu-item-active' : 'sidebar-menu-item-inactive'}
+          flex items-center py-2.5 my-1 rounded-lg text-sm font-medium transition-all duration-200
+          ${isSubMenuActive 
+            ? 'bg-gradient-to-r from-blue-primary/70 to-blue-lighter/30 text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]' 
+            : 'text-blue-lightest hover:bg-blue-primary/30 hover:text-white'}
+          ${isCollapsed ? 'px-2 justify-center' : 'px-3'}
         `}>
           <div className="flex items-center flex-1">
             <div className={`
-              ${isCollapsed ? 'flex justify-center w-full' : 'mr-3'}
-              ${isSubMenuActive ? 'sidebar-menu-icon-active' : 'sidebar-menu-icon-inactive'}
+              relative flex items-center justify-center
+              ${isCollapsed ? 'w-full' : 'mr-3'}
+              ${isSubMenuActive ? 'text-white' : 'text-blue-lightest group-hover:text-white'}
             `}>
               <item.icon 
                 className={`h-5 w-5 transition-all duration-200
@@ -131,6 +144,11 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
                 isGlowing={isSubMenuActive || isHovered}
                 glowColor={isSubMenuActive ? "white" : "highlight"}
               />
+              
+              {/* Subtle icon background effect */}
+              <span className={`absolute inset-0 rounded-full -z-10 transition-all duration-200
+                ${isSubMenuActive ? 'bg-white/10' : 'bg-transparent group-hover:bg-white/5'}
+              `}></span>
             </div>
             
             {!isCollapsed && (
@@ -156,7 +174,7 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
           {isSubMenuActive && (
             <motion.div 
               layoutId="sidebar-indicator" 
-              className={`absolute ${isCollapsed ? 'right-1.5' : 'right-2.5'} w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_5px_rgba(255,255,255,0.8)]`} 
+              className={`absolute ${isCollapsed ? 'right-1.5' : 'right-3'} w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_5px_rgba(255,255,255,0.8)]`} 
               initial="initial"
               animate="animate" 
               variants={indicatorVariants}
