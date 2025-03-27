@@ -51,18 +51,23 @@ const CosmicShader: React.FC = () => {
       
       vec4 o = vec4(0.0, 0.0, 0.0, 1.0); // Output color
       
-      // Fixed GLSL for-loop initialization
+      // Initialize variables outside the loop
       float i = 0.0;
       float g = 0.0;
       float e = 0.0;
       float s = 0.0;
       
-      for(; ++i < 99.0; o.rgb += 0.01 - hsv(0.1, g * 0.013, s / 2e2)) {
+      // Main loop
+      for(; i < 99.0; i += 1.0) {
+        i += 1.0; // This mimics the ++i behavior
+        if(i >= 99.0) break;
+        
         vec3 p = vec3((FC.xy - 0.5 * r) / r.y * 7.0 + vec2(-2.0, 8.0), g + 4.0) * 
                 rotate3D(sin(t * 0.5) * 0.005 - 1.8, vec3(0.0, 9.0, -1.0));
         
         s = 1.8;
         
+        // Inner loop with explicit counter
         for(int j = 0; j < 19; j++) {
           p = vec3(0.05, 4.0, -1.0) - abs(abs(p) * e - vec3(3.1, 4.0, 2.9));
           s *= e = 7.1 / dot(p, p * 0.5);
@@ -70,6 +75,8 @@ const CosmicShader: React.FC = () => {
         
         g += p.y / s;
         s = log(s) / exp(e);
+        
+        o.rgb += 0.01 - hsv(0.1, g * 0.013, s / 2e2);
       }
       
       gl_FragColor = o;

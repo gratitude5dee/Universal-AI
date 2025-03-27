@@ -1,4 +1,3 @@
-
 import React, { ReactNode, useState, useEffect, useCallback, useRef } from "react";
 import Header from "../header";
 import { motion, AnimatePresence } from "framer-motion";
@@ -16,9 +15,7 @@ const MainContent: React.FC<MainContentProps> = ({ children }) => {
   const [isAnimationComplete, setIsAnimationComplete] = useState(true);
   const previousPathRef = useRef(location.pathname);
   
-  // Trigger transition when route changes, but only if it's a different route
   useEffect(() => {
-    // Only trigger transition if the path actually changed
     if (previousPathRef.current !== location.pathname && isAnimationComplete) {
       previousPathRef.current = location.pathname;
       setIsAnimationComplete(false);
@@ -27,24 +24,17 @@ const MainContent: React.FC<MainContentProps> = ({ children }) => {
     }
   }, [location.pathname, isAnimationComplete]);
 
-  // Handle animation completed
   const handleAnimationComplete = useCallback(() => {
     console.log("Animation complete, setting isPageTransition to false");
-    
-    // Immediately set isPageTransition to false
     setIsPageTransition(false);
-    
-    // Allow a small delay before allowing new transitions
     setTimeout(() => {
       setIsAnimationComplete(true);
       console.log("Animation reset, ready for next transition");
-    }, 800); // Increased buffer time to prevent rapid transitions
+    }, 800);
   }, []);
 
-  // Handle animation exit completed
   const handleExitComplete = useCallback(() => {
     console.log("Exit animation completed");
-    // Ensure we've reset the transition state
     setIsPageTransition(false);
   }, []);
 
