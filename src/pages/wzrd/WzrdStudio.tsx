@@ -1,13 +1,20 @@
 
-import React from "react";
+import React, { useState } from "react";
 import DashboardLayout from "@/layouts/dashboard-layout";
 import { Content } from "@/components/ui/content";
-import { Palette, ExternalLink } from "lucide-react";
+import { Palette, ExternalLink, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import FuturisticCursor from "@/components/ui/FuturisticCursor";
 
 const WzrdStudio = () => {
-  console.log("Rendering WzrdStudio component");
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const simulateLoading = () => {
+    setIsLoading(true);
+    setTimeout(() => setIsLoading(false), 2000);
+  };
+  
   return (
     <DashboardLayout>
       <Content title="WZRD.tech Studio" subtitle="Create magical digital experiences with our advanced creative tools">
@@ -22,8 +29,43 @@ const WzrdStudio = () => {
             </div>
           </div>
           
+          {/* Demonstration of cursor states */}
+          <div className="mb-8 p-4 bg-blue-darker/30 backdrop-blur-md rounded-lg border border-blue-primary/20">
+            <h3 className="text-lg font-medium mb-4 text-blue-lightest">Interactive Cursor Demo</h3>
+            <p className="text-sm text-blue-lighter mb-4">
+              Move your cursor over these elements to see different cursor states:
+            </p>
+            <div className="flex flex-wrap gap-4 items-center">
+              <Button 
+                variant="default" 
+                className="cursor-interactive bg-gradient-to-r from-cyan-600 to-blue-600"
+                onClick={simulateLoading}
+              >
+                Test Loading State
+              </Button>
+              
+              <a 
+                href="#" 
+                className="cursor-interactive inline-block px-4 py-2 bg-blue-primary/20 hover:bg-blue-primary/30 text-blue-lightest rounded-md transition-colors duration-200 border border-blue-primary/30"
+                onClick={(e) => e.preventDefault()}
+              >
+                Interactive Link
+              </a>
+              
+              <motion.div
+                className="cursor-interactive w-12 h-12 bg-gradient-to-br from-purple-500/30 to-pink-500/30 rounded-lg flex items-center justify-center border border-purple-500/40"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Wand2 className="h-6 w-6 text-purple-300" />
+              </motion.div>
+              
+              <span className="text-blue-lightest px-3 py-1.5 bg-transparent">Non-interactive text</span>
+            </div>
+          </div>
+          
           {/* 3D Hover Card with Glassmorphism */}
-          <motion.div className="mt-8 mb-8 relative group perspective-1000" whileHover={{
+          <motion.div className="mt-8 mb-8 relative group perspective-1000 cursor-interactive" whileHover={{
             scale: 1.02,
             rotateX: 5,
             rotateY: 5
@@ -49,7 +91,11 @@ const WzrdStudio = () => {
                     <span className="inline-block h-3 w-3 rounded-full bg-studio-clay"></span>
                   </div>
                   
-                  <Button variant="outline" className="bg-white/50 hover:bg-white/70 backdrop-blur-sm border border-white/30 text-studio-charcoal" onClick={() => window.open("https://wzrdflow.lovable.app", "_blank")}>
+                  <Button 
+                    variant="outline" 
+                    className="cursor-interactive bg-white/50 hover:bg-white/70 backdrop-blur-sm border border-white/30 text-studio-charcoal" 
+                    onClick={() => window.open("https://wzrdflow.lovable.app", "_blank")}
+                  >
                     <span>Visit WZRD.tech</span>
                     <ExternalLink className="ml-2 h-4 w-4" />
                   </Button>
@@ -62,21 +108,24 @@ const WzrdStudio = () => {
           </motion.div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-            <div className="bg-white p-6 rounded-xl border border-studio-sand/30">
+            <div className="cursor-interactive bg-white p-6 rounded-xl border border-studio-sand/30">
               <h3 className="text-lg font-medium mb-2">Visual Design Tools</h3>
               <p className="text-sm text-studio-clay">Create stunning visuals with AI-powered design tools</p>
             </div>
-            <div className="bg-white p-6 rounded-xl border border-studio-sand/30">
+            <div className="cursor-interactive bg-white p-6 rounded-xl border border-studio-sand/30">
               <h3 className="text-lg font-medium mb-2">Audio Engineering</h3>
               <p className="text-sm text-studio-clay">Craft immersive soundscapes with magical audio tools</p>
             </div>
-            <div className="bg-white p-6 rounded-xl border border-studio-sand/30">
+            <div className="cursor-interactive bg-white p-6 rounded-xl border border-studio-sand/30">
               <h3 className="text-lg font-medium mb-2">Interactive Experiences</h3>
               <p className="text-sm text-studio-clay">Build engaging interactive content with no-code wizardry</p>
             </div>
           </div>
         </div>
       </Content>
+      
+      {/* Update the FuturisticCursor loading state based on app state */}
+      <FuturisticCursor isLoading={isLoading} />
     </DashboardLayout>
   );
 };

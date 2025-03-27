@@ -179,19 +179,19 @@ const Sidebar: React.FC<SidebarProps> = ({ navItems }) => {
             variant="ghost" 
             size="icon" 
             onClick={togglePin}
-            className={`absolute right-4 top-5 h-6 w-6 rounded-full transition-all duration-200 z-20 ${pinned ? 'bg-blue-primary text-white shadow-blue-glow' : 'bg-transparent text-white hover:bg-blue-primary/30'}`}
+            className={`cursor-interactive absolute right-4 top-5 h-6 w-6 rounded-full transition-all duration-200 z-20 ${pinned ? 'bg-blue-primary text-white shadow-blue-glow' : 'bg-transparent text-white hover:bg-blue-primary/30'}`}
             aria-label={pinned ? "Unpin sidebar" : "Pin sidebar"}
           >
             <Pin className="h-3.5 w-3.5" />
           </Button>
         )}
         
-        {/* Single improved toggle button */}
+        {/* Improved toggle button */}
         <Button 
           variant="outline" 
           size="icon" 
           onClick={toggleSidebar} 
-          className="absolute -right-3 top-24 h-10 w-10 rounded-full bg-cyan-600 border-cyan-400 hover:bg-cyan-500 text-white shadow-[0_0_10px_rgba(8,145,178,0.7)] z-20 flex items-center justify-center transition-all duration-200" 
+          className="cursor-interactive absolute -left-3 top-24 h-10 w-10 rounded-full bg-gradient-to-r from-cyan-600 to-cyan-500 backdrop-blur-md border-cyan-400/40 hover:bg-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white shadow-[0_0_15px_rgba(8,145,178,0.7)] z-20 flex items-center justify-center transition-all duration-200" 
           aria-label={isHidden ? "Show sidebar" : (isCollapsed ? "Expand sidebar" : "Collapse sidebar")}
         >
           {getButtonIcon()}
