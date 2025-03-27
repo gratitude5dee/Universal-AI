@@ -186,12 +186,12 @@ const Sidebar: React.FC<SidebarProps> = ({ navItems }) => {
           </Button>
         )}
         
-        {/* Single improved toggle button - moved to the left side */}
+        {/* Single improved toggle button */}
         <Button 
           variant="outline" 
           size="icon" 
           onClick={toggleSidebar} 
-          className="absolute -left-3 top-24 h-10 w-10 rounded-full bg-gradient-to-r from-cyan-600 to-cyan-500 border border-cyan-400/40 hover:from-cyan-500 hover:to-cyan-400 text-white shadow-[0_0_15px_rgba(8,145,178,0.8)] z-20 flex items-center justify-center transition-all duration-200 backdrop-blur-sm" 
+          className="absolute -right-3 top-24 h-10 w-10 rounded-full bg-cyan-600 border-cyan-400 hover:bg-cyan-500 text-white shadow-[0_0_10px_rgba(8,145,178,0.7)] z-20 flex items-center justify-center transition-all duration-200" 
           aria-label={isHidden ? "Show sidebar" : (isCollapsed ? "Expand sidebar" : "Collapse sidebar")}
         >
           {getButtonIcon()}
