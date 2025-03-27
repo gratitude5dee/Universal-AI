@@ -37,7 +37,7 @@ const Header: React.FC = () => {
       <div className="flex items-center">
         <Link to="/" className="flex items-center mr-4">
           <div className="text-lg font-semibold tracking-tight">
-            WZRD<span className="text-studio-accent">Studio</span>
+            UniversalAI<span className="text-studio-accent">Studio</span>
           </div>
         </Link>
         
