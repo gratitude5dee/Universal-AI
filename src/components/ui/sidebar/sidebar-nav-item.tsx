@@ -52,7 +52,7 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
 
   if (!item.hasSubmenu) {
     return (
-      <Link to={item.path} className="relative block" title={isCollapsed ? item.name : ""}>
+      <Link to={item.path} className="relative block group" title={isCollapsed ? item.name : ""}>
         <div className={`
           sidebar-menu-item
           ${isActive ? 'sidebar-menu-item-active' : 'sidebar-menu-item-inactive'}
@@ -96,7 +96,7 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
       <a 
         href="#" 
         onClick={toggleSubmenu} 
-        className="relative block" 
+        className="relative block group" 
         title={isCollapsed ? item.name : ""}
       >
         <div className={`

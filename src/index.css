@@ -22,7 +22,7 @@
   
   /* Improved sidebar menu item styles */
   .sidebar-menu-item {
-    @apply flex items-center px-3 py-2.5 my-1 rounded-lg text-sm font-medium transition-all duration-200 group;
+    @apply flex items-center px-3 py-2.5 my-1 rounded-lg text-sm font-medium transition-all duration-200;
   }
   
   .sidebar-menu-item-active {
@@ -42,7 +42,7 @@
   }
   
   .sidebar-menu-icon-inactive {
-    @apply text-blue-lightest group-hover:text-white;
+    @apply text-blue-lightest;
   }
   
   .sidebar-submenu-item {
