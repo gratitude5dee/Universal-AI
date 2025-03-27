@@ -40,7 +40,7 @@ const BioSection: React.FC = () => {
                 newItems[index] = e.target.value;
                 setBioItems(newItems);
               }}
-              className="flex-1 bg-black/5 text-studio-charcoal p-3 rounded-md border border-gray-700/20"
+              className="flex-1 bg-black/5 text-blue-primary p-3 rounded-md border border-gray-700/20"
             />
             <button
               onClick={() => handleRemoveBio(index)}
@@ -58,7 +58,7 @@ const BioSection: React.FC = () => {
             value={newBio}
             onChange={(e) => setNewBio(e.target.value)}
             onKeyDown={handleAddBio}
-            className="w-full bg-black/5 text-studio-charcoal p-3 rounded-md border border-gray-700/20"
+            className="w-full bg-black/5 text-blue-primary p-3 rounded-md border border-gray-700/20 placeholder:text-blue-dark/50"
           />
         </div>
       </div>

@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Send, Download, RefreshCw, Link, BellRing, Badge } from "lucide-react";
+import { Send, Download, RefreshCw, Link, BellRing, Badge, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -8,7 +8,7 @@ const BankingControls: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="glass-card p-6">
-        <h3 className="text-lg font-medium mb-5">Permission Settings</h3>
+        <h3 className="text-lg font-medium mb-5 text-white">Permission Settings</h3>
         
         <div className="space-y-4">
           <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-studio-sand/20">
@@ -17,8 +17,8 @@ const BankingControls: React.FC = () => {
                 <Send className="h-4 w-4 text-studio-accent" />
               </div>
               <div>
-                <h4 className="font-medium text-sm text-blue-primary">Outgoing Payments</h4>
-                <p className="text-xs text-blue-dark/70">Allow agent to send payments</p>
+                <h4 className="text-sm card-heading">Outgoing Payments</h4>
+                <p className="text-xs card-text">Allow agent to send payments</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -36,8 +36,8 @@ const BankingControls: React.FC = () => {
                 <Download className="h-4 w-4 text-studio-accent" />
               </div>
               <div>
-                <h4 className="font-medium text-sm text-blue-primary">Incoming Payments</h4>
-                <p className="text-xs text-blue-dark/70">Allow agent to receive funds</p>
+                <h4 className="text-sm card-heading">Incoming Payments</h4>
+                <p className="text-xs card-text">Allow agent to receive funds</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -55,8 +55,8 @@ const BankingControls: React.FC = () => {
                 <RefreshCw className="h-4 w-4 text-studio-accent" />
               </div>
               <div>
-                <h4 className="font-medium text-sm text-blue-primary">Recurring Transactions</h4>
-                <p className="text-xs text-blue-dark/70">Allow scheduled payments</p>
+                <h4 className="text-sm card-heading">Recurring Transactions</h4>
+                <p className="text-xs card-text">Allow scheduled payments</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -74,8 +74,8 @@ const BankingControls: React.FC = () => {
                 <Link className="h-4 w-4 text-studio-accent" />
               </div>
               <div>
-                <h4 className="font-medium text-sm text-blue-primary">External Connections</h4>
-                <p className="text-xs text-blue-dark/70">Allow connecting to third-party services</p>
+                <h4 className="text-sm card-heading">External Connections</h4>
+                <p className="text-xs card-text">Allow connecting to third-party services</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -91,7 +91,7 @@ const BankingControls: React.FC = () => {
       
       <div className="grid grid-cols-2 gap-6">
         <div className="glass-card p-6">
-          <h3 className="text-lg font-medium mb-4">Alert Configuration</h3>
+          <h3 className="text-lg font-medium mb-4 text-white">Alert Configuration</h3>
           
           <div className="space-y-3">
             <div className="flex items-center justify-between p-3 bg-white rounded-md border border-studio-sand/20">
@@ -137,27 +137,27 @@ const BankingControls: React.FC = () => {
         </div>
         
         <div className="glass-card p-6">
-          <h3 className="text-lg font-medium mb-4">Scheduled Transactions</h3>
+          <h3 className="text-lg font-medium mb-4 text-white">Scheduled Transactions</h3>
           
           <div className="space-y-4">
             <div className="p-3 bg-white rounded-lg border border-studio-sand/20">
               <div className="flex items-center justify-between mb-2">
-                <h4 className="font-medium text-sm text-blue-primary">API Subscription</h4>
+                <h4 className="text-sm card-heading">API Subscription</h4>
                 <Badge className="bg-blue-500">Monthly</Badge>
               </div>
               <div className="flex items-center justify-between">
-                <p className="text-xs text-blue-dark/70">$29.99 to CloudAPI Inc.</p>
+                <p className="text-xs card-text">$29.99 to CloudAPI Inc.</p>
                 <Button variant="outline" size="sm" className="h-7 text-xs">Edit</Button>
               </div>
             </div>
             
             <div className="p-3 bg-white rounded-lg border border-studio-sand/20">
               <div className="flex items-center justify-between mb-2">
-                <h4 className="font-medium text-sm text-blue-primary">Storage Fees</h4>
+                <h4 className="text-sm card-heading">Storage Fees</h4>
                 <Badge className="bg-blue-500">Weekly</Badge>
               </div>
               <div className="flex items-center justify-between">
-                <p className="text-xs text-blue-dark/70">$12.50 to DataStore</p>
+                <p className="text-xs card-text">$12.50 to DataStore</p>
                 <Button variant="outline" size="sm" className="h-7 text-xs">Edit</Button>
               </div>
             </div>
@@ -171,7 +171,5 @@ const BankingControls: React.FC = () => {
     </div>
   );
 };
-
-import { Plus } from "lucide-react";
 
 export default BankingControls;

@@ -47,7 +47,7 @@ const BasicInfoSection: React.FC = () => {
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full bg-black/5 text-studio-charcoal p-3 rounded-md border border-gray-700/20"
+          className="w-full bg-black/5 text-blue-primary p-3 rounded-md border border-gray-700/20"
         />
       </div>
 
@@ -74,7 +74,7 @@ const BasicInfoSection: React.FC = () => {
         <select
           value={modelProvider}
           onChange={(e) => setModelProvider(e.target.value)}
-          className="w-full bg-black/5 text-studio-charcoal p-3 rounded-md border border-gray-700/20"
+          className="w-full bg-black/5 text-blue-primary p-3 rounded-md border border-gray-700/20"
         >
           {modelProviders.map((provider) => (
             <option key={provider} value={provider}>
@@ -92,7 +92,7 @@ const BasicInfoSection: React.FC = () => {
         <select
           value={clientType}
           onChange={(e) => setClientType(e.target.value)}
-          className="w-full bg-black/5 text-studio-charcoal p-3 rounded-md border border-gray-700/20"
+          className="w-full bg-black/5 text-blue-primary p-3 rounded-md border border-gray-700/20"
         >
           {clientTypes.map((client) => (
             <option key={client} value={client}>
@@ -108,7 +108,7 @@ const BasicInfoSection: React.FC = () => {
           Plugins extend Eliza's core functionality with additional features.
         </p>
         <select
-          className="w-full bg-black/5 text-studio-charcoal p-3 rounded-md border border-gray-700/20"
+          className="w-full bg-black/5 text-blue-primary p-3 rounded-md border border-gray-700/20"
         >
           <option value="">Select one or multiple plugins</option>
           <option value="web-search">Web Search</option>
