@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Pin } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pin, ChevronsLeft, ChevronsRight } from "lucide-react";
 import SidebarContent from "./sidebar-content";
 import { motion } from "framer-motion";
 import CloudShader from "@/components/ui/shaders/CloudShader";
@@ -80,22 +80,30 @@ const Sidebar: React.FC<SidebarProps> = ({ navItems }) => {
     return () => clearTimeout(hideTimer);
   }, [hoverIntent, pinned]);
 
+  // Combined toggle function for collapse and hide
   const toggleSidebar = () => {
+    if (isHidden) {
+      // If sidebar is hidden, show it first
+      setIsHidden(false);
+      localStorage.setItem('sidebarHidden', 'false');
+      return;
+    }
+    
+    // If sidebar is visible, toggle collapse state
     const newState = !isCollapsed;
     setIsCollapsed(newState);
     localStorage.setItem('sidebarCollapsed', String(newState));
+    
+    if (newState && !isHidden) {
+      // If collapsing and not already hidden, consider hiding
+      if (!pinned) { // Only hide if not pinned
+        setIsHidden(true);
+        localStorage.setItem('sidebarHidden', 'true');
+      }
+    }
+    
     if (!newState) {
       setPinned(false); // Unpin when manually expanded
-    }
-  };
-
-  const toggleHidden = () => {
-    const newHiddenState = !isHidden;
-    setIsHidden(newHiddenState);
-    localStorage.setItem('sidebarHidden', String(newHiddenState));
-    if (newHiddenState) {
-      setPinned(false); // Unpin when hiding
-      localStorage.setItem('sidebarPinned', 'false');
     }
   };
 
@@ -112,6 +120,17 @@ const Sidebar: React.FC<SidebarProps> = ({ navItems }) => {
     
     if (isCollapsed) {
       setIsHovered(newPinState);
+    }
+  };
+
+  // Determine which button icon to show based on sidebar state
+  const getButtonIcon = () => {
+    if (isHidden) {
+      return <ChevronsRight className="h-4 w-4" />;
+    } else if (isCollapsed) {
+      return <ChevronRight className="h-4 w-4" />;
+    } else {
+      return <ChevronsLeft className="h-4 w-4" />;
     }
   };
 
@@ -167,26 +186,15 @@ const Sidebar: React.FC<SidebarProps> = ({ navItems }) => {
           </Button>
         )}
         
-        {/* Toggle collapse button */}
+        {/* Single improved toggle button */}
         <Button 
           variant="outline" 
           size="icon" 
           onClick={toggleSidebar} 
-          className="absolute -right-3 top-24 h-6 w-6 rounded-full bg-blue-dark border-blue-primary/50 text-white shadow-blue-glow z-20" 
-          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          className="absolute -right-3 top-24 h-10 w-10 rounded-full bg-cyan-600 border-cyan-400 hover:bg-cyan-500 text-white shadow-[0_0_10px_rgba(8,145,178,0.7)] z-20 flex items-center justify-center transition-all duration-200" 
+          aria-label={isHidden ? "Show sidebar" : (isCollapsed ? "Expand sidebar" : "Collapse sidebar")}
         >
-          {isCollapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
-        </Button>
-        
-        {/* Hide/Show button */}
-        <Button 
-          variant="outline" 
-          size="icon" 
-          onClick={toggleHidden}
-          className="absolute -right-3 top-36 h-6 w-6 rounded-full bg-blue-dark border-blue-primary/50 text-white shadow-blue-glow z-20" 
-          aria-label={isHidden ? "Show sidebar" : "Hide sidebar"}
-        >
-          {isHidden ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
+          {getButtonIcon()}
         </Button>
       </motion.aside>
     </>
