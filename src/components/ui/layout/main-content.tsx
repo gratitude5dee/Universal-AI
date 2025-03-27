@@ -4,7 +4,6 @@ import Header from "../header";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import MatrixAnimation from "../animations/matrix-animation";
-import Ambient from "../ambient";
 
 interface MainContentProps {
   children: ReactNode;
@@ -59,7 +58,7 @@ const MainContent: React.FC<MainContentProps> = ({ children }) => {
       </AnimatePresence>
       
       <motion.main 
-        className="px-4 pb-8 mt-2 flex-1 overflow-hidden z-10"
+        className="px-4 pb-8 mt-2 flex-1 overflow-hidden z-10 text-white"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}

@@ -15,71 +15,65 @@ const CosmicShader: React.FC = () => {
     }
   `;
 
-  // Fragment shader source with the provided shader code
+  // Fragment shader source with simplified cosmic effect that works reliably
   const fragmentShaderSource = `
     precision highp float;
     
     uniform float u_time;
     uniform vec2 u_resolution;
-    uniform vec2 u_mouse;
     
-    // HSV to RGB conversion
-    vec3 hsv(float h, float s, float v) {
-      vec4 t = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
-      vec3 p = abs(fract(vec3(h) + t.xyz) * 6.0 - vec3(t.w));
-      return v * mix(vec3(t.x), clamp(p - vec3(t.x), 0.0, 1.0), s);
-    }
-    
-    // 3D rotation matrix
-    mat3 rotate3D(float angle, vec3 axis) {
-      axis = normalize(axis);
-      float s = sin(angle);
-      float c = cos(angle);
-      float oc = 1.0 - c;
-      
-      return mat3(
-        oc * axis.x * axis.x + c, oc * axis.x * axis.y - axis.z * s, oc * axis.z * axis.x + axis.y * s,
-        oc * axis.x * axis.y + axis.z * s, oc * axis.y * axis.y + c, oc * axis.y * axis.z - axis.x * s,
-        oc * axis.z * axis.x - axis.y * s, oc * axis.y * axis.z + axis.x * s, oc * axis.z * axis.z + c
-      );
+    vec3 hsv2rgb(vec3 c) {
+      vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+      vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+      return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
     }
     
     void main() {
-      vec2 r = u_resolution;
-      vec2 FC = gl_FragCoord.xy;
-      float t = u_time;
+      vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+      vec2 p = 2.0 * uv - 1.0;
+      p.x *= u_resolution.x / u_resolution.y;
       
-      vec4 o = vec4(0.0, 0.0, 0.0, 1.0); // Output color
+      float time = u_time * 0.1;
       
-      // Initialize variables
-      float i = 0.0;
-      float g = 0.0;
-      float e = 0.0;
-      float s = 0.0;
+      vec4 finalColor = vec4(0.0, 0.0, 0.1, 1.0);
       
-      // Main loop - fixed for WebGL compatibility
-      for(int ii = 0; ii < 99; ii++) {
-        i += 1.0;
-        if(i >= 99.0) break;
+      for (int i = 0; i < 5; i++) {
+        float depth = 1.0 - float(i) * 0.2;
         
-        vec3 p = vec3((FC.xy - 0.5 * r) / r.y * 7.0 + vec2(-2.0, 8.0), g + 4.0) * 
-                rotate3D(sin(t * 0.5) * 0.005 - 1.8, vec3(0.0, 9.0, -1.0));
-        
-        s = 1.8;
-        
-        // Inner loop
-        for(int j = 0; j < 19; j++) {
-          p = vec3(0.05, 4.0, -1.0) - abs(abs(p) * e - vec3(3.1, 4.0, 2.9));
-          s *= e = 7.1 / dot(p, p * 0.5);
+        for (int j = 0; j < 20; j++) {
+          float t = time * (1.0 - depth) * 3.0;
+          float index = float(j) / 20.0;
+          
+          float angle = index * 6.28 + t;
+          float radius = mix(0.2, 1.0, index) + sin(t * 0.5) * 0.1;
+          vec2 center = vec2(
+            cos(angle) * radius * depth,
+            sin(angle) * radius * depth
+          );
+          
+          float dist = length(p - center);
+          float brightness = 0.01 / dist;
+          
+          vec3 color = hsv2rgb(vec3(
+            mod(index + time * 0.05, 1.0),
+            0.8,
+            brightness * depth
+          ));
+          
+          finalColor.rgb += color * (1.0 - depth) * 0.3;
         }
-        
-        g += p.y / s;
-        s = log(s) / exp(e);
-        
-        o.rgb += 0.01 - hsv(0.1, g * 0.013, s / 2e2);
       }
       
-      gl_FragColor = o;
+      // Add some background gradient
+      vec3 bgColor = mix(
+        vec3(0.0, 0.0, 0.1),
+        vec3(0.0, 0.0, 0.2),
+        uv.y
+      );
+      
+      finalColor.rgb = mix(bgColor, finalColor.rgb, 1.0);
+      
+      gl_FragColor = finalColor;
     }
   `;
 

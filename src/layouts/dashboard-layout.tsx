@@ -12,9 +12,10 @@ interface DashboardLayoutProps {
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <div className="min-h-screen flex flex-col bg-blue-darker overflow-hidden">
+      {/* Place Ambient first so it's behind everything */}
       <Ambient />
       
-      <div className="flex flex-1 z-10">
+      <div className="flex flex-1 z-10 relative">
         <Sidebar navItems={navItems} />
         <MainContent>{children}</MainContent>
       </div>
