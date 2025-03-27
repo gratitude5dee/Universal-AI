@@ -32,6 +32,19 @@
     @apply text-blue-dark/70 text-sm;
   }
   
+  /* White background text colors for better readability */
+  .white-bg-heading {
+    @apply text-blue-dark font-semibold;
+  }
+  
+  .white-bg-subheading {
+    @apply text-blue-dark/80;
+  }
+  
+  .white-bg-text {
+    @apply text-blue-dark/70 text-sm;
+  }
+  
   /* Improved sidebar menu item styles */
   .sidebar-menu-item {
     @apply flex items-center px-3 py-2.5 my-1 rounded-lg text-sm font-medium transition-all duration-200;

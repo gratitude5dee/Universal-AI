@@ -66,7 +66,7 @@ const CreateAgent = () => {
                   </TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="wizard" className="flex-1 space-y-6 bg-white rounded-lg p-6">
+                <TabsContent value="wizard" className="flex-1 space-y-6 bg-white rounded-lg p-6 text-blue-dark">
                   <WizardView 
                     wizardStep={wizardStep}
                     setWizardStep={setWizardStep}
@@ -83,7 +83,7 @@ const CreateAgent = () => {
                   />
                 </TabsContent>
                 
-                <TabsContent value="form" className="flex-1 bg-white rounded-lg p-6">
+                <TabsContent value="form" className="flex-1 bg-white rounded-lg p-6 text-blue-dark">
                   <FormView 
                     currentStep={currentStep}
                     setCurrentStep={setCurrentStep}
