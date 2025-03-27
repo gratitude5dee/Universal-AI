@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { LogOut } from "lucide-react";
 import { AgentIcon, BrainIcon, WalletIcon, DashboardIcon } from "@/components/ui/icons";
+import CloudShader from "@/components/ui/shaders/CloudShader";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -43,9 +44,16 @@ export default function Index() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-futuristic-baseDarker to-futuristic-accent/10 p-4 text-white"
+      className="min-h-screen flex flex-col items-center justify-center p-4 text-white relative"
     >
-      <div className="max-w-md w-full space-y-8 glass-card p-8 rounded-xl border border-white/10">
+      {/* WebGL Background */}
+      <div className="absolute inset-0 z-0">
+        <CloudShader />
+        {/* Overlay for better text contrast */}
+        <div className="absolute inset-0 bg-black/20 z-1"></div>
+      </div>
+      
+      <div className="max-w-md w-full space-y-8 glass-card p-8 rounded-xl border border-white/10 relative z-10">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-2 highlight-text">WZRD Studio</h1>
           <p className="text-lg cool-gray-text mb-8">Sign in to access your creative workspace</p>

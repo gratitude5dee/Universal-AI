@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useMotionValue, useTransform, useAnimation } from "framer-motion";
@@ -123,15 +122,15 @@ const Landing = () => {
                        #.                    ..:::.::-:-:-::::-----:::-==**+---:-:::===-=*#############*==-:.......  .:  .:  .::::*                       
                         -               ....:.::.::-----:--------:::::::-=+#*+==---:--::-*##%%@%@%%%%#*+==::.:.::..:::.......:--:=@                       
                         =:           ....:.::::::=--=--------:::.:..:.:::-=+#@*+---------=*#%@@@@@@%%+=++-:::.:.:.:.:.:::.:.:-:--=                        
-                         =:         .....::....:::.:::::--=-:::.:.::::::::-=****==------==*%@@@@@@@#++==:::.:.:.:=+:.:.-::..::--=                         
+                         =:         .....::....:::.:::::--=-:::.:.:.::::::::-=****==------==*%@@@@@@@#++==:::.:.:.:=+:.:.-::..::--=                         
                           =..        ..:.:.:.::.:::.:-.:--:.:.:.::.:.:.:::-=+=**=---=====+#@@@@@@@*=--::::.:.::-%=.:::---:.:---+                          
-                           +:       ..:..:::----:---:--=----:.:.:.:::::::::-+*=++=-==-====+*%@@@@@#=-:::.:.::.:=-:.::----:::::-*                           
+                           +:       ..:..:::----:---:--=----:.:.:.::::::::::-+*=++=-==-====+*%@@@@@#=-:::.:.::.:=-:.::----:::::-*                           
                             #:       .........::----=-=-=---:.:.:.:..:.:::-+*=+++===+=+=+=*@@@@@%=:::.::.:::--:.::--------:--#                            
                              @-:      ..:.::.:...::::-----::.:.:.:.:.:::::::=**=*+++==+==+=++@@@@#=:::::.:::::.:.:--------::-=@                             
                               +-:.     ...:::.:::.:...::.:::.:.:.:.:.:.:::=*#+**=++**+=+-=+@%+--:::.:.--:::.:.::-------:--=+                              
                                 +:::.    ::-*=-=-:..:.......:..:.:.::--::-+#******##*==+#+===-:::.::-+:::.::.::--------:-+#                               
-                                 +=: :.  .::+*:::::.:.:..::.::::.-*@%=-#*@@@%####**+=====+--::::.::-=::.::.:.:.::------::=%                                 
-                                    *-:--...-#@#::... ..:::.:**+-:=@#*@%@@@@@*#**++=*+*+=::::-:-::::.:.:.:.:.:.::-------@                                   
+                                 +=: :.  .::+*:::::.:.:..::.::::.-*@%=-#*@@@%####**+=====+--::::.::-=::.::.:.:.:.::------::=%                                 
+                                    *-:--...-#@#::... ..:::.:**+-:=@#*@%@@@@@*#**++=*+*+=::::-:-::::.:.:.:.:.:.:.::-------@                                   
                                      %*#+:.   .-@#-. ....:.:-::-*%%#=*@%#%%#+###**+*==-::::.:.-+:.:.:::.:.:--:.:...:=#                                    
                                        @##+.  ...-*=:..:...:.::::::::::=#*%***###=-::::.::.:.:::.::-::.:.:.:.....:=@                                      
                                          @%*-:: ::. =*+-:-:--:::::::::.::**+#%%*=-:::.:-++:::::::::.:.:.:.:...::*@                                        
@@ -418,107 +417,4 @@ const Landing = () => {
                       </motion.div>
                       
                       <motion.div 
-                        className="bg-purple-500/20 backdrop-blur-md rounded-lg p-2 sm:p-3 flex items-center relative z-10 overflow-hidden group" 
-                        whileHover={{
-                          scale: 1.03,
-                          y: -2,
-                          boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 10px rgba(139,92,246,0.3)"
-                        }}
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-400/0 via-purple-400/10 to-purple-400/0 opacity-0 group-hover:opacity-100 transform -translate-x-full group-hover:translate-x-full transition-all duration-700" />
-                        <BookOpen 
-                          className="h-4 w-4 sm:h-5 sm:w-5 text-purple-400 mr-1.5 sm:mr-2" 
-                          style={{transform: "translateZ(20px)"}} 
-                        />
-                        <span className="text-xs sm:text-sm">Learn</span>
-                      </motion.div>
-                      
-                      <motion.div 
-                        className="bg-blue-500/20 backdrop-blur-md rounded-lg p-2 sm:p-3 flex items-center relative z-10 overflow-hidden group" 
-                        whileHover={{
-                          scale: 1.03,
-                          y: -2,
-                          boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 10px rgba(59,130,246,0.3)"
-                        }}
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-blue-400/10 to-blue-400/0 opacity-0 group-hover:opacity-100 transform -translate-x-full group-hover:translate-x-full transition-all duration-700" />
-                        <Brain 
-                          className="h-4 w-4 sm:h-5 sm:w-5 text-blue-400 mr-1.5 sm:mr-2" 
-                          style={{transform: "translateZ(20px)"}} 
-                        />
-                        <span className="text-xs sm:text-sm">Create</span>
-                      </motion.div>
-                      
-                      <motion.div 
-                        className="bg-amber-500/20 backdrop-blur-md rounded-lg p-2 sm:p-3 flex items-center relative z-10 overflow-hidden group" 
-                        whileHover={{
-                          scale: 1.03,
-                          y: -2,
-                          boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 10px rgba(245,158,11,0.3)"
-                        }}
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-r from-amber-400/0 via-amber-400/10 to-amber-400/0 opacity-0 group-hover:opacity-100 transform -translate-x-full group-hover:translate-x-full transition-all duration-700" />
-                        <Headphones 
-                          className="h-4 w-4 sm:h-5 sm:w-5 text-amber-400 mr-1.5 sm:mr-2" 
-                          style={{transform: "translateZ(20px)"}} 
-                        />
-                        <span className="text-xs sm:text-sm">Listen</span>
-                      </motion.div>
-                    </div>
-                  </div>
-                  
-                  {/* Recent activity section with subtle shadows */}
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <h3 className="text-sm text-white/90 font-medium">Recent Activity</h3>
-                      <span className="text-xs text-white/60">Today</span>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 bg-white/5 rounded-lg p-2 text-xs">
-                        <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                        <span className="text-white/80">New creation started</span>
-                        <span className="text-white/40 ml-auto text-[10px]">2m ago</span>
-                      </div>
-                      
-                      <div className="flex items-center gap-2 bg-white/5 rounded-lg p-2 text-xs">
-                        <div className="h-2 w-2 rounded-full bg-blue-400"></div>
-                        <span className="text-white/80">Asset published to chain</span>
-                        <span className="text-white/40 ml-auto text-[10px]">1h ago</span>
-                      </div>
-                      
-                      <div className="flex items-center gap-2 bg-white/5 rounded-lg p-2 text-xs">
-                        <div className="h-2 w-2 rounded-full bg-purple-400"></div>
-                        <span className="text-white/80">New AI model connected</span>
-                        <span className="text-white/40 ml-auto text-[10px]">3h ago</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-              
-              {/* Animated sparkles around the card */}
-              <motion.div 
-                className="absolute -top-6 -right-6" 
-                animate={{rotate: [0, 15, 0]}}
-                transition={{duration: 5, repeat: Infinity, ease: "easeInOut"}}
-              >
-                <Sparkles className="h-6 w-6 text-yellow-300/60" />
-              </motion.div>
-              
-              <motion.div 
-                className="absolute -bottom-4 -left-4" 
-                animate={{rotate: [0, -10, 0]}}
-                transition={{duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1}}
-              >
-                <Sparkles className="h-5 w-5 text-teal-300/60" />
-              </motion.div>
-            </div>
-          </motion.div>
-        </main>
-      </div>
-    </div>
-  );
-};
-
-export default Landing;
+                        className="bg-purple-500/20 backdrop-blur-md rounded-lg p
