@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect } from 'react';
 import { useWebGLSetup } from '@/hooks/useWebGLSetup';
 
@@ -168,7 +169,7 @@ const CloudShader: React.FC = () => {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 w-full h-full"
-      style={{ zIndex: -10 }}
+      style={{ zIndex: -20 }}
     />
   );
 };
