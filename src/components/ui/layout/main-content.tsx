@@ -4,6 +4,7 @@ import Header from "../header";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import MatrixAnimation from "../animations/matrix-animation";
+import EtherealCloudShader from "../shaders/EtherealCloudShader";
 
 interface MainContentProps {
   children: ReactNode;
@@ -50,56 +51,11 @@ const MainContent: React.FC<MainContentProps> = ({ children }) => {
   return (
     <motion.div 
       className="flex-1 min-h-screen flex flex-col w-full overflow-hidden relative"
-      style={{
-        background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)'
-      }}
       layout
       transition={{ duration: 0.25, ease: "easeOut" }}
     >
-      {/* Animated cloud background */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Background gradient already applied in the parent div */}
-        
-        {/* Animated cloud elements with improved opacity for better contrast */}
-        <motion.div 
-          className="absolute top-0 left-[-10%] w-[50%] h-[50%] opacity-10 bg-blue-lighter blur-3xl rounded-full"
-          animate={{
-            x: ["0%", "5%", "0%"],
-            y: ["0%", "3%", "0%"],
-          }}
-          transition={{
-            duration: 30,
-            repeat: Infinity,
-            repeatType: "reverse"
-          }}
-        />
-        
-        <motion.div 
-          className="absolute bottom-0 right-[-5%] w-[40%] h-[40%] opacity-8 bg-blue-light blur-3xl rounded-full"
-          animate={{
-            x: ["0%", "-8%", "0%"],
-            y: ["0%", "-5%", "0%"],
-          }}
-          transition={{
-            duration: 40,
-            repeat: Infinity,
-            repeatType: "reverse"
-          }}
-        />
-        
-        <motion.div 
-          className="absolute top-[30%] right-[10%] w-[30%] h-[30%] opacity-10 bg-blue-primary blur-3xl rounded-full"
-          animate={{
-            x: ["0%", "-10%", "0%"],
-            y: ["0%", "8%", "0%"],
-          }}
-          transition={{
-            duration: 50,
-            repeat: Infinity,
-            repeatType: "reverse"
-          }}
-        />
-      </div>
+      {/* Ethereal Cloud Shader Background */}
+      <EtherealCloudShader />
       
       <Header />
       
