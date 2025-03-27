@@ -13,7 +13,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <div className="min-h-screen flex flex-col bg-transparent overflow-hidden">
       {/* Place Ambient component for the CloudShader background */}
-      <Ambient />
+      <Ambient showAsciiStreams={true} />
       
       <div className="flex flex-1 z-10 relative">
         <Sidebar navItems={navItems} />

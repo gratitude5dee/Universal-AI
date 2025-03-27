@@ -4,7 +4,6 @@ import DashboardLayout from "@/layouts/dashboard-layout";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Content } from "@/components/ui/content";
-import { Share2 } from "lucide-react";
 
 interface DistributionLayoutProps {
   children: ReactNode;
