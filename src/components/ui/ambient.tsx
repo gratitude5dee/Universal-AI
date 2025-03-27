@@ -51,7 +51,7 @@ const Ambient = ({ showAsciiStreams = false }: { showAsciiStreams?: boolean }) =
   };
   
   return (
-    <div className="fixed inset-0 min-h-screen w-full -z-10 overflow-hidden pointer-events-none">
+    <div className="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
       {/* Cloud GLSL Shader Background */}
       <CloudShader />
       
