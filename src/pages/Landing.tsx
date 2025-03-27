@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useMotionValue, useTransform, useAnimation } from "framer-motion";
@@ -417,4 +418,128 @@ const Landing = () => {
                       </motion.div>
                       
                       <motion.div 
-                        className="bg-purple-500/20 backdrop-blur-md rounded-lg p
+                        className="bg-purple-500/20 backdrop-blur-md rounded-lg p-2 sm:p-3 flex items-center relative z-10 overflow-hidden group" 
+                        whileHover={{
+                          scale: 1.03,
+                          y: -2,
+                          boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 10px rgba(147,51,234,0.3)"
+                        }} 
+                        style={{transformStyle: "preserve-3d"}}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/10 to-purple-500/0 opacity-0 group-hover:opacity-100 transform -translate-x-full group-hover:translate-x-full transition-all duration-700" />
+                        <BookOpen 
+                          className="h-4 w-4 sm:h-5 sm:w-5 text-purple-400 mr-1.5 sm:mr-2 relative" 
+                          style={{transform: "translateZ(20px)"}} 
+                        />
+                        <span className="text-xs sm:text-sm">Learn</span>
+                      </motion.div>
+                      
+                      <motion.div 
+                        className="bg-orange-500/20 backdrop-blur-md rounded-lg p-2 sm:p-3 flex items-center relative z-10 overflow-hidden group" 
+                        whileHover={{
+                          scale: 1.03,
+                          y: -2,
+                          boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 10px rgba(249,115,22,0.3)"
+                        }} 
+                        style={{transformStyle: "preserve-3d"}}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/0 via-orange-500/10 to-orange-500/0 opacity-0 group-hover:opacity-100 transform -translate-x-full group-hover:translate-x-full transition-all duration-700" />
+                        <Brain 
+                          className="h-4 w-4 sm:h-5 sm:w-5 text-orange-400 mr-1.5 sm:mr-2 relative" 
+                          style={{transform: "translateZ(20px)"}} 
+                        />
+                        <span className="text-xs sm:text-sm">Create</span>
+                      </motion.div>
+                      
+                      <motion.div 
+                        className="bg-cyan-500/20 backdrop-blur-md rounded-lg p-2 sm:p-3 flex items-center relative z-10 overflow-hidden group" 
+                        whileHover={{
+                          scale: 1.03,
+                          y: -2,
+                          boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 10px rgba(6,182,212,0.3)"
+                        }} 
+                        style={{transformStyle: "preserve-3d"}}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/10 to-cyan-500/0 opacity-0 group-hover:opacity-100 transform -translate-x-full group-hover:translate-x-full transition-all duration-700" />
+                        <Headphones 
+                          className="h-4 w-4 sm:h-5 sm:w-5 text-cyan-400 mr-1.5 sm:mr-2 relative" 
+                          style={{transform: "translateZ(20px)"}} 
+                        />
+                        <span className="text-xs sm:text-sm">Listen</span>
+                      </motion.div>
+                    </div>
+                  </div>
+                  
+                  {/* Secondary mockup element */}
+                  <div className="bg-[#1E1E2E]/70 backdrop-blur-md rounded-xl p-3 sm:p-4 relative" style={{transformStyle: 'preserve-3d'}}>
+                    {/* Inner noise texture */}
+                    <div 
+                      className="absolute inset-0 opacity-[0.05] mix-blend-overlay rounded-xl" 
+                      style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
+                      }} 
+                    />
+                    
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-xs text-white/70">Activities</div>
+                      <Sparkles className="h-3 w-3 text-amber-400" />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      {[
+                        { name: 'Neural Expansion', progress: 85, color: 'from-teal-500 to-cyan-400' },
+                        { name: 'Creators Funded', progress: 62, color: 'from-orange-500 to-amber-400' },
+                        { name: 'Daily Creates', progress: 38, color: 'from-purple-500 to-pink-400' }
+                      ].map((item, i) => (
+                        <div key={i} className="space-y-1">
+                          <div className="flex justify-between text-xs">
+                            <span className="text-white/80">{item.name}</span>
+                            <span className="text-white/50">{item.progress}%</span>
+                          </div>
+                          <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                            <motion.div 
+                              className={`h-full rounded-full bg-gradient-to-r ${item.color}`}
+                              style={{ width: `${item.progress}%` }}
+                              initial={{ width: 0 }}
+                              animate={{ width: `${item.progress}%` }}
+                              transition={{ duration: 1, delay: 0.5 + (i * 0.2) }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+              
+              {/* Subtle floating elements */}
+              <motion.div 
+                className="absolute -top-4 -right-4 w-12 h-12 rounded-lg"
+                animate={{ y: [0, -10, 0], rotate: [0, 5, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <div className="w-full h-full relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-lg blur-xl" />
+                  <div className="absolute inset-0 backdrop-blur-sm border border-white/10 rounded-lg" />
+                </div>
+              </motion.div>
+              
+              <motion.div 
+                className="absolute -bottom-3 -left-3 w-10 h-10 rounded-full"
+                animate={{ y: [0, 8, 0], x: [0, -5, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              >
+                <div className="w-full h-full relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-full blur-xl" />
+                  <div className="absolute inset-0 backdrop-blur-sm border border-white/10 rounded-full" />
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </main>
+      </div>
+    </div>
+  );
+};
+
+export default Landing;
