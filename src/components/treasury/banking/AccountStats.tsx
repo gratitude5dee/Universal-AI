@@ -7,9 +7,9 @@ const AccountStats: React.FC = () => {
   return (
     <div className="grid grid-cols-2 gap-6">
       <div className="glass-card p-5">
-        <h3 className="text-lg font-medium mb-4 text-blue-dark">Income & Expenditure</h3>
+        <h3 className="text-lg font-medium mb-4 text-white">Income & Expenditure</h3>
         <div className="aspect-video flex items-center justify-center bg-studio-sand/10 rounded-xl">
-          <div className="text-center text-blue-dark">
+          <div className="text-center text-white">
             <BarChart3 className="h-10 w-10 mx-auto mb-2 text-studio-accent/50" />
             <p>Income vs. Expenditure Chart</p>
           </div>
@@ -18,7 +18,7 @@ const AccountStats: React.FC = () => {
       
       <div className="glass-card p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-medium text-blue-dark">Pending Approvals</h3>
+          <h3 className="text-lg font-medium text-white">Pending Approvals</h3>
           <Badge className="bg-yellow-500">{2}</Badge>
         </div>
         

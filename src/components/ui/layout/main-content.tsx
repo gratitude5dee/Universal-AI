@@ -4,7 +4,7 @@ import Header from "../header";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import MatrixAnimation from "../animations/matrix-animation";
-import EtherealCloudShader from "../shaders/EtherealCloudShader";
+import CosmicShader from "../shaders/CosmicShader";
 
 interface MainContentProps {
   children: ReactNode;
@@ -54,8 +54,8 @@ const MainContent: React.FC<MainContentProps> = ({ children }) => {
       layout
       transition={{ duration: 0.25, ease: "easeOut" }}
     >
-      {/* Ethereal Cloud Shader Background */}
-      <EtherealCloudShader />
+      {/* Cosmic Shader Background */}
+      <CosmicShader />
       
       <Header />
       

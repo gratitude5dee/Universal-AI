@@ -1,12 +1,12 @@
 
 import React from "react";
-import EtherealCloudShader from "./shaders/EtherealCloudShader";
+import CosmicShader from "./shaders/CosmicShader";
 
 const Ambient = () => {
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden">
-      {/* Use the ethereal cloud shader as the background */}
-      <EtherealCloudShader />
+      {/* Use the cosmic shader as the background */}
+      <CosmicShader />
       
       {/* Subtle noise overlay for texture */}
       <div className="absolute inset-0 opacity-[0.03] z-[-5]" style={{ 
