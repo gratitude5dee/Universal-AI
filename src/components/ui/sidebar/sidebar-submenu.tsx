@@ -9,7 +9,7 @@ interface SubmenuProps {
   submenuItems: {
     name: string;
     path: string;
-    icon: React.ComponentType<{ className?: string }>;
+    icon: React.ComponentType<{ className?: string; isGlowing?: boolean; glowColor?: "highlight" | "accent" | "white" }>;
   }[];
   currentPath: string;
   currentTab?: string | null;
@@ -122,7 +122,11 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
                     ${isSubItemActive ? 'sidebar-submenu-item-active' : 'sidebar-submenu-item-inactive'}
                   `}
                 >
-                  <subItem.icon className={`h-3.5 w-3.5 mr-2 ${isSubItemActive ? 'text-white' : 'text-blue-lighter'}`} />
+                  <subItem.icon 
+                    className={`h-3.5 w-3.5 mr-2 ${isSubItemActive ? 'text-white' : 'text-blue-lighter'}`} 
+                    isGlowing={isSubItemActive} 
+                    glowColor={isSubItemActive ? "white" : "highlight"}
+                  />
                   <span className="text-shadow-sm">{subItem.name}</span>
                 </Link>
               </motion.div>

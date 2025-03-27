@@ -1,10 +1,12 @@
+
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@crossmint/client-sdk-react-ui";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { LogOut, Settings as SettingsIcon, User } from "lucide-react";
+import { LogOut, User } from "lucide-react";
+import { SettingsIcon } from "@/components/ui/icons";
 
 export const Settings = () => {
   const [open, setOpen] = React.useState(false);
@@ -31,7 +33,7 @@ export const Settings = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="icon">
-          <SettingsIcon className="h-5 w-5" />
+          <SettingsIcon className="h-5 w-5" isGlowing={false} />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">

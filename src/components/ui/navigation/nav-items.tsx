@@ -1,19 +1,23 @@
-
 import { 
-  LayoutDashboard, Zap, Palette, BookOpen, Brain, Headphones, Infinity, UserRound, Users, 
-  ImageIcon, BarChart3, Shield, Globe, Bot, Database, ShoppingCart, Eye, Building, 
-  Trees, ArrowRightLeft, Share2, Link, Tv, User, Music, Wallet, Landmark, TrendingUp, Droplets, 
-  CreditCard
+  NavHomeIcon, NavDashboardIcon, NavBrainIcon, NavGalleryIcon, NavWalletIcon, 
+  NavAgentIcon, NavAnalyticsIcon, NavSettingsIcon, NavMarketplaceIcon
+} from "@/components/ui/icons";
+
+// For the remaining icons we'll continue using lucide-react for now, but gradually replace them
+import { 
+  Palette, BookOpen, Headphones, Infinity, UserRound, Users, Shield, Globe, 
+  Database, ShoppingCart, Eye, Building, Trees, ArrowRightLeft, Share2, Link, Tv, 
+  User, Music, Landmark, TrendingUp, Droplets, CreditCard
 } from "lucide-react";
 
 export const navItems = [{
   name: "Dashboard",
   path: "/",
-  icon: LayoutDashboard
+  icon: NavDashboardIcon
 }, {
   name: "WZRD.tech",
   path: "#",
-  icon: Zap,
+  icon: NavBrainIcon,
   hasSubmenu: true,
   submenuItems: [
     {
@@ -29,7 +33,7 @@ export const navItems = [{
     {
       name: "DeepResearch",
       path: "/wzrd/research",
-      icon: Brain
+      icon: NavBrainIcon
     },
     {
       name: "Generative Podcasts",
@@ -56,29 +60,29 @@ export const navItems = [{
     {
       name: "Asset Library",
       path: "/gallery",
-      icon: ImageIcon
+      icon: NavGalleryIcon
     },
     {
       name: "Analytics",
       path: "/analytics",
-      icon: BarChart3
+      icon: NavAnalyticsIcon
     },
     {
       name: "Marketplace Launch",
       path: "/marketplace-launch",
-      icon: Globe
+      icon: NavMarketplaceIcon
     }
   ]
 }, {
   name: "Agents",
   path: "#",
-  icon: Users,
+  icon: NavAgentIcon,
   hasSubmenu: true,
   submenuItems: [
     {
       name: "Create New Agent",
       path: "/create-agent",
-      icon: Bot
+      icon: NavAgentIcon
     },
     {
       name: "My Collection",
@@ -158,13 +162,13 @@ export const navItems = [{
 }, {
   name: "Treasury",
   path: "#",
-  icon: Wallet,
+  icon: NavWalletIcon,
   hasSubmenu: true,
   submenuItems: [
     {
       name: "Overview",
       path: "/treasury",
-      icon: Wallet
+      icon: NavWalletIcon
     },
     {
       name: "Agent Banking",

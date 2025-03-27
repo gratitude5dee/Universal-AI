@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useWallet } from '@/context/WalletContext';
+import { WalletIcon } from '@/components/ui/icons';
 
 export const WalletInfo = () => {
   const { address, balance, isLoading, fetchBalance } = useWallet();
@@ -19,7 +19,7 @@ export const WalletInfo = () => {
       className="flex items-center gap-2"
       onClick={fetchBalance}
     >
-      <Wallet className="h-4 w-4" />
+      <WalletIcon className="h-4 w-4" isGlowing={false} />
       <span>
         {isLoading 
           ? 'Loading...' 

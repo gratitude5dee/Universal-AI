@@ -8,12 +8,12 @@ interface NavItemProps {
   item: {
     name: string;
     path: string;
-    icon: React.ComponentType<{ className?: string }>;
+    icon: React.ComponentType<{ className?: string; isGlowing?: boolean; glowColor?: "highlight" | "accent" | "white" }>;
     hasSubmenu?: boolean;
     submenuItems?: {
       name: string;
       path: string;
-      icon: React.ComponentType<{ className?: string }>;
+      icon: React.ComponentType<{ className?: string; isGlowing?: boolean; glowColor?: "highlight" | "accent" | "white" }>;
     }[];
   };
   isActive: boolean;
@@ -50,9 +50,17 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
     }
   };
 
+  const [isHovered, setIsHovered] = React.useState(false);
+
   if (!item.hasSubmenu) {
     return (
-      <Link to={item.path} className="relative block group" title={isCollapsed ? item.name : ""}>
+      <Link 
+        to={item.path} 
+        className="relative block group" 
+        title={isCollapsed ? item.name : ""}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <div className={`
           sidebar-menu-item
           ${isActive ? 'sidebar-menu-item-active' : 'sidebar-menu-item-inactive'}
@@ -61,10 +69,14 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
             ${isCollapsed ? 'flex justify-center w-full' : 'mr-3'}
             ${isActive ? 'sidebar-menu-icon-active' : 'sidebar-menu-icon-inactive'}
           `}>
-            <item.icon className={`h-5 w-5 transition-all duration-200
-              ${isActive ? 'icon-glow-white' : ''}
-              ${!isActive && 'group-hover:text-white'}
-            `} />
+            <item.icon 
+              className={`h-5 w-5 transition-all duration-200
+                ${isActive ? 'icon-glow-white' : ''}
+                ${!isActive && 'group-hover:text-white'}
+              `}
+              isGlowing={isActive || isHovered}
+              glowColor={isActive ? "white" : "highlight"}
+            />
           </div>
           
           {!isCollapsed && (
@@ -99,6 +111,8 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
         onClick={toggleSubmenu} 
         className="relative block group" 
         title={isCollapsed ? item.name : ""}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         <div className={`
           sidebar-menu-item
@@ -109,10 +123,14 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
               ${isCollapsed ? 'flex justify-center w-full' : 'mr-3'}
               ${isSubMenuActive ? 'sidebar-menu-icon-active' : 'sidebar-menu-icon-inactive'}
             `}>
-              <item.icon className={`h-5 w-5 transition-all duration-200
-                ${isSubMenuActive ? 'icon-glow-white' : ''}
-                ${!isSubMenuActive && 'group-hover:text-white'}
-              `} />
+              <item.icon 
+                className={`h-5 w-5 transition-all duration-200
+                  ${isSubMenuActive ? 'icon-glow-white' : ''}
+                  ${!isSubMenuActive && 'group-hover:text-white'}
+                `}
+                isGlowing={isSubMenuActive || isHovered}
+                glowColor={isSubMenuActive ? "white" : "highlight"}
+              />
             </div>
             
             {!isCollapsed && (
