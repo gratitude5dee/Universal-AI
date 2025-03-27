@@ -19,6 +19,10 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Inter', 'sans-serif'],
+				heading: ['"Neue Machina"', 'Inter', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -41,6 +45,21 @@ export default {
 					light: "#60a5fa",
 					lighter: "#93c5fd",
 					lightest: "#dbeafe",
+				},
+				// New futuristic color palette
+				futuristic: {
+					base: 'var(--color-base-deep)',
+					baseLighter: 'var(--color-base-deep-lighter)',
+					baseDarker: 'var(--color-base-deep-darker)',
+					accent: 'var(--color-accent-primary)',
+					accentLighter: 'var(--color-accent-primary-lighter)',
+					accentDarker: 'var(--color-accent-primary-darker)',
+					highlight: 'var(--color-highlight-interactive)',
+					highlightLighter: 'var(--color-highlight-interactive-lighter)',
+					highlightDarker: 'var(--color-highlight-interactive-darker)',
+					coolGray: 'var(--color-neutral-cool-gray)',
+					coolGrayLighter: 'var(--color-neutral-cool-gray-lighter)',
+					coolGrayDarker: 'var(--color-neutral-cool-gray-darker)'
 				},
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
@@ -160,13 +179,18 @@ export default {
 				'elevation': '0 10px 30px -5px rgba(0, 0, 0, 0.1)',
 				'inner-glow': 'inset 0 0 10px rgba(255, 255, 255, 0.5)',
 				'blue-glow': '0 0 15px rgba(59, 130, 246, 0.5)',
-				'card-glow': '0 4px 20px -2px rgba(30, 64, 175, 0.25)'
+				'card-glow': '0 4px 20px -2px rgba(30, 64, 175, 0.25)',
+				'accent-glow': '0 0 20px rgba(255, 107, 0, 0.5)',
+				'highlight-glow': '0 0 20px rgba(0, 240, 255, 0.5)'
 			},
 			backgroundImage: {
 				'blue-gradient': 'linear-gradient(135deg, #1a2d69 0%, #1e40af 100%)',
 				'blue-card': 'linear-gradient(to bottom right, rgba(96, 165, 250, 0.3), rgba(59, 130, 246, 0.3))',
 				'sidebar-gradient': 'linear-gradient(to bottom, #1a2d69, #1e40af)',
-				'card-gradient': 'linear-gradient(to bottom right, rgba(96, 165, 250, 0.2), rgba(59, 130, 246, 0.2))'
+				'card-gradient': 'linear-gradient(to bottom right, rgba(96, 165, 250, 0.2), rgba(59, 130, 246, 0.2))',
+				'futuristic-gradient': 'linear-gradient(135deg, var(--color-base-deep) 0%, var(--color-base-deep-lighter) 100%)',
+				'accent-gradient': 'linear-gradient(135deg, var(--color-accent-primary) 0%, var(--color-accent-primary-lighter) 100%)',
+				'highlight-gradient': 'linear-gradient(135deg, var(--color-highlight-interactive) 0%, var(--color-highlight-interactive-lighter) 100%)'
 			}
 		}
 	},

@@ -1,9 +1,31 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.cdnfonts.com/css/neue-machina');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* New Futuristic Color Palette */
+    --color-base-deep: #0A0F27;
+    --color-base-deep-lighter: #141C44;
+    --color-base-deep-darker: #060B1D;
+    
+    --color-accent-primary: #FF6B00;
+    --color-accent-primary-lighter: #FF8A3D;
+    --color-accent-primary-darker: #D85800;
+    
+    --color-highlight-interactive: #00F0FF;
+    --color-highlight-interactive-lighter: #4FF8FF;
+    --color-highlight-interactive-darker: #00C4D1;
+    
+    --color-neutral-cool-gray: #A0A8B8;
+    --color-neutral-cool-gray-lighter: #C2C8D4;
+    --color-neutral-cool-gray-darker: #7A8296;
+  }
+
   html, body {
     margin: 0;
     padding: 0;
@@ -12,38 +34,50 @@
     overflow-x: hidden;
     color: white;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    background-color: var(--color-base-deep);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Neue Machina', 'Inter', sans-serif;
+    font-weight: 700;
   }
 }
 
 @layer components {
   .glass-card {
-    @apply bg-card-gradient backdrop-blur-md border border-blue-primary/20 rounded-xl shadow-card-glow;
+    @apply backdrop-blur-md border rounded-xl shadow-card-glow;
+    background: linear-gradient(135deg, rgba(20, 28, 68, 0.3), rgba(10, 15, 39, 0.4));
+    border-color: rgba(0, 240, 255, 0.2);
   }
   
   /* Card text colors for better readability */
   .card-heading {
-    @apply text-blue-primary font-medium;
+    @apply font-medium;
+    color: var(--color-highlight-interactive);
   }
   
   .card-subheading {
-    @apply text-blue-dark;
+    color: var(--color-neutral-cool-gray-lighter);
   }
   
   .card-text {
-    @apply text-blue-dark/70 text-sm;
+    @apply text-sm;
+    color: var(--color-neutral-cool-gray);
   }
   
   /* White background text colors for better readability */
   .white-bg-heading {
-    @apply text-blue-dark font-semibold;
+    @apply font-semibold;
+    color: var(--color-base-deep);
   }
   
   .white-bg-subheading {
-    @apply text-blue-dark/80;
+    color: var(--color-base-deep-lighter);
   }
   
   .white-bg-text {
-    @apply text-blue-dark/70 text-sm;
+    @apply text-sm;
+    color: var(--color-base-deep-lighter);
   }
   
   /* Improved sidebar menu item styles */
@@ -52,11 +86,16 @@
   }
   
   .sidebar-menu-item-active {
-    @apply text-white bg-blue-primary shadow-blue-glow;
+    background-color: var(--color-accent-primary);
+    @apply text-white shadow-blue-glow;
   }
   
   .sidebar-menu-item-inactive {
-    @apply text-blue-lightest hover:bg-blue-primary/30 hover:text-white;
+    @apply text-blue-lightest hover:text-white;
+    background-color: transparent;
+    &:hover {
+      background-color: rgba(255, 107, 0, 0.3);
+    }
   }
   
   .sidebar-menu-icon {
@@ -76,11 +115,37 @@
   }
   
   .sidebar-submenu-item-active {
-    @apply bg-blue-primary/20 text-white font-medium;
+    background-color: rgba(0, 240, 255, 0.2);
+    @apply text-white font-medium;
   }
   
   .sidebar-submenu-item-inactive {
-    @apply text-blue-lightest hover:bg-blue-primary/30 hover:text-white;
+    @apply text-blue-lightest hover:text-white;
+    &:hover {
+      background-color: rgba(0, 240, 255, 0.3);
+    }
+  }
+
+  /* New button styles */
+  .btn-primary {
+    background-color: var(--color-accent-primary);
+    color: white;
+    @apply px-4 py-2 rounded-lg transition-all duration-200;
+    &:hover {
+      background-color: var(--color-accent-primary-lighter);
+      box-shadow: 0 0 15px rgba(255, 107, 0, 0.5);
+    }
+  }
+
+  .btn-outline {
+    background-color: transparent;
+    border: 1px solid var(--color-highlight-interactive);
+    color: var(--color-highlight-interactive);
+    @apply px-4 py-2 rounded-lg transition-all duration-200;
+    &:hover {
+      background-color: rgba(0, 240, 255, 0.1);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+    }
   }
 }
 
@@ -95,11 +160,11 @@
   
   /* Cloud shader related utilities */
   .cloud-shadow {
-    filter: drop-shadow(0 5px 15px rgba(59, 130, 246, 0.3));
+    filter: drop-shadow(0 5px 15px rgba(0, 240, 255, 0.3));
   }
   
   .cloud-glow {
-    box-shadow: 0 0 30px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
   }
   
   .z-shader {
@@ -128,7 +193,11 @@
   }
   
   .text-glow-blue {
-    text-shadow: 0 0 8px rgba(96, 165, 250, 0.7);
+    text-shadow: 0 0 8px rgba(0, 240, 255, 0.7);
+  }
+  
+  .text-glow-orange {
+    text-shadow: 0 0 8px rgba(255, 107, 0, 0.7);
   }
   
   .text-glow-white {
@@ -138,6 +207,31 @@
   /* Custom filter utility for icon glow effect */
   .icon-glow-white {
     filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+  }
+
+  .icon-glow-cyan {
+    filter: drop-shadow(0 0 3px rgba(0, 240, 255, 0.5));
+  }
+
+  .icon-glow-orange {
+    filter: drop-shadow(0 0 3px rgba(255, 107, 0, 0.5));
+  }
+
+  /* New gradient utilities */
+  .bg-gradient-futuristic {
+    background: linear-gradient(135deg, var(--color-base-deep) 0%, var(--color-base-deep-lighter) 100%);
+  }
+
+  .bg-gradient-accent {
+    background: linear-gradient(135deg, var(--color-accent-primary) 0%, var(--color-accent-primary-lighter) 100%);
+  }
+
+  .bg-gradient-highlight {
+    background: linear-gradient(135deg, var(--color-highlight-interactive) 0%, var(--color-highlight-interactive-lighter) 100%);
+  }
+
+  .bg-gradient-glass {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
   }
 }
 
@@ -177,4 +271,23 @@
 
 .animate-glow-pulse {
   animation: glow-pulse 8s infinite ease-in-out;
+}
+
+/* New animations */
+@keyframes float-up {
+  0% { transform: translateY(10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.animate-float-up {
+  animation: float-up 0.8s ease-out forwards;
+}
+
+@keyframes highlight-pulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
+  50% { box-shadow: 0 0 25px rgba(0, 240, 255, 0.7); }
+}
+
+.animate-highlight-pulse {
+  animation: highlight-pulse 3s infinite ease-in-out;
 }

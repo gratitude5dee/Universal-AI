@@ -13,23 +13,36 @@ body, html {
   overflow-x: hidden;
   width: 100%;
   height: 100%;
+  background-color: var(--color-base-deep);
 }
 
-/* Blue theme utility classes */
+/* Color utility classes */
 .glass-card {
-  @apply bg-card-gradient backdrop-blur-md border border-blue-primary/20 rounded-xl shadow-card-glow;
+  background: linear-gradient(135deg, rgba(20, 28, 68, 0.3), rgba(10, 15, 39, 0.4));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  @apply rounded-xl shadow-card-glow;
 }
 
-.blue-glow {
-  @apply shadow-blue-glow;
+.accent-glow {
+  box-shadow: 0 0 15px rgba(255, 107, 0, 0.5);
 }
 
-.blue-text {
-  @apply text-blue-lighter;
+.highlight-glow {
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
 }
 
-.blue-bg {
-  @apply bg-blue-primary;
+.accent-text {
+  color: var(--color-accent-primary);
+}
+
+.highlight-text {
+  color: var(--color-highlight-interactive);
+}
+
+.cool-gray-text {
+  color: var(--color-neutral-cool-gray);
 }
 
 .logo {
@@ -39,10 +52,10 @@ body, html {
   transition: filter 300ms;
 }
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em var(--color-highlight-interactive));
 }
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em var(--color-accent-primary));
 }
 
 @keyframes logo-spin {
@@ -65,5 +78,5 @@ body, html {
 }
 
 .read-the-docs {
-  color: #888;
+  color: var(--color-neutral-cool-gray);
 }

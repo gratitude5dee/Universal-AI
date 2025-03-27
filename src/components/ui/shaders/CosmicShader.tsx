@@ -15,17 +15,29 @@ const CosmicShader: React.FC = () => {
     }
   `;
 
-  // Fragment shader source with simplified cosmic effect that works reliably
+  // Fragment shader source with colors matching our new palette
   const fragmentShaderSource = `
     precision highp float;
     
     uniform float u_time;
     uniform vec2 u_resolution;
     
-    vec3 hsv2rgb(vec3 c) {
-      vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
-      vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
-      return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+    vec3 colorPalette(float t) {
+      // Blend between deep base color, accent color, and highlight color
+      vec3 baseDeep = vec3(0.039, 0.059, 0.153);      // #0A0F27
+      vec3 accentColor = vec3(1.0, 0.42, 0.0);        // #FF6B00
+      vec3 highlightColor = vec3(0.0, 0.941, 1.0);    // #00F0FF
+      
+      float t1 = fract(t + 0.0);
+      float t2 = fract(t + 0.33);
+      float t3 = fract(t + 0.66);
+      
+      // Sharper transitions
+      t1 = smoothstep(0.0, 0.5, t1) - smoothstep(0.5, 1.0, t1);
+      t2 = smoothstep(0.0, 0.5, t2) - smoothstep(0.5, 1.0, t2);
+      t3 = smoothstep(0.0, 0.5, t3) - smoothstep(0.5, 1.0, t3);
+      
+      return baseDeep * t1 + accentColor * t2 + highlightColor * t3;
     }
     
     void main() {
@@ -35,7 +47,7 @@ const CosmicShader: React.FC = () => {
       
       float time = u_time * 0.1;
       
-      vec4 finalColor = vec4(0.0, 0.0, 0.1, 1.0);
+      vec4 finalColor = vec4(0.039, 0.059, 0.153, 1.0); // Base deep color #0A0F27
       
       for (int i = 0; i < 5; i++) {
         float depth = 1.0 - float(i) * 0.2;
@@ -54,20 +66,17 @@ const CosmicShader: React.FC = () => {
           float dist = length(p - center);
           float brightness = 0.01 / dist;
           
-          vec3 color = hsv2rgb(vec3(
-            mod(index + time * 0.05, 1.0),
-            0.8,
-            brightness * depth
-          ));
+          // Use our color palette instead of HSV
+          vec3 color = colorPalette(index + time * 0.05) * brightness * depth;
           
           finalColor.rgb += color * (1.0 - depth) * 0.3;
         }
       }
       
-      // Add some background gradient
+      // Add some background gradient matching our color palette
       vec3 bgColor = mix(
-        vec3(0.0, 0.0, 0.1),
-        vec3(0.0, 0.0, 0.2),
+        vec3(0.039, 0.059, 0.153),  // #0A0F27 at bottom
+        vec3(0.078, 0.109, 0.267),  // #141C44 at top
         uv.y
       );
       
