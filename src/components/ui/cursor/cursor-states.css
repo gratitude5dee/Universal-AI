@@ -1,0 +1,75 @@
+
+/* Hover state with improved visuals */
+.futuristic-cursor.hovering {
+  width: 16px;
+  height: 16px;
+  background-color: rgba(0, 240, 255, 0.1);
+  border: 2px solid var(--color-highlight-interactive, #00f0ff);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.8), inset 0 0 6px rgba(0, 240, 255, 0.4);
+  transition: all 0.15s ease-out;
+}
+
+.futuristic-cursor.hovering .cursor-ring {
+  animation: ringPulseHover 1.5s infinite;
+}
+
+/* Click/Active state with enhanced feedback */
+.futuristic-cursor.active {
+  width: 14px;
+  height: 14px;
+  background-color: rgba(0, 240, 255, 0.3);
+  border: 2px solid var(--color-highlight-interactive, #00f0ff);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 1), inset 0 0 10px rgba(0, 240, 255, 0.6);
+  transition: all 0.1s ease-out;
+  animation: clickPulse 0.3s ease-out;
+}
+
+/* Loading state with improved animation */
+.futuristic-cursor.loading {
+  width: 20px;
+  height: 20px;
+  border: none;
+  background-color: transparent;
+  animation: none;
+}
+
+.cursor-loading {
+  position: absolute;
+  inset: -8px;
+  animation: spin 3s linear infinite;
+}
+
+.loading-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--color-highlight-interactive, #00f0ff);
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.8);
+  animation: loadingDotPulse 1.5s infinite;
+  animation-delay: calc(var(--index) * 0.15s);
+}
+
+.loading-dot:nth-child(1) {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.loading-dot:nth-child(2) {
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+}
+
+.loading-dot:nth-child(3) {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.loading-dot:nth-child(4) {
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}

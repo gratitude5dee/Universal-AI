@@ -1,0 +1,24 @@
+
+/* Particle effects */
+.cursor-particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: var(--color-highlight-interactive, #00f0ff);
+  box-shadow: 0 0 6px rgba(0, 240, 255, 0.8);
+  pointer-events: none;
+  z-index: 10000;
+}
+
+/* Floating particles for enhanced feedback */
+.cursor-float-particle {
+  position: fixed;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--color-highlight-interactive, #00f0ff);
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+  pointer-events: none;
+  z-index: 9997;
+}

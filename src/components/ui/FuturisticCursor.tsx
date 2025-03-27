@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import "./FuturisticCursor.css";
+import "./cursor/index.css";
 
 interface FuturisticCursorProps {
   isLoading?: boolean;
