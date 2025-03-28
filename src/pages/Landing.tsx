@@ -19,15 +19,17 @@ import {
   Workflow,
   CreditCard,
   Infinity,
-  Code
+  Code,
+  LucideIcon
 } from "lucide-react";
+import { LucideIconWrapper } from "@/components/ui/icons";
 import CloudShader from "@/components/ui/shaders/CloudShader";
 import Ambient from "@/components/ui/ambient";
 import MatrixDrop from "@/components/ui/animations/matrix-drop";
 
 // Type definition for the FeatureCard component props
 type FeatureCardProps = { 
-  icon: React.ElementType; // Using ElementType to handle Lucide icons
+  icon: LucideIcon;
   title: string;
   description: string;
   colorClass?: string;
@@ -244,9 +246,9 @@ const Landing = () => {
     );
   };
   
-  // Feature Card Component - Using ElementType for the icon
+  // Feature Card Component - Using the Lucide icon properly
   const FeatureCard = ({ 
-    icon: Icon,
+    icon: IconComponent,
     title, 
     description,
     colorClass = "from-teal-400 to-cyan-400"
@@ -261,7 +263,7 @@ const Landing = () => {
         transition={{ duration: 0.5 }}
       >
         <div className={`mb-4 p-3 rounded-lg bg-gradient-to-br ${colorClass} w-12 h-12 flex items-center justify-center`}>
-          <Icon className="h-6 w-6 text-white" />
+          <IconComponent className="h-6 w-6 text-white" />
         </div>
         <h3 className="text-xl font-semibold mb-2 text-white">{title}</h3>
         <p className="text-gray-300">{description}</p>

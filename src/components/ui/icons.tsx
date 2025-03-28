@@ -253,3 +253,21 @@ export const NavAgentIcon = AgentIcon;
 export const NavAnalyticsIcon = AnalyticsIcon;
 export const NavSettingsIcon = SettingsIcon;
 export const NavMarketplaceIcon = MarketplaceIcon;
+
+// Let's add an IconWrapper to handle Lucide icons
+import { LucideIcon } from "lucide-react";
+
+// Create a wrapper for Lucide icons
+export const LucideIconWrapper = ({ 
+  icon: LucideIcon, 
+  className,
+  size,
+  ...props 
+}: { 
+  icon: LucideIcon; 
+  className?: string;
+  size?: number;
+  [key: string]: any;
+}) => {
+  return <LucideIcon className={className} size={size} {...props} />;
+};
