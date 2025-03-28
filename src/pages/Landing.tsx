@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useMotionValue, useTransform, useAnimation } from "framer-motion";
@@ -19,17 +18,14 @@ import {
   Workflow,
   CreditCard,
   Infinity,
-  Code,
-  type LucideProps
+  Code
 } from "lucide-react";
-import { LucideIconWrapper } from "@/components/ui/icons";
 import CloudShader from "@/components/ui/shaders/CloudShader";
 import Ambient from "@/components/ui/ambient";
-import MatrixDrop from "@/components/ui/animations/matrix-drop";
 
 // Type definition for the FeatureCard component props
 type FeatureCardProps = { 
-  icon: React.ComponentType<LucideProps>;
+  icon: React.ElementType; // Using ElementType to handle Lucide icons
   title: string;
   description: string;
   colorClass?: string;
@@ -134,7 +130,7 @@ const Landing = () => {
                            %::.......=@*::-*%@%###+**--*@@@*@@@+=-----#*:::::-%*::::::::::-::::::::::::::::::=*#=:-*@@@@@@@@@@@                           
                           *::::..:.:::%#:::+#@#=+*#*+=#@@@*##*==-+*###+=:-::-=*=:::::::::::::-=-:::::.:.:::::::*=:=@@@@@@@@@@@@@                          
                          %-.+=%-....-*--:.:::=++++*@@@@@@*#@@%=-=-::::-%%#+--+#=-::::::.::.::::::::.:::::::.::::-:#@@@@@@@@@@@@@@                         
-                        ==::::.:.:.::::--:.:--+*#@@@@@@@%#@@%#+====:::=+---=+=-::==+=:--:::::::::.:::::==::::.:::==@@@@@@@@%@@@@@@                        
+                        ==::::.:.:.::::--:.:--+*#@@@@@@@%#@@%#+====:::=+---=+=-::==+=:--:::::::::.:::::==::::.:::==@@@@@@%@@@@@@@@                        
                         =-::......:.:::::-=%@@@@@@@@@@@*+=+=%@@@=-=:::-=:::::::-=--:::----+-::::::::::::::::::.:::=@@@@@@@@@@@@@@@                        
                         -: ...::.:.:::::+@@@@@@@@@@@@%:--+#@%**++-:::::.:::--+##+::::::::--+=+#@%+-:::::.:.:.::.:@@@@@@@@@@@@@@@@@@                       
                        *  ..:..::.::::--+@@@@@%%@@@@#*=-*%@#@%%@%%@@%=-+#@@@@@@%%#+=:::::::=#@@@%%@%-::::::.:.-+==*%%@@@@@@@@@@@@%@@                      
@@ -159,7 +155,7 @@ const Landing = () => {
                        #.                    ..:::.::-:-:-::::-----:::-==**+---:-:::===-=*#############*==-:.......  .:  .:  .::::*                       
                         -               ....:.::.::-----:--------:::::::-=+#*+==---:--::-*##%%@%@%%%%#*+==::.:.::..:::.......:--:=@                       
                         =:           ....:.::::::=--=--------:::.:..:.:::-=+#@*+---------=*#%@@@@@@%%+=++-:::.:.:.:.:.:::.:.:-:--=                        
-                         =:         .....::....:::.:::::--=-:::.:.:.:.:.::::::::-=****==------==*%@@@@@@@#++==:::.:.:.:=+:.:.-:::.::--=                         
+                         =:         .....::....:::.:::::--=-:::.:.:.:.:.::::::::-=****==------==*%@@@@@@@#++==:::.:.:.:=+:.:.-::..::--=                         
                           =..        ..:.:.:.::.:::.:-.:--:.:.:.:.:..:.:::-=+=**=---=====+#@@@@@@@*=--::::.:.::-%=.:::---:.:---+                          
                            +:       ..:..:::----:---:--=----:.:.:.:.:..:.:::-=+=+++=-==-====+*%@@@@@#=-:::.:.::.:=-:.::----:::::-*                           
                             #:       .........::----=-=---:.:.:.:.:..:.:::-=**=*+++==+=+=*@@@@@%=:::.::.:::--:.::--------:--#                            
@@ -167,7 +163,7 @@ const Landing = () => {
                               +-:.     ...:::.:::.:...::.:::.:.:.:.:.:.:::=*#+**=++**+=+-=+@%+--:::.:.--:::.:.:.::-------:--=+                              
                                 +:::.    ::-*=-=-:..:.......:..:.:.::--::-+#******##*==+#+===-:::.::-+:::.::.::--------:-+#                               
                                  +=: :.  .::+*:::::.:.:..::.::::.-*@%=-#*@@@%####**+=====+--::::.::-=::.::.:.:.:.:.------::=%                                 
-                                    *-:--...-#@#::... ..:::.:**+-:=@#*@%@@@@@*#**++=*+*+=::::-:-::::.:.:.:.:.:.:.:.::-------@                                   
+                                    *-:--...-#@#::... ..:::.:**+-:=@#*@%@@@@@*#**++=*+*+=::::-:-::::.:.:.:.:.:.:.:.-------@                                   
                                      %*#+:.   .-@#-. ....:.:-::-*%%#=*@%#%%#+###**+*==-::::.:.-+:.:.:::.:.:--:.:...:=#                                    
                                        @##+.  ...-*=:..:...:.::::::::::=#*%***###=-::::.::.:.:::.::-::.:.:.:.....:=@                                      
                                          @%*-:: ::. =*+-:-:--:::::::::.::**+#%%*=-:::.:-++:::::::::.:.:.:.:...::*@                                        
@@ -177,7 +173,7 @@ const Landing = () => {
                                                     #==++*####%%@*@@@%###===+====+#@%%+-=:+*#####++*@%@                                                   
                                                         #%@@%#%%%%@%@@@@@@@@@@@@@%++**##*=:..-+%@%%                                                       
                                                                @%++++++**#*##***+==::::-+#@@                                                              
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
       `];
     const [frameIndex, setFrameIndex] = useState(0);
     useEffect(() => {
@@ -246,9 +242,9 @@ const Landing = () => {
     );
   };
   
-  // Feature Card Component - Using the Lucide icon properly
+  // Feature Card Component - Using ElementType for the icon
   const FeatureCard = ({ 
-    icon,
+    icon: Icon,
     title, 
     description,
     colorClass = "from-teal-400 to-cyan-400"
@@ -263,7 +259,7 @@ const Landing = () => {
         transition={{ duration: 0.5 }}
       >
         <div className={`mb-4 p-3 rounded-lg bg-gradient-to-br ${colorClass} w-12 h-12 flex items-center justify-center`}>
-          <LucideIconWrapper icon={icon} className="h-6 w-6 text-white" />
+          <Icon className="h-6 w-6 text-white" />
         </div>
         <h3 className="text-xl font-semibold mb-2 text-white">{title}</h3>
         <p className="text-gray-300">{description}</p>
@@ -467,209 +463,4 @@ const Landing = () => {
                         <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-400"></div>
                         <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-400"></div>
                       </div>
-                      <div className="text-xs text-gray-400">universal.ai</div>
-                    </div>
-                    
-                    {/* Terminal-like interface */}
-                    <div className="bg-black/50 rounded-lg p-3 overflow-hidden h-40 sm:h-48 text-xs sm:text-sm font-mono text-green-500">
-                      <div className="text-cyan-400 mb-2">$ connecting to universal.ai...</div>
-                      <div className="text-green-500">$ access granted</div>
-                      <div className="text-green-400 mb-2">$ initializing creator protocol...</div>
-                      <div className="text-cyan-300">$ loading creative assets <span className="animate-pulse">▓▓▓▓▓▓░░░░</span> 60%</div>
-                      <div className="text-purple-400 mt-2">$ quantum entanglement established</div>
-                      <div className="text-amber-400">$ creator mode: <span className="text-cyan-500">ACTIVE</span></div>
-                      <div className="mt-2 text-white/80 animate-pulse">Ready to transform imagination into reality...</div>
-                    </div>
-                  </div>
-                  
-                  {/* Features list */}
-                  <div className="space-y-3">
-                    <div className="flex items-center text-xs sm:text-sm">
-                      <div className="w-1.5 h-1.5 bg-teal-400 rounded-full mr-2"></div>
-                      <span className="text-gray-300">AI-powered creation tools</span>
-                    </div>
-                    <div className="flex items-center text-xs sm:text-sm">
-                      <div className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2"></div>
-                      <span className="text-gray-300">Autonomous agent ecosystem</span>
-                    </div>
-                    <div className="flex items-center text-xs sm:text-sm">
-                      <div className="w-1.5 h-1.5 bg-orange-400 rounded-full mr-2"></div>
-                      <span className="text-gray-300">On-chain distribution network</span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-              
-              {/* Floating elements around the card for enhanced visual appeal */}
-              <motion.div 
-                className="absolute -top-6 -right-2 text-2xl"
-                animate={{ y: [0, -10, 0], opacity: [0.4, 0.8, 0.4] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <Sparkles className="h-6 w-6 text-yellow-300/70" />
-              </motion.div>
-              
-              <motion.div 
-                className="absolute -bottom-4 -left-2 text-2xl"
-                animate={{ y: [0, 10, 0], opacity: [0.3, 0.7, 0.3] }}
-                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-              >
-                <Brain className="h-6 w-6 text-purple-400/70" />
-              </motion.div>
-              
-              <motion.div 
-                className="absolute bottom-12 -right-4 text-2xl"
-                animate={{ y: [0, 8, 0], opacity: [0.2, 0.6, 0.2] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              >
-                <Palette className="h-5 w-5 text-teal-400/70" />
-              </motion.div>
-            </div>
-          </motion.div>
-        </main>
-        
-        {/* Custom WZRD.Work button section */}
-        <div className="mt-16 sm:mt-24 max-w-7xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="mb-6"
-          >
-            <h2 className="text-2xl sm:text-3xl font-bold mb-2">WZRD.Work</h2>
-            <p className="text-gray-300 max-w-2xl mx-auto">Connect to WZRD's innovative workspace platform</p>
-          </motion.div>
-          
-          <motion.div
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <Button
-              onClick={() => window.open("https://work.wzrdtech.xyz/", "_blank")}
-              className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white px-8 py-4 text-lg rounded-xl shadow-[0_0_20px_rgba(147,51,234,0.4)] hover:shadow-[0_0_30px_rgba(147,51,234,0.6)] relative overflow-hidden group"
-            >
-              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-purple-600/0 via-white/20 to-purple-600/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
-              <span className="flex items-center">
-                <BookOpen className="mr-2 h-5 w-5" />
-                Visit WZRD.Work
-              </span>
-            </Button>
-          </motion.div>
-        </div>
-        
-        {/* Features section */}
-        <section className="mt-20 sm:mt-32 max-w-7xl mx-auto">
-          <motion.div 
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-2xl sm:text-4xl font-bold mb-4">Universal AI Features</h2>
-            <p className="text-gray-300 max-w-2xl mx-auto">
-              Explore the capabilities that make Universal AI the ultimate platform for creators
-            </p>
-          </motion.div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {/* Feature cards */}
-            <FeatureCard 
-              icon={Brain}
-              title="AI-Powered Creation"
-              description="Harness the power of advanced AI to generate content, code, and creative assets effortlessly."
-              colorClass="from-purple-500 to-indigo-400"
-            />
-            
-            <FeatureCard 
-              icon={Database}
-              title="On-Chain Storage"
-              description="Secure your creations with decentralized storage solutions backed by blockchain technology."
-              colorClass="from-amber-500 to-orange-400"
-            />
-            
-            <FeatureCard 
-              icon={Cpu}
-              title="Agent Ecosystem"
-              description="Create autonomous AI agents that work for you, generating value while you focus on creativity."
-              colorClass="from-teal-500 to-cyan-400"
-            />
-            
-            <FeatureCard 
-              icon={Shield}
-              title="Enhanced Security"
-              description="Protect your intellectual property with cutting-edge security protocols and encryption."
-              colorClass="from-red-500 to-pink-400"
-            />
-            
-            <FeatureCard 
-              icon={BookOpenCheck}
-              title="Creative Prompting"
-              description="Advanced prompt engineering tools to help you craft the perfect input for your AI creations."
-              colorClass="from-green-500 to-emerald-400"
-            />
-            
-            <FeatureCard 
-              icon={Workflow}
-              title="Workflow Automation"
-              description="Streamline your creative process with custom automated workflows tailored to your needs."
-              colorClass="from-blue-500 to-sky-400"
-            />
-          </div>
-        </section>
-        
-        {/* Showcase section */}
-        <section className="mt-20 sm:mt-32 max-w-7xl mx-auto pb-20">
-          <motion.div 
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-2xl sm:text-4xl font-bold mb-4">Creation Showcase</h2>
-            <p className="text-gray-300 max-w-2xl mx-auto">
-              Discover what creators are building with Universal AI technology
-            </p>
-          </motion.div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            <ShowcaseItem 
-              title="AI-Powered Music Composition"
-              image="/placeholder.svg"
-              tag="Audio Creation"
-            />
-            
-            <ShowcaseItem 
-              title="Generative Visual Art Gallery"
-              image="/placeholder.svg"
-              tag="Visual Arts"
-            />
-            
-            <ShowcaseItem 
-              title="Interactive Storytelling Experience"
-              image="/placeholder.svg"
-              tag="Narrative"
-            />
-          </div>
-        </section>
-      </div>
-      
-      {/* Matrix-like background elements for additional visual flair */}
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-10">
-        <MatrixDrop char="1" x={50} y={100} speed={5} opacity={0.3} delay={0.2} />
-        <MatrixDrop char="0" x={150} y={200} speed={7} opacity={0.5} delay={0.5} />
-        <MatrixDrop char="1" x={250} y={150} speed={6} opacity={0.4} delay={0.8} />
-        <MatrixDrop char="0" x={350} y={220} speed={8} opacity={0.3} delay={1.1} />
-        <MatrixDrop char="1" x={450} y={180} speed={5} opacity={0.5} delay={1.4} />
-      </div>
-    </div>
-  );
-};
-
-export default Landing;
+                      <div className="text-xs text-gray-400
