@@ -20,14 +20,15 @@ import {
   CreditCard,
   Infinity,
   Code,
-  LucideIcon
+  type LucideIcon, // Import the LucideIcon type
+  type LucideProps
 } from "lucide-react";
 import CloudShader from "@/components/ui/shaders/CloudShader";
 import Ambient from "@/components/ui/ambient";
 
 // Type definition for the FeatureCard component props
 type FeatureCardProps = { 
-  icon: LucideIcon;  // Use LucideIcon type from lucide-react
+  icon: React.FC<LucideProps>; // Fixed icon type
   title: string;
   description: string;
   colorClass?: string;
@@ -261,7 +262,7 @@ const Landing = () => {
         transition={{ duration: 0.5 }}
       >
         <div className={`mb-4 p-3 rounded-lg bg-gradient-to-br ${colorClass} w-12 h-12 flex items-center justify-center`}>
-          <Icon className="h-6 w-6 text-white" /> {/* Fixed: proper component usage */}
+          <Icon className="h-6 w-6 text-white" />
         </div>
         <h3 className="text-xl font-semibold mb-2 text-white">{title}</h3>
         <p className="text-gray-300">{description}</p>
