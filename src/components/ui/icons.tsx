@@ -1,7 +1,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { LucideProps } from "lucide-react";
+import { LucideProps, LucideIcon } from "lucide-react";
 
 // Core Icon component with common props
 export interface IconProps extends React.SVGAttributes<SVGElement> {
@@ -254,20 +254,19 @@ export const NavAnalyticsIcon = AnalyticsIcon;
 export const NavSettingsIcon = SettingsIcon;
 export const NavMarketplaceIcon = MarketplaceIcon;
 
-// Let's add an IconWrapper to handle Lucide icons
-import { LucideIcon } from "lucide-react";
-
-// Create a wrapper for Lucide icons
-export const LucideIconWrapper = ({ 
-  icon: LucideIcon, 
-  className,
-  size,
-  ...props 
-}: { 
-  icon: LucideIcon; 
+// Create a wrapper for Lucide icons that correctly handles the component type
+export interface LucideIconWrapperProps {
+  icon: React.ComponentType<LucideProps>;
   className?: string;
   size?: number;
   [key: string]: any;
-}) => {
-  return <LucideIcon className={className} size={size} {...props} />;
+}
+
+export const LucideIconWrapper = ({ 
+  icon: Icon, 
+  className,
+  size,
+  ...props 
+}: LucideIconWrapperProps) => {
+  return <Icon className={className} size={size} {...props} />;
 };
