@@ -36,7 +36,7 @@ const WzrdStudio = () => {
             }} />
               
               <div className="relative z-10">
-                <h3 className="text-xl font-semibold text-studio-charcoal mb-2">WZRD.tech Creative Studio</h3>
+                <h3 className="text-xl font-semibold mb-2 text-slate-50">WZRD.tech Creative Studio</h3>
                 <p className="text-studio-clay mb-6">Cultivate your creator with our cutting-edge visual development environment.</p>
                 
                 <div className="flex items-center justify-between">
