@@ -19,15 +19,16 @@ import {
   Workflow,
   CreditCard,
   Infinity,
-  Code,
-  type LucideIcon
+  Code
 } from "lucide-react";
 import CloudShader from "@/components/ui/shaders/CloudShader";
 import Ambient from "@/components/ui/ambient";
+import CinematicIntro from "@/components/ui/animations/CinematicIntro";
+import { LucideProps } from "lucide-react";
 
 // Type definition for the FeatureCard component props
 type FeatureCardProps = { 
-  icon: React.ElementType; // Using ElementType to handle Lucide icons
+  icon: React.ComponentType<LucideProps>; // Using ComponentType to handle Lucide icons
   title: string;
   description: string;
   colorClass?: string;
@@ -48,16 +49,30 @@ const Landing = () => {
   const controls = useAnimation();
   const [isLoading, setIsLoading] = useState(true);
   const [typedText, setTypedText] = useState("");
+  const [showIntro, setShowIntro] = useState(true);
   const fullText = "Cultivate your Creator";
 
-  // ASCII animation effect
-  useEffect(() => {
-    // Simulate loading screen with ASCII animation
+  // Handle intro completion
+  const handleIntroComplete = () => {
+    setShowIntro(false);
+    // Start the normal loading animation process after intro finishes
+    setIsLoading(true);
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2000);
+    }, 1000); // Shorter loading time after intro
     return () => clearTimeout(timer);
-  }, []);
+  };
+
+  // ASCII animation effect - only if not showing intro
+  useEffect(() => {
+    if (!showIntro) {
+      // Simulate loading screen with ASCII animation
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showIntro]);
 
   // Typing effect implementation
   useEffect(() => {
@@ -308,11 +323,20 @@ const Landing = () => {
   
   return (
     <div className="fixed inset-0 min-h-screen w-full overflow-hidden">
+      {/* Cinematic Intro Animation */}
+      {showIntro && (
+        <CinematicIntro 
+          onComplete={handleIntroComplete}
+          commandText="install universal.ai"
+          noiseColor="270, 90%, 60%"
+        />
+      )}
+      
       {/* Background elements */}
       <Ambient showAsciiStreams={false} />
       
       {/* ASCII loading screen */}
-      {isLoading && <AsciiLoadingScreen />}
+      {!showIntro && isLoading && <AsciiLoadingScreen />}
 
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 h-full relative z-10 overflow-y-auto">
         {/* Header section */}

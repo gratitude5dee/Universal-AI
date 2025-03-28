@@ -1,0 +1,69 @@
+
+/* CinematicIntro.module.css */
+
+.introContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000; /* Black background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 1s ease-out 1s; /* Fade out container after animation (adjust timing) */
+}
+
+.introContainer.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+.terminal {
+  font-family: 'Courier New', Courier, monospace; /* Terminal font */
+  font-size: 1.2rem;
+  color: #0f0; /* Green terminal text */
+  text-shadow: 0 0 5px #0f0, 0 0 10px #0f0; /* Glow effect */
+  white-space: pre; /* Preserve whitespace for typing */
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
+.terminal.hidden {
+    opacity: 0;
+}
+
+.cursor {
+  display: inline-block;
+  background-color: #0f0;
+  box-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
+  width: 0.7em; /* Adjust cursor size */
+  height: 1.2em; /* Match line height */
+  margin-left: 2px;
+  vertical-align: bottom;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.matrixCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* Below terminal initially, will be shown later */
+  opacity: 0;
+  background-color: transparent; /* Will be drawn on */
+  transition: opacity 0.5s ease-in;
+}
+
+.matrixCanvas.visible {
+  opacity: 1;
+}
