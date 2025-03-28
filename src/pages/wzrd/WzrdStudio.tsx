@@ -1,12 +1,15 @@
+
 import React from "react";
 import DashboardLayout from "@/layouts/dashboard-layout";
 import { Content } from "@/components/ui/content";
 import { Palette, ExternalLink, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+
 const WzrdStudio = () => {
   console.log("Rendering WzrdStudio component");
-  return <DashboardLayout>
+  return (
+    <DashboardLayout>
       <Content title="WZRD.tech Studio" subtitle="Create magical digital experiences with our advanced creative tools">
         <div className="glass-card p-6">
           <div className="flex items-center mb-4">
@@ -21,22 +24,22 @@ const WzrdStudio = () => {
           
           {/* 3D Hover Card with Glassmorphism */}
           <motion.div className="mt-8 mb-8 relative group perspective-1000 cursor-interactive" whileHover={{
-          scale: 1.02,
-          rotateX: 5,
-          rotateY: 5
-        }} transition={{
-          type: "spring",
-          stiffness: 300,
-          damping: 15
-        }}>
+            scale: 1.02,
+            rotateX: 5,
+            rotateY: 5
+          }} transition={{
+            type: "spring",
+            stiffness: 300,
+            damping: 15
+          }}>
             <div className="bg-gradient-to-br from-purple-500/20 to-studio-accent/20 backdrop-blur-lg rounded-xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.1)] p-8 relative overflow-hidden">
               {/* Noise texture overlay */}
               <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay" style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-            }} />
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
+              }} />
               
               <div className="relative z-10">
-                <h3 className="text-xl font-semibold mb-2 text-slate-50">WZRD.tech Creative Studio</h3>
+                <h3 className="text-xl font-semibold text-studio-charcoal mb-2">WZRD.tech Creative Studio</h3>
                 <p className="text-studio-clay mb-6">Cultivate your creator with our cutting-edge visual development environment.</p>
                 
                 <div className="flex items-center justify-between">
@@ -60,22 +63,22 @@ const WzrdStudio = () => {
           
           {/* Second card for WZRD.Work */}
           <motion.div className="mt-8 mb-8 relative group perspective-1000 cursor-interactive" whileHover={{
-          scale: 1.02,
-          rotateX: 5,
-          rotateY: 5
-        }} transition={{
-          type: "spring",
-          stiffness: 300,
-          damping: 15
-        }}>
+            scale: 1.02,
+            rotateX: 5,
+            rotateY: 5
+          }} transition={{
+            type: "spring",
+            stiffness: 300,
+            damping: 15
+          }}>
             <div className="bg-gradient-to-br from-blue-500/20 to-teal-500/20 backdrop-blur-lg rounded-xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.1)] p-8 relative overflow-hidden">
               {/* Noise texture overlay */}
               <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay" style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-            }} />
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
+              }} />
               
               <div className="relative z-10">
-                <h3 className="text-xl font-semibold mb-2 text-slate-50">WZRD.Work</h3>
+                <h3 className="text-xl font-semibold text-studio-charcoal mb-2">WZRD.Work</h3>
                 <p className="text-studio-clay mb-6">Discover collaborative opportunities and professional wizardry tools for creators.</p>
                 
                 <div className="flex items-center justify-between">
@@ -113,6 +116,8 @@ const WzrdStudio = () => {
           </div>
         </div>
       </Content>
-    </DashboardLayout>;
+    </DashboardLayout>
+  );
 };
+
 export default WzrdStudio;
