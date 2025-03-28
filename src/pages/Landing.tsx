@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useMotionValue, useTransform, useAnimation } from "framer-motion";
@@ -386,7 +387,7 @@ const Landing = () => {
               animate={controls} 
               transition={{delay: 0.2}}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 to-purple-500/10 opacity-30" />
+              <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 to-purple-500/10 opacity-30"></div>
               <div 
                 className="absolute inset-0" 
                 style={{
@@ -394,7 +395,7 @@ const Landing = () => {
                   opacity: 0.05,
                   mixBlendMode: 'overlay'
                 }} 
-              />
+              ></div>
               <p className="text-base sm:text-lg text-gray-200 max-w-xl mx-auto lg:mx-0 relative z-10">
                 UNIVERSAL.AI IS FOR THE CREATOR, PERPETUAL CREATOR CRYPTO MACHINES, HYPERLIQUID CULTURE FUND
               </p>
@@ -413,7 +414,7 @@ const Landing = () => {
                 className="text-sm sm:text-base bg-transparent hover:bg-white/10 border border-white/20 backdrop-blur-sm px-6 sm:px-8 py-5 sm:py-6 h-auto rounded-lg relative overflow-hidden group" 
                 variant="outline"
               >
-                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-teal-500/0 via-white/5 to-teal-500/0 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
+                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-teal-500/0 via-white/5 to-teal-500/0 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></span>
                 <span className="relative z-10 flex items-center">
                   Explore Platform
                   <ExternalLink className="ml-2 h-4 w-4 opacity-70" />
@@ -446,7 +447,7 @@ const Landing = () => {
                       opacity: 0.05,
                       mixBlendMode: 'overlay'
                     }} 
-                  />
+                  ></div>
                   
                   {/* Enhanced lighting effect */}
                   <div className="absolute -top-20 -right-20 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl"></div>
@@ -462,4 +463,52 @@ const Landing = () => {
                       <div className="flex space-x-1.5">
                         <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-400"></div>
                         <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-400"></div>
-                        <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-400">
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-400"></div>
+                      </div>
+                      <div className="text-xs text-gray-400">AI Studio</div>
+                    </div>
+                    
+                    {/* Terminal-like content */}
+                    <div className="bg-black/30 rounded p-2 sm:p-3 text-[8px] sm:text-xs font-mono text-green-300 h-32 sm:h-40 overflow-hidden">
+                      <div className="opacity-80">$ initializing universal.ai</div>
+                      <div className="opacity-70">$ loading creator toolkit...</div>
+                      <div className="opacity-90 mt-1">$ initializing neural fabric</div>
+                      <div className="opacity-90">$ connecting to decentralized nodes</div>
+                      <div className="opacity-100 text-cyan-300 mt-1">[SYSTEM] Creator mode activated</div>
+                      <div className="animate-pulse mt-2 text-white">Ready to create magic_<span className="inline-block w-2 h-3 bg-white/70 animate-blink ml-0.5"></span></div>
+                    </div>
+                  </div>
+                  
+                  {/* Controls mockup */}
+                  <div className="space-y-2 sm:space-y-3">
+                    <div className="flex space-x-1.5 sm:space-x-2.5">
+                      <div className="h-1.5 sm:h-2 flex-1 rounded-full bg-teal-500/30"></div>
+                      <div className="h-1.5 sm:h-2 flex-1 rounded-full bg-cyan-500/20"></div>
+                      <div className="h-1.5 sm:h-2 flex-1 rounded-full bg-indigo-500/20"></div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="h-2 sm:h-3 w-14 sm:w-20 rounded-full bg-white/10"></div>
+                      <div className="h-2.5 sm:h-3.5 w-2.5 sm:w-3.5 rounded-full bg-cyan-400/50 animate-pulse"></div>
+                    </div>
+                    <div className="flex space-x-1 sm:space-x-2">
+                      <div className="h-3 sm:h-4 w-5 sm:w-7 rounded bg-white/10"></div>
+                      <div className="h-3 sm:h-4 w-6 sm:w-8 rounded bg-white/10"></div>
+                      <div className="h-3 sm:h-4 w-7 sm:w-9 rounded bg-white/10"></div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+              
+              {/* Floating elements for enhanced depth perception */}
+              <div className="absolute top-1/4 -left-4 sm:-left-6 w-8 h-8 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-purple-500/30 to-fuchsia-500/30 backdrop-blur-md border border-white/10 transform rotate-12 shadow-lg"></div>
+              <div className="absolute top-1/3 -right-4 sm:-right-8 w-6 h-6 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-cyan-500/30 to-teal-500/30 backdrop-blur-md border border-white/10 transform -rotate-12 shadow-lg"></div>
+              <div className="absolute bottom-1/4 left-1/4 w-4 h-4 sm:w-6 sm:h-6 rounded-full bg-orange-500/30 backdrop-blur-md border border-white/10 shadow-lg"></div>
+            </div>
+          </motion.div>
+        </main>
+      </div>
+    </div>
+  );
+};
+
+export default Landing;
