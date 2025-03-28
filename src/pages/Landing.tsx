@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useMotionValue, useTransform, useAnimation } from "framer-motion";
@@ -20,15 +19,14 @@ import {
   CreditCard,
   Infinity,
   Code,
-  type LucideIcon, // Import the LucideIcon type
-  type LucideProps
+  type LucideIcon
 } from "lucide-react";
 import CloudShader from "@/components/ui/shaders/CloudShader";
 import Ambient from "@/components/ui/ambient";
 
 // Type definition for the FeatureCard component props
 type FeatureCardProps = { 
-  icon: React.FC<LucideProps>; // Fixed icon type
+  icon: React.ElementType; // This is the key fix - use ElementType instead of FC<LucideProps>
   title: string;
   description: string;
   colorClass?: string;
@@ -146,7 +144,7 @@ const Landing = () => {
 +@@@+:.:*@@@=.=@@#-*@@@@@@@@-.+@@@%::..  -%@@@@@%=:-#*@%%@@@@+:::--=*#%+@@@@%==%@@@+:+@@**=::::--=#@@@@+:=%@@@%*#@@@@#:--#@@@=::=----*:.:-*@@@%#@*-::+@@@=
 +@@@+:..*@@%+:=@@@*:-%@@@@@@-.+@@@%:::...:=@@@@@+:.:--+##@@@@+..:::-**++%@@@%:-+%@@@##%%+%@@%+--:=%@@@@*=%@@@@@@@@@@@@+--#@@@=:.:----=.:-+%@@@=%@@=.:=@@@=
 +@@@+:.:*@@@=.=@@@*: .+@@@@%=.+@@@#::.:   .+@@@#::-==+++#@@@@@@@@@@@@+++@@@@@+::+%@@@%@@+#@@@@@@@@@@@@%+#@@@@*****#@@@%--#@@@=-::-+----==*@@@%=*@@*:.=@@@+
-=@@@*-:.*@@@=.=@@@#:.  :%@@%-.+@@@%::.     :#@#-:....::-%@@@@@@@@@@@@+=+@@@@%++:-*@@@@%#=###@@@@@@@@@*=*@@@@*:.  :=#@@@*-#@@@@@@@@@@+*@@%#@@@@@@@@@- -@@@=
+=@@@*-:.*@@@=.=@@@#:.  :%@@%-.+@@@%::.     :#@#-:....::-%@@@@@@@@@@@@+=+@@@@%++:-*@@@@%#=###@@@@@@@@@*=*@@@@*:.  :=@@@@*-#@@@@@@@@@@+*@@%#@@@@@@@@@- -@@@=
 +@@@@%*#@@@%: =@@@#:.    =@%- +@@%#:::      -++:.     .-+=+=++=+===++==+==++*+*=-====+++:+---=++++==--=*+++*+.   .-*###%+#@@%@@@@@@+=#@@@#@@=-==+@@+.-@@@=
 *+@@@@@@@@*-  -*#@#-.     :*-:+=-==::.         .:.        .  :=-.-..::-::.::-=+=-:-:--=====::...:::-::...:..:   ::::::-:-=-=====-=== :=++##+.  .=%@@--@@@=
  +===+=-:-:...---::....          ..                         .====::        .:-:::   ..:-::..   ....   .:::-::                           .:--   .=-:-==@%#=
@@ -160,12 +158,12 @@ const Landing = () => {
                         =:           ....:.::::::=--=--------:::.:..:.:::-=+#@*+---------=*#%@@@@@@%%+=++-:::.:.:.:.:.:::.:.:-:--=                        
                          =:         .....::....:::.:::::--=-:::.:.:.:.:.::::::::-=****==------==*%@@@@@@@#++==:::.:.:.:=+:.:.-::..::--=                         
                           =..        ..:.:.:.::.:::.:-.:--:.:.:.:.:..:.:::-=+=**=---=====+#@@@@@@@*=--::::.:.::-%=.:::---:.:---+                          
-                           +:       ..:..:::----:---:--=----:.:.:.:..:.:::-=+=+++=-==-====+*%@@@@@#=-:::.:.::.:=-:.::----:::::-*                           
+                           +:       ..:..:::----:---:--=----:.:.:.:.:..:.:::-=+=+++=-==-====+*%@@@@@#=-:::.:.::.:=-:.::----:::::-*                           
                             #:       .........::----=-=---:.:.:.:.:..:.:::-=**=*+++==+=+=*@@@@@%=:::.::.:::--:.::--------:--#                            
                              @-:      ..:.::.:...::::-----::.:.:.:.:.:::::::=**=*+++==+==+=++@@@@#=:::::.:::::.:.:--------::-=@                             
                               +-:.     ...:::.:::.:...::.:::.:.:.:.:.:.:::=*#+**=++**+=+-=+@%+--:::.:.--:::.:.:.::-------:--=+                              
                                 +:::.    ::-*=-=-:..:.......:..:.:.::--::-+#******##*==+#+===-:::.::-+:::.::.::--------:-+#                               
-                                 +=: :.  .::+*:::::.:.:..::.::::.-*@%=-#*@@@%####**+=====+--::::.::-=::.::.:.:.:.::------::=%                                 
+                                 +=: :.  .::+*:::::.:.:..::.::::.-*@%=-#*@@@%####**+=====+--::::.::-=::.::.:.:.:.:.------::=%                                 
                                     *-:--...-#@#::... ..:::.:**+-:=@#*@%@@@@@*#**++=*+*+=::::-:-::::.:.:.:.:.:.:.::-------@                                   
                                      %*#+:.   .-@#-. ....:.:-::-*%%#=*@%#%%#+###**+*==-::::.:.-+:.:.:::.:.:--:.:...:=#                                    
                                        @##+.  ...-*=:..:...:.::::::::::=#*%***###=-::::.::.:.:::.::-::.:.:.:.....:=@                                      
@@ -464,53 +462,4 @@ const Landing = () => {
                       <div className="flex space-x-1.5">
                         <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-400"></div>
                         <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-400"></div>
-                        <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-400"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </motion.div>
-        </main>
-
-        {/* Feature section */}
-        <section className="mt-20 sm:mt-32 max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">The Nexus of Creation</h2>
-            <p className="text-gray-300 max-w-2xl mx-auto">Universal AI unifies advanced AI tools, secure asset management, and innovative distribution channels in one powerful platform.</p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            <FeatureCard 
-              icon={Sparkles}
-              title="Generative AI Studio"
-              description="Create anything with our powerful AI tools, from images to audio, text, and beyond."
-              colorClass="from-cyan-400 to-blue-500"
-            />
-            <FeatureCard 
-              icon={BookOpen}
-              title="Infinite Library"
-              description="Access an endless collection of AI-generated resources and knowledge at your fingertips."
-              colorClass="from-purple-400 to-indigo-500"
-            />
-            <FeatureCard 
-              icon={Headphones}
-              title="AI Podcasts"
-              description="Generate engaging podcasts with realistic voices on any topic you can imagine."
-              colorClass="from-amber-400 to-orange-500"
-            />
-          </div>
-        </section>
-      </div>
-    </div>
-  );
-};
-
-export default Landing;
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-400">
