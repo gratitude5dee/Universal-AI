@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useMotionValue, useTransform, useAnimation } from "framer-motion";
@@ -472,5 +473,17 @@ const Landing = () => {
                   <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl"></div>
                   
                   {/* Platform mockup interface with improved 3D effect */}
-                  <div 
-                    className="bg-[#1E1E2E]/70 backdrop-blur-md rounded-xl p-3 sm:p-4 mb-4 sm:mb-5 relative"
+                  <div className="bg-[#1E1E2E]/70 backdrop-blur-md rounded-xl p-3 sm:p-4 mb-4 sm:mb-5 relative">
+                    {/* Interface content goes here */}
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </main>
+      </div>
+    </div>
+  );
+};
+
+export default Landing;
