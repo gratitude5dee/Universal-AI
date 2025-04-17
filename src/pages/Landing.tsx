@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useMotionValue, useTransform, useAnimation } from "framer-motion";
@@ -327,7 +328,7 @@ const Landing = () => {
       {showIntro && (
         <CinematicIntro 
           onComplete={handleIntroComplete}
-          commandText="install universal.ai"
+          commandText="pip install universalai"
           noiseColor="270, 90%, 60%"
         />
       )}
@@ -476,3 +477,14 @@ const Landing = () => {
                   {/* Enhanced lighting effect */}
                   <div className="absolute -top-20 -right-20 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl"></div>
                   <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl"></div>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </main>
+      </div>
+    </div>
+  );
+};
+
+export default Landing;
