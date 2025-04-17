@@ -2,8 +2,11 @@
 import { 
   TargetAndTransition, 
   AnimationControls,
-  MotionStyle
+  MotionStyle,
+  ForwardRefComponent,
+  HTMLMotionProps
 } from 'framer-motion';
+import { LucideIcon } from 'lucide-react';
 
 declare module 'framer-motion' {
   interface TargetAndTransition {
@@ -19,5 +22,16 @@ declare module 'framer-motion' {
     transform?: string;
     backgroundColor?: string;
     [key: string]: any;
+  }
+}
+
+// Add this to fix the type in Landing.tsx
+declare global {
+  interface ForwardRefExoticComponent<P> {
+    (props: P): JSX.Element;
+  }
+  
+  interface LucideIconType {
+    (props: any): JSX.Element;
   }
 }
