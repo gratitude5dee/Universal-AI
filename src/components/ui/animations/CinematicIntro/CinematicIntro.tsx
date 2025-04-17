@@ -1,19 +1,18 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styles from './CinematicIntro.module.css';
 
 interface CinematicIntroProps {
-  onComplete?: () => void; // Optional callback when animation finishes
+  onComplete?: () => void;
   commandText?: string;
   matrixChars?: string;
-  noiseColor?: string; // Base HSL color for noise (e.g., '270, 90%, 60%')
+  noiseColor?: string;
 }
 
 const CinematicIntro: React.FC<CinematicIntroProps> = ({
   onComplete,
-  commandText = 'pip install universal.ai',
+  commandText = 'pip install universalai',
   matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍｦｲｸｺｿﾁﾄﾉﾌﾔﾖﾙﾚﾛﾝ',
-  noiseColor = '270, 90%, 60%', // Purple/Violet base HSL
+  noiseColor = '270, 90%, 60%',
 }) => {
   const [typedCommand, setTypedCommand] = useState('$ ');
   const [showCursor, setShowCursor] = useState(true);
@@ -31,137 +30,128 @@ const CinematicIntro: React.FC<CinematicIntroProps> = ({
   const noiseParticlesRef = useRef<{ x: number; y: number; intensity: number; }[]>([]);
   const transitionProgressRef = useRef(0); // 0 = matrix, 1 = noise
 
-  // --- Animation Configuration ---
-  const TYPING_SPEED_MS = 80;
-  const MATRIX_ERUPTION_DURATION_MS = 2500;
-  const TRANSFORM_DURATION_MS = 1500;
-  const NOISE_DURATION_MS = 3000;
-  const FADE_OUT_DURATION_MS = 1000;
+  // Enhanced timing configuration
+  const TYPING_SPEED_MS = 60; // Faster typing for better engagement
+  const MATRIX_ERUPTION_DURATION_MS = 3000; // Longer matrix effect
+  const TRANSFORM_DURATION_MS = 2000; // Smoother transition
+  const NOISE_DURATION_MS = 2500; // Balanced noise duration
+  const FADE_OUT_DURATION_MS = 1500; // Smoother fade out
   const FONT_SIZE = 16;
-  const NOISE_PARTICLE_COUNT = 5000; // Adjust for performance/density
+  const NOISE_PARTICLE_COUNT = 7000; // More particles for richer effect
 
-  // --- Stage Transition Logic ---
+  // Enhanced stage transition logic
   useEffect(() => {
-    clearTimeout(stageTimeoutRef.current); // Clear previous timeouts
+    clearTimeout(stageTimeoutRef.current);
 
     if (stage === 'typing') {
       let i = 0;
       const targetCommand = '$ ' + commandText;
       const intervalId = setInterval(() => {
-        setTypedCommand((prev) => prev + targetCommand[i + 2]); // +2 to skip '$ '
+        setTypedCommand((prev) => {
+          // Add random glitch effect to previously typed characters
+          const glitched = prev.split('').map(char => 
+            Math.random() < 0.05 ? matrixChars[Math.floor(Math.random() * matrixChars.length)] : char
+          ).join('');
+          return glitched + targetCommand[i + 2];
+        });
         i++;
         if (i + 2 >= targetCommand.length) {
           clearInterval(intervalId);
           setShowCursor(false);
-          stageTimeoutRef.current = setTimeout(() => setStage('erupting'), 500); // Pause before eruption
+          stageTimeoutRef.current = setTimeout(() => setStage('erupting'), 800);
         }
       }, TYPING_SPEED_MS);
       return () => clearInterval(intervalId);
-
     } else if (stage === 'erupting') {
-      setShowTerminal(false); // Fade out terminal
-      setShowCanvas(true);    // Fade in canvas
-      transitionProgressRef.current = 0; // Ensure we start with matrix
+      setShowTerminal(false);
+      setShowCanvas(true);
+      transitionProgressRef.current = 0;
       stageTimeoutRef.current = setTimeout(() => setStage('transforming'), MATRIX_ERUPTION_DURATION_MS);
-
     } else if (stage === 'transforming') {
-       stageTimeoutRef.current = setTimeout(() => setStage('noise'), TRANSFORM_DURATION_MS);
-
+      stageTimeoutRef.current = setTimeout(() => setStage('noise'), TRANSFORM_DURATION_MS);
     } else if (stage === 'noise') {
       stageTimeoutRef.current = setTimeout(() => setStage('fading'), NOISE_DURATION_MS);
-
     } else if (stage === 'fading') {
-       setContainerVisible(false); // Start fading out the whole container via CSS
-       stageTimeoutRef.current = setTimeout(() => {
-            setStage('done');
-            if (onComplete) onComplete();
-        }, FADE_OUT_DURATION_MS + 100); // Wait for CSS fade + buffer
-
+      setContainerVisible(false);
+      stageTimeoutRef.current = setTimeout(() => {
+        setStage('done');
+        if (onComplete) onComplete();
+      }, FADE_OUT_DURATION_MS + 100);
     }
 
-    return () => clearTimeout(stageTimeoutRef.current); // Cleanup timeout on unmount/stage change
+    return () => clearTimeout(stageTimeoutRef.current);
+  }, [stage, commandText, onComplete, matrixChars]);
 
-  }, [stage, commandText, onComplete]);
-
-
-  // --- Canvas Drawing Logic ---
+  // Enhanced drawing logic with improved transitions
   const draw = useCallback((ctx: CanvasRenderingContext2D, frameCount: number, columns: number) => {
-    // --- Shared Drawing Setup ---
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.06)'; // Slightly transparent black for fading trails/background
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.08)'; // Slightly more transparent for smoother trails
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.font = `${FONT_SIZE}px monospace`;
 
-    // --- Calculate Transition Progress ---
     if (stage === 'transforming') {
-      transitionProgressRef.current = Math.min(1, transitionProgressRef.current + 1 / (TRANSFORM_DURATION_MS / (1000 / 60))); // Approx frames
+      const easedProgress = 1 - Math.cos((transitionProgressRef.current * Math.PI) / 2); // Smooth easing
+      transitionProgressRef.current = Math.min(1, transitionProgressRef.current + 1 / (TRANSFORM_DURATION_MS / (1000 / 60)));
     } else if (stage === 'noise' || stage === 'fading') {
-        transitionProgressRef.current = 1;
+      transitionProgressRef.current = 1;
     }
 
-    const progress = transitionProgressRef.current; // 0 = matrix, 1 = noise
+    const progress = transitionProgressRef.current;
 
-    // --- Draw Matrix (if progress < 1) ---
     if (progress < 1) {
-        const matrixAlpha = 1 - progress; // Fade out matrix
-        ctx.globalAlpha = matrixAlpha;
+      const matrixAlpha = 1 - easedProgress(progress); // Smooth fade out
+      ctx.globalAlpha = matrixAlpha;
+      ctx.fillStyle = '#0f0';
 
-        // Matrix Green Color (can transition this color too if desired)
-        ctx.fillStyle = '#0f0'; // Green Matrix text
+      dropsRef.current.forEach((y, i) => {
+        const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+        const x = i * FONT_SIZE;
+        
+        // Add subtle vertical movement
+        const offset = Math.sin(frameCount * 0.02 + i * 0.1) * 2;
+        ctx.fillText(text, x, (y * FONT_SIZE) + offset);
 
-        dropsRef.current.forEach((y, i) => {
-            const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-            const x = i * FONT_SIZE;
-            ctx.fillText(text, x, y * FONT_SIZE);
-
-            // Randomly reset drop or move down
-            if (y * FONT_SIZE > ctx.canvas.height && Math.random() > 0.975) {
-                dropsRef.current[i] = 0;
-            }
-            dropsRef.current[i]++;
-        });
-        ctx.globalAlpha = 1; // Reset global alpha
-    }
-
-
-    // --- Draw Noise (if progress > 0) ---
-    if (progress > 0) {
-        const noiseAlpha = stage === 'fading' ? Math.max(0, 1 - (1 - (stageTimeoutRef.current ? 1 : 0))) : progress; // Crude fade during 'fading' stage, better handled by container fade
-        ctx.globalAlpha = noiseAlpha;
-
-        if (noiseParticlesRef.current.length === 0) {
-            // Initialize noise particles only once when needed
-            for (let i = 0; i < NOISE_PARTICLE_COUNT; i++) {
-                noiseParticlesRef.current.push({
-                    x: Math.random() * ctx.canvas.width,
-                    y: Math.random() * ctx.canvas.height,
-                    intensity: Math.random() // 0 to 1
-                });
-            }
+        if (y * FONT_SIZE > ctx.canvas.height && Math.random() > 0.975) {
+          dropsRef.current[i] = 0;
         }
-
-        // Update and draw noise particles
-        noiseParticlesRef.current.forEach(p => {
-            // Simple movement (optional, makes it less static)
-            p.x += (Math.random() - 0.5) * 0.5;
-            p.y += (Math.random() - 0.5) * 0.5;
-            if (p.x < 0 || p.x > ctx.canvas.width) p.x = Math.random() * ctx.canvas.width; // Wrap around
-            if (p.y < 0 || p.y > ctx.canvas.height) p.y = Math.random() * ctx.canvas.height; // Wrap around
-
-            const lightness = 40 + p.intensity * 50; // Vary lightness based on intensity (40% to 90%)
-            const alpha = 0.1 + p.intensity * 0.6;   // Vary alpha based on intensity (more intense = brighter/more opaque)
-            ctx.fillStyle = `hsla(${noiseColor.split(',')[0]}, ${noiseColor.split(',')[1]}, ${lightness}%, ${alpha})`; // Use HSL for easy lightness/color control
-
-            // Draw particle (small rectangle)
-             ctx.fillRect(p.x, p.y, 1, 1); // Draw 1x1 pixel particles
-             // ctx.fillRect(p.x, p.y, 2, 2); // Or slightly larger
-        });
-
-        ctx.globalAlpha = 1.0; // Reset global alpha
+        dropsRef.current[i]++;
+      });
+      ctx.globalAlpha = 1;
     }
 
+    if (progress > 0) {
+      const noiseAlpha = stage === 'fading' ? 
+        Math.max(0, 1 - (frameCount % FADE_OUT_DURATION_MS) / FADE_OUT_DURATION_MS) : 
+        easedProgress(progress);
+      ctx.globalAlpha = noiseAlpha;
 
-  }, [stage, matrixChars, noiseColor]); // Dependencies for the drawing function
+      if (noiseParticlesRef.current.length === 0) {
+        for (let i = 0; i < NOISE_PARTICLE_COUNT; i++) {
+          noiseParticlesRef.current.push({
+            x: Math.random() * ctx.canvas.width,
+            y: Math.random() * ctx.canvas.height,
+            intensity: Math.random()
+          });
+        }
+      }
 
+      noiseParticlesRef.current.forEach(p => {
+        p.x += (Math.random() - 0.5) * 0.8;
+        p.y += (Math.random() - 0.5) * 0.8;
+        if (p.x < 0 || p.x > ctx.canvas.width) p.x = Math.random() * ctx.canvas.width;
+        if (p.y < 0 || p.y > ctx.canvas.height) p.y = Math.random() * ctx.canvas.height;
+
+        const lightness = 40 + p.intensity * 50;
+        const alpha = 0.1 + p.intensity * 0.7;
+        ctx.fillStyle = `hsla(${noiseColor.split(',')[0]}, ${noiseColor.split(',')[1]}, ${lightness}%, ${alpha})`;
+        
+        // Larger particles with dynamic size
+        const size = 1 + p.intensity * 2;
+        ctx.fillRect(p.x, p.y, size, size);
+      });
+
+      ctx.globalAlpha = 1.0;
+    }
+  }, [stage, matrixChars, noiseColor]);
 
   // --- Animation Loop ---
   useEffect(() => {
@@ -223,7 +213,7 @@ const CinematicIntro: React.FC<CinematicIntroProps> = ({
 
 
   // --- Render ---
-  if (stage === 'done') return null; // Don't render anything once done
+  if (stage === 'done') return null;
 
   return (
     <div className={`${styles.introContainer} ${!containerVisible ? styles.hidden : ''}`}>
@@ -235,5 +225,10 @@ const CinematicIntro: React.FC<CinematicIntroProps> = ({
     </div>
   );
 };
+
+// Easing function
+function easedProgress(progress: number): number {
+    return 1 - Math.cos((progress * Math.PI) / 2);
+}
 
 export default CinematicIntro;

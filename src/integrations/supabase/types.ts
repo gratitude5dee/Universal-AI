@@ -9,6 +9,74 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      characters: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+          project_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          project_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          project_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "characters_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      credit_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          metadata: Json | null
+          resource_type: string
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          resource_type: string
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          resource_type?: string
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       crypto_transactions: {
         Row: {
           amount: number
@@ -142,6 +210,76 @@ export type Database = {
         }
         Relationships: []
       }
+      generations: {
+        Row: {
+          api_provider: string
+          callback_received_at: string | null
+          created_at: string
+          external_request_id: string | null
+          failure_reason: string | null
+          id: string
+          project_id: string | null
+          request_payload: Json
+          result_media_asset_id: string | null
+          shot_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          api_provider: string
+          callback_received_at?: string | null
+          created_at?: string
+          external_request_id?: string | null
+          failure_reason?: string | null
+          id?: string
+          project_id?: string | null
+          request_payload: Json
+          result_media_asset_id?: string | null
+          shot_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          api_provider?: string
+          callback_received_at?: string | null
+          created_at?: string
+          external_request_id?: string | null
+          failure_reason?: string | null
+          id?: string
+          project_id?: string | null
+          request_payload?: Json
+          result_media_asset_id?: string | null
+          shot_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generations_result_media_asset_id_fkey"
+            columns: ["result_media_asset_id"]
+            isOneToOne: false
+            referencedRelation: "media_assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generations_shot_id_fkey"
+            columns: ["shot_id"]
+            isOneToOne: false
+            referencedRelation: "shots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       keyframes: {
         Row: {
           created_at: string | null
@@ -173,6 +311,59 @@ export type Database = {
             columns: ["track_item_id"]
             isOneToOne: false
             referencedRelation: "track_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      media_assets: {
+        Row: {
+          asset_type: string
+          cdn_url: string | null
+          created_at: string
+          file_name: string
+          id: string
+          mime_type: string
+          project_id: string | null
+          purpose: string
+          size_bytes: number | null
+          storage_path: string | null
+          storage_provider: string | null
+          user_id: string
+        }
+        Insert: {
+          asset_type: string
+          cdn_url?: string | null
+          created_at?: string
+          file_name: string
+          id?: string
+          mime_type: string
+          project_id?: string | null
+          purpose: string
+          size_bytes?: number | null
+          storage_path?: string | null
+          storage_provider?: string | null
+          user_id: string
+        }
+        Update: {
+          asset_type?: string
+          cdn_url?: string | null
+          created_at?: string
+          file_name?: string
+          id?: string
+          mime_type?: string
+          project_id?: string | null
+          purpose?: string
+          size_bytes?: number | null
+          storage_path?: string | null
+          storage_provider?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_assets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]
@@ -274,9 +465,11 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          claude_api_key: string | null
           created_at: string
           id: string
           last_wallet_connection: string | null
+          luma_api_key: string | null
           updated_at: string
           username: string | null
           wallet_address: string | null
@@ -285,9 +478,11 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          claude_api_key?: string | null
           created_at?: string
           id: string
           last_wallet_connection?: string | null
+          luma_api_key?: string | null
           updated_at?: string
           username?: string | null
           wallet_address?: string | null
@@ -296,9 +491,11 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          claude_api_key?: string | null
           created_at?: string
           id?: string
           last_wallet_connection?: string | null
+          luma_api_key?: string | null
           updated_at?: string
           username?: string | null
           wallet_address?: string | null
@@ -309,33 +506,156 @@ export type Database = {
       }
       projects: {
         Row: {
+          add_voiceover: boolean | null
           aspect_ratio: string | null
+          call_to_action: string | null
+          cinematic_inspiration: string | null
+          concept_option: string | null
+          concept_text: string | null
           created_at: string | null
+          custom_format_description: string | null
           description: string | null
+          format: string | null
+          genre: string | null
           id: string
+          main_message: string | null
+          product_name: string | null
+          selected_storyline_id: string | null
+          special_requests: string | null
+          style_reference_asset_id: string | null
+          target_audience: string | null
           title: string
+          tone: string | null
           updated_at: string | null
           user_id: string
+          video_style: string | null
         }
         Insert: {
+          add_voiceover?: boolean | null
           aspect_ratio?: string | null
+          call_to_action?: string | null
+          cinematic_inspiration?: string | null
+          concept_option?: string | null
+          concept_text?: string | null
           created_at?: string | null
+          custom_format_description?: string | null
           description?: string | null
+          format?: string | null
+          genre?: string | null
           id?: string
+          main_message?: string | null
+          product_name?: string | null
+          selected_storyline_id?: string | null
+          special_requests?: string | null
+          style_reference_asset_id?: string | null
+          target_audience?: string | null
           title?: string
+          tone?: string | null
           updated_at?: string | null
           user_id: string
+          video_style?: string | null
         }
         Update: {
+          add_voiceover?: boolean | null
           aspect_ratio?: string | null
+          call_to_action?: string | null
+          cinematic_inspiration?: string | null
+          concept_option?: string | null
+          concept_text?: string | null
           created_at?: string | null
+          custom_format_description?: string | null
           description?: string | null
+          format?: string | null
+          genre?: string | null
           id?: string
+          main_message?: string | null
+          product_name?: string | null
+          selected_storyline_id?: string | null
+          special_requests?: string | null
+          style_reference_asset_id?: string | null
+          target_audience?: string | null
           title?: string
+          tone?: string | null
           updated_at?: string | null
           user_id?: string
+          video_style?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "projects_selected_storyline_id_fkey"
+            columns: ["selected_storyline_id"]
+            isOneToOne: false
+            referencedRelation: "storylines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_style_reference_asset_id_fkey"
+            columns: ["style_reference_asset_id"]
+            isOneToOne: false
+            referencedRelation: "media_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scenes: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          lighting: string | null
+          location: string | null
+          project_id: string
+          scene_number: number
+          storyline_id: string | null
+          title: string | null
+          updated_at: string
+          voiceover: string | null
+          weather: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          lighting?: string | null
+          location?: string | null
+          project_id: string
+          scene_number: number
+          storyline_id?: string | null
+          title?: string | null
+          updated_at?: string
+          voiceover?: string | null
+          weather?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          lighting?: string | null
+          location?: string | null
+          project_id?: string
+          scene_number?: number
+          storyline_id?: string | null
+          title?: string | null
+          updated_at?: string
+          voiceover?: string | null
+          weather?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scenes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scenes_storyline_id_fkey"
+            columns: ["storyline_id"]
+            isOneToOne: false
+            referencedRelation: "storylines"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       shared_videos: {
         Row: {
@@ -418,6 +738,125 @@ export type Database = {
             columns: ["workflow_id"]
             isOneToOne: false
             referencedRelation: "workflows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shots: {
+        Row: {
+          audio_status: string | null
+          audio_url: string | null
+          created_at: string | null
+          dialogue: string | null
+          failure_reason: string | null
+          id: string
+          image_status: string | null
+          image_url: string | null
+          luma_generation_id: string | null
+          project_id: string
+          prompt_idea: string | null
+          scene_id: string
+          shot_number: number
+          shot_type: string | null
+          sound_effects: string | null
+          updated_at: string | null
+          visual_prompt: string | null
+        }
+        Insert: {
+          audio_status?: string | null
+          audio_url?: string | null
+          created_at?: string | null
+          dialogue?: string | null
+          failure_reason?: string | null
+          id?: string
+          image_status?: string | null
+          image_url?: string | null
+          luma_generation_id?: string | null
+          project_id: string
+          prompt_idea?: string | null
+          scene_id: string
+          shot_number: number
+          shot_type?: string | null
+          sound_effects?: string | null
+          updated_at?: string | null
+          visual_prompt?: string | null
+        }
+        Update: {
+          audio_status?: string | null
+          audio_url?: string | null
+          created_at?: string | null
+          dialogue?: string | null
+          failure_reason?: string | null
+          id?: string
+          image_status?: string | null
+          image_url?: string | null
+          luma_generation_id?: string | null
+          project_id?: string
+          prompt_idea?: string | null
+          scene_id?: string
+          shot_number?: number
+          shot_type?: string | null
+          sound_effects?: string | null
+          updated_at?: string | null
+          visual_prompt?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shots_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shots_scene_id_fkey"
+            columns: ["scene_id"]
+            isOneToOne: false
+            referencedRelation: "scenes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      storylines: {
+        Row: {
+          created_at: string
+          description: string
+          full_story: string
+          generated_by: string | null
+          id: string
+          is_selected: boolean | null
+          project_id: string
+          tags: string[] | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          full_story: string
+          generated_by?: string | null
+          id?: string
+          is_selected?: boolean | null
+          project_id: string
+          tags?: string[] | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          full_story?: string
+          generated_by?: string | null
+          id?: string
+          is_selected?: boolean | null
+          project_id?: string
+          tags?: string[] | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "storylines_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]
@@ -526,6 +965,33 @@ export type Database = {
           },
         ]
       }
+      user_credits: {
+        Row: {
+          created_at: string
+          id: string
+          total_credits: number
+          updated_at: string
+          used_credits: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          total_credits?: number
+          updated_at?: string
+          used_credits?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          total_credits?: number
+          updated_at?: string
+          used_credits?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       wallet_sessions: {
         Row: {
           created_at: string
@@ -633,7 +1099,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      add_credits: {
+        Args: {
+          credit_amount: number
+          transaction_type?: string
+          metadata?: Json
+        }
+        Returns: boolean
+      }
+      get_available_credits: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      is_authenticated_user: {
+        Args: { requested_user_id: string }
+        Returns: boolean
+      }
+      use_credits: {
+        Args: { resource_type: string; credit_cost?: number; metadata?: Json }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
@@ -644,27 +1129,29 @@ export type Database = {
   }
 }
 
-type PublicSchema = Database[Extract<keyof Database, "public">]
+type DefaultSchema = Database[Extract<keyof Database, "public">]
 
 export type Tables<
-  PublicTableNameOrOptions extends
-    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-        Database[PublicTableNameOrOptions["schema"]]["Views"])
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
-        PublicSchema["Views"])
-    ? (PublicSchema["Tables"] &
-        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -672,20 +1159,22 @@ export type Tables<
     : never
 
 export type TablesInsert<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -693,20 +1182,22 @@ export type TablesInsert<
     : never
 
 export type TablesUpdate<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -714,21 +1205,23 @@ export type TablesUpdate<
     : never
 
 export type Enums<
-  PublicEnumNameOrOptions extends
-    | keyof PublicSchema["Enums"]
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
     | { schema: keyof Database },
-  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
-    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof PublicSchema["CompositeTypes"]
+    | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof Database },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof Database
@@ -737,6 +1230,12 @@ export type CompositeTypes<
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
   ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
-    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const
