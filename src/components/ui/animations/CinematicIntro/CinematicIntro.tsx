@@ -11,7 +11,7 @@ interface CinematicIntroProps {
 
 const CinematicIntro: React.FC<CinematicIntroProps> = ({
   onComplete,
-  commandText = 'pip install universalai',
+  commandText = 'pip install $5dee',
   matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍｦｲｸｺｿﾁﾄﾉﾌﾔﾖﾙﾚﾛﾝ',
   noiseColor = '270, 90%, 60%',
 }) => {
