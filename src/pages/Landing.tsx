@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, useMotionValue, useTransform, useAnimation } from "framer-motion";
@@ -481,3 +482,8 @@ const Landing = () => {
           </motion.div>
         </main>
       </div>
+    </div>
+  );
+};
+
+export default Landing;
