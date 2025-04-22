@@ -1,18 +1,12 @@
+
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@crossmint/client-sdk-react-ui";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { LogOut } from "lucide-react";
 import { AgentIcon, BrainIcon, WalletIcon, DashboardIcon } from "@/components/ui/icons";
 import Ambient from "@/components/ui/ambient";
-
-// Try to import from Crossmint first, fallback to our mock implementation
-let useAuth: any;
-try {
-  useAuth = require("@crossmint/client-sdk-react-ui").useAuth;
-} catch (e) {
-  useAuth = require("@/context/AuthContext").useAuth;
-}
 
 export default function Index() {
   const navigate = useNavigate();

@@ -12,7 +12,6 @@ import { AnimatePresence } from "framer-motion";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { WalletProvider } from "@/context/WalletContext";
 import { ProtectedRoute } from "@/components/ui/ProtectedRoute";
-import { AuthProvider } from "@/context/AuthContext";
 
 // Import all page components
 import Home from "./pages/Index";
@@ -36,17 +35,7 @@ import WzrdInfiniteLibrary from "./pages/wzrd/WzrdInfiniteLibrary";
 import WzrdCompanions from "./pages/wzrd/WzrdCompanions";
 
 // Conditionally import Crossmint only if we have a valid API key
-let CrossmintProvider: any;
-let CrossmintAuthProvider: any;
-try {
-  const crossmint = require("@crossmint/client-sdk-react-ui");
-  CrossmintProvider = crossmint.CrossmintProvider;
-  CrossmintAuthProvider = crossmint.CrossmintAuthProvider;
-} catch (e) {
-  // Create dummy components if Crossmint isn't available
-  CrossmintProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-  CrossmintAuthProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-}
+import { CrossmintProvider, CrossmintAuthProvider } from "@crossmint/client-sdk-react-ui";
 
 window.Buffer = Buffer;
 
@@ -75,11 +64,9 @@ function App() {
             </CrossmintAuthProvider>
           </CrossmintProvider>
         ) : (
-          <AuthProvider>
-            <WalletProvider>
-              <AppContent bypassAuth={true} />
-            </WalletProvider>
-          </AuthProvider>
+          <WalletProvider>
+            <AppContent bypassAuth={true} />
+          </WalletProvider>
         )}
       </ErrorBoundary>
     </QueryClientProvider>

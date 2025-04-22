@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 
@@ -43,7 +42,7 @@ type PaginationLinkProps = {
 const PaginationLink = ({
   className,
   isActive,
-  size = "icon" as "default" | "sm" | "lg" | "icon",
+  size = "icon",
   ...props
 }: PaginationLinkProps) => (
   <a
