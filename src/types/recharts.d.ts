@@ -53,3 +53,4 @@ declare module 'recharts' {
   export const ReferenceLine: FC<any>;
   export const Area: FC<any>;
   export const AreaChart: FC<any>;
+}

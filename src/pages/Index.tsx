@@ -6,13 +6,8 @@ import { LogOut } from "lucide-react";
 import { AgentIcon, BrainIcon, WalletIcon, DashboardIcon } from "@/components/ui/icons";
 import Ambient from "@/components/ui/ambient";
 
-// Try to import from Crossmint first, fallback to our mock implementation
-let useAuth: any;
-try {
-  useAuth = require("@crossmint/client-sdk-react-ui").useAuth;
-} catch (e) {
-  useAuth = require("@/context/AuthContext").useAuth;
-}
+// Import our mock implementation as a fallback
+import { useAuth } from "@/context/AuthContext";
 
 export default function Index() {
   const navigate = useNavigate();
