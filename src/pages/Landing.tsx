@@ -24,6 +24,7 @@ import type { LucideIcon } from "lucide-react";
 import CloudShader from "@/components/ui/shaders/CloudShader";
 import Ambient from "@/components/ui/ambient";
 import CinematicIntro from "@/components/ui/animations/CinematicIntro/CinematicIntro";
+import TerminalWindow from "@/components/ui/TerminalWindow";
 
 // Modify the FeatureCardProps type to use LucideIcon
 type FeatureCardProps = { 
@@ -160,7 +161,7 @@ const Landing = () => {
 +@@@+:.:*@@%+:=@@@*:-%@@@@@@-.+@@@%:::...:=@@@@@+:.:--+##@@@@+..:::-**++%@@@%:-+%@@@##%%+%@@%+--:=%@@@@*=%@@@@@@@@@@@@+--#@@@=:.:----=.:-+%@@@=%@@=.:=@@@=
 +@@@+:.:*@@@=.=@@@*: .+@@@@%=.+@@@#::.:   .+@@@#::-==+++#@@@@@@@@@@@@+++@@@@@+::+%@@@%@@+#@@@@@@@@@@@@%+#@@@@*****#@@@%--#@@@=-::-+----==*@@@%=*@@*:.=@@@+
 =@@@*-:.*@@@=.=@@@#:.  :%@@%-.+@@@%::.     :#@#-:....::-%@@@@@@@@@@@@+=+@@@@%++:-*@@@@%#=###@@@@@@@@@*=*@@@@*:.  :=@@@@*-#@@@@@@@@@@+*@@%#@@@@@@@@@- -@@@=
-+@@@@%*#@@@%: =@@@#:.    =@%- +@@%#:::      -++:.     .-+=+=++=+===++==+==++*+*=-====+++:+---=++++==--=*+++*+.   .-*###%+#@@%@@@@@@+=#@@@#@@=-==+@@+.-@@@=
++@@@@%*#@@@%: =@@@#:.    =@%- +@@%#:::      -++:.     .-+=+=++=+===++==+==++*+*=-====+++:+---=++++==--=*+++%+.   .-*###%+#@@%@@@@@@+=#@@@#@@=-==+@@+.-@@@=
 *+@@@@@@@@*-  -*#@#-.     :*-:+=-==::.         .:.        .  :=-.-..::-::.::-=+=-:-:--=====::...:::-::...:..:   ::::::-:-=-=====-=== :=++##+.  .=%@@--@@@=
  +===+=-:-:...---::....          ..                         .====::        .:-:::   ..:-::..   ....   .:::-::                           .:--   .=-:-==@%#=
    @@*+:::::::-+@#=@@:           ::               :.        : ::.                                         ....                   .::-@@@@+.         ..::--
@@ -454,30 +455,12 @@ const Landing = () => {
             transition={{duration: 0.6, delay: 0.2}} 
             style={{perspective: 1000}}
           >
-            <div className="relative w-full max-w-lg mx-auto">
-              {/* 3D tilting main card container with enhanced shadows */}
-              <motion.div 
-                className="relative" 
-                style={{rotateX, rotateY, transformStyle: "preserve-3d"}}
-              >
-                {/* Glass card container with improved lighting effects */}
-                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 border border-white/20 shadow-[0_20px_80px_-10px_rgba(45,212,191,0.3)] transform transition-all duration-200 relative overflow-hidden">
-                  {/* Inner noise texture */}
-                  <div 
-                    className="absolute inset-0" 
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-                      opacity: 0.05,
-                      mixBlendMode: 'overlay'
-                    }} 
-                  ></div>
-                  
-                  {/* Enhanced lighting effect */}
-                  <div className="absolute -top-20 -right-20 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl"></div>
-                  <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl"></div>
-                </div>
-              </motion.div>
-            </div>
+            <TerminalWindow />
           </motion.div>
         </main>
       </div>
+    </div>
+  );
+};
+
+export default Landing;
