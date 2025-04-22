@@ -1,5 +1,5 @@
 
-import { Buffer } from 'buffer';
+import { Buffer as BufferPolyfill } from 'buffer';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -36,19 +36,23 @@ import WzrdInfiniteLibrary from "./pages/wzrd/WzrdInfiniteLibrary";
 import WzrdCompanions from "./pages/wzrd/WzrdCompanions";
 
 // Conditionally import Crossmint only if we have a valid API key
-let CrossmintProvider: any;
-let CrossmintAuthProvider: any;
+let CrossmintProvider: React.FC<{children: React.ReactNode}>;
+let CrossmintAuthProvider: React.FC<{children: React.ReactNode, loginMethods: string[]}>;
+
 try {
   const crossmint = require("@crossmint/client-sdk-react-ui");
   CrossmintProvider = crossmint.CrossmintProvider;
   CrossmintAuthProvider = crossmint.CrossmintAuthProvider;
 } catch (e) {
   // Create dummy components if Crossmint isn't available
-  CrossmintProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-  CrossmintAuthProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+  CrossmintProvider = ({ children }) => <>{children}</>;
+  CrossmintAuthProvider = ({ children }) => <>{children}</>;
 }
 
-window.Buffer = Buffer;
+// Set global Buffer for the window object
+if (typeof window !== 'undefined') {
+  window.Buffer = BufferPolyfill;
+}
 
 const queryClient = new QueryClient();
 
