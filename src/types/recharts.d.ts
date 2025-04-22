@@ -15,9 +15,29 @@ declare module 'recharts' {
     id?: string | number;
   }
 
-  export const ResponsiveContainer: FC<ResponsiveContainerProps & RefAttributes<HTMLDivElement>>;
+  export interface LegendProps {
+    width?: number;
+    height?: number;
+    layout?: 'horizontal' | 'vertical';
+    align?: 'left' | 'center' | 'right';
+    verticalAlign?: 'top' | 'middle' | 'bottom';
+    iconSize?: number;
+    iconType?: 'line' | 'square' | 'rect' | 'circle' | 'cross' | 'diamond' | 'star' | 'triangle' | 'wye';
+    payload?: Array<any>;
+    chartWidth?: number;
+    chartHeight?: number;
+    margin?: object;
+    content?: ReactNode | FC<any>;
+    wrapperStyle?: object;
+    onClick?: (data: any) => void;
+    onMouseEnter?: (data: any) => void;
+    onMouseLeave?: (data: any) => void;
+  }
 
-  // Add other recharts components as needed
+  export const ResponsiveContainer: FC<ResponsiveContainerProps & RefAttributes<HTMLDivElement>>;
+  export const Label: FC<any>;
+
+  // Add other recharts components
   export const LineChart: FC<any>;
   export const Line: FC<any>;
   export const BarChart: FC<any>;

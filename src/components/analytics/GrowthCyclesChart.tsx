@@ -36,68 +36,70 @@ const GrowthCyclesChart = () => {
       </h2>
       <div className="h-[300px] w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={monthlyData}>
-            <defs>
-              <linearGradient id="colorGrowth" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#8BC34A" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#8BC34A" stopOpacity={0} />
-              </linearGradient>
-              <linearGradient id="colorSunshine" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#FF9800" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#FF9800" stopOpacity={0} />
-              </linearGradient>
-              <linearGradient id="colorWater" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#03A9F4" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#03A9F4" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <XAxis 
-              dataKey="name" 
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 12, fill: "#8A8A8A" }}
-            />
-            <YAxis 
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 12, fill: "#8A8A8A" }}
-            />
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
-            <Tooltip 
-              contentStyle={{ 
-                borderRadius: "8px", 
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                border: "none"
-              }}
-            />
-            <Area 
-              type="monotone" 
-              dataKey="growth" 
-              stroke="#8BC34A" 
-              strokeWidth={2}
-              fillOpacity={1} 
-              fill="url(#colorGrowth)" 
-              name="Growth"
-            />
-            <Area 
-              type="monotone" 
-              dataKey="sunshine" 
-              stroke="#FF9800" 
-              strokeWidth={2}
-              fillOpacity={1} 
-              fill="url(#colorSunshine)" 
-              name="Sunshine"
-            />
-            <Area 
-              type="monotone" 
-              dataKey="water" 
-              stroke="#03A9F4" 
-              strokeWidth={2}
-              fillOpacity={1} 
-              fill="url(#colorWater)" 
-              name="Water"
-            />
-          </AreaChart>
+          {(containerProps) => (
+            <AreaChart data={monthlyData} width={containerProps.width} height={containerProps.height}>
+              <defs>
+                <linearGradient id="colorGrowth" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#8BC34A" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#8BC34A" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="colorSunshine" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#FF9800" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#FF9800" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="colorWater" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#03A9F4" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#03A9F4" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <XAxis 
+                dataKey="name" 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 12, fill: "#8A8A8A" }}
+              />
+              <YAxis 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 12, fill: "#8A8A8A" }}
+              />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
+              <Tooltip 
+                contentStyle={{ 
+                  borderRadius: "8px", 
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                  border: "none"
+                }}
+              />
+              <Area 
+                type="monotone" 
+                dataKey="growth" 
+                stroke="#8BC34A" 
+                strokeWidth={2}
+                fillOpacity={1} 
+                fill="url(#colorGrowth)" 
+                name="Growth"
+              />
+              <Area 
+                type="monotone" 
+                dataKey="sunshine" 
+                stroke="#FF9800" 
+                strokeWidth={2}
+                fillOpacity={1} 
+                fill="url(#colorSunshine)" 
+                name="Sunshine"
+              />
+              <Area 
+                type="monotone" 
+                dataKey="water" 
+                stroke="#03A9F4" 
+                strokeWidth={2}
+                fillOpacity={1} 
+                fill="url(#colorWater)" 
+                name="Water"
+              />
+            </AreaChart>
+          )}
         </ResponsiveContainer>
       </div>
     </motion.div>
