@@ -36,7 +36,7 @@ import WzrdInfiniteLibrary from "./pages/wzrd/WzrdInfiniteLibrary";
 import WzrdCompanions from "./pages/wzrd/WzrdCompanions";
 
 // Conditionally import Crossmint only if we have a valid API key
-let CrossmintProvider: React.FC<{children: React.ReactNode}>;
+let CrossmintProvider: React.FC<{children: React.ReactNode, apiKey?: string}>;
 let CrossmintAuthProvider: React.FC<{children: React.ReactNode, loginMethods: string[]}>;
 
 try {

@@ -8,6 +8,7 @@
 /// <reference path="./crossmint.d.ts" />
 /// <reference path="./buffer.d.ts" />
 /// <reference path="./env.d.ts" />
+/// <reference path="./recharts.d.ts" />
 
 // Ensure React JSX runtime is properly typed
 declare module 'react/jsx-runtime' {

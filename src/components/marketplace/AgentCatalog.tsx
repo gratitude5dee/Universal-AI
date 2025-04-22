@@ -74,9 +74,9 @@ const AgentCatalog: React.FC<AgentCatalogProps> = ({
         >
           {filteredAgents.map((agent) => (
             viewMode === "grid" ? (
-              <AgentCard key={agent.id} agent={agent} />
+              <AgentCard agent={agent} key={agent.id} />
             ) : (
-              <AgentListItem key={agent.id} agent={agent} />
+              <AgentListItem agent={agent} key={agent.id} />
             )
           ))}
         </motion.div>
