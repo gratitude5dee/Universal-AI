@@ -7,7 +7,10 @@ const NearAgentsList: React.FC = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {nearAgents.map(agent => (
-        <AgentDirectoryCard key={agent.id} agent={agent} />
+        <AgentDirectoryCard 
+          key={agent.id} 
+          agent={agent} 
+        />
       ))}
     </div>
   );
