@@ -7,7 +7,7 @@ const AutonolasAgentsList: React.FC = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {autonomasAgents.map(agent => (
-        <AgentDirectoryCard agent={agent} key={agent.id} />
+        <AgentDirectoryCard key={agent.id} agent={agent} />
       ))}
     </div>
   );

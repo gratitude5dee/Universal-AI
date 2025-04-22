@@ -1,154 +1,89 @@
 
 import React, { useState } from "react";
-import { Key, Lock, Eye, EyeOff, Plus, X } from "lucide-react";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Plus } from "lucide-react";
+
+interface Secret {
+  key: string;
+  value: string;
+}
 
 const SecretsSection: React.FC = () => {
-  const [secrets, setSecrets] = useState([
-    { key: 'OPENAI_API_KEY', value: '', visible: false },
-    { key: 'TWITTER_API_KEY', value: '', visible: false }
+  const [secrets, setSecrets] = useState<Secret[]>([
+    { key: "TWITTER_PASSWORD", value: "" },
+    { key: "TWITTER_EMAIL", value: "" },
+    { key: "TWITTER_2FA_SECRET", value: "" },
+    { key: "POST_IMMEDIATELY", value: "true" },
+    { key: "ENABLE_ACTION_PROCESSING", value: "true" },
+    { key: "MAX_ACTIONS_PROCESSING", value: "10" },
+    { key: "POST_INTERVAL_MAX", value: "180" },
+    { key: "POST_INTERVAL_MIN", value: "90" },
+    { key: "TWITTER_SPACES_ENABLE", value: "false" },
+    { key: "ACTION_TIMELINE_TYPE", value: "foryou" },
+    { key: "TWITTER_POLL_INTERVAL", value: "120" },
   ]);
-  
-  const [showAddSecret, setShowAddSecret] = useState(false);
-  const [newSecretKey, setNewSecretKey] = useState('');
-  
-  const toggleVisibility = (index: number) => {
+
+  const [newSecretKey, setNewSecretKey] = useState("");
+  const [newSecretValue, setNewSecretValue] = useState("");
+
+  const handleAddSecret = () => {
+    if (newSecretKey.trim()) {
+      setSecrets([...secrets, { key: newSecretKey, value: newSecretValue }]);
+      setNewSecretKey("");
+      setNewSecretValue("");
+    }
+  };
+
+  const updateSecret = (index: number, field: keyof Secret, value: string) => {
     const updatedSecrets = [...secrets];
-    updatedSecrets[index].visible = !updatedSecrets[index].visible;
+    updatedSecrets[index][field] = value;
     setSecrets(updatedSecrets);
   };
-  
-  const handleSecretChange = (index: number, value: string) => {
-    const updatedSecrets = [...secrets];
-    updatedSecrets[index].value = value;
-    setSecrets(updatedSecrets);
-  };
-  
-  const addNewSecret = () => {
-    if (!newSecretKey.trim()) return;
-    
-    setSecrets([...secrets, { key: newSecretKey, value: '', visible: false }]);
-    setNewSecretKey('');
-    setShowAddSecret(false);
-  };
-  
-  const removeSecret = (index: number) => {
-    const updatedSecrets = [...secrets];
-    updatedSecrets.splice(index, 1);
-    setSecrets(updatedSecrets);
-  };
-  
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-semibold white-bg-heading mb-1">API Keys & Secrets</h2>
-        <p className="white-bg-subheading">Configure API keys and other sensitive information your agent needs</p>
-      </div>
-      
-      <div className="space-y-4">
+    <div className="py-6" id="secrets">
+      <h2 className="text-2xl font-bold mb-4">Add secrets</h2>
+      <p className="text-muted-foreground mb-6">
+        These are required to connect with your model, clients and plugins.
+      </p>
+
+      <div className="grid grid-cols-2 gap-4 mb-6">
         {secrets.map((secret, index) => (
-          <div key={index} className="grid grid-cols-12 gap-4 items-center border p-4 rounded-md">
-            <div className="col-span-4">
-              <Label htmlFor={`secret-key-${index}`} className="mb-1 block">Key</Label>
-              <div className="flex items-center">
-                <Key className="w-4 h-4 text-muted-foreground mr-2" />
-                <Input
-                  id={`secret-key-${index}`}
-                  value={secret.key}
-                  readOnly
-                  className="font-mono text-sm"
-                />
-              </div>
+          <React.Fragment key={index}>
+            <div className="bg-black/20 p-3 rounded-md text-white">
+              {secret.key}
             </div>
-            
-            <div className="col-span-7">
-              <Label htmlFor={`secret-value-${index}`} className="mb-1 block">Value</Label>
-              <div className="flex items-center">
-                <Lock className="w-4 h-4 text-muted-foreground mr-2" />
-                <Input
-                  id={`secret-value-${index}`}
-                  type={secret.visible ? "text" : "password"}
-                  value={secret.value}
-                  onChange={(e) => handleSecretChange(index, e.target.value)}
-                  className="font-mono text-sm"
-                />
-              </div>
-            </div>
-            
-            <div className="col-span-1 flex items-end justify-end space-x-2">
-              <button
-                type="button"
-                onClick={() => toggleVisibility(index)}
-                className="p-2 text-muted-foreground hover:text-foreground"
-              >
-                {secret.visible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-              
-              {index > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeSecret(index)}
-                  className="p-2 text-muted-foreground hover:text-red-500"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-          </div>
+            <input
+              type="text"
+              placeholder="Enter value..."
+              value={secret.value}
+              onChange={(e) => updateSecret(index, "value", e.target.value)}
+              className="bg-black/20 p-3 rounded-md text-white border-0 focus:ring-1 focus:ring-studio-accent"
+            />
+          </React.Fragment>
         ))}
       </div>
-      
-      {showAddSecret ? (
-        <div className="border p-4 rounded-md">
-          <Label htmlFor="new-secret-key" className="mb-1 block">New Secret Key</Label>
-          <div className="flex items-center">
-            <Input
-              id="new-secret-key"
-              value={newSecretKey}
-              onChange={(e) => setNewSecretKey(e.target.value)}
-              placeholder="CUSTOM_API_KEY"
-              className="font-mono text-sm mr-2"
-              autoFocus
-            />
-            <Button type="button" onClick={addNewSecret} size="sm">Add</Button>
-            <Button type="button" variant="ghost" size="sm" onClick={() => setShowAddSecret(false)}>
-              Cancel
-            </Button>
-          </div>
-        </div>
-      ) : (
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full"
-          onClick={() => setShowAddSecret(true)}
+
+      <div className="bg-black/10 p-4 rounded-lg mb-6">
+        <h3 className="text-xl font-medium mb-2">Additional secrets</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          In case you need to add secrets that are not listed above.
+        </p>
+
+        <button
+          onClick={handleAddSecret}
+          className="flex items-center gap-2 text-studio-accent hover:text-studio-accent/80"
         >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Custom Secret
-        </Button>
-      )}
-      
-      <div className="bg-muted p-4 rounded-md">
-        <h3 className="text-sm font-medium mb-2">Security Notice</h3>
-        <p className="text-sm text-muted-foreground">
-          Your secrets are stored securely and are only accessible by your agent. 
-          They are encrypted at rest and never exposed to other users or agents.
-        </p>
+          <Plus className="h-4 w-4" /> Add secret
+        </button>
       </div>
-      
-      <div>
-        <Label htmlFor="system-context" className="mb-1 block">System Context</Label>
-        <Textarea
-          id="system-context"
-          placeholder="Add additional system context for your agent..."
-          className="h-24"
+
+      <div className="py-4">
+        <h3 className="text-xl font-medium mb-2">Voice model <span className="text-xs text-gray-400 font-normal">Optional</span></h3>
+        <input
+          type="text"
+          value="en_US-male-medium"
+          className="w-full bg-black/20 p-3 rounded-md text-white border-0 focus:ring-1 focus:ring-studio-accent"
         />
-        <p className="text-xs text-muted-foreground mt-1">
-          This information will be included in the system prompt for your agent.
-        </p>
       </div>
     </div>
   );

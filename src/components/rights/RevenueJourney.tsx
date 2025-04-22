@@ -40,58 +40,51 @@ const RevenueJourney = () => {
     <div className="space-y-4">
       <div className="relative h-[180px] mb-2">
         <ResponsiveContainer width="100%" height="100%">
-          {(containerProps) => (
-            <LineChart 
-              data={revenueData} 
-              width={containerProps.width}
-              height={containerProps.height}
-              margin={{ top: 5, right: 20, left: -20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#E8DCCA" vertical={false} />
-              <XAxis 
-                dataKey="month" 
-                axisLine={false}
-                tickLine={false}
-                tick={{ fontSize: 12, fill: '#D2B48C' }}
+          <LineChart data={revenueData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#E8DCCA" vertical={false} />
+            <XAxis 
+              dataKey="month" 
+              axisLine={false}
+              tickLine={false}
+              tick={{ fontSize: 12, fill: '#D2B48C' }}
+            />
+            <YAxis 
+              axisLine={false}
+              tickLine={false}
+              tick={{ fontSize: 12, fill: '#D2B48C' }}
+              tickFormatter={(value) => `$${value}`}
+            />
+            <Tooltip 
+              formatter={(value) => [`$${value}`, 'Revenue']}
+              contentStyle={{ 
+                background: 'rgba(255, 248, 240, 0.9)',
+                border: '1px solid #E8DCCA',
+                borderRadius: '8px'
+              }}
+            />
+            <Line 
+              type="monotone" 
+              dataKey="revenue" 
+              stroke="#D98F64" 
+              strokeWidth={2}
+              dot={{ r: 4, fill: '#D98F64', strokeWidth: 2, stroke: '#FFF8F0' }}
+              activeDot={{ r: 6, fill: '#D98F64', strokeWidth: 2, stroke: '#FFF8F0' }}
+            />
+            
+            {/* Milestone lines */}
+            {milestones.map((milestone, index) => (
+              <line 
+                key={index}
+                x1="0%" 
+                y1={100 - (milestone.value / 600) * 100 + "%"} 
+                x2="100%" 
+                y2={100 - (milestone.value / 600) * 100 + "%"} 
+                stroke="#D2B48C" 
+                strokeWidth={1} 
+                strokeDasharray="4 4" 
               />
-              <YAxis 
-                axisLine={false}
-                tickLine={false}
-                tick={{ fontSize: 12, fill: '#D2B48C' }}
-                tickFormatter={(value) => `$${value}`}
-              />
-              <Tooltip 
-                formatter={(value) => [`$${value}`, 'Revenue']}
-                contentStyle={{ 
-                  background: 'rgba(255, 248, 240, 0.9)',
-                  border: '1px solid #E8DCCA',
-                  borderRadius: '8px'
-                }}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="revenue" 
-                stroke="#D98F64" 
-                strokeWidth={2}
-                dot={{ r: 4, fill: '#D98F64', strokeWidth: 2, stroke: '#FFF8F0' }}
-                activeDot={{ r: 6, fill: '#D98F64', strokeWidth: 2, stroke: '#FFF8F0' }}
-              />
-              
-              {/* Milestone lines */}
-              {milestones.map((milestone, index) => (
-                <line 
-                  key={index}
-                  x1="0%" 
-                  y1={100 - (milestone.value / 600) * 100 + "%"} 
-                  x2="100%" 
-                  y2={100 - (milestone.value / 600) * 100 + "%"} 
-                  stroke="#D2B48C" 
-                  strokeWidth={1} 
-                  strokeDasharray="4 4" 
-                />
-              ))}
-            </LineChart>
-          )}
+            ))}
+          </LineChart>
         </ResponsiveContainer>
         
         {/* Milestone markers */}

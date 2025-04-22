@@ -70,57 +70,53 @@ export const WorkflowMetrics = () => {
           <h3 className="text-sm font-medium mb-3">Weekly Activity</h3>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              {(containerProps) => (
-                <LineChart
-                  data={activityData}
-                  width={containerProps.width}
-                  height={containerProps.height}
-                  margin={{
-                    top: 5,
-                    right: 30,
-                    left: 20,
-                    bottom: 5,
+              <LineChart
+                data={activityData}
+                margin={{
+                  top: 5,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
+                <XAxis 
+                  dataKey="day" 
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12, fill: "#8A8A8A" }}
+                />
+                <YAxis 
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12, fill: "#8A8A8A" }}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    borderRadius: "8px", 
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                    border: "none"
                   }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
-                  <XAxis 
-                    dataKey="day" 
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 12, fill: "#8A8A8A" }}
-                  />
-                  <YAxis 
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 12, fill: "#8A8A8A" }}
-                  />
-                  <Tooltip 
-                    contentStyle={{ 
-                      borderRadius: "8px", 
-                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                      border: "none"
-                    }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="completedTasks" 
-                    name="Completed Tasks"
-                    stroke="#10B981" 
-                    strokeWidth={2} 
-                    dot={{ r: 4 }} 
-                    activeDot={{ r: 6 }} 
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="pendingTasks" 
-                    name="Pending Tasks"
-                    stroke="#F59E0B" 
-                    strokeWidth={2} 
-                    dot={{ r: 4 }} 
-                    activeDot={{ r: 6 }} 
-                  />
-                </LineChart>
-              )}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="completedTasks" 
+                  name="Completed Tasks"
+                  stroke="#10B981" 
+                  strokeWidth={2} 
+                  dot={{ r: 4 }} 
+                  activeDot={{ r: 6 }} 
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="pendingTasks" 
+                  name="Pending Tasks"
+                  stroke="#F59E0B" 
+                  strokeWidth={2} 
+                  dot={{ r: 4 }} 
+                  activeDot={{ r: 6 }} 
+                />
+              </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
@@ -129,33 +125,31 @@ export const WorkflowMetrics = () => {
           <h3 className="text-sm font-medium mb-3">Task Distribution</h3>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              {(containerProps) => (
-                <PieChart width={containerProps.width} height={containerProps.height}>
-                  <Pie
-                    data={pieData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    paddingAngle={5}
-                    dataKey="value"
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    labelLine={false}
-                  >
-                    {pieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    formatter={(value) => [`${value} tasks`, ""]}
-                    contentStyle={{ 
-                      borderRadius: "8px", 
-                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                      border: "none"
-                    }}
-                  />
-                </PieChart>
-              )}
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={5}
+                  dataKey="value"
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  labelLine={false}
+                >
+                  {pieData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  formatter={(value) => [`${value} tasks`, ""]}
+                  contentStyle={{ 
+                    borderRadius: "8px", 
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                    border: "none"
+                  }}
+                />
+              </PieChart>
             </ResponsiveContainer>
           </div>
         </div>
