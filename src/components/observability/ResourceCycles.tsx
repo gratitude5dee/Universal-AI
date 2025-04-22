@@ -12,7 +12,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Label,
   ReferenceLine
 } from "recharts";
 
@@ -51,64 +50,69 @@ export const ResourceCycles = () => {
         
         <div className="h-[300px] w-full mb-8">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={hourlyData}>
-              <defs>
-                <linearGradient id="colorCpu" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#FFB766" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#FFB766" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="colorMemory" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#8884D8" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#8884D8" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <XAxis 
-                dataKey="time" 
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis 
-                axisLine={false}
-                tickLine={false}
-                domain={[0, 100]}
-                label={{ value: '%', angle: -90, position: 'insideLeft' }}
-              />
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
-              <Tooltip 
-                contentStyle={{ 
-                  borderRadius: "8px", 
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                  border: "none"
-                }}
-                formatter={(value) => [`${value}%`, ""]}
-              />
-              
-              <ReferenceLine 
-                y={75} 
-                stroke="#FF9800" 
-                strokeDasharray="3 3"
-                label={{ value: "High", position: "right", fill: "#FF9800" }}
-              />
-              
-              <Area 
-                type="monotone" 
-                dataKey="cpu" 
-                stroke="#FFB766" 
-                fillOpacity={1} 
-                fill="url(#colorCpu)" 
-                name="CPU (Sunshine)"
-                strokeWidth={2}
-              />
-              <Area 
-                type="monotone" 
-                dataKey="memory" 
-                stroke="#8884D8" 
-                fillOpacity={1} 
-                fill="url(#colorMemory)" 
-                name="Memory (Moonlight)"
-                strokeWidth={2}
-              />
-            </AreaChart>
+            {(containerProps) => (
+              <AreaChart 
+                data={hourlyData}
+                width={containerProps.width}
+                height={containerProps.height}
+              >
+                <defs>
+                  <linearGradient id="colorCpu" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#FFB766" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#FFB766" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="colorMemory" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#8884D8" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#8884D8" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis 
+                  dataKey="time" 
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis 
+                  axisLine={false}
+                  tickLine={false}
+                  domain={[0, 100]}
+                />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
+                <Tooltip 
+                  contentStyle={{ 
+                    borderRadius: "8px", 
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                    border: "none"
+                  }}
+                  formatter={(value) => [`${value}%`, ""]}
+                />
+                
+                <ReferenceLine 
+                  y={75} 
+                  stroke="#FF9800" 
+                  strokeDasharray="3 3"
+                  label={{ value: "High", position: "right", fill: "#FF9800" }}
+                />
+                
+                <Area 
+                  type="monotone" 
+                  dataKey="cpu" 
+                  stroke="#FFB766" 
+                  fillOpacity={1} 
+                  fill="url(#colorCpu)" 
+                  name="CPU (Sunshine)"
+                  strokeWidth={2}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="memory" 
+                  stroke="#8884D8" 
+                  fillOpacity={1} 
+                  fill="url(#colorMemory)" 
+                  name="Memory (Moonlight)"
+                  strokeWidth={2}
+                />
+              </AreaChart>
+            )}
           </ResponsiveContainer>
         </div>
         
@@ -149,54 +153,60 @@ export const ResourceCycles = () => {
         
         <div className="h-[250px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={dailyData}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
-              <XAxis 
-                dataKey="day" 
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis 
-                axisLine={false}
-                tickLine={false}
-                domain={[0, 100]}
-              />
-              <Tooltip 
-                contentStyle={{ 
-                  borderRadius: "8px", 
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                  border: "none"
-                }}
-                formatter={(value) => [`${value}%`, ""]}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="sunshine" 
-                stroke="#FFB766" 
-                strokeWidth={2}
-                dot={{ stroke: '#FFB766', strokeWidth: 2, r: 4, fill: '#fff' }}
-                activeDot={{ r: 6 }}
-                name="Sunshine"
-              />
-              <Line 
-                type="monotone" 
-                dataKey="rainfall" 
-                stroke="#54B4D3" 
-                strokeWidth={2}
-                dot={{ stroke: '#54B4D3', strokeWidth: 2, r: 4, fill: '#fff' }}
-                activeDot={{ r: 6 }}
-                name="Rainfall"
-              />
-              <Line 
-                type="monotone" 
-                dataKey="harvest" 
-                stroke="#4CAF50" 
-                strokeWidth={2}
-                dot={{ stroke: '#4CAF50', strokeWidth: 2, r: 4, fill: '#fff' }}
-                activeDot={{ r: 6 }}
-                name="Harvest"
-              />
-            </LineChart>
+            {(containerProps) => (
+              <LineChart 
+                data={dailyData}
+                width={containerProps.width}
+                height={containerProps.height}
+              >
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
+                <XAxis 
+                  dataKey="day" 
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis 
+                  axisLine={false}
+                  tickLine={false}
+                  domain={[0, 100]}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    borderRadius: "8px", 
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                    border: "none"
+                  }}
+                  formatter={(value) => [`${value}%`, ""]}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="sunshine" 
+                  stroke="#FFB766" 
+                  strokeWidth={2}
+                  dot={{ stroke: '#FFB766', strokeWidth: 2, r: 4, fill: '#fff' }}
+                  activeDot={{ r: 6 }}
+                  name="Sunshine"
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="rainfall" 
+                  stroke="#54B4D3" 
+                  strokeWidth={2}
+                  dot={{ stroke: '#54B4D3', strokeWidth: 2, r: 4, fill: '#fff' }}
+                  activeDot={{ r: 6 }}
+                  name="Rainfall"
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="harvest" 
+                  stroke="#4CAF50" 
+                  strokeWidth={2}
+                  dot={{ stroke: '#4CAF50', strokeWidth: 2, r: 4, fill: '#fff' }}
+                  activeDot={{ r: 6 }}
+                  name="Harvest"
+                />
+              </LineChart>
+            )}
           </ResponsiveContainer>
         </div>
         

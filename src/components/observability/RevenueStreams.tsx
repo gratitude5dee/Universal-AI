@@ -56,41 +56,45 @@ export const RevenueStreams = () => {
       
       <div className="h-80 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={revenueData}
-            margin={{
-              top: 20,
-              right: 30,
-              left: 20,
-              bottom: 5,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
-            <XAxis 
-              dataKey="name" 
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 12, fill: "#8A8A8A" }}
-            />
-            <YAxis 
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 12, fill: "#8A8A8A" }}
-              tickFormatter={(value) => `$${value}`}
-            />
-            <Tooltip 
-              formatter={(value) => [`$${value}`, ""]}
-              contentStyle={{ 
-                borderRadius: "8px", 
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                border: "none"
+          {(containerProps) => (
+            <BarChart
+              data={revenueData}
+              width={containerProps.width}
+              height={containerProps.height}
+              margin={{
+                top: 20,
+                right: 30,
+                left: 20,
+                bottom: 5,
               }}
-            />
-            <Legend />
-            <Bar dataKey="primary" name="Primary Sales" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="royalties" name="Royalties" fill="#F97316" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="secondary" name="Secondary" fill="#0EA5E9" radius={[4, 4, 0, 0]} />
-          </BarChart>
+            >
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
+              <XAxis 
+                dataKey="name" 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 12, fill: "#8A8A8A" }}
+              />
+              <YAxis 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 12, fill: "#8A8A8A" }}
+                tickFormatter={(value) => `$${value}`}
+              />
+              <Tooltip 
+                formatter={(value) => [`$${value}`, ""]}
+                contentStyle={{ 
+                  borderRadius: "8px", 
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                  border: "none"
+                }}
+              />
+              <Legend />
+              <Bar dataKey="primary" name="Primary Sales" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="royalties" name="Royalties" fill="#F97316" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="secondary" name="Secondary" fill="#0EA5E9" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          )}
         </ResponsiveContainer>
       </div>
     </div>
