@@ -18,33 +18,28 @@ declare module 'react/jsx-runtime' {
 // Add Fragment typing to avoid the key prop error
 interface FragmentProps {
   children?: React.ReactNode;
-  // Allow key as a property but it won't be part of the props passed to the component
   key?: React.Key;
 }
 
 // Add TypeScript definitions for component props
 interface AgentCardProps {
   agent: Agent;
-  // Allow key as a property but it won't be part of the props passed to the component
   key?: React.Key;
 }
 
 interface AgentListItemProps {
   agent: Agent;
-  // Allow key as a property but it won't be part of the props passed to the component
   key?: React.Key;
 }
 
 interface AgentDirectoryCardProps {
   agent: Agent;
-  // Allow key as a property but it won't be part of the props passed to the component
   key?: React.Key;
 }
 
 interface SavingsGoalProps {
   goal: SavingsGoal;
   onAddToGoal: (goalId: string) => void;
-  // Allow key as a property but it won't be part of the props passed to the component
   key?: React.Key;
 }
 
@@ -52,7 +47,6 @@ interface TreasureItemProps {
   treasure: Treasure;
   onClick: (treasure: Treasure) => void;
   isSelected: boolean;
-  // Allow key as a property but it won't be part of the props passed to the component
   key?: React.Key;
 }
 
@@ -63,7 +57,6 @@ interface MatrixDropProps {
   speed: number;
   opacity: number;
   delay: number;
-  // Allow key as a property but it won't be part of the props passed to the component
   key?: React.Key;
 }
 

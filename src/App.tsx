@@ -72,11 +72,11 @@ function App() {
       <ErrorBoundary>
         {hasCrossmintConfig ? (
           <CrossmintProvider apiKey={import.meta.env.VITE_CROSSMINT_CLIENT_KEY || ""}>
-            {(props) => (
+            {crossmintProps => (
               <CrossmintAuthProvider loginMethods={["email", "farcaster"]}>
-                {(authProps) => (
+                {authProps => (
                   <WalletProvider>
-                    {(walletProps) => <AppContent />}
+                    {walletProps => <AppContent />}
                   </WalletProvider>
                 )}
               </CrossmintAuthProvider>
@@ -84,9 +84,9 @@ function App() {
           </CrossmintProvider>
         ) : (
           <AuthProvider>
-            {(authProps) => (
+            {authProps => (
               <WalletProvider>
-                {(walletProps) => <AppContent bypassAuth={true} />}
+                {walletProps => <AppContent bypassAuth={true} />}
               </WalletProvider>
             )}
           </AuthProvider>
@@ -100,7 +100,7 @@ function AppContent({ bypassAuth = false }: { bypassAuth?: boolean }) {
   return (
     <BrowserRouter>
       <TooltipProvider>
-        {(tooltipProps) => (
+        {() => (
           <AnimatePresence mode="wait">
             <Routes>
               {/* New landing page as the root route */}

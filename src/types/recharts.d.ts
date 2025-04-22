@@ -10,7 +10,7 @@ declare module 'recharts' {
     minWidth?: string | number;
     minHeight?: string | number;
     maxHeight?: number;
-    children?: ReactNode;
+    children: ReactNode | ((containerProps: any) => ReactNode);
     debounce?: number;
     id?: string | number;
   }
