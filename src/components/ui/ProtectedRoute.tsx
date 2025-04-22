@@ -1,7 +1,7 @@
 
-import { useAuth } from "@crossmint/client-sdk-react-ui";
+import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();

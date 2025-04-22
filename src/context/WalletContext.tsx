@@ -1,6 +1,13 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useAuth } from '@crossmint/client-sdk-react-ui';
+
+// Try to import from Crossmint first, fallback to our mock implementation
+let useAuth: any;
+try {
+  useAuth = require("@crossmint/client-sdk-react-ui").useAuth;
+} catch (e) {
+  useAuth = require("@/context/AuthContext").useAuth;
+}
 
 interface WalletContextType {
   address: string;
