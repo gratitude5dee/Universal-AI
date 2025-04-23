@@ -2,18 +2,11 @@
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@crossmint/client-sdk-react-ui";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { LogOut, User } from "lucide-react";
 import { SettingsIcon } from "@/components/ui/icons";
-
-// Try to import from Crossmint first, fallback to our mock implementation
-let useAuth: any;
-try {
-  useAuth = require("@crossmint/client-sdk-react-ui").useAuth;
-} catch (e) {
-  useAuth = require("@/context/AuthContext").useAuth;
-}
 
 export const Settings = () => {
   const [open, setOpen] = React.useState(false);

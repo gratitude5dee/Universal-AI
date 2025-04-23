@@ -1,16 +1,10 @@
+
 import React from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAuth } from "@crossmint/client-sdk-react-ui";
 import { WalletInfo } from "./WalletInfo";
 import { Settings } from "./Settings";
-
-// Try to import from Crossmint first, fallback to our mock implementation
-let useAuth: any;
-try {
-  useAuth = require("@crossmint/client-sdk-react-ui").useAuth;
-} catch (e) {
-  useAuth = require("@/context/AuthContext").useAuth;
-}
 
 const Header: React.FC = () => {
   const location = useLocation();

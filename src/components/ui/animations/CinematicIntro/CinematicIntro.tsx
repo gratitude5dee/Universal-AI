@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styles from './CinematicIntro.module.css';
 
@@ -11,7 +10,7 @@ interface CinematicIntroProps {
 
 const CinematicIntro: React.FC<CinematicIntroProps> = ({
   onComplete,
-  commandText = 'pip install $5dee',
+  commandText = 'pip install universalai',
   matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍｦｲｸｺｿﾁﾄﾉﾌﾔﾖﾙﾚﾛﾝ',
   noiseColor = '270, 90%, 60%',
 }) => {
@@ -178,6 +177,7 @@ const CinematicIntro: React.FC<CinematicIntroProps> = ({
          noiseParticlesRef.current = []; // Clear for re-initialization in draw loop if needed
     }
 
+
     const render = () => {
       frameCount++;
       draw(ctx, frameCount, columns);
@@ -190,6 +190,7 @@ const CinematicIntro: React.FC<CinematicIntroProps> = ({
       cancelAnimationFrame(animationFrameRef.current!); // Cleanup loop
     };
   }, [showCanvas, draw, stage]); // Re-run effect if canvas visibility or stage changes
+
 
   // --- Handle Resize ---
   useEffect(() => {
@@ -209,6 +210,7 @@ const CinematicIntro: React.FC<CinematicIntroProps> = ({
 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
 
   // --- Render ---
   if (stage === 'done') return null;
