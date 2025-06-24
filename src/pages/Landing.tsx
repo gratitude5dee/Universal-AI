@@ -20,7 +20,9 @@ import {
   Infinity,
   Code,
   Mail,
-  ArrowRight
+  ArrowRight,
+  Wallet,
+  Bot
 } from "lucide-react";
 import CloudShader from "@/components/ui/shaders/CloudShader";
 import Ambient from "@/components/ui/ambient";
