@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
@@ -46,7 +45,7 @@ const WizardView: React.FC<WizardViewProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-xl border p-6">
+    <div className="glass-card p-6 backdrop-blur-md bg-white/10 border border-white/20 rounded-xl">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold text-blue-dark">AI Agent Wizard</h2>
         <div className="text-sm font-medium text-blue-dark">Step {wizardStep} of 6</div>

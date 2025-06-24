@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Sparkles } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -13,7 +12,7 @@ const EventTriggersStep: React.FC = () => {
         <p className="white-bg-subheading">Define when your agent will activate and take action</p>
       </div>
       
-      <div className="bg-white p-6 rounded-xl border border-gray-200">
+      <div className="backdrop-blur-md bg-white/10 border border-white/20 p-6 rounded-xl">
         <h3 className="font-medium mb-3 text-blue-dark">Activation Triggers</h3>
         
         <div className="space-y-3">
@@ -62,7 +61,7 @@ const EventTriggersStep: React.FC = () => {
         </div>
       </div>
       
-      <div className="bg-white p-6 rounded-xl border border-gray-200">
+      <div className="backdrop-blur-md bg-white/10 border border-white/20 p-6 rounded-xl">
         <h3 className="font-medium mb-3 text-blue-dark">Conditions & Logic</h3>
         
         <div className="space-y-4">
@@ -112,7 +111,7 @@ const EventTriggersStep: React.FC = () => {
         </div>
       </div>
       
-      <div className="flex items-center bg-blue-50 p-4 rounded-lg">
+      <div className="flex items-center bg-blue-50/30 backdrop-blur-sm p-4 rounded-lg border border-blue-100/30">
         <Sparkles className="h-5 w-5 text-blue-500 mr-2" />
         <p className="text-sm text-blue-700">
           <strong>AI Assistant:</strong> Daily schedules work well for consistent outputs. Consider adding social media triggers for more dynamic interactions.

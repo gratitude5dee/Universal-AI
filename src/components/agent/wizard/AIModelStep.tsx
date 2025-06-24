@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Cpu, Bot, Paintbrush, Sparkles } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -21,10 +20,10 @@ const AIModelStep: React.FC<AIModelStepProps> = ({ aiModel, setAiModel, agentPur
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div 
-          className={`p-6 rounded-xl border cursor-pointer transition-all ${aiModel === 'gpt-4o' ? 'border-emerald-500 bg-emerald-50' : 'border-gray-200 hover:border-emerald-200'}`}
+          className={`backdrop-blur-md bg-white/10 border border-white/20 p-6 rounded-xl cursor-pointer transition-all ${aiModel === 'gpt-4o' ? 'border-emerald-500 bg-emerald-50/10 shadow-lg' : 'hover:border-emerald-200'}`}
           onClick={() => setAiModel('gpt-4o')}
         >
-          <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-emerald-100/30 flex items-center justify-center">
             <Cpu className="h-5 w-5 text-emerald-500" />
           </div>
           <h3 className="font-medium mt-4 mb-1 text-blue-dark">GPT-4o</h3>
@@ -36,10 +35,10 @@ const AIModelStep: React.FC<AIModelStepProps> = ({ aiModel, setAiModel, agentPur
         </div>
         
         <div 
-          className={`p-6 rounded-xl border cursor-pointer transition-all ${aiModel === 'claude-3' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-200'}`}
+          className={`backdrop-blur-md bg-white/10 border border-white/20 p-6 rounded-xl cursor-pointer transition-all ${aiModel === 'claude-3' ? 'border-blue-500 bg-blue-50/10 shadow-lg' : 'hover:border-blue-200'}`}
           onClick={() => setAiModel('claude-3')}
         >
-          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-blue-100/30 flex items-center justify-center">
             <Bot className="h-5 w-5 text-blue-500" />
           </div>
           <h3 className="font-medium mt-4 mb-1">Claude 3</h3>
@@ -51,10 +50,10 @@ const AIModelStep: React.FC<AIModelStepProps> = ({ aiModel, setAiModel, agentPur
         </div>
         
         <div 
-          className={`p-6 rounded-xl border cursor-pointer transition-all ${aiModel === 'stable-diffusion' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-indigo-200'}`}
+          className={`backdrop-blur-md bg-white/10 border border-white/20 p-6 rounded-xl cursor-pointer transition-all ${aiModel === 'stable-diffusion' ? 'border-indigo-500 bg-indigo-50/10 shadow-lg' : 'hover:border-indigo-200'}`}
           onClick={() => setAiModel('stable-diffusion')}
         >
-          <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-indigo-100/30 flex items-center justify-center">
             <Paintbrush className="h-5 w-5 text-indigo-500" />
           </div>
           <h3 className="font-medium mt-4 mb-1">Stable Diffusion XL</h3>
@@ -66,10 +65,10 @@ const AIModelStep: React.FC<AIModelStepProps> = ({ aiModel, setAiModel, agentPur
         </div>
         
         <div 
-          className={`p-6 rounded-xl border cursor-pointer transition-all ${aiModel === 'llama-3' ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-purple-200'}`}
+          className={`backdrop-blur-md bg-white/10 border border-white/20 p-6 rounded-xl cursor-pointer transition-all ${aiModel === 'llama-3' ? 'border-purple-500 bg-purple-50/10 shadow-lg' : 'hover:border-purple-200'}`}
           onClick={() => setAiModel('llama-3')}
         >
-          <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-purple-100/30 flex items-center justify-center">
             <Bot className="h-5 w-5 text-purple-500" />
           </div>
           <h3 className="font-medium mt-4 mb-1">Llama 3</h3>
@@ -81,7 +80,7 @@ const AIModelStep: React.FC<AIModelStepProps> = ({ aiModel, setAiModel, agentPur
         </div>
       </div>
       
-      <div className="bg-white p-6 rounded-xl border border-gray-200">
+      <div className="backdrop-blur-md bg-white/10 border border-white/20 p-6 rounded-xl">
         <h3 className="font-medium mb-3 text-blue-dark">Parameter Configuration</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
@@ -130,7 +129,7 @@ const AIModelStep: React.FC<AIModelStepProps> = ({ aiModel, setAiModel, agentPur
         </div>
       </div>
       
-      <div className="flex items-center bg-blue-50 p-4 rounded-lg">
+      <div className="flex items-center bg-blue-50/30 backdrop-blur-sm p-4 rounded-lg border border-blue-100/30">
         <Sparkles className="h-5 w-5 text-blue-500 mr-2" />
         <p className="text-sm text-blue-700">
           <strong>AI Assistant:</strong> For {agentPurpose === 'art' ? 'visual content' : agentPurpose === 'music' ? 'audio generation' : 'creative writing'}, I recommend using {aiModel === 'gpt-4o' ? 'GPT-4o with temperature 0.8' : aiModel === 'claude-3' ? 'Claude 3 with temperature 0.7' : aiModel === 'stable-diffusion' ? 'Stable Diffusion with higher guidance scale' : 'Llama 3 with a detailed system prompt'}.

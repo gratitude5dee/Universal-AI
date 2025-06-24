@@ -1,4 +1,3 @@
-
 import React from "react";
 import PurposeStep from "./PurposeStep";
 import BlockchainStep from "./BlockchainStep";
