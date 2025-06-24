@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { LucideIcon } from "lucide-react";
@@ -46,15 +45,15 @@ export const StatsCard: React.FC<StatsCardProps> = ({
         stiffness: 100 
       }}
       whileHover={{ y: -5, transition: { duration: 0.2 } }}
-      className={`bg-card-gradient backdrop-blur-md border border-blue-primary/20 p-5 rounded-xl shadow-card-glow ${className}`}
+      className={`backdrop-blur-md bg-white/10 border border-white/20 p-5 rounded-xl shadow-card-glow ${className}`}
     >
       <div className="flex justify-between items-start">
         <div>
-          <h3 className="text-sm font-medium text-blue-lightest mb-1">
+          <h3 className="text-sm font-medium text-white text-shadow-sm mb-1">
             {title}
           </h3>
           <div className="flex items-baseline">
-            <p className="text-2xl md:text-3xl font-semibold text-white">{value}</p>
+            <p className="text-2xl md:text-3xl font-semibold text-white text-shadow-sm">{value}</p>
             {trend && trendValue && (
               <span className={`ml-2 text-xs ${getTrendColor()}`}>
                 {trend === "up" ? "↑" : trend === "down" ? "↓" : "→"} {trendValue}
@@ -62,12 +61,12 @@ export const StatsCard: React.FC<StatsCardProps> = ({
             )}
           </div>
           {description && (
-            <p className="text-xs text-blue-lighter mt-1">{description}</p>
+            <p className="text-xs text-white/70 mt-1">{description}</p>
           )}
         </div>
         {Icon && (
-          <div className="bg-blue-primary/20 p-2 rounded-xl">
-            <Icon className="h-5 w-5 text-blue-lighter" />
+          <div className="bg-white/10 p-2 rounded-xl">
+            <Icon className="h-5 w-5 text-white/70" />
           </div>
         )}
       </div>
