@@ -1,4 +1,3 @@
-
 export interface AccountInfo {
   accountNumber: string;
   routingNumber: string;
@@ -97,12 +96,12 @@ export const formatDate = (dateString: string) => {
 export const getStatusColor = (status: string) => {
   switch(status) {
     case "completed":
-      return "bg-green-100 text-green-800";
+      return "bg-green-500/30 text-green-300";
     case "pending":
-      return "bg-yellow-100 text-yellow-800";
+      return "bg-yellow-500/30 text-yellow-300";
     case "failed":
-      return "bg-red-100 text-red-800";
+      return "bg-red-500/30 text-red-300";
     default:
-      return "bg-gray-100 text-gray-800";
+      return "bg-gray-500/30 text-gray-300";
   }
 };
