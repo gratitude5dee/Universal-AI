@@ -60,6 +60,37 @@ export const MagicalDashboard = () => {
         />
       </div>
 
+      {/* Workflow Metrics and Quick Access in a grid - MOVED UP */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Workflow Metrics */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="glass-card p-6"
+        >
+          <h2 className="text-xl font-medium mb-4 flex items-center gap-2 text-white text-shadow-sm">
+            <ListChecks className="h-5 w-5 text-studio-accent" />
+            Workflow Metrics
+          </h2>
+          <WorkflowMetrics />
+        </motion.div>
+
+        {/* Quick Access Tiles */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="glass-card p-6"
+        >
+          <h2 className="text-xl font-medium mb-4 flex items-center gap-2 text-white text-shadow-sm">
+            <Grid2X2 className="h-5 w-5 text-studio-accent" />
+            Quick Access
+          </h2>
+          <QuickAccessTiles />
+        </motion.div>
+      </div>
+
       {/* Main Dashboard Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Agent Status Section - 1/3 width */}
@@ -104,37 +135,6 @@ export const MagicalDashboard = () => {
         </h2>
         <RevenueStreams />
       </motion.div>
-
-      {/* Workflow Metrics and Quick Access in a grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Workflow Metrics */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="glass-card p-6"
-        >
-          <h2 className="text-xl font-medium mb-4 flex items-center gap-2 text-white text-shadow-sm">
-            <ListChecks className="h-5 w-5 text-studio-accent" />
-            Workflow Metrics
-          </h2>
-          <WorkflowMetrics />
-        </motion.div>
-
-        {/* Quick Access Tiles */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="glass-card p-6"
-        >
-          <h2 className="text-xl font-medium mb-4 flex items-center gap-2 text-white text-shadow-sm">
-            <Grid2X2 className="h-5 w-5 text-studio-accent" />
-            Quick Access
-          </h2>
-          <QuickAccessTiles />
-        </motion.div>
-      </div>
     </div>
   );
 };
