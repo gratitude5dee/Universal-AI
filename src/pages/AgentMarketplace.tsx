@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import DashboardLayout from "@/layouts/dashboard-layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -30,20 +29,20 @@ const AgentMarketplace = () => {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">AI Agent Marketplace</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-3xl font-bold tracking-tight text-white text-shadow-sm">AI Agent Marketplace</h1>
+          <p className="text-white/80 mt-2 text-shadow-sm">
             Discover, evaluate, and acquire pre-built AI agents for your creative projects
           </p>
         </div>
 
         <Tabs defaultValue="browse" className="space-y-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <TabsList>
-              <TabsTrigger value="browse" className="flex items-center gap-2">
+            <TabsList className="bg-white/10 backdrop-blur-md border border-white/20 shadow-card-glow">
+              <TabsTrigger value="browse" className="flex items-center gap-2 text-white data-[state=active]:bg-studio-accent data-[state=active]:text-white">
                 <Grid2x2 className="w-4 h-4" />
                 <span>Browse</span>
               </TabsTrigger>
-              <TabsTrigger value="compare" className="flex items-center gap-2">
+              <TabsTrigger value="compare" className="flex items-center gap-2 text-white data-[state=active]:bg-studio-accent data-[state=active]:text-white">
                 <Activity className="w-4 h-4" />
                 <span>Compare</span>
               </TabsTrigger>
@@ -51,12 +50,12 @@ const AgentMarketplace = () => {
 
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <div className="relative flex-1 sm:w-80">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50 h-4 w-4" />
                 <Input 
                   placeholder="Search agents..." 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/50"
                 />
               </div>
               
@@ -64,16 +63,16 @@ const AgentMarketplace = () => {
                 variant="outline" 
                 size="icon"
                 onClick={() => setFilterOpen(!filterOpen)}
-                className={filterOpen ? "bg-muted" : ""}
+                className={`${filterOpen ? "bg-white/20" : "bg-white/10"} border-white/20 text-white hover:bg-white/30`}
               >
                 <Sliders className="h-4 w-4" />
               </Button>
               
-              <div className="hidden sm:flex border rounded-md">
+              <div className="hidden sm:flex border border-white/20 rounded-md">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className={`rounded-r-none ${viewMode === 'grid' ? 'bg-muted' : ''}`}
+                  className={`rounded-r-none ${viewMode === 'grid' ? 'bg-white/20' : 'bg-white/10'} text-white hover:bg-white/30`}
                   onClick={() => setViewMode("grid")}
                 >
                   <Grid2x2 className="h-4 w-4" />
@@ -81,7 +80,7 @@ const AgentMarketplace = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className={`rounded-l-none ${viewMode === 'list' ? 'bg-muted' : ''}`}
+                  className={`rounded-l-none ${viewMode === 'list' ? 'bg-white/20' : 'bg-white/10'} text-white hover:bg-white/30`}
                   onClick={() => setViewMode("list")}
                 >
                   <List className="h-4 w-4" />
@@ -92,33 +91,33 @@ const AgentMarketplace = () => {
 
           <TabsContent value="browse" className="space-y-6 mt-0">
             {filterOpen && (
-              <div className="bg-muted/50 p-4 rounded-lg animate-in fade-in-50 slide-in-from-top-5 duration-300">
+              <div className="glass-card p-4 animate-in fade-in-50 slide-in-from-top-5 duration-300 backdrop-blur-md bg-white/10 border border-white/20 shadow-card-glow">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
-                    <h3 className="text-sm font-medium mb-2">Agent Type</h3>
+                    <h3 className="text-sm font-medium mb-2 text-white text-shadow-sm">Agent Type</h3>
                     <div className="flex flex-wrap gap-2">
-                      <Button variant="outline" size="sm" className="bg-background">Creative</Button>
-                      <Button variant="outline" size="sm" className="bg-background">Analytical</Button>
-                      <Button variant="outline" size="sm" className="bg-background">Conversational</Button>
-                      <Button variant="outline" size="sm" className="bg-background">Assistive</Button>
+                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Creative</Button>
+                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Analytical</Button>
+                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Conversational</Button>
+                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Assistive</Button>
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium mb-2">Pricing Model</h3>
+                    <h3 className="text-sm font-medium mb-2 text-white text-shadow-sm">Pricing Model</h3>
                     <div className="flex flex-wrap gap-2">
-                      <Button variant="outline" size="sm" className="bg-background">Free</Button>
-                      <Button variant="outline" size="sm" className="bg-background">Subscription</Button>
-                      <Button variant="outline" size="sm" className="bg-background">Pay-per-use</Button>
-                      <Button variant="outline" size="sm" className="bg-background">One-time</Button>
+                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Free</Button>
+                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Subscription</Button>
+                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Pay-per-use</Button>
+                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">One-time</Button>
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium mb-2">Base Model</h3>
+                    <h3 className="text-sm font-medium mb-2 text-white text-shadow-sm">Base Model</h3>
                     <div className="flex flex-wrap gap-2">
-                      <Button variant="outline" size="sm" className="bg-background">GPT-4o</Button>
-                      <Button variant="outline" size="sm" className="bg-background">Claude 3</Button>
-                      <Button variant="outline" size="sm" className="bg-background">Gemini Pro</Button>
-                      <Button variant="outline" size="sm" className="bg-background">Mixtral</Button>
+                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">GPT-4o</Button>
+                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Claude 3</Button>
+                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Gemini Pro</Button>
+                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Mixtral</Button>
                     </div>
                   </div>
                 </div>
