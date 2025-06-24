@@ -52,7 +52,7 @@ const ThreadOfLife = () => {
             <TabsTrigger value="timeline" className="text-white data-[state=active]:bg-studio-accent data-[state=active]:text-white">Timeline</TabsTrigger>
           </TabsList>
           <TabsContent value="lineage" className="pt-4">
-            <div className="glass-card p-6 backdrop-blur-md bg-white/10 border border-white/20 shadow-card-glow">
+            <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-6 shadow-card-glow">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-medium text-white text-shadow-sm">Asset Lineage Visualization</h3>
                 <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
@@ -91,13 +91,13 @@ const ThreadOfLife = () => {
             </div>
           </TabsContent>
           <TabsContent value="transformations" className="pt-4">
-            <div className="glass-card p-6 backdrop-blur-md bg-white/10 border border-white/20 shadow-card-glow">
+            <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-6 shadow-card-glow">
               <h3 className="text-lg font-medium mb-6 text-white text-shadow-sm">Transformation Records</h3>
               <p className="text-white/80 text-shadow-sm mb-4">This tab will display the transformation records for your assets.</p>
             </div>
           </TabsContent>
           <TabsContent value="timeline" className="pt-4">
-            <div className="glass-card p-6 backdrop-blur-md bg-white/10 border border-white/20 shadow-card-glow">
+            <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-6 shadow-card-glow">
               <h3 className="text-lg font-medium mb-6 text-white text-shadow-sm">Historical Timeline</h3>
               <p className="text-white/80 text-shadow-sm mb-4">This tab will display the complete historical timeline for your assets.</p>
             </div>
