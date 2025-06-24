@@ -443,7 +443,7 @@ const Landing = () => {
               animate={controls} 
               transition={{delay: 0.1}}
             >
-              Make Magic Real Again 
+              An Open-Source Creator OS 
             </motion.h2>
             
             {/* Hero box */}
@@ -463,7 +463,7 @@ const Landing = () => {
                 }} 
               ></div>
               <p className="text-base sm:text-lg text-gray-200 max-w-xl mx-auto lg:mx-0 relative z-10">
-                UNIVERSAL.AI IS FOR THE CREATOR, PERPETUAL CREATOR CRYPTO MACHINES, HYPERLIQUID CULTURE FUND
+                A full-stack solution for creators and brands to create, register, manage, and grow IP-backed assets.
               </p>
             </motion.div>
             
@@ -531,16 +531,16 @@ const Landing = () => {
                         <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-400"></div>
                         <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-400"></div>
                       </div>
-                      <div className="text-xs text-gray-400">AI Studio</div>
+                      <div className="text-xs text-gray-400">UniversalAI</div>
                     </div>
                     
                     {/* Terminal-like content */}
                     <div className="bg-black/30 rounded p-2 sm:p-3 text-[8px] sm:text-xs font-mono text-green-300 h-32 sm:h-40 overflow-hidden">
-                      <div className="opacity-80">$ initializing universal.ai</div>
-                      <div className="opacity-70">$ loading creator toolkit...</div>
-                      <div className="opacity-90 mt-1">$ initializing neural fabric</div>
-                      <div className="opacity-90">$ connecting to decentralized nodes</div>
-                      <div className="opacity-100 text-cyan-300 mt-1">[SYSTEM] Creator mode activated</div>
+                      <div className="opacity-80">$pip install $5DEE</div>
+                      <div className="opacity-70">$ initializing creator cyptographic nodes ...</div>
+                      <div className="opacity-90 mt-1">$ activating UniversalAI </div>
+                      <div className="opacity-90">$$$ connecting to your hyperliquid culture fund </div>
+                      <div className="opacity-100 text-cyan-300 mt-1">[WZRD.tech] How may I be of service? </div>
                       <div className="animate-pulse mt-2 text-white">Ready to create magic_<span className="inline-block w-2 h-3 bg-white/70 animate-blink ml-0.5"></span></div>
                     </div>
                   </div>
