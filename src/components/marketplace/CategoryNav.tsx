@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { 
@@ -34,8 +33,8 @@ const CategoryNav: React.FC<CategoryNavProps> = ({ selectedCategory, setSelected
   ];
 
   return (
-    <div className="bg-white rounded-xl border p-4 sticky top-4">
-      <h3 className="font-medium mb-3">Categories</h3>
+    <div className="glass-card p-4 sticky top-4 backdrop-blur-md bg-white/10 border border-white/20 shadow-card-glow">
+      <h3 className="font-medium mb-3 text-white text-shadow-sm">Categories</h3>
       <nav className="space-y-1">
         {categories.map((category) => {
           const isSelected = selectedCategory === category.id;
@@ -47,7 +46,7 @@ const CategoryNav: React.FC<CategoryNavProps> = ({ selectedCategory, setSelected
               className={`w-full flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-colors relative ${
                 isSelected 
                   ? "text-studio-accent font-medium" 
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  : "text-white/70 hover:text-white hover:bg-white/10"
               }`}
               onClick={() => setSelectedCategory(category.id)}
             >
