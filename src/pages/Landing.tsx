@@ -25,7 +25,7 @@ import {
 import CloudShader from "@/components/ui/shaders/CloudShader";
 import Ambient from "@/components/ui/ambient";
 import CinematicIntro from "@/components/ui/animations/CinematicIntro";
-import { LucideProps } from "lucide-react";
+import { LucideCrop as LucideProps } from "lucide-react";
 
 // Type definition for the FeatureCard component props
 type FeatureCardProps = { 
