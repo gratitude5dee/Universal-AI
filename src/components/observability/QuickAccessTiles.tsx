@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { 
@@ -44,7 +43,7 @@ export const QuickAccessTiles = () => {
           <Link 
             key={tile.id} 
             to={tile.path}
-            className="bg-white p-4 rounded-xl border border-studio-sand/30 flex flex-col items-center justify-center hover:shadow-md transition-all h-24"
+            className="backdrop-blur-md bg-white/10 p-4 rounded-xl border border-white/20 shadow-card-glow flex flex-col items-center justify-center hover:bg-white/15 transition-all duration-200 h-24"
           >
             <div 
               className="p-2 rounded-lg mb-2"
@@ -52,10 +51,12 @@ export const QuickAccessTiles = () => {
             >
               <TileIcon style={{ color: tile.color }} className="h-6 w-6" />
             </div>
-            <span className="text-sm font-medium text-center">{tile.title}</span>
+            <span className="text-sm font-medium text-center text-white text-shadow-sm">{tile.title}</span>
           </Link>
         );
       })}
     </div>
   );
 };
+
+export default QuickAccessTiles;

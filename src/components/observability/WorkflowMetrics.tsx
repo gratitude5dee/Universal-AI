@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   LineChart,
@@ -34,41 +33,41 @@ export const WorkflowMetrics = () => {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-3 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-studio-sand/30 flex items-center">
-          <div className="p-2 rounded-lg mr-3 bg-green-100">
-            <CheckCircle className="h-5 w-5 text-green-600" />
+        <div className="backdrop-blur-md bg-white/10 p-4 rounded-xl border border-white/20 shadow-card-glow flex items-center">
+          <div className="p-2 rounded-lg mr-3 bg-green-500/20">
+            <CheckCircle className="h-5 w-5 text-green-400" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Completed</p>
-            <p className="text-xl font-bold">72</p>
+            <p className="text-xs text-white/70 text-shadow-sm">Completed</p>
+            <p className="text-xl font-bold text-white text-shadow-sm">72</p>
           </div>
         </div>
         
-        <div className="bg-white p-4 rounded-xl border border-studio-sand/30 flex items-center">
-          <div className="p-2 rounded-lg mr-3 bg-amber-100">
-            <Clock className="h-5 w-5 text-amber-600" />
+        <div className="backdrop-blur-md bg-white/10 p-4 rounded-xl border border-white/20 shadow-card-glow flex items-center">
+          <div className="p-2 rounded-lg mr-3 bg-amber-500/20">
+            <Clock className="h-5 w-5 text-amber-400" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">In Progress</p>
-            <p className="text-xl font-bold">18</p>
+            <p className="text-xs text-white/70 text-shadow-sm">In Progress</p>
+            <p className="text-xl font-bold text-white text-shadow-sm">18</p>
           </div>
         </div>
         
-        <div className="bg-white p-4 rounded-xl border border-studio-sand/30 flex items-center">
-          <div className="p-2 rounded-lg mr-3 bg-gray-100">
-            <AlertCircle className="h-5 w-5 text-gray-600" />
+        <div className="backdrop-blur-md bg-white/10 p-4 rounded-xl border border-white/20 shadow-card-glow flex items-center">
+          <div className="p-2 rounded-lg mr-3 bg-gray-500/20">
+            <AlertCircle className="h-5 w-5 text-gray-400" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Pending</p>
-            <p className="text-xl font-bold">10</p>
+            <p className="text-xs text-white/70 text-shadow-sm">Pending</p>
+            <p className="text-xl font-bold text-white text-shadow-sm">10</p>
           </div>
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2">
-          <h3 className="text-sm font-medium mb-3">Weekly Activity</h3>
-          <div className="h-64 w-full">
+          <h3 className="text-sm font-medium mb-3 text-white text-shadow-sm">Weekly Activity</h3>
+          <div className="h-64 w-full backdrop-blur-md bg-white/10 p-4 rounded-xl border border-white/20 shadow-card-glow">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
                 data={activityData}
@@ -79,23 +78,26 @@ export const WorkflowMetrics = () => {
                   bottom: 5,
                 }}
               >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" opacity={0.1} />
                 <XAxis 
                   dataKey="day" 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: "#8A8A8A" }}
+                  tick={{ fontSize: 12, fill: "#FFFFFF" }}
                 />
                 <YAxis 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: "#8A8A8A" }}
+                  tick={{ fontSize: 12, fill: "#FFFFFF" }}
                 />
                 <Tooltip 
                   contentStyle={{ 
                     borderRadius: "8px", 
                     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                    border: "none"
+                    border: "1px solid rgba(255, 255, 255, 0.2)",
+                    backgroundColor: "rgba(0, 0, 0, 0.7)",
+                    backdropFilter: "blur(10px)",
+                    color: "#FFFFFF"
                   }}
                 />
                 <Line 
@@ -104,8 +106,8 @@ export const WorkflowMetrics = () => {
                   name="Completed Tasks"
                   stroke="#10B981" 
                   strokeWidth={2} 
-                  dot={{ r: 4 }} 
-                  activeDot={{ r: 6 }} 
+                  dot={{ r: 4, fill: "#10B981", strokeWidth: 1, stroke: "#FFFFFF" }} 
+                  activeDot={{ r: 6, fill: "#10B981", stroke: "#FFFFFF" }} 
                 />
                 <Line 
                   type="monotone" 
@@ -113,8 +115,8 @@ export const WorkflowMetrics = () => {
                   name="Pending Tasks"
                   stroke="#F59E0B" 
                   strokeWidth={2} 
-                  dot={{ r: 4 }} 
-                  activeDot={{ r: 6 }} 
+                  dot={{ r: 4, fill: "#F59E0B", strokeWidth: 1, stroke: "#FFFFFF" }} 
+                  activeDot={{ r: 6, fill: "#F59E0B", stroke: "#FFFFFF" }} 
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -122,8 +124,8 @@ export const WorkflowMetrics = () => {
         </div>
         
         <div>
-          <h3 className="text-sm font-medium mb-3">Task Distribution</h3>
-          <div className="h-64 w-full">
+          <h3 className="text-sm font-medium mb-3 text-white text-shadow-sm">Task Distribution</h3>
+          <div className="h-64 w-full backdrop-blur-md bg-white/10 p-4 rounded-xl border border-white/20 shadow-card-glow">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -135,7 +137,7 @@ export const WorkflowMetrics = () => {
                   paddingAngle={5}
                   dataKey="value"
                   label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  labelLine={false}
+                  labelLine={{ stroke: "rgba(255, 255, 255, 0.3)", strokeWidth: 1 }}
                 >
                   {pieData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
@@ -146,7 +148,10 @@ export const WorkflowMetrics = () => {
                   contentStyle={{ 
                     borderRadius: "8px", 
                     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                    border: "none"
+                    border: "1px solid rgba(255, 255, 255, 0.2)",
+                    backgroundColor: "rgba(0, 0, 0, 0.7)",
+                    backdropFilter: "blur(10px)",
+                    color: "#FFFFFF"
                   }}
                 />
               </PieChart>
@@ -157,3 +162,5 @@ export const WorkflowMetrics = () => {
     </div>
   );
 };
+
+export default WorkflowMetrics;

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { 
@@ -70,7 +69,7 @@ export const MagicalDashboard = () => {
           transition={{ duration: 0.5 }}
           className="glass-card p-6"
         >
-          <h2 className="text-xl font-medium mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-medium mb-4 flex items-center gap-2 text-white text-shadow-sm">
             <UserCheck className="h-5 w-5 text-studio-accent" />
             Agent Status
           </h2>
@@ -84,7 +83,7 @@ export const MagicalDashboard = () => {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="glass-card p-6 lg:col-span-2"
         >
-          <h2 className="text-xl font-medium mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-medium mb-4 flex items-center gap-2 text-white text-shadow-sm">
             <FileImage className="h-5 w-5 text-studio-accent" />
             Recent Creative Outputs
           </h2>
@@ -99,7 +98,7 @@ export const MagicalDashboard = () => {
         transition={{ duration: 0.5, delay: 0.2 }}
         className="glass-card p-6"
       >
-        <h2 className="text-xl font-medium mb-4 flex items-center gap-2">
+        <h2 className="text-xl font-medium mb-4 flex items-center gap-2 text-white text-shadow-sm">
           <Wallet className="h-5 w-5 text-studio-accent" />
           Revenue Streams & Royalties
         </h2>
@@ -115,7 +114,7 @@ export const MagicalDashboard = () => {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="glass-card p-6"
         >
-          <h2 className="text-xl font-medium mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-medium mb-4 flex items-center gap-2 text-white text-shadow-sm">
             <ListChecks className="h-5 w-5 text-studio-accent" />
             Workflow Metrics
           </h2>
@@ -129,7 +128,7 @@ export const MagicalDashboard = () => {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="glass-card p-6"
         >
-          <h2 className="text-xl font-medium mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-medium mb-4 flex items-center gap-2 text-white text-shadow-sm">
             <Grid2X2 className="h-5 w-5 text-studio-accent" />
             Quick Access
           </h2>
@@ -139,3 +138,5 @@ export const MagicalDashboard = () => {
     </div>
   );
 };
+
+export default MagicalDashboard;

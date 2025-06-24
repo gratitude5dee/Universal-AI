@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   BarChart,
@@ -36,16 +35,18 @@ export const RevenueStreams = () => {
         {revenueStreams.map((stream) => {
           const StreamIcon = stream.icon;
           return (
-            <div key={stream.name} className="bg-white p-4 rounded-xl border border-studio-sand/30">
+            <div key={stream.name} className="backdrop-blur-md bg-white/10 p-4 rounded-xl border border-white/20 shadow-card-glow hover:bg-white/15 transition-all duration-200">
               <div className="flex items-center mb-2">
                 <div className="p-2 rounded-lg mr-3" style={{ backgroundColor: `${stream.color}20` }}>
-                  <StreamIcon style={{ color: stream.color }} className="h-5 w-5" />
+                  <StreamIcon className="h-5 w-5" style={{ color: stream.color }} />
                 </div>
-                <h3 className="font-medium">{stream.name}</h3>
+                <div>
+                  <h3 className="font-medium text-white text-shadow-sm">{stream.name}</h3>
+                </div>
               </div>
               <div className="flex items-baseline justify-between">
-                <p className="text-2xl font-bold">{stream.value}</p>
-                <span className="text-xs text-green-500 bg-green-50 px-2 py-1 rounded-full">
+                <p className="text-2xl font-bold text-white text-shadow-sm">{stream.value}</p>
+                <span className="text-xs text-green-400 bg-green-500/20 px-2 py-1 rounded-full">
                   {stream.change}
                 </span>
               </div>
@@ -54,7 +55,7 @@ export const RevenueStreams = () => {
         })}
       </div>
       
-      <div className="h-80 w-full">
+      <div className="h-80 w-full backdrop-blur-md bg-white/10 p-6 rounded-xl border border-white/20 shadow-card-glow">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={revenueData}
@@ -65,17 +66,17 @@ export const RevenueStreams = () => {
               bottom: 5,
             }}
           >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" opacity={0.1} />
             <XAxis 
               dataKey="name" 
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 12, fill: "#8A8A8A" }}
+              tick={{ fontSize: 12, fill: "#FFFFFF" }}
             />
             <YAxis 
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 12, fill: "#8A8A8A" }}
+              tick={{ fontSize: 12, fill: "#FFFFFF" }}
               tickFormatter={(value) => `$${value}`}
             />
             <Tooltip 
@@ -83,10 +84,13 @@ export const RevenueStreams = () => {
               contentStyle={{ 
                 borderRadius: "8px", 
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                border: "none"
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                backgroundColor: "rgba(0, 0, 0, 0.7)",
+                backdropFilter: "blur(10px)",
+                color: "#FFFFFF"
               }}
             />
-            <Legend />
+            <Legend wrapperStyle={{ color: "#FFFFFF" }} />
             <Bar dataKey="primary" name="Primary Sales" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
             <Bar dataKey="royalties" name="Royalties" fill="#F97316" radius={[4, 4, 0, 0]} />
             <Bar dataKey="secondary" name="Secondary" fill="#0EA5E9" radius={[4, 4, 0, 0]} />
@@ -96,3 +100,5 @@ export const RevenueStreams = () => {
     </div>
   );
 };
+
+export default RevenueStreams;
