@@ -1,5 +1,5 @@
 import React from "react";
-import { AlertTriangle, Badge } from "lucide-react";
+import { AlertTriangle, Badge, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const AccountStats: React.FC = () => {
