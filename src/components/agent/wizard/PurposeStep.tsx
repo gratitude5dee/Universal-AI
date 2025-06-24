@@ -65,7 +65,7 @@ const PurposeStep: React.FC<PurposeStepProps> = ({ agentPurpose, setAgentPurpose
         <Textarea 
           id="purpose-description" 
           placeholder="Describe what your agent will do in more detail..."
-          className="h-24 mt-2 text-blue-dark"
+          className="h-24 mt-2 text-blue-dark backdrop-blur-sm bg-white/10 border border-white/20"
         />
       </div>
       
@@ -79,7 +79,7 @@ const PurposeStep: React.FC<PurposeStepProps> = ({ agentPurpose, setAgentPurpose
         </button>
         
         {showAdvanced && (
-          <div className="mt-4 bg-gray-50 p-4 rounded-lg">
+          <div className="mt-4 backdrop-blur-md bg-white/10 border border-white/20 p-4 rounded-lg">
             <h3 className="font-medium mb-2 text-blue-dark">Advanced Capabilities</h3>
             <div className="space-y-3">
               <div className="flex items-center">
@@ -99,7 +99,7 @@ const PurposeStep: React.FC<PurposeStepProps> = ({ agentPurpose, setAgentPurpose
         )}
       </div>
       
-      <div className="flex items-center bg-blue-50 p-4 rounded-lg">
+      <div className="flex items-center bg-blue-50/30 backdrop-blur-sm p-4 rounded-lg border border-blue-100/30">
         <Sparkles className="h-5 w-5 text-blue-500 mr-2" />
         <p className="text-sm text-blue-700">
           <strong>AI Assistant:</strong> For generative art, I recommend enabling autonomous operation for continuous creation.

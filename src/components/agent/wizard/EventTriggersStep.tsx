@@ -26,7 +26,7 @@ const EventTriggersStep: React.FC = () => {
               <div>
                 <Label htmlFor="frequency" className="text-xs text-blue-dark">Frequency</Label>
                 <Select defaultValue="daily">
-                  <SelectTrigger id="frequency" className="text-blue-dark">
+                  <SelectTrigger id="frequency" className="text-blue-dark backdrop-blur-sm bg-white/10 border border-white/20">
                     <SelectValue placeholder="Select frequency" />
                   </SelectTrigger>
                   <SelectContent>
@@ -39,7 +39,7 @@ const EventTriggersStep: React.FC = () => {
               </div>
               <div>
                 <Label htmlFor="time" className="text-xs text-blue-dark">Time</Label>
-                <Input type="time" id="time" defaultValue="09:00" className="text-blue-dark" />
+                <Input type="time" id="time" defaultValue="09:00" className="text-blue-dark backdrop-blur-sm bg-white/10 border border-white/20" />
               </div>
             </div>
           </div>
@@ -68,7 +68,7 @@ const EventTriggersStep: React.FC = () => {
           <div>
             <Label htmlFor="condition-source" className="text-xs text-blue-dark">Data Source</Label>
             <Select defaultValue="social">
-              <SelectTrigger id="condition-source" className="mt-1 text-blue-dark">
+              <SelectTrigger id="condition-source" className="mt-1 text-blue-dark backdrop-blur-sm bg-white/10 border border-white/20">
                 <SelectValue placeholder="Select data source" />
               </SelectTrigger>
               <SelectContent>
@@ -84,7 +84,7 @@ const EventTriggersStep: React.FC = () => {
             <div>
               <Label htmlFor="condition-operator" className="text-xs">Operator</Label>
               <Select defaultValue="contains">
-                <SelectTrigger id="condition-operator" className="mt-1">
+                <SelectTrigger id="condition-operator" className="mt-1 backdrop-blur-sm bg-white/10 border border-white/20">
                   <SelectValue placeholder="Select operator" />
                 </SelectTrigger>
                 <SelectContent>
@@ -98,7 +98,7 @@ const EventTriggersStep: React.FC = () => {
             
             <div className="col-span-2">
               <Label htmlFor="condition-value" className="text-xs">Value</Label>
-              <Input id="condition-value" className="mt-1" placeholder="trending topic" />
+              <Input id="condition-value" className="mt-1 backdrop-blur-sm bg-white/10 border border-white/20" placeholder="trending topic" />
             </div>
           </div>
           

@@ -27,7 +27,7 @@ const OutputConfigStep: React.FC<OutputConfigStepProps> = ({ outputFormat, setOu
           
           <div className="ml-6 mb-4">
             <Select defaultValue="opensea">
-              <SelectTrigger className="text-blue-dark">
+              <SelectTrigger className="text-blue-dark backdrop-blur-sm bg-white/10 border border-white/20">
                 <SelectValue placeholder="Select marketplace" />
               </SelectTrigger>
               <SelectContent>
@@ -112,7 +112,7 @@ const OutputConfigStep: React.FC<OutputConfigStepProps> = ({ outputFormat, setOu
           <div>
             <Label htmlFor="style-options" className="text-sm text-blue-dark">Style Profile</Label>
             <Select defaultValue="modern">
-              <SelectTrigger id="style-options" className="mt-1 text-blue-dark">
+              <SelectTrigger id="style-options" className="mt-1 text-blue-dark backdrop-blur-sm bg-white/10 border border-white/20">
                 <SelectValue placeholder="Select style" />
               </SelectTrigger>
               <SelectContent>
@@ -127,7 +127,7 @@ const OutputConfigStep: React.FC<OutputConfigStepProps> = ({ outputFormat, setOu
           <div>
             <Label htmlFor="content-filter" className="text-sm text-blue-dark">Content Filter</Label>
             <Select defaultValue="moderate">
-              <SelectTrigger id="content-filter" className="mt-1 text-blue-dark">
+              <SelectTrigger id="content-filter" className="mt-1 text-blue-dark backdrop-blur-sm bg-white/10 border border-white/20">
                 <SelectValue placeholder="Select filter level" />
               </SelectTrigger>
               <SelectContent>

@@ -25,7 +25,7 @@ const EconomicStep: React.FC<EconomicStepProps> = ({ feePercentage, setFeePercen
           <div>
             <Label htmlFor="pricing-model" className="text-sm text-blue-dark">Pricing Model</Label>
             <Select defaultValue="dynamic">
-              <SelectTrigger id="pricing-model" className="mt-1 text-blue-dark">
+              <SelectTrigger id="pricing-model" className="mt-1 text-blue-dark backdrop-blur-sm bg-white/10 border border-white/20">
                 <SelectValue placeholder="Select pricing model" />
               </SelectTrigger>
               <SelectContent>
@@ -40,7 +40,7 @@ const EconomicStep: React.FC<EconomicStepProps> = ({ feePercentage, setFeePercen
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="base-price" className="text-sm text-blue-dark">Base Price (ETH)</Label>
-              <Input id="base-price" type="number" step="0.01" defaultValue="0.1" className="mt-1 text-blue-dark" />
+              <Input id="base-price" type="number" step="0.01" defaultValue="0.1" className="mt-1 text-blue-dark backdrop-blur-sm bg-white/10 border border-white/20" />
             </div>
             
             <div>
@@ -52,7 +52,7 @@ const EconomicStep: React.FC<EconomicStepProps> = ({ feePercentage, setFeePercen
                 max="20" 
                 value={feePercentage} 
                 onChange={(e) => setFeePercentage(e.target.value)}
-                className="mt-1 text-blue-dark" 
+                className="mt-1 text-blue-dark backdrop-blur-sm bg-white/10 border border-white/20" 
               />
             </div>
           </div>
@@ -73,7 +73,7 @@ const EconomicStep: React.FC<EconomicStepProps> = ({ feePercentage, setFeePercen
           
           <div>
             <Label htmlFor="split-address" className="text-sm text-blue-dark">Collaborator Address (Optional)</Label>
-            <Input id="split-address" placeholder="0x..." className="mt-1 font-mono text-sm text-blue-dark" />
+            <Input id="split-address" placeholder="0x..." className="mt-1 font-mono text-sm text-blue-dark backdrop-blur-sm bg-white/10 border border-white/20" />
           </div>
           
           <div>

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import DashboardLayout from "@/layouts/dashboard-layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -66,7 +65,7 @@ const CreateAgent = () => {
                   </TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="wizard" className="flex-1 space-y-6 bg-white rounded-lg p-6 text-blue-dark">
+                <TabsContent value="wizard" className="flex-1 space-y-6 backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-6 text-blue-dark">
                   <WizardView 
                     wizardStep={wizardStep}
                     setWizardStep={setWizardStep}
@@ -83,7 +82,7 @@ const CreateAgent = () => {
                   />
                 </TabsContent>
                 
-                <TabsContent value="form" className="flex-1 bg-white rounded-lg p-6 text-blue-dark">
+                <TabsContent value="form" className="flex-1 backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-6 text-blue-dark">
                   <FormView 
                     currentStep={currentStep}
                     setCurrentStep={setCurrentStep}
