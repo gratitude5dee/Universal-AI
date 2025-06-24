@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Trash } from "lucide-react";
 
@@ -24,8 +23,8 @@ const BioSection: React.FC = () => {
 
   return (
     <div className="py-6" id="bio">
-      <h2 className="text-2xl font-bold mb-2 white-bg-heading">Bio</h2>
-      <p className="white-bg-subheading mb-4">
+      <h2 className="text-2xl font-bold mb-2 text-white animate-text-glow">Bio</h2>
+      <p className="text-white/80 text-shadow-sm mb-4">
         Background information for your character. Includes biographical details about the character, either as one complete biography or several statements that vary.
       </p>
 
@@ -40,11 +39,11 @@ const BioSection: React.FC = () => {
                 newItems[index] = e.target.value;
                 setBioItems(newItems);
               }}
-              className="flex-1 bg-black/5 text-blue-primary p-3 rounded-md border border-gray-700/20"
+              className="flex-1 backdrop-blur-sm bg-white/10 border border-white/20 text-white p-3 rounded-md placeholder:text-white/50"
             />
             <button
               onClick={() => handleRemoveBio(index)}
-              className="p-2 text-gray-500 hover:text-gray-700"
+              className="p-2 text-white/70 hover:text-white"
             >
               <Trash className="h-5 w-5" />
             </button>
@@ -58,7 +57,7 @@ const BioSection: React.FC = () => {
             value={newBio}
             onChange={(e) => setNewBio(e.target.value)}
             onKeyDown={handleAddBio}
-            className="w-full bg-black/5 text-blue-primary p-3 rounded-md border border-gray-700/20 placeholder:text-blue-dark/50"
+            className="w-full backdrop-blur-sm bg-white/10 border border-white/20 text-white p-3 rounded-md placeholder:text-white/50"
           />
         </div>
       </div>

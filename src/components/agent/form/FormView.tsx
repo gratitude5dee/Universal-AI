@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import TableOfContents from "@/components/agent/TableOfContents";
@@ -48,11 +47,11 @@ const FormView: React.FC<FormViewProps> = ({
     <>
       {currentStep === 'form' && (
         <div className="grid md:grid-cols-[280px_1fr] gap-6 h-full">
-          <div className="bg-white rounded-xl border p-4 h-fit sticky top-4">
+          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-4 h-fit sticky top-4">
             <TableOfContents activeSection={activeSection} />
           </div>
           
-          <div className="bg-white rounded-xl border p-6 max-h-[75vh] overflow-auto" onScroll={handleScroll}>
+          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-6 max-h-[75vh] overflow-auto" onScroll={handleScroll}>
             <BasicInfoSection />
             <BioSection />
             <LoreSection />
@@ -66,13 +65,13 @@ const FormView: React.FC<FormViewProps> = ({
       )}
       
       {currentStep === 'secrets' && (
-        <div className="bg-white rounded-xl border p-6">
+        <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-6">
           <SecretsSection />
         </div>
       )}
       
       {currentStep === 'confirmation' && (
-        <div className="bg-white rounded-xl border p-6">
+        <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-6">
           <AgentConfirmation 
             name="Trump" 
             modelProvider="OpenAI" 
@@ -87,6 +86,7 @@ const FormView: React.FC<FormViewProps> = ({
           variant="outline"
           onClick={handleGoBack}
           disabled={currentStep === 'form'}
+          className="text-white border-white/30 hover:bg-white/10"
         >
           Back
         </Button>
@@ -94,6 +94,7 @@ const FormView: React.FC<FormViewProps> = ({
         <Button
           onClick={handleContinue}
           disabled={currentStep === 'confirmation'}
+          className="bg-studio-accent hover:bg-studio-accent/90 text-white"
         >
           {currentStep === 'form' ? 'Next: Configuration' : currentStep === 'secrets' ? 'Next: Confirmation' : 'Create Agent'}
         </Button>

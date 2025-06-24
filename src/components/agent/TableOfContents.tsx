@@ -1,4 +1,3 @@
-
 import React from "react";
 
 type TableOfContentsProps = {
@@ -24,7 +23,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ activeSection }) => {
 
   return (
     <div className="sticky top-0">
-      <h3 className="font-medium mb-3 text-lg">Table of Contents</h3>
+      <h3 className="font-medium mb-3 text-lg text-white text-shadow-sm animate-text-glow">Table of Contents</h3>
       <ul className="space-y-2">
         {sections.map((section) => (
           <li key={section.id}>
@@ -33,7 +32,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ activeSection }) => {
               className={`block text-sm ${
                 activeSection === section.id
                   ? "text-studio-accent font-medium"
-                  : "text-muted-foreground hover:text-studio-charcoal"
+                  : "text-white/70 hover:text-white"
               }`}
             >
               {activeSection === section.id && "• "}
