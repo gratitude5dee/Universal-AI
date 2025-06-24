@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { Gem, Flower, Droplets, Clover, Bird, Sparkles } from "lucide-react";
@@ -34,7 +33,7 @@ const AchievementGarden = ({ revealAchievement }: AchievementGardenProps) => {
           return (
             <motion.div
               key={achievement.id}
-              className="bg-white rounded-2xl p-5 text-center cursor-pointer hover:shadow-md transition-all border border-gray-100"
+              className="backdrop-blur-md bg-white/10 rounded-2xl p-5 text-center cursor-pointer hover:shadow-md transition-all border border-white/20"
               whileHover={{ y: -5, transition: { duration: 0.2 } }}
               onClick={() => revealAchievement(achievement)}
             >
