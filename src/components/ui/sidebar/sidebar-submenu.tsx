@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -45,7 +44,7 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
     return (
       <div className="absolute left-full top-0 ml-1 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
         <motion.div 
-          className="bg-gradient-to-br from-blue-darker/90 to-blue-dark/90 backdrop-blur-md p-2 min-w-48 border border-blue-primary/30 rounded-lg shadow-[0_0_20px_rgba(30,64,175,0.3)]"
+          className="bg-gradient-to-br from-blue-darker/90 to-blue-dark/90 backdrop-blur-md p-3 min-w-48 border border-blue-primary/30 rounded-lg shadow-[0_0_20px_rgba(30,64,175,0.3)]"
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.2 }}
@@ -53,7 +52,7 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
           <div className="text-xs font-medium text-cyan-400 text-glow-cyan mb-2 px-2 uppercase tracking-wider">
             {parentName}
           </div>
-          <div className="space-y-0.5">
+          <div className="space-y-1">
             {submenuItems.map((subItem, index) => {
               const basePathMatch = currentPath.startsWith(subItem.path.split("?")[0]);
               const queryMatch = subItem.path.includes(`tab=${currentTab}`);
@@ -73,7 +72,7 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
                   <Link 
                     to={subItem.path} 
                     className={`
-                      flex items-center px-2.5 py-1.5 rounded-md text-xs transition-all duration-200
+                      flex items-center px-3 py-2 rounded-lg text-xs transition-all duration-200
                       ${isSubItemActive 
                         ? 'bg-cyan-500/20 text-white font-medium' 
                         : 'text-blue-lightest hover:bg-cyan-500/10 hover:text-white'}
@@ -104,7 +103,7 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
           animate={{ height: "auto", opacity: 1, overflow: 'visible' }}
           exit={{ height: 0, opacity: 0, overflow: 'hidden' }}
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="mt-0.5 ml-4 space-y-0.5 overflow-hidden"
+          className="mt-1 ml-4 space-y-1 overflow-hidden"
         >
           {submenuItems.map((subItem, index) => {
             const basePathMatch = currentPath.startsWith(subItem.path.split("?")[0]);
@@ -124,7 +123,7 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
                 <Link 
                   to={subItem.path} 
                   className={`
-                    flex items-center px-2.5 py-1.5 rounded-md text-xs transition-all duration-200 relative group
+                    flex items-center px-3 py-2 rounded-lg text-xs transition-all duration-200 relative group
                     ${isSubItemActive 
                       ? 'bg-cyan-500/20 text-white font-medium' 
                       : 'text-blue-lightest hover:bg-cyan-500/10 hover:text-white'}
