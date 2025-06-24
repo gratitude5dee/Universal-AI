@@ -8,25 +8,25 @@ const EventTriggersStep: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <h2 className="text-2xl font-bold white-bg-heading">Event Triggers & Conditions</h2>
-        <p className="white-bg-subheading">Define when your agent will activate and take action</p>
+        <h2 className="text-2xl font-bold text-white animate-pulse text-shadow-sm">Event Triggers & Conditions</h2>
+        <p className="text-white/80 text-shadow-sm">Define when your agent will activate and take action</p>
       </div>
       
       <div className="backdrop-blur-md bg-white/10 border border-white/20 p-6 rounded-xl">
-        <h3 className="font-medium mb-3 text-blue-dark">Activation Triggers</h3>
+        <h3 className="font-medium mb-3 text-white text-shadow-sm">Activation Triggers</h3>
         
         <div className="space-y-3">
           <div className="flex items-center">
             <input type="checkbox" id="trigger-schedule" className="mr-2" defaultChecked />
-            <label htmlFor="trigger-schedule" className="text-sm text-blue-dark">Schedule-based</label>
+            <label htmlFor="trigger-schedule" className="text-sm text-white text-shadow-sm">Schedule-based</label>
           </div>
           
           <div className="ml-6 mb-4">
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <Label htmlFor="frequency" className="text-xs text-blue-dark">Frequency</Label>
+                <Label htmlFor="frequency" className="text-xs text-white text-shadow-sm">Frequency</Label>
                 <Select defaultValue="daily">
-                  <SelectTrigger id="frequency" className="text-blue-dark backdrop-blur-sm bg-white/10 border border-white/20">
+                  <SelectTrigger id="frequency" className="text-white backdrop-blur-sm bg-white/10 border border-white/20">
                     <SelectValue placeholder="Select frequency" />
                   </SelectTrigger>
                   <SelectContent>
@@ -38,37 +38,37 @@ const EventTriggersStep: React.FC = () => {
                 </Select>
               </div>
               <div>
-                <Label htmlFor="time" className="text-xs text-blue-dark">Time</Label>
-                <Input type="time" id="time" defaultValue="09:00" className="text-blue-dark backdrop-blur-sm bg-white/10 border border-white/20" />
+                <Label htmlFor="time" className="text-xs text-white text-shadow-sm">Time</Label>
+                <Input type="time" id="time" defaultValue="09:00" className="text-white backdrop-blur-sm bg-white/10 border border-white/20" />
               </div>
             </div>
           </div>
           
           <div className="flex items-center">
             <input type="checkbox" id="trigger-mention" className="mr-2" />
-            <label htmlFor="trigger-mention" className="text-sm">User interaction (mentions, commands)</label>
+            <label htmlFor="trigger-mention" className="text-sm text-white text-shadow-sm">User interaction (mentions, commands)</label>
           </div>
           
           <div className="flex items-center">
             <input type="checkbox" id="trigger-event" className="mr-2" />
-            <label htmlFor="trigger-event" className="text-sm">External events (API webhooks)</label>
+            <label htmlFor="trigger-event" className="text-sm text-white text-shadow-sm">External events (API webhooks)</label>
           </div>
           
           <div className="flex items-center">
             <input type="checkbox" id="trigger-tx" className="mr-2" />
-            <label htmlFor="trigger-tx" className="text-sm">Blockchain transactions</label>
+            <label htmlFor="trigger-tx" className="text-sm text-white text-shadow-sm">Blockchain transactions</label>
           </div>
         </div>
       </div>
       
       <div className="backdrop-blur-md bg-white/10 border border-white/20 p-6 rounded-xl">
-        <h3 className="font-medium mb-3 text-blue-dark">Conditions & Logic</h3>
+        <h3 className="font-medium mb-3 text-white text-shadow-sm">Conditions & Logic</h3>
         
         <div className="space-y-4">
           <div>
-            <Label htmlFor="condition-source" className="text-xs text-blue-dark">Data Source</Label>
+            <Label htmlFor="condition-source" className="text-xs text-white text-shadow-sm">Data Source</Label>
             <Select defaultValue="social">
-              <SelectTrigger id="condition-source" className="mt-1 text-blue-dark backdrop-blur-sm bg-white/10 border border-white/20">
+              <SelectTrigger id="condition-source" className="mt-1 text-white backdrop-blur-sm bg-white/10 border border-white/20">
                 <SelectValue placeholder="Select data source" />
               </SelectTrigger>
               <SelectContent>
@@ -82,9 +82,9 @@ const EventTriggersStep: React.FC = () => {
           
           <div className="grid grid-cols-3 gap-2">
             <div>
-              <Label htmlFor="condition-operator" className="text-xs">Operator</Label>
+              <Label htmlFor="condition-operator" className="text-xs text-white text-shadow-sm">Operator</Label>
               <Select defaultValue="contains">
-                <SelectTrigger id="condition-operator" className="mt-1 backdrop-blur-sm bg-white/10 border border-white/20">
+                <SelectTrigger id="condition-operator" className="mt-1 text-white backdrop-blur-sm bg-white/10 border border-white/20">
                   <SelectValue placeholder="Select operator" />
                 </SelectTrigger>
                 <SelectContent>
@@ -97,12 +97,12 @@ const EventTriggersStep: React.FC = () => {
             </div>
             
             <div className="col-span-2">
-              <Label htmlFor="condition-value" className="text-xs">Value</Label>
-              <Input id="condition-value" className="mt-1 backdrop-blur-sm bg-white/10 border border-white/20" placeholder="trending topic" />
+              <Label htmlFor="condition-value" className="text-xs text-white text-shadow-sm">Value</Label>
+              <Input id="condition-value" className="mt-1 text-white backdrop-blur-sm bg-white/10 border border-white/20 placeholder:text-white/50" placeholder="trending topic" />
             </div>
           </div>
           
-          <button className="text-sm text-purple-600 flex items-center">
+          <button className="text-sm text-purple-300 hover:text-purple-200 transition-colors flex items-center">
             <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
@@ -113,7 +113,7 @@ const EventTriggersStep: React.FC = () => {
       
       <div className="flex items-center bg-blue-50/30 backdrop-blur-sm p-4 rounded-lg border border-blue-100/30">
         <Sparkles className="h-5 w-5 text-blue-500 mr-2" />
-        <p className="text-sm text-blue-700">
+        <p className="text-sm text-white text-shadow-sm">
           <strong>AI Assistant:</strong> Daily schedules work well for consistent outputs. Consider adding social media triggers for more dynamic interactions.
         </p>
       </div>

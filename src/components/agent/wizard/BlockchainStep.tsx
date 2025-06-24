@@ -11,8 +11,8 @@ const BlockchainStep: React.FC<BlockchainStepProps> = ({ blockchain, setBlockcha
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <h2 className="text-2xl font-bold white-bg-heading">Blockchain Deployment</h2>
-        <p className="white-bg-subheading">Choose where your agent's outputs will be stored</p>
+        <h2 className="text-2xl font-bold text-white animate-pulse text-shadow-sm">Blockchain Deployment</h2>
+        <p className="text-white/80 text-shadow-sm">Choose where your agent's outputs will be stored</p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -31,11 +31,11 @@ const BlockchainStep: React.FC<BlockchainStepProps> = ({ blockchain, setBlockcha
                 <path fill="currentColor" d="M32.452 223.4582453L127.962 288.0582453V154.5309453L32.452 223.4582453Z" />
               </svg>
             </div>
-            <div className="bg-white/20 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium text-indigo-600">Popular</div>
+            <div className="bg-white/20 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium text-white">Popular</div>
           </div>
-          <h3 className="font-medium mt-4 mb-1 text-blue-dark">Ethereum</h3>
-          <p className="text-sm text-blue-dark/70">Mainstream blockchain with wide adoption and established standards</p>
-          <div className="mt-4 text-xs text-blue-dark/60 flex items-center">
+          <h3 className="font-medium mt-4 mb-1 text-white text-shadow-sm">Ethereum</h3>
+          <p className="text-sm text-white/80 text-shadow-sm">Mainstream blockchain with wide adoption and established standards</p>
+          <div className="mt-4 text-xs text-white/70 flex items-center">
             <span className="mr-4">Gas: High</span>
             <span>Speed: Medium</span>
           </div>
@@ -51,11 +51,11 @@ const BlockchainStep: React.FC<BlockchainStepProps> = ({ blockchain, setBlockcha
                 <path fill="currentColor" d="M320 48.5C170 48.5 48.5 170 48.5 320S170 591.5 320 591.5 591.5 470 591.5 320 470 48.5 320 48.5Z"/>
               </svg>
             </div>
-            <div className="bg-white/20 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium text-blue-600">L2</div>
+            <div className="bg-white/20 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium text-white">L2</div>
           </div>
-          <h3 className="font-medium mt-4 mb-1 text-blue-dark">Base</h3>
-          <p className="text-sm text-blue-dark/70">Ethereum L2 with lower fees and faster transactions</p>
-          <div className="mt-4 text-xs text-blue-dark/60 flex items-center">
+          <h3 className="font-medium mt-4 mb-1 text-white text-shadow-sm">Base</h3>
+          <p className="text-sm text-white/80 text-shadow-sm">Ethereum L2 with lower fees and faster transactions</p>
+          <div className="mt-4 text-xs text-white/70 flex items-center">
             <span className="mr-4">Gas: Low</span>
             <span>Speed: Fast</span>
           </div>
@@ -68,9 +68,9 @@ const BlockchainStep: React.FC<BlockchainStepProps> = ({ blockchain, setBlockcha
           <div className="w-10 h-10 rounded-full bg-green-100/30 flex items-center justify-center">
             <Layers className="h-5 w-5 text-green-500" />
           </div>
-          <h3 className="font-medium mt-4 mb-1">Mantle</h3>
-          <p className="text-sm text-muted-foreground">Ethereum scaling solution with data availability layer</p>
-          <div className="mt-4 text-xs text-gray-500 flex items-center">
+          <h3 className="font-medium mt-4 mb-1 text-white text-shadow-sm">Mantle</h3>
+          <p className="text-sm text-white/80 text-shadow-sm">Ethereum scaling solution with data availability layer</p>
+          <div className="mt-4 text-xs text-white/70 flex items-center">
             <span className="mr-4">Gas: Very Low</span>
             <span>Speed: Fast</span>
           </div>
@@ -83,9 +83,9 @@ const BlockchainStep: React.FC<BlockchainStepProps> = ({ blockchain, setBlockcha
           <div className="w-10 h-10 rounded-full bg-purple-100/30 flex items-center justify-center">
             <Zap className="h-5 w-5 text-purple-500" />
           </div>
-          <h3 className="font-medium mt-4 mb-1">Solana</h3>
-          <p className="text-sm text-muted-foreground">High-throughput blockchain with low transaction costs</p>
-          <div className="mt-4 text-xs text-gray-500 flex items-center">
+          <h3 className="font-medium mt-4 mb-1 text-white text-shadow-sm">Solana</h3>
+          <p className="text-sm text-white/80 text-shadow-sm">High-throughput blockchain with low transaction costs</p>
+          <div className="mt-4 text-xs text-white/70 flex items-center">
             <span className="mr-4">Gas: Minimal</span>
             <span>Speed: Very Fast</span>
           </div>
@@ -94,7 +94,7 @@ const BlockchainStep: React.FC<BlockchainStepProps> = ({ blockchain, setBlockcha
       
       <div className="flex items-center bg-blue-50/30 backdrop-blur-sm p-4 rounded-lg border border-blue-100/30">
         <Sparkles className="h-5 w-5 text-blue-500 mr-2" />
-        <p className="text-sm text-blue-700">
+        <p className="text-sm text-white text-shadow-sm">
           <strong>AI Assistant:</strong> For {agentPurpose === 'art' ? 'visual NFTs' : agentPurpose === 'music' ? 'audio NFTs' : 'text NFTs'}, I recommend {blockchain === 'ethereum' ? 'Ethereum for established marketplaces' : blockchain === 'base' ? 'Base for lower fees' : blockchain === 'mantle' ? 'Mantle for sustainability' : 'Solana for fast minting'}.
         </p>
       </div>
