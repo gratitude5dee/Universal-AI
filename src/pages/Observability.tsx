@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import DashboardLayout from "@/layouts/dashboard-layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -29,23 +28,37 @@ const Observability = () => {
     <DashboardLayout>
       <Content title="Magical Observatory" subtitle="Monitor your digital realm with mindful guardianship">
         <div className="space-y-6">
-          <div className="flex space-x-4 mb-6">
-            <Button 
-              variant={activeView === "dashboard" ? "default" : "outline"} 
-              onClick={() => setActiveView("dashboard")}
-              className="gap-2"
-            >
-              <Layout size={18} />
-              Command Center
-            </Button>
-            <Button 
-              variant={activeView === "observatory" ? "default" : "outline"} 
-              onClick={() => setActiveView("observatory")}
-              className="gap-2"
-            >
-              <Eye size={18} />
-              Observatory View
-            </Button>
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex space-x-4">
+              <Button 
+                variant={activeView === "dashboard" ? "default" : "outline"} 
+                onClick={() => setActiveView("dashboard")}
+                className="gap-2"
+              >
+                <Layout size={18} />
+                Command Center
+              </Button>
+              <Button 
+                variant={activeView === "observatory" ? "default" : "outline"} 
+                onClick={() => setActiveView("observatory")}
+                className="gap-2"
+              >
+                <Eye size={18} />
+                Observatory View
+              </Button>
+            </div>
+            
+            <div className="flex gap-2">
+              <Button size="sm" variant="outline" onClick={() => handleQuickAction("Health check")}>
+                Run Health Check
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => handleQuickAction("Security scan")}>
+                Security Scan
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => handleQuickAction("Backup")}>
+                Create Backup
+              </Button>
+            </div>
           </div>
 
           {activeView === "dashboard" ? (
@@ -86,18 +99,6 @@ const Observability = () => {
               </TabsContent>
             </Tabs>
           )}
-
-          <div className="flex flex-wrap gap-2 mt-8">
-            <Button size="sm" variant="outline" onClick={() => handleQuickAction("Health check")}>
-              Run Health Check
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => handleQuickAction("Security scan")}>
-              Security Scan
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => handleQuickAction("Backup")}>
-              Create Backup
-            </Button>
-          </div>
         </div>
       </Content>
     </DashboardLayout>
