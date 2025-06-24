@@ -1,5 +1,4 @@
 import React from "react";
-import { motion } from "framer-motion";
 import { Sprout, Sun, Droplets, Clover } from "lucide-react";
 import StatsCard from "@/components/ui/stats-card";
 

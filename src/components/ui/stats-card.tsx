@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { DivideIcon as LucideIcon } from "lucide-react";
+import { LucideIcon } from "lucide-react";
 
 interface StatsCardProps {
   title: string;
@@ -65,7 +65,7 @@ export const StatsCard: React.FC<StatsCardProps> = ({
           )}
         </div>
         {Icon && (
-          <div className="bg-white/10 p-2 rounded-xl">
+          <div className="bg-white/10 backdrop-blur-sm p-2 rounded-xl">
             <Icon className="h-5 w-5 text-white/70" />
           </div>
         )}
