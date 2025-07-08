@@ -24,18 +24,18 @@ ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view their own profile" 
 ON public.profiles 
 FOR SELECT 
-USING (auth.uid() = id);
+USING ((select auth.uid()) = id);
 
 CREATE POLICY "Users can update their own profile" 
 ON public.profiles 
 FOR UPDATE 
-USING (auth.uid() = id)
-WITH CHECK (auth.uid() = id);
+USING ((select auth.uid()) = id)
+WITH CHECK ((select auth.uid()) = id);
 
 CREATE POLICY "Users can insert their own profile" 
 ON public.profiles 
 FOR INSERT 
-WITH CHECK (auth.uid() = id);
+WITH CHECK ((select auth.uid()) = id);
 
 -- Create function to handle new user signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()
