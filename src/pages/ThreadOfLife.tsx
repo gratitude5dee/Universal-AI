@@ -85,7 +85,7 @@ const ThreadOfLife = () => {
                 <div className="backdrop-blur-md bg-white/10 p-4 rounded-lg border border-white/20 shadow-card-glow">
                   <h4 className="font-medium mb-2 text-white text-shadow-sm">View Options</h4>
                   <p className="text-sm text-white/80 text-shadow-sm">Customize the display of your asset lineage</p>
-                  <Button className="w-full mt-4" size="sm" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Customize View</Button>
+                  <Button variant="outline" size="sm" className="w-full mt-4 bg-white/10 border-white/20 text-white hover:bg-white/20">Customize View</Button>
                 </div>
               </div>
             </div>

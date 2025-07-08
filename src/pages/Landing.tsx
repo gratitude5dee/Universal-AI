@@ -17,7 +17,7 @@ import {
   BookOpenCheck,
   Workflow,
   CreditCard,
-  Infinity,
+  Infinity as InfinityIcon,
   Code,
   Mail,
   ArrowRight,
@@ -27,7 +27,7 @@ import {
 import CloudShader from "@/components/ui/shaders/CloudShader";
 import Ambient from "@/components/ui/ambient";
 import CinematicIntro from "@/components/ui/animations/CinematicIntro";
-import { LucideCrop as LucideProps } from "lucide-react";
+import { LucideProps } from "lucide-react";
 
 // Type definition for the FeatureCard component props
 type FeatureCardProps = { 
@@ -264,7 +264,7 @@ const Landing = () => {
         style={{top, left}} 
         initial={{opacity: 0, y: -50}} 
         animate={{opacity: [0, 0.4, 0], y: [0, 100]}} 
-        transition={{repeat: Infinity, duration, delay, ease: "linear"}}
+        transition={{repeat: Infinity, duration: duration, delay: delay, ease: "linear"}}
       >
         {streamChars.split('').map((char, i) => (
           <motion.div 
