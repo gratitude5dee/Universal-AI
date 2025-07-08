@@ -9,33 +9,52 @@ interface PersonalityQuizStepProps {
   onBack: () => void;
 }
 
-const questions = [
+const newQuestions = [
   {
-    question: "When approaching a new creation, do you prefer a meticulous plan or spontaneous discovery?",
-    options: ["Meticulous Plan", "Spontaneous Discovery"],
-    key: 'planning'
+    question: "When a new idea strikes, is it a flash of lightning or a slowly growing seed?",
+    options: ["Flash of Lightning", "Growing Seed"],
+    key: 'ideaPace'
   },
   {
-    question: "Does your inspiration come more from the tangible world or abstract concepts?",
-    options: ["Tangible World", "Abstract Concepts"],
-    key: 'inspiration'
+    question: "Do you draw power from the silent whispers of ancient lore or the vibrant pulse of modern culture?",
+    options: ["Ancient Lore", "Modern Pulse"],
+    key: 'inspirationSource'
   },
   {
-    question: "Do you find energy in solitary creation or collaborative brainstorming?",
-    options: ["Solitary Creation", "Collaboration"],
-    key: 'energy'
+    question: "Is your creative sanctuary a solitary tower of focus or a bustling roundtable of collaboration?",
+    options: ["Solitary Tower", "Bustling Roundtable"],
+    key: 'workStyle'
   },
   {
-    question: "Is your creative process driven by logic and structure, or emotion and feeling?",
-    options: ["Logic & Structure", "Emotion & Feeling"],
-    key: 'process'
+    question: "When you create, are you channeling raw, chaotic magic or weaving intricate, structured spells?",
+    options: ["Chaotic Magic", "Structured Spells"],
+    key: 'processStyle'
   },
   {
-    question: "Do you aim for perfection down to the last detail, or embrace the beauty of imperfection?",
-    options: ["Perfection", "Imperfection"],
-    key: 'detail'
+    question: "Is the final creation a polished gem, perfect in every facet, or a living artifact, beautifully imperfect?",
+    options: ["Polished Gem", "Living Artifact"],
+    key: 'perfectionism'
   },
 ];
+
+const determineArchetype = (answers: {[key: string]: string}): string => {
+  // Example Archetype Logic (can be made more complex)
+  // For simplicity, let's pick two dominant traits.
+  // Trait 1: Based on inspirationSource
+  const sourceTrait = answers.inspirationSource === "Ancient Lore" ? "Lorekeeper" : "Innovator";
+  // Trait 2: Based on processStyle
+  const styleTrait = answers.processStyle === "Structured Spells" ? "Architect" : "Alchemist";
+
+  // Combine them, or use more sophisticated mapping
+  if (sourceTrait === "Lorekeeper" && styleTrait === "Architect") return "Chronicler Architect";
+  if (sourceTrait === "Lorekeeper" && styleTrait === "Alchemist") return "Mystic Alchemist";
+  if (sourceTrait === "Innovator" && styleTrait === "Architect") return "Visionary Architect";
+  if (sourceTrait === "Innovator" && styleTrait === "Alchemist") return "Future Alchemist";
+
+  // Fallback / simpler version if needed
+  return `${sourceTrait} ${styleTrait}`;
+};
+
 
 const PersonalityQuizStep: React.FC<PersonalityQuizStepProps> = ({ onNext, onBack }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -43,16 +62,14 @@ const PersonalityQuizStep: React.FC<PersonalityQuizStepProps> = ({ onNext, onBac
   const { setPersonalityType } = useOnboarding();
 
   const handleAnswer = (option: string) => {
-    const newAnswers = {...answers, [questions[currentQuestion].key]: option};
+    const newAnswers = {...answers, [newQuestions[currentQuestion].key]: option};
     setAnswers(newAnswers);
 
-    if (currentQuestion < questions.length - 1) {
+    if (currentQuestion < newQuestions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
-      // Simple logic to determine personality type from answers
-      const planning = newAnswers.planning === 'Meticulous Plan' ? 'Architect' : 'Bard';
-      const inspiration = newAnswers.inspiration === 'Tangible World' ? 'Realist' : 'Visionary';
-      setPersonalityType(`${inspiration} ${planning}`);
+      const archetype = determineArchetype(newAnswers);
+      setPersonalityType(archetype);
       onNext();
     }
   };
@@ -78,10 +95,10 @@ const PersonalityQuizStep: React.FC<PersonalityQuizStepProps> = ({ onNext, onBac
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <p className="text-lg mb-6 text-center">{questions[currentQuestion].question}</p>
-            <div className="flex justify-center gap-4">
-              {questions[currentQuestion].options.map(option => (
-                <Button key={option} variant="outline" onClick={() => handleAnswer(option)}>
+            <p className="text-lg mb-6 text-center">{newQuestions[currentQuestion].question}</p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              {newQuestions[currentQuestion].options.map(option => (
+                <Button key={option} variant="outline" size="lg" className="min-w-[200px]" onClick={() => handleAnswer(option)}>
                   {option}
                 </Button>
               ))}
