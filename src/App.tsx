@@ -33,6 +33,7 @@ import WzrdResearch from "./pages/wzrd/WzrdResearch";
 import WzrdPodcasts from "./pages/wzrd/WzrdPodcasts";
 import WzrdInfiniteLibrary from "./pages/wzrd/WzrdInfiniteLibrary";
 import WzrdCompanions from "./pages/wzrd/WzrdCompanions";
+import OnboardingPage from "./pages/Onboarding";
 
 // Conditionally import Crossmint only if we have a valid API key
 import { CrossmintProvider, CrossmintAuthProvider } from "@crossmint/client-sdk-react-ui";
@@ -79,8 +80,14 @@ function AppContent({ bypassAuth = false }: { bypassAuth?: boolean }) {
       <TooltipProvider>
         <AnimatePresence mode="wait">
           <Routes>
-            {/* New landing page as the root route */}
-            <Route path="/" element={<Landing />} />
+            {/* Onboarding as the root route for new users */}
+            <Route path="/" element={<OnboardingPage />} />
+            
+            {/* Keep the landing page available at a specific path if needed */}
+            <Route path="/landing-preview" element={<Landing />} />
+            
+            {/* Add the onboarding route */}
+            <Route path="/onboarding" element={<OnboardingPage />} />
             
             {/* Move original Index to /index route */}
             <Route path="/index" element={<Index />} />
