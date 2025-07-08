@@ -24,7 +24,7 @@ const MatrixBackground: React.FC<MatrixBackgroundProps> = () => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    const katakana = 'ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ';
+    const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズヅブプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
     const numbers = '0123456789';
     const characters = katakana + numbers;
     const fontSize = 16;

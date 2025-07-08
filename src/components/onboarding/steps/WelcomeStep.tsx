@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import CinematicIntro from '@/components/ui/animations/CinematicIntro/CinematicIntro';
+import FuturisticLoader from '@/components/ui/animations/FuturisticLoader';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -9,14 +9,14 @@ interface WelcomeStepProps {
 }
 
 const WelcomeStep: React.FC<WelcomeStepProps> = ({ onNext }) => {
-  const [showIntro, setShowIntro] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleIntroComplete = () => {
-    setShowIntro(false);
+  const handleLoaderComplete = () => {
+    setIsLoading(false);
   };
 
-  if (showIntro) {
-    return <CinematicIntro onComplete={handleIntroComplete} commandText="INITIATE CREATOR GENESIS..." />;
+  if (isLoading) {
+    return <FuturisticLoader onComplete={handleLoaderComplete} />;
   }
 
   return (

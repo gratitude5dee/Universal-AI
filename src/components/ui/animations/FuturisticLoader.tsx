@@ -7,10 +7,24 @@ interface FuturisticLoaderProps {
   onComplete: () => void;
 }
 
+const statusMessagesList = [
+  "INITIALIZING SYSTEM...",
+  "CALIBRATING SENSORS...",
+  "LOADING CORE MODULES...",
+  "DECOMPRESSING ASSETS...",
+  "COMPILING SHADERS...",
+  "ESTABLISHING NEXUS...",
+  "AWAKENING AI CORE...",
+  "ALIGNING REALMS...",
+  "SYNCHRONIZING DATASTREAMS...",
+  "FINALIZING BOOT SEQUENCE..."
+];
+
 const FuturisticLoader: React.FC<FuturisticLoaderProps> = ({ onComplete }) => {
   const [stage, setStage] = useState<'booting' | 'loading' | 'finishing' | 'done'>('booting');
   const [progress, setProgress] = useState(0);
-  const [statusText, setStatusText] = useState("INITIALIZING SYSTEM...");
+  const [currentStatusIndex, setCurrentStatusIndex] = useState(0);
+  const [statusText, setStatusText] = useState(statusMessagesList[0]);
   const [showCentralUI, setShowCentralUI] = useState(false);
   const [showMatrix, setShowMatrix] = useState(false);
 
@@ -25,9 +39,9 @@ const FuturisticLoader: React.FC<FuturisticLoaderProps> = ({ onComplete }) => {
   useEffect(() => {
     if (stage === 'booting') {
       setShowMatrix(true); // Matrix rain starts
+      setStatusText(statusMessagesList[0]); // Initial status
       const timer1 = setTimeout(() => {
         setShowCentralUI(true); // Central UI fades in
-        setStatusText("COMPILING SHADERS...");
       }, 500); // Delay for Matrix to appear first
       const timer2 = setTimeout(() => setStage('loading'), 1000); // Start loading phase after initial fade-ins
       return () => {
@@ -41,14 +55,17 @@ const FuturisticLoader: React.FC<FuturisticLoaderProps> = ({ onComplete }) => {
   useEffect(() => {
     if (stage === 'loading') {
       const duration = 4000; // 4 seconds for loading
-      const interval = 50; // Update progress every 50ms
+      const progressUpdateInterval = 50; // Update progress every 50ms
+      const statusChangeInterval = duration / statusMessagesList.length;
       let currentProgress = 0;
+      let statusTimeoutId: NodeJS.Timeout;
 
-      const progressInterval = setInterval(() => {
-        currentProgress += (interval / duration) * 100;
+      const progressIntervalId = setInterval(() => {
+        currentProgress += (progressUpdateInterval / duration) * 100;
         if (currentProgress >= 100) {
           setProgress(100);
-          clearInterval(progressInterval);
+          clearInterval(progressIntervalId);
+          clearTimeout(statusTimeoutId); // Clear pending status updates
           setStage('finishing');
         } else {
           setProgress(currentProgress);
@@ -57,16 +74,33 @@ const FuturisticLoader: React.FC<FuturisticLoaderProps> = ({ onComplete }) => {
         setCpu(getRandomUsage());
         setGpu(getRandomUsage());
         setMem(getRandomUsage());
-      }, interval);
+      }, progressUpdateInterval);
 
-      return () => clearInterval(progressInterval);
+      // Cycle through status messages
+      const updateStatusMessage = (index: number) => {
+        if (index < statusMessagesList.length) {
+          setStatusText(statusMessagesList[index]);
+          setCurrentStatusIndex(index);
+          statusTimeoutId = setTimeout(() => updateStatusMessage(index + 1), statusChangeInterval);
+        }
+      };
+
+      // Start cycling status messages shortly after loading begins
+      const initialStatusDelay = setTimeout(() => updateStatusMessage(currentStatusIndex), 100);
+
+
+      return () => {
+        clearInterval(progressIntervalId);
+        clearTimeout(statusTimeoutId);
+        clearTimeout(initialStatusDelay);
+      };
     }
-  }, [stage]);
+  }, [stage, currentStatusIndex]); // Added currentStatusIndex to dependencies
 
   // Stage 3: Finishing
   useEffect(() => {
     if (stage === 'finishing') {
-      setStatusText("ALL SYSTEMS OPERATIONAL");
+      setStatusText("SYSTEM READY"); // Changed from "ALL SYSTEMS OPERATIONAL"
       const holdTimer = setTimeout(() => {
         // Trigger exit animations
         setShowCentralUI(false); // Central UI starts fading out
