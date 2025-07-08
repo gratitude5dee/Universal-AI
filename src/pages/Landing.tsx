@@ -403,12 +403,12 @@ const Landing = () => {
             whileTap={{scale: 0.95}}
           >
             <Button 
-              onClick={() => navigate("/home")} 
+              onClick={() => navigate("/auth")} 
               className="bg-gradient-to-r from-orange-500 to-amber-400 hover:from-orange-600 hover:to-amber-500 text-white px-3 sm:px-5 py-2 rounded-lg border border-orange-300/30 shadow-[0_0_15px_rgba(249,115,22,0.5)] transition-all hover:shadow-[0_0_25px_rgba(249,115,22,0.7)] text-xs sm:text-sm relative overflow-hidden group"
             >
               <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-orange-500/0 via-white/20 to-orange-500/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
               <Link2 className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-              Connect with Crossmint
+              Get Started
             </Button>
           </motion.div>
         </motion.header>
@@ -476,13 +476,13 @@ const Landing = () => {
               whileTap={{scale: 0.98}}
             >
               <Button 
-                onClick={() => navigate("/wzrd/studio")} 
+                onClick={() => navigate("/auth")} 
                 className="text-sm sm:text-base bg-transparent hover:bg-white/10 border border-white/20 backdrop-blur-sm px-6 sm:px-8 py-5 sm:py-6 h-auto rounded-lg relative overflow-hidden group" 
                 variant="outline"
               >
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-teal-500/0 via-white/5 to-teal-500/0 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></span>
                 <span className="relative z-10 flex items-center">
-                  Explore Platform
+                  Start Creating
                   <ExternalLink className="ml-2 h-4 w-4 opacity-70" />
                 </span>
               </Button>

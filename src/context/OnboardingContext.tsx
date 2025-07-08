@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface OnboardingState {
   creatorName: string;
@@ -18,11 +20,15 @@ interface OnboardingContextType extends OnboardingState {
   toggleConnectedAccount: (account: string) => void;
   addUploadedFile: (file: { type: 'image' | 'video' | 'voice'; name: string }) => void;
   setPreferences: (prefs: Partial<OnboardingState['preferences']>) => void;
+  saveOnboardingData: () => Promise<void>;
+  loading: boolean;
 }
 
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
 
 export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
   const [state, setState] = useState<OnboardingState>({
     creatorName: '',
     personalityType: '',
@@ -55,8 +61,41 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
     setState(s => ({ ...s, preferences: { ...s.preferences, ...prefs } }));
   };
 
+  const saveOnboardingData = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          personality_type: state.personalityType,
+          connected_accounts: state.connectedAccounts,
+          uploaded_files: state.uploadedFiles,
+          ai_preferences: state.preferences,
+          onboarding_completed: true,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', (await supabase.auth.getUser()).data.user?.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Profile saved!",
+        description: "Your Creator OS has been configured successfully.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error saving profile",
+        description: error.message,
+        variant: "destructive",
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <OnboardingContext.Provider value={{ ...state, setCreatorName, setPersonalityType, toggleConnectedAccount, addUploadedFile, setPreferences }}>
+    <OnboardingContext.Provider value={{ ...state, setCreatorName, setPersonalityType, toggleConnectedAccount, addUploadedFile, setPreferences, saveOnboardingData, loading }}>
       {children}
     </OnboardingContext.Provider>
   );

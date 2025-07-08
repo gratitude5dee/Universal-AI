@@ -11,6 +11,7 @@ import Landing from "./pages/Landing";
 import { AnimatePresence } from "framer-motion";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { WalletProvider } from "@/context/WalletContext";
+import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/components/ui/ProtectedRoute";
 
 // Import all page components
@@ -34,6 +35,7 @@ import WzrdPodcasts from "./pages/wzrd/WzrdPodcasts";
 import WzrdInfiniteLibrary from "./pages/wzrd/WzrdInfiniteLibrary";
 import WzrdCompanions from "./pages/wzrd/WzrdCompanions";
 import OnboardingPage from "./pages/Onboarding";
+import AuthPage from "./pages/Auth";
 
 // Conditionally import Crossmint only if we have a valid API key
 import { CrossmintProvider, CrossmintAuthProvider } from "@crossmint/client-sdk-react-ui";
@@ -65,9 +67,11 @@ function App() {
             </CrossmintAuthProvider>
           </CrossmintProvider>
         ) : (
-          <WalletProvider>
-            <AppContent bypassAuth={true} />
-          </WalletProvider>
+          <AuthProvider>
+            <WalletProvider>
+              <AppContent bypassAuth={true} />
+            </WalletProvider>
+          </AuthProvider>
         )}
       </ErrorBoundary>
     </QueryClientProvider>
@@ -80,14 +84,17 @@ function AppContent({ bypassAuth = false }: { bypassAuth?: boolean }) {
       <TooltipProvider>
         <AnimatePresence mode="wait">
           <Routes>
-            {/* Onboarding as the root route for new users */}
-            <Route path="/" element={<OnboardingPage />} />
+            {/* Landing page as the root route */}
+            <Route path="/" element={<Landing />} />
+            
+            {/* Authentication route */}
+            <Route path="/auth" element={<AuthPage />} />
+            
+            {/* Onboarding route - protected */}
+            <Route path="/onboarding" element={bypassAuth ? <OnboardingPage /> : <ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
             
             {/* Keep the landing page available at a specific path if needed */}
             <Route path="/landing-preview" element={<Landing />} />
-            
-            {/* Add the onboarding route */}
-            <Route path="/onboarding" element={<OnboardingPage />} />
             
             {/* Move original Index to /index route */}
             <Route path="/index" element={<Index />} />

@@ -7,18 +7,23 @@ import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 
 const FinalizationStep = () => {
-  const { personalityType, connectedAccounts, uploadedFiles, preferences } = useOnboarding();
+  const { personalityType, connectedAccounts, uploadedFiles, preferences, saveOnboardingData, loading: saveLoading } = useOnboarding();
   const navigate = useNavigate();
   const [isFinalizing, setIsFinalizing] = useState(false);
 
-  const handleFinalize = () => {
+  const handleFinalize = async () => {
     setIsFinalizing(true);
     
-    confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
-    
-    setTimeout(() => {
-      navigate('/home');
-    }, 2000);
+    try {
+      await saveOnboardingData();
+      confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
+      
+      setTimeout(() => {
+        navigate('/home');
+      }, 2000);
+    } catch (error) {
+      setIsFinalizing(false);
+    }
   };
   
   return (
@@ -46,8 +51,8 @@ const FinalizationStep = () => {
         </div>
       </div>
       
-      <Button onClick={handleFinalize} disabled={isFinalizing} size="lg" className="mt-8 bg-primary text-primary-foreground hover:bg-primary/90">
-        {isFinalizing ? 'Entering Studio...' : 'Enter Your Creative Studio'} <Zap className="ml-2 h-5 w-5"/>
+      <Button onClick={handleFinalize} disabled={isFinalizing || saveLoading} size="lg" className="mt-8 bg-primary text-primary-foreground hover:bg-primary/90">
+        {isFinalizing || saveLoading ? 'Saving and Entering Studio...' : 'Enter Your Creative Studio'} <Zap className="ml-2 h-5 w-5"/>
       </Button>
     </div>
   );

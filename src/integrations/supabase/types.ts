@@ -528,39 +528,54 @@ export type Database = {
       }
       profiles: {
         Row: {
+          ai_preferences: Json | null
           avatar_url: string | null
           claude_api_key: string | null
+          connected_accounts: Json | null
           created_at: string
           id: string
           last_wallet_connection: string | null
           luma_api_key: string | null
+          onboarding_completed: boolean
+          personality_type: string | null
           updated_at: string
+          uploaded_files: Json | null
           username: string | null
           wallet_address: string | null
           wallet_auth_token: string | null
           wallet_type: string | null
         }
         Insert: {
+          ai_preferences?: Json | null
           avatar_url?: string | null
           claude_api_key?: string | null
+          connected_accounts?: Json | null
           created_at?: string
           id: string
           last_wallet_connection?: string | null
           luma_api_key?: string | null
+          onboarding_completed?: boolean
+          personality_type?: string | null
           updated_at?: string
+          uploaded_files?: Json | null
           username?: string | null
           wallet_address?: string | null
           wallet_auth_token?: string | null
           wallet_type?: string | null
         }
         Update: {
+          ai_preferences?: Json | null
           avatar_url?: string | null
           claude_api_key?: string | null
+          connected_accounts?: Json | null
           created_at?: string
           id?: string
           last_wallet_connection?: string | null
           luma_api_key?: string | null
+          onboarding_completed?: boolean
+          personality_type?: string | null
           updated_at?: string
+          uploaded_files?: Json | null
           username?: string | null
           wallet_address?: string | null
           wallet_auth_token?: string | null
