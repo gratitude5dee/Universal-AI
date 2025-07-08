@@ -41,6 +41,7 @@ WITH CHECK (auth.uid() = id);
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
+  SET search_path = public;
   INSERT INTO public.profiles (id, username, display_name, avatar_url)
   VALUES (
     NEW.id,
