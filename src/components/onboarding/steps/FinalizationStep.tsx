@@ -86,6 +86,5 @@ const SummaryItem: React.FC<{label: string, value: string | number}> = ({ label,
     <span className="font-semibold text-slate-100">{value}</span>
   </div>
 );
-};
 
 export default FinalizationStep;

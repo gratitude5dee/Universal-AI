@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, UploadCloud, File, Video, Mic, CheckCircle } from 'lucide-react';
 import { useOnboarding } from '@/context/OnboardingContext';
 import { Progress } from '@/components/ui/progress';
+import { motion } from 'framer-motion';
 
 interface TrainingDataStepProps {
   onNext: () => void;
@@ -62,19 +63,18 @@ const TrainingDataStep: React.FC<TrainingDataStepProps> = ({ onNext, onBack }) =
         <p className="text-slate-400">Infuse your AI with your unique voice, likeness, and style.</p>
       </div>
       
-      <motion.div
+      <div
         {...getRootProps()}
         className={`p-10 border-2 border-dashed rounded-xl text-center cursor-pointer transition-all duration-200 ${
           isDragActive ? 'border-cyan-500 bg-cyan-500/10 scale-105' : 'border-slate-600 hover:border-cyan-400'
         }`}
-        whileHover={{ borderColor: isDragActive ? '#06B6D4' : '#2DD4BF' }} // Use theme colors
       >
         <input {...getInputProps()} />
         <UploadCloud className={`h-12 w-12 mx-auto mb-4 ${isDragActive ? 'text-cyan-400 animate-pulse' : 'text-slate-500'}`}/>
         <p className="font-semibold text-slate-200">Drag & drop files here, or click to select</p>
         <p className="text-xs text-slate-500 mt-1">Upload images, videos, and voice samples for training.</p>
         <p className="text-xs text-slate-600 mt-3 font-semibold">Powered by Vapi & Tavus</p>
-      </motion.div>
+      </div>
       
       {uploadedFiles.length > 0 && (
         <div className="mt-6 space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
