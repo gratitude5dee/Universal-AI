@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Bot, Sparkles } from 'lucide-react';
+import { ArrowLeft, Bot, Sparkles } from 'lucide-react'; // ArrowRight removed as it's not used in merged version
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { Card3D } from '@/components/ui/glass-components';
+import { useOnboarding } from '@/context/OnboardingContext'; // Added from main
 
-// Floating particles component
+// Floating particles component (from glassmorphism version)
 const FloatingParticles = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -34,6 +35,7 @@ const FloatingParticles = () => {
   );
 };
 
+// newQuestions from glassmorphism version (includes gradient and icon)
 const newQuestions = [
   {
     question: "When a new idea strikes, is it a flash of lightning or a slowly growing seed?",
@@ -72,28 +74,56 @@ const newQuestions = [
   },
 ];
 
-const PersonalityQuizStep = ({ onNext, onBack }) => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState({});
-  const [selectedOption, setSelectedOption] = useState(null);
+// determineArchetype function from main branch
+const determineArchetype = (answers: {[key: string]: string}): string => {
+  const sourceTrait = answers.inspirationSource === "Ancient Lore" ? "Lorekeeper" : "Innovator";
+  const styleTrait = answers.processStyle === "Structured Spells" ? "Architect" : "Alchemist";
 
-  const handleAnswer = (option) => {
-    setSelectedOption(option);
+  if (sourceTrait === "Lorekeeper" && styleTrait === "Architect") return "Chronicler Architect";
+  if (sourceTrait === "Lorekeeper" && styleTrait === "Alchemist") return "Mystic Alchemist";
+  if (sourceTrait === "Innovator" && styleTrait === "Architect") return "Visionary Architect";
+  if (sourceTrait === "Innovator" && styleTrait === "Alchemist") return "Future Alchemist";
+
+  return `${sourceTrait} ${styleTrait}`;
+};
+
+// Props interface from main branch
+interface PersonalityQuizStepProps {
+  onNext: () => void;
+  onBack: () => void;
+}
+
+// Component definition from main (typed) and incorporating merged logic
+const PersonalityQuizStep: React.FC<PersonalityQuizStepProps> = ({ onNext, onBack }) => {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState<{[key: string]: string}>({}); // Typed from main
+  const [selectedOption, setSelectedOption] = useState<string | null>(null); // Typed and from glass
+  const { setPersonalityType } = useOnboarding(); // From main
+
+  // Merged handleAnswer function
+  const handleAnswer = (option: string) => {
+    setSelectedOption(option); // For UI feedback
     const newAnswers = {...answers, [newQuestions[currentQuestion].key]: option};
     setAnswers(newAnswers);
 
-    setTimeout(() => {
+    setTimeout(() => { // UI delay from glass
       if (currentQuestion < newQuestions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
         setSelectedOption(null);
       } else {
-        onNext(newAnswers);
+        // Logic from main branch
+        const archetype = determineArchetype(newAnswers);
+        if (setPersonalityType) { // Check if setPersonalityType is available
+            setPersonalityType(archetype);
+        }
+        onNext(); // Call onNext without arguments as per main's pattern
       }
     }, 600);
   };
 
-  const currentQ = newQuestions[currentQuestion];
+  const currentQ = newQuestions[currentQuestion]; // From glass
 
+  // JSX from glassmorphism version
   return (
     <div className="relative">
       <FloatingParticles />
