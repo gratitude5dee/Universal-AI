@@ -1,117 +1,151 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Bot } from 'lucide-react';
-import { useOnboarding } from '@/context/OnboardingContext';
-import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, Bot, Sparkles } from 'lucide-react'; // ArrowRight removed as it's not used in merged version
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
+import { Card3D } from '@/components/ui/glass-components';
+import { useOnboarding } from '@/context/OnboardingContext'; // Added from main
 
-interface PersonalityQuizStepProps {
-  onNext: () => void;
-  onBack: () => void;
-}
-
+// Floating particles component (from glassmorphism version)
+const FloatingParticles = () => {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {[...Array(6)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-2 h-2 rounded-full bg-gradient-to-r from-cyan-400 to-purple-400 blur-sm"
+          initial={{
+            x: Math.random() * 100 + '%',
+            y: 100 + Math.random() * 20 + '%',
+            scale: 0
+          }}
+          animate={{
+            y: -20 + '%',
+            scale: [0, 1, 0],
+            opacity: [0, 0.8, 0],
+          }}
+          transition={{
+            duration: 3 + Math.random() * 2,
+            repeat: Infinity,
+            delay: i * 0.5,
+            ease: "easeOut"
+          }}
+        />
+      ))}
+    </div>
+  );
+};
 const newQuestions = [
   {
     question: "When a new idea strikes, is it a flash of lightning or a slowly growing seed?",
     options: ["Flash of Lightning", "Growing Seed"],
-    key: 'ideaPace'
   },
   {
     question: "Do you draw power from the silent whispers of ancient lore or the vibrant pulse of modern culture?",
     options: ["Ancient Lore", "Modern Pulse"],
-    key: 'inspirationSource'
   },
   {
     question: "Is your creative sanctuary a solitary tower of focus or a bustling roundtable of collaboration?",
     options: ["Solitary Tower", "Bustling Roundtable"],
-    key: 'workStyle'
   },
   {
     question: "When you create, are you channeling raw, chaotic magic or weaving intricate, structured spells?",
     options: ["Chaotic Magic", "Structured Spells"],
-    key: 'processStyle'
   },
   {
     question: "Is the final creation a polished gem, perfect in every facet, or a living artifact, beautifully imperfect?",
     options: ["Polished Gem", "Living Artifact"],
-    key: 'perfectionism'
-  },
-];
-
-const determineArchetype = (answers: {[key: string]: string}): string => {
-  // Example Archetype Logic (can be made more complex)
-  // For simplicity, let's pick two dominant traits.
-  // Trait 1: Based on inspirationSource
-  const sourceTrait = answers.inspirationSource === "Ancient Lore" ? "Lorekeeper" : "Innovator";
-  // Trait 2: Based on processStyle
-  const styleTrait = answers.processStyle === "Structured Spells" ? "Architect" : "Alchemist";
-
-  // Combine them, or use more sophisticated mapping
   if (sourceTrait === "Lorekeeper" && styleTrait === "Architect") return "Chronicler Architect";
   if (sourceTrait === "Lorekeeper" && styleTrait === "Alchemist") return "Mystic Alchemist";
   if (sourceTrait === "Innovator" && styleTrait === "Architect") return "Visionary Architect";
   if (sourceTrait === "Innovator" && styleTrait === "Alchemist") return "Future Alchemist";
 
-  // Fallback / simpler version if needed
-  return `${sourceTrait} ${styleTrait}`;
-};
-
-
 const PersonalityQuizStep: React.FC<PersonalityQuizStepProps> = ({ onNext, onBack }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<{[key: string]: string}>({});
-  const { setPersonalityType } = useOnboarding();
+  const [answers, setAnswers] = useState<{[key: string]: string}>({}); // Typed from main
+  const [selectedOption, setSelectedOption] = useState<string | null>(null); // Typed and from glass
+  const { setPersonalityType } = useOnboarding(); // From main
 
+  // Merged handleAnswer function
   const handleAnswer = (option: string) => {
-    const newAnswers = {...answers, [newQuestions[currentQuestion].key]: option};
-    setAnswers(newAnswers);
-
-    if (currentQuestion < newQuestions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
-      const archetype = determineArchetype(newAnswers);
-      setPersonalityType(archetype);
-      onNext();
-    }
+    
   };
 
-  return (
-    <div className="bg-background/20 backdrop-blur-sm border border-border rounded-lg max-w-3xl mx-auto p-8">
-      <div className="flex items-start gap-4 mb-6">
-        <div className="bg-primary/20 p-3 rounded-full">
-          <Bot className="h-6 w-6 text-primary" />
-        </div>
-        <div>
-          <h2 className="text-2xl font-bold">Essence Alignment</h2>
-          <p className="text-muted-foreground">The Oracle will ask a few questions to understand your creative spirit.</p>
-        </div>
-      </div>
+  const currentQ = newQuestions[currentQuestion]; // From glass
 
-      <div className="min-h-[150px]">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentQuestion}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            <p className="text-lg mb-6 text-center">{newQuestions[currentQuestion].question}</p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              {newQuestions[currentQuestion].options.map(option => (
-                <Button key={option} variant="outline" size="lg" className="min-w-[200px]" onClick={() => handleAnswer(option)}>
-                  {option}
-                </Button>
+  // JSX from glassmorphism version
+  return (
               ))}
             </div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
+            <p className="text-white/50 text-sm">Question {currentQuestion + 1} of {newQuestions.length}</p>
+          </div>
 
-      <div className="flex justify-between mt-8 pt-4 border-t border-border">
-        <Button variant="ghost" onClick={onBack} disabled={currentQuestion === 0}>
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back
-        </Button>
-      </div>
+          {/* Question */}
+          <div className="min-h-[200px]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentQuestion}
+                initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.9 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="text-center"
+              >
+                <motion.div
+                  className="text-6xl mb-4"
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", stiffness: 200 }}
+                >
+                  {currentQ.icon}
+                </motion.div>
+                <p className={`text-xl mb-8 text-gradient bg-gradient-to-r ${currentQ.gradient} font-medium`}>
+                  {currentQ.question}
+                </p>
+
+                <div className="flex flex-col sm:flex-row justify-center gap-4">
+                  {currentQ.options.map((option, index) => (
+                    <motion.button
+                      key={option}
+                      className={`
+                        relative px-8 py-4 rounded-xl font-medium text-white
+                        backdrop-blur-xl border transition-all duration-300
+                        ${selectedOption === option
+                          ? 'bg-white/30 border-white/50 scale-105'
+                          : 'bg-white/10 border-white/20 hover:bg-white/20 hover:border-white/30 hover:scale-105'
+                        }
+                      `}
+                      onClick={() => handleAnswer(option)}
+                      whileHover={{ y: -2 }}
+                      whileTap={{ scale: 0.98 }}
+                      initial={{ opacity: 0, x: index === 0 ? -20 : 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.2 + index * 0.1 }}
+                    >
+                      {/* Shimmer effect */}
+                      <div className="absolute inset-0 rounded-xl overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-shimmer" />
+                      </div>
+                      <span className="relative z-10">{option}</span>
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Navigation */}
+          <div className="flex justify-between mt-8 pt-6 border-t border-white/10">
+            <Button
+              variant="ghost"
+              onClick={onBack}
+              disabled={currentQuestion === 0}
+              className="text-white/70 hover:text-white hover:bg-white/10"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back
+            </Button>
+          </div>
+        </div>
+      </Card3D>
     </div>
   );
 };

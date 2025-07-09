@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -37,16 +36,14 @@ export default {
 					accent: "#D98F64",
 					highlight: "#F9D7C0"
 				},
-				// Enhanced blue theme colors with better contrast
 				blue: {
-					darker: "#1a2d69", // Darkened for better contrast
+					darker: "#1a2d69",
 					dark: "#1e40af",
 					primary: "#3b82f6",
 					light: "#60a5fa",
 					lighter: "#93c5fd",
 					lightest: "#dbeafe",
 				},
-				// New futuristic color palette
 				futuristic: {
 					base: 'var(--color-base-deep)',
 					baseLighter: 'var(--color-base-deep-lighter)',
@@ -98,13 +95,26 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+        // Added from glassmorphism config
+        glass: {
+          light: 'rgba(255, 255, 255, 0.1)',
+          medium: 'rgba(255, 255, 255, 0.2)',
+          heavy: 'rgba(255, 255, 255, 0.3)',
+          dark: 'rgba(0, 0, 0, 0.1)',
+        }
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
+      // Added from glassmorphism config
+      backdropBlur: {
+        xs: '2px',
+        '3xl': '40px',
+        '4xl': '60px',
+      },
 			keyframes: {
 				'accordion-down': {
 					from: { height: '0' },
@@ -157,7 +167,25 @@ export default {
 				'glow-pulse': {
 					'0%, 100%': { opacity: '0.8' },
 					'50%': { opacity: '0.6' }
-				}
+				},
+        // Added from glassmorphism config
+        liquidFlow: {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '33%': { transform: 'translate(30px, -30px) scale(1.1)' },
+          '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+        },
+        floatOrb: { // Note: existing 'float' keyframe is different. Renaming to floatOrb from glass config
+          '0%, 100%': { transform: 'translateY(0) translateX(0)' },
+          '50%': { transform: 'translateY(-20px) translateX(10px)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+        hueRotate: {
+          '0%': { filter: 'hue-rotate(0deg)' },
+          '100%': { filter: 'hue-rotate(360deg)' },
+        }
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -167,12 +195,17 @@ export default {
 				'slide-up': 'slide-up 0.5s ease-out forwards',
 				'slide-in-right': 'slide-in-right 0.5s ease-out forwards',
 				'soft-pulse': 'soft-pulse 3s infinite ease-in-out',
-				'float': 'float 6s infinite ease-in-out',
+				'float': 'float 6s infinite ease-in-out', // This is the existing 'float'
 				'scale-in': 'scale-in 0.3s ease-out forwards',
 				'breathing': 'breathing 8s infinite ease-in-out',
 				'cloud-drift': 'cloud-drift 60s infinite ease-in-out',
 				'cloud-drift-alt': 'cloud-drift-alt 70s infinite ease-in-out',
-				'glow-pulse': 'glow-pulse 8s infinite ease-in-out'
+				'glow-pulse': 'glow-pulse 8s infinite ease-in-out',
+        // Added from glassmorphism config
+        'liquid-flow': 'liquidFlow 8s ease-in-out infinite',
+        'float-orb': 'floatOrb 6s ease-in-out infinite', // Corresponds to new floatOrb keyframe
+        'shimmer': 'shimmer 3s linear infinite',
+        'hue-rotate': 'hueRotate 10s linear infinite',
 			},
 			boxShadow: {
 				'subtle': '0 2px 10px rgba(0, 0, 0, 0.05)',
@@ -190,9 +223,39 @@ export default {
 				'card-gradient': 'linear-gradient(to bottom right, rgba(96, 165, 250, 0.2), rgba(59, 130, 246, 0.2))',
 				'futuristic-gradient': 'linear-gradient(135deg, var(--color-base-deep) 0%, var(--color-base-deep-lighter) 100%)',
 				'accent-gradient': 'linear-gradient(135deg, var(--color-accent-primary) 0%, var(--color-accent-primary-lighter) 100%)',
-				'highlight-gradient': 'linear-gradient(135deg, var(--color-highlight-interactive) 0%, var(--color-highlight-interactive-lighter) 100%)'
+				'highlight-gradient': 'linear-gradient(135deg, var(--color-highlight-interactive) 0%, var(--color-highlight-interactive-lighter) 100%)',
+        // Added from glassmorphism config
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-glass': 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+        'noise': "url('/noise.svg')", // Assuming noise.svg will be in public folder
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+    require("tailwindcss-animate"),
+    // Added from glassmorphism config
+    function({ addUtilities }) {
+      addUtilities({
+        '.glass-panel': {
+          '@apply backdrop-blur-3xl bg-glass-light border border-glass-medium rounded-2xl shadow-2xl': {},
+          'box-shadow': '0 8px 32px 0 rgba(31, 38, 135, 0.37), inset 0 2px 4px 0 rgba(255, 255, 255, 0.1)',
+        },
+        '.glass-panel-premium': {
+          '@apply glass-panel relative overflow-hidden': {},
+          '&::before': {
+            '@apply absolute inset-0 bg-gradient-glass': {},
+            content: '""',
+          }
+        },
+        '.text-gradient': {
+          '@apply bg-clip-text text-transparent': {},
+        },
+        '.hover-3d': {
+          'transform-style': 'preserve-3d',
+          'transform': 'perspective(1000px)',
+          'transition': 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)',
+        }
+      })
+    }
+  ],
 } satisfies Config;
