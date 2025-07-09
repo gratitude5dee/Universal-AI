@@ -27,35 +27,64 @@ const FinalizationStep = () => {
   };
   
   return (
-    <div className="bg-background/20 backdrop-blur-sm border border-border rounded-lg max-w-3xl mx-auto p-8 text-center">
+    <motion.div
+      className="bg-slate-800/50 backdrop-blur-md border border-slate-700 rounded-lg max-w-3xl mx-auto p-8 text-center shadow-xl"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <motion.div
         initial={{ scale: 0, rotate: -180 }}
         animate={{ scale: 1, rotate: 0 }}
         transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.2 }}
-        className="mx-auto w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-cyan-500 flex items-center justify-center shadow-lg mb-6"
+        className="mx-auto w-24 h-24 rounded-full bg-gradient-to-br from-sky-500 to-cyan-400 flex items-center justify-center shadow-lg mb-6 shadow-cyan-500/30"
       >
         <CheckCircle className="h-12 w-12 text-white"/>
       </motion.div>
 
-      <h2 className="text-3xl font-bold mb-4">Genesis Complete</h2>
-      <p className="text-muted-foreground mb-6">Your Creator OS has been aligned with your essence. Here is your personalized configuration:</p>
+      <h2 className="text-3xl font-bold mb-4 text-slate-100">Genesis Complete</h2>
+      <p className="text-slate-400 mb-6">Your Creator OS has been aligned with your essence. Here is your personalized configuration:</p>
       
-      <div className="text-left bg-muted/10 border border-border rounded-lg p-6 space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <p><strong>Creative Archetype:</strong> {personalityType || 'The Universalist'}</p>
-            <p><strong>Preferred LLM:</strong> {preferences.llm}</p>
-            <p><strong>Connected Accounts:</strong> {connectedAccounts.length}</p>
-            <p><strong>Training Files:</strong> {uploadedFiles.length}</p>
-            <p><strong>Default Chain:</strong> {preferences.chain}</p>
-            <p><strong>Creative Style:</strong> {preferences.style}</p>
+      <motion.div
+        className="text-left bg-slate-700/30 border border-slate-600 rounded-lg p-6 space-y-3"
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.4 }}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+            <SummaryItem label="Creative Archetype" value={personalityType || 'The Universalist'} />
+            <SummaryItem label="Preferred LLM" value={preferences.llm} />
+            <SummaryItem label="Connected Accounts" value={connectedAccounts.length.toString()} />
+            <SummaryItem label="Training Files" value={uploadedFiles.length.toString()} />
+            <SummaryItem label="Default Chain" value={preferences.chain} />
+            <SummaryItem label="Creative Style" value={preferences.style} />
         </div>
-      </div>
+      </motion.div>
       
-      <Button onClick={handleFinalize} disabled={isFinalizing || saveLoading} size="lg" className="mt-8 bg-primary text-primary-foreground hover:bg-primary/90">
-        {isFinalizing || saveLoading ? 'Saving and Entering Studio...' : 'Enter Your Creative Studio'} <Zap className="ml-2 h-5 w-5"/>
-      </Button>
-    </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6, duration: 0.5 }}
+      >
+        <Button
+          onClick={handleFinalize}
+          disabled={isFinalizing || saveLoading}
+          size="lg"
+          className="mt-10 w-full sm:w-auto bg-gradient-to-r from-cyan-500 to-sky-500 text-white hover:from-cyan-600 hover:to-sky-600 text-base font-semibold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+        >
+          {isFinalizing || saveLoading ? 'Finalizing & Entering Studio...' : 'Enter Your Creative Studio'}
+          <Zap className="ml-2 h-5 w-5"/>
+        </Button>
+      </motion.div>
+    </motion.div>
   );
 };
+
+const SummaryItem: React.FC<{label: string, value: string | number}> = ({ label, value}) => (
+  <div className="py-1">
+    <span className="text-sm text-slate-400 block">{label}</span>
+    <span className="font-semibold text-slate-100">{value}</span>
+  </div>
+);
 
 export default FinalizationStep;

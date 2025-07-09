@@ -1,57 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Sparkles, Star, Zap } from 'lucide-react';
-import {
-  Card3D,
-  LiquidBackground,
-  GradientBorder,
-  MagneticButton,
-  HolographicText,
-  ParticleField,
-  GlassPanel
-} from '@/components/ui/glass-components'; // Adjusted import path
-
 const WelcomeStep = ({ onNext }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    setIsLoaded(true);
-  }, []);
-
-  const handleMouseMove = (e) => {
-    setMousePosition({
-      x: (e.clientX / window.innerWidth) * 100,
-      y: (e.clientY / window.innerHeight) * 100,
-    });
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        when: "beforeChildren",
-        staggerChildren: 0.2,
-        delayChildren: 0.3,
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 50, opacity: 0, scale: 0.8, filter: "blur(10px)" },
-    visible: {
-      y: 0,
-      opacity: 1,
-      scale: 1,
-      filter: "blur(0px)",
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 15,
-      }
-    }
-  };
 
   return (
     <motion.div

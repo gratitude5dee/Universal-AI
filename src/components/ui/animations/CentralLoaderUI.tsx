@@ -17,17 +17,17 @@ const StatBar: React.FC<{ label: string; value: number; icon: React.ElementType 
   icon: Icon,
 }) => (
   <div className="flex flex-col items-center w-16">
-    <Icon className="w-5 h-5 mb-1 text-green-400" />
-    <div className="text-xs text-green-400 mb-1">{label}</div>
-    <div className="w-2 h-16 bg-green-900/50 rounded overflow-hidden relative">
+    <Icon className="w-5 h-5 mb-1 text-cyan-400" />
+    <div className="text-xs text-cyan-400 mb-1">{label}</div>
+    <div className="w-2 h-16 bg-cyan-900/50 rounded overflow-hidden relative">
       <motion.div
-        className="w-full bg-green-400 absolute bottom-0 left-0"
+        className="w-full bg-cyan-400 absolute bottom-0 left-0"
         initial={{ height: '0%' }}
         animate={{ height: `${value}%` }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
       />
     </div>
-    <div className="text-xs text-green-300 mt-1">{value.toFixed(0)}%</div>
+    <div className="text-xs text-cyan-300 mt-1">{value.toFixed(0)}%</div>
   </div>
 );
 
@@ -54,14 +54,14 @@ const CentralLoaderUI: React.FC<CentralLoaderUIProps> = ({
           {/* Outer Hexagon with glow */}
           <motion.polygon
             points={hexagonPoints}
-            stroke="#0f0" // Glowing green border
+            stroke="cyan" // Glowing cyan border
             strokeWidth="3"
             fill="none"
             initial={{ pathLength: 0, opacity: 0 }}
             animate={{ pathLength: 1, opacity: 1 }}
             transition={{ duration: 1, ease: "easeInOut", delay: 0.5 }}
             style={{
-              filter: 'drop-shadow(0 0 8px #0f0)', // Glow effect using SVG filter is also an option
+              filter: 'drop-shadow(0 0 8px cyan)', // Glow effect using SVG filter is also an option
             }}
           />
 
@@ -74,7 +74,7 @@ const CentralLoaderUI: React.FC<CentralLoaderUIProps> = ({
               y1="100" // Center point
               x2={100 + 80 * Math.cos((Math.PI / 3) * i + Math.PI / 6)} // Points on hexagon vertices
               y2={100 + 80 * Math.sin((Math.PI / 3) * i + Math.PI / 6)}
-              stroke="#0f0"
+              stroke="cyan"
               strokeWidth="2"
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: progress / 100 > (i / 6) ? 0.7 : 0, scale: 1 }} // Segments appear as progress increases
@@ -95,10 +95,10 @@ const CentralLoaderUI: React.FC<CentralLoaderUIProps> = ({
                 y="50%"
                 dy=".3em" // vertical centering
                 textAnchor="middle"
-                fill="#0f0"
+                fill="cyan"
                 fontSize="20"
                 fontFamily="monospace"
-                style={{ filter: 'drop-shadow(0 0 5px #0f0)'}}
+                style={{ filter: 'drop-shadow(0 0 5px cyan)'}}
               >
                 U.AI
               </text>
@@ -109,7 +109,7 @@ const CentralLoaderUI: React.FC<CentralLoaderUIProps> = ({
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <CheckCircle className="w-16 h-16 text-green-400" x="68" y="68" />
+              <CheckCircle className="w-16 h-16 text-cyan-400" x="68" y="68" />
             </motion.g>
           )}
         </svg>
@@ -117,8 +117,8 @@ const CentralLoaderUI: React.FC<CentralLoaderUIProps> = ({
 
       {/* Status Text */}
       <motion.p
-        className="text-lg sm:text-xl text-green-400 font-mono mb-3"
-        style={{ textShadow: '0 0 5px #0f0, 0 0 10px #0f0' }} // Glow effect
+        className="text-lg sm:text-xl text-cyan-400 font-mono mb-3"
+        style={{ textShadow: '0 0 5px cyan, 0 0 10px cyan' }} // Glow effect
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4 }}
@@ -128,10 +128,10 @@ const CentralLoaderUI: React.FC<CentralLoaderUIProps> = ({
       </motion.p>
 
       {/* Progress Bar */}
-      <div className="w-64 sm:w-80 h-2 bg-green-900/70 rounded-full overflow-hidden mb-10 border border-green-700/50">
+      <div className="w-64 sm:w-80 h-2 bg-cyan-900/70 rounded-full overflow-hidden mb-10 border border-cyan-700/50">
         <motion.div
-          className="h-full bg-green-400"
-          style={{ textShadow: '0 0 8px #0f0' }}
+          className="h-full bg-cyan-400"
+          style={{ textShadow: '0 0 8px cyan' }}
           initial={{ width: '0%' }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.5, ease: 'linear' }}

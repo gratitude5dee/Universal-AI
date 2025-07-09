@@ -34,66 +34,31 @@ const FloatingParticles = () => {
     </div>
   );
 };
-
-// newQuestions from glassmorphism version (includes gradient and icon)
 const newQuestions = [
   {
     question: "When a new idea strikes, is it a flash of lightning or a slowly growing seed?",
     options: ["Flash of Lightning", "Growing Seed"],
-    key: 'ideaPace',
-    gradient: "from-yellow-400 to-orange-500",
-    icon: "⚡",
   },
   {
     question: "Do you draw power from the silent whispers of ancient lore or the vibrant pulse of modern culture?",
     options: ["Ancient Lore", "Modern Pulse"],
-    key: 'inspirationSource',
-    gradient: "from-purple-400 to-pink-500",
-    icon: "📚",
   },
   {
     question: "Is your creative sanctuary a solitary tower of focus or a bustling roundtable of collaboration?",
     options: ["Solitary Tower", "Bustling Roundtable"],
-    key: 'workStyle',
-    gradient: "from-blue-400 to-cyan-500",
-    icon: "🏰",
   },
   {
     question: "When you create, are you channeling raw, chaotic magic or weaving intricate, structured spells?",
     options: ["Chaotic Magic", "Structured Spells"],
-    key: 'processStyle',
-    gradient: "from-red-400 to-purple-500",
-    icon: "✨",
   },
   {
     question: "Is the final creation a polished gem, perfect in every facet, or a living artifact, beautifully imperfect?",
     options: ["Polished Gem", "Living Artifact"],
-    key: 'perfectionism',
-    gradient: "from-emerald-400 to-teal-500",
-    icon: "💎",
-  },
-];
-
-// determineArchetype function from main branch
-const determineArchetype = (answers: {[key: string]: string}): string => {
-  const sourceTrait = answers.inspirationSource === "Ancient Lore" ? "Lorekeeper" : "Innovator";
-  const styleTrait = answers.processStyle === "Structured Spells" ? "Architect" : "Alchemist";
-
   if (sourceTrait === "Lorekeeper" && styleTrait === "Architect") return "Chronicler Architect";
   if (sourceTrait === "Lorekeeper" && styleTrait === "Alchemist") return "Mystic Alchemist";
   if (sourceTrait === "Innovator" && styleTrait === "Architect") return "Visionary Architect";
   if (sourceTrait === "Innovator" && styleTrait === "Alchemist") return "Future Alchemist";
 
-  return `${sourceTrait} ${styleTrait}`;
-};
-
-// Props interface from main branch
-interface PersonalityQuizStepProps {
-  onNext: () => void;
-  onBack: () => void;
-}
-
-// Component definition from main (typed) and incorporating merged logic
 const PersonalityQuizStep: React.FC<PersonalityQuizStepProps> = ({ onNext, onBack }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<{[key: string]: string}>({}); // Typed from main
@@ -102,66 +67,13 @@ const PersonalityQuizStep: React.FC<PersonalityQuizStepProps> = ({ onNext, onBac
 
   // Merged handleAnswer function
   const handleAnswer = (option: string) => {
-    setSelectedOption(option); // For UI feedback
-    const newAnswers = {...answers, [newQuestions[currentQuestion].key]: option};
-    setAnswers(newAnswers);
-
-    setTimeout(() => { // UI delay from glass
-      if (currentQuestion < newQuestions.length - 1) {
-        setCurrentQuestion(currentQuestion + 1);
-        setSelectedOption(null);
-      } else {
-        // Logic from main branch
-        const archetype = determineArchetype(newAnswers);
-        if (setPersonalityType) { // Check if setPersonalityType is available
-            setPersonalityType(archetype);
-        }
-        onNext(); // Call onNext without arguments as per main's pattern
-      }
-    }, 600);
+    
   };
 
   const currentQ = newQuestions[currentQuestion]; // From glass
 
   // JSX from glassmorphism version
   return (
-    <div className="relative">
-      <FloatingParticles />
-
-      <Card3D className="glass-panel-premium max-w-3xl mx-auto p-8">
-        <div className="relative z-10">
-          {/* Header */}
-          <div className="flex items-start gap-4 mb-8">
-            <motion.div
-              className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 p-3 rounded-full backdrop-blur-xl border border-glass-medium"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            >
-              <Bot className="h-6 w-6 text-white" />
-            </motion.div>
-            <div>
-              <h2 className="text-3xl font-bold text-white flex items-center gap-2">
-                Essence Alignment
-                <Sparkles className="h-6 w-6 text-yellow-400" />
-              </h2>
-              <p className="text-white/70">The Oracle peers into your creative soul...</p>
-            </div>
-          </div>
-
-          {/* Progress */}
-          <div className="mb-8">
-            <div className="flex gap-2 mb-2">
-              {newQuestions.map((_, index) => (
-                <motion.div
-                  key={index}
-                  className={`h-1 flex-1 rounded-full ${
-                    index <= currentQuestion ? 'bg-gradient-to-r ' + currentQ.gradient : 'bg-white/20'
-                  }`}
-                  initial={{ scaleX: 0 }}
-                  style={{ originX: 0 }}
-                  animate={{ scaleX: index <= currentQuestion ? 1 : 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                />
               ))}
             </div>
             <p className="text-white/50 text-sm">Question {currentQuestion + 1} of {newQuestions.length}</p>
