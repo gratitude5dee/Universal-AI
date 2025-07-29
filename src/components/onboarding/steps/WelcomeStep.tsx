@@ -55,7 +55,7 @@ const WelcomeStep: React.FC<WelcomeStepProps> = ({ onNext }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
   const { setCreatorName } = useOnboarding();
-  const { handleAreaClick } = useOnboardingNavigation({ onNext });
+  const { } = useOnboardingNavigation({ onNext });
 
   useEffect(() => {
     setIsLoaded(true);
@@ -140,13 +140,7 @@ const WelcomeStep: React.FC<WelcomeStepProps> = ({ onNext }) => {
           </motion.div>
 
           {/* Main content */}
-          <div 
-            className="text-center space-y-8 cursor-pointer" 
-            onClick={handleAreaClick}
-            role="button"
-            tabIndex={0}
-            aria-label="Click anywhere or press Enter/Space to continue to next step"
-          >
+          <div className="text-center space-y-8">
             <motion.div variants={itemVariants}>
               <motion.div
                 initial={{ scale: 0, rotate: -180 }}
