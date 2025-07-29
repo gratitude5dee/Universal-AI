@@ -38,26 +38,49 @@ const newQuestions = [
   {
     question: "When a new idea strikes, is it a flash of lightning or a slowly growing seed?",
     options: ["Flash of Lightning", "Growing Seed"],
+    icon: "⚡",
+    gradient: "from-yellow-400 to-orange-500"
   },
   {
     question: "Do you draw power from the silent whispers of ancient lore or the vibrant pulse of modern culture?",
     options: ["Ancient Lore", "Modern Pulse"],
+    icon: "📚",
+    gradient: "from-purple-400 to-pink-500"
   },
   {
     question: "Is your creative sanctuary a solitary tower of focus or a bustling roundtable of collaboration?",
     options: ["Solitary Tower", "Bustling Roundtable"],
+    icon: "🏰",
+    gradient: "from-blue-400 to-cyan-500"
   },
   {
     question: "When you create, are you channeling raw, chaotic magic or weaving intricate, structured spells?",
     options: ["Chaotic Magic", "Structured Spells"],
+    icon: "🔮",
+    gradient: "from-green-400 to-teal-500"
   },
   {
     question: "Is the final creation a polished gem, perfect in every facet, or a living artifact, beautifully imperfect?",
     options: ["Polished Gem", "Living Artifact"],
-  if (sourceTrait === "Lorekeeper" && styleTrait === "Architect") return "Chronicler Architect";
-  if (sourceTrait === "Lorekeeper" && styleTrait === "Alchemist") return "Mystic Alchemist";
-  if (sourceTrait === "Innovator" && styleTrait === "Architect") return "Visionary Architect";
-  if (sourceTrait === "Innovator" && styleTrait === "Alchemist") return "Future Alchemist";
+    icon: "💎",
+    gradient: "from-indigo-400 to-purple-500"
+  },
+];
+
+interface PersonalityQuizStepProps {
+  onNext: () => void;
+  onBack: () => void;
+}
+
+const determinePersonalityType = (answers: {[key: string]: string}): string => {
+  // Simple logic for determining personality type based on answers
+  const traits = Object.values(answers);
+  if (traits.includes("Ancient Lore") && traits.includes("Structured Spells")) return "Chronicler Architect";
+  if (traits.includes("Ancient Lore") && traits.includes("Chaotic Magic")) return "Mystic Alchemist";
+  if (traits.includes("Modern Pulse") && traits.includes("Structured Spells")) return "Visionary Architect";
+  if (traits.includes("Modern Pulse") && traits.includes("Chaotic Magic")) return "Future Alchemist";
+  return "Creative Visionary";
+};
 
 const PersonalityQuizStep: React.FC<PersonalityQuizStepProps> = ({ onNext, onBack }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -67,13 +90,40 @@ const PersonalityQuizStep: React.FC<PersonalityQuizStepProps> = ({ onNext, onBac
 
   // Merged handleAnswer function
   const handleAnswer = (option: string) => {
+    setSelectedOption(option);
+    setAnswers(prev => ({ ...prev, [currentQuestion]: option }));
     
+    setTimeout(() => {
+      if (currentQuestion < newQuestions.length - 1) {
+        setCurrentQuestion(prev => prev + 1);
+        setSelectedOption(null);
+      } else {
+        const personalityType = determinePersonalityType({ ...answers, [currentQuestion]: option });
+        setPersonalityType(personalityType);
+        onNext();
+      }
+    }, 500);
   };
 
   const currentQ = newQuestions[currentQuestion]; // From glass
 
   // JSX from glassmorphism version
   return (
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      <FloatingParticles />
+      
+      <Card3D className="w-full max-w-2xl">
+        <div className="p-8">
+          {/* Progress */}
+          <div className="flex justify-between items-center mb-8">
+            <div className="flex space-x-2">
+              {newQuestions.map((_, index) => (
+                <div
+                  key={index}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index <= currentQuestion ? 'bg-cyan-400' : 'bg-white/20'
+                  }`}
+                />
               ))}
             </div>
             <p className="text-white/50 text-sm">Question {currentQuestion + 1} of {newQuestions.length}</p>
