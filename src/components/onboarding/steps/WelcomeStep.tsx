@@ -175,29 +175,47 @@ const WelcomeStep: React.FC<WelcomeStepProps> = ({ onNext }) => {
               </p>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="pt-8">
-              <div className="relative inline-block">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur opacity-50" />
-                <Button
-                  onClick={onNext}
-                  className="
-                    relative px-8 py-4 text-lg font-semibold
-                    bg-gradient-to-r from-purple-600/20 to-pink-600/20
-                    text-white rounded-2xl border border-white/20
-                    hover:from-purple-600/30 hover:to-pink-600/30
-                    transition-all duration-300
-                    flex items-center gap-3
-                    backdrop-blur-xl
-                  "
-                >
-                  <span>Begin the Ritual</span>
-                  <motion.div
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
+            <motion.div variants={itemVariants} className="pt-8 relative z-50">
+              {/* Enhanced clickable area with proper pointer events */}
+              <div className="relative inline-block group cursor-pointer">
+                {/* Animated glow background - positioned behind button */}
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur opacity-50 group-hover:opacity-75 transition-opacity duration-300 pointer-events-none" />
+                
+                {/* Expanded clickable zone for better UX */}
+                <div className="relative p-2 -m-2">
+                  <Button
+                    onClick={onNext}
+                    size="lg"
+                    className="
+                      relative px-8 py-4 text-lg font-semibold
+                      bg-gradient-to-r from-purple-600/20 to-pink-600/20
+                      text-white rounded-2xl border border-white/20
+                      hover:from-purple-600/40 hover:to-pink-600/40
+                      hover:border-white/40 hover:scale-105
+                      active:scale-95
+                      transition-all duration-300 ease-out
+                      flex items-center gap-3
+                      backdrop-blur-xl
+                      shadow-lg hover:shadow-xl
+                      focus:outline-none focus:ring-4 focus:ring-purple-500/50
+                      min-h-[56px] min-w-[200px]
+                      pointer-events-auto
+                      z-10
+                    "
+                    aria-label="Begin the Genesis Ritual onboarding process"
+                    role="button"
+                    tabIndex={0}
                   >
-                    <ArrowRight className="w-5 h-5" />
-                  </motion.div>
-                </Button>
+                    <span className="relative z-10">Begin the Ritual</span>
+                    <motion.div
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className="relative z-10"
+                    >
+                      <ArrowRight className="w-5 h-5" />
+                    </motion.div>
+                  </Button>
+                </div>
               </div>
             </motion.div>
 
