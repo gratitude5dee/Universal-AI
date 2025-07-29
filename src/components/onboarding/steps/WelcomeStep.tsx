@@ -4,6 +4,7 @@ import { ArrowRight, Sparkles, Star, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card3D } from '@/components/ui/glass-components';
 import { useOnboarding } from '@/context/OnboardingContext';
+import { useOnboardingNavigation } from '@/hooks/useOnboardingNavigation';
 
 // Floating particles component
 const FloatingParticles = () => {
@@ -54,6 +55,7 @@ const WelcomeStep: React.FC<WelcomeStepProps> = ({ onNext }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
   const { setCreatorName } = useOnboarding();
+  const { handleAreaClick } = useOnboardingNavigation({ onNext });
 
   useEffect(() => {
     setIsLoaded(true);
@@ -138,7 +140,13 @@ const WelcomeStep: React.FC<WelcomeStepProps> = ({ onNext }) => {
           </motion.div>
 
           {/* Main content */}
-          <div className="text-center space-y-8">
+          <div 
+            className="text-center space-y-8 cursor-pointer" 
+            onClick={handleAreaClick}
+            role="button"
+            tabIndex={0}
+            aria-label="Click anywhere or press Enter/Space to continue to next step"
+          >
             <motion.div variants={itemVariants}>
               <motion.div
                 initial={{ scale: 0, rotate: -180 }}

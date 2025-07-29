@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, UploadCloud, File, Video, Mic, CheckCircle, Sparkles, Zap } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { useOnboardingNavigation } from '@/hooks/useOnboardingNavigation';
 
 // Liquid Glass Background
 const LiquidGlassBackground = () => {
@@ -84,6 +85,11 @@ const TrainingDataStep = ({ onNext, onBack }) => {
   const dropzoneRef = useRef(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  const { handleAreaClick } = useOnboardingNavigation({ 
+    onNext, 
+    onBack, 
+    disabled: uploadedFiles.length === 0 
+  });
 
   const gradientX = useTransform(mouseX, [0, 1], ['40%', '60%']);
   const gradientY = useTransform(mouseY, [0, 1], ['40%', '60%']);
@@ -120,7 +126,13 @@ const TrainingDataStep = ({ onNext, onBack }) => {
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       <LiquidGlassBackground />
       
-      <div className="w-full max-w-4xl backdrop-blur-xl bg-white/10 rounded-2xl border border-white/20 p-8">
+      <div 
+        className="w-full max-w-4xl backdrop-blur-xl bg-white/10 rounded-2xl border border-white/20 p-8 cursor-pointer"
+        onClick={handleAreaClick}
+        role="button"
+        tabIndex={0}
+        aria-label="Click anywhere or press Enter/Space to continue (upload files first)"
+      >
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-white mb-4">Training Data Upload</h2>
           <p className="text-white/70">Upload files to train your AI agent</p>
@@ -130,9 +142,10 @@ const TrainingDataStep = ({ onNext, onBack }) => {
         <div
           {...getRootProps()}
           className={`
-            border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300
+            border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300 dropzone
             ${isDragActive ? 'border-cyan-400 bg-cyan-400/10' : 'border-white/30 hover:border-white/50'}
           `}
+          data-interactive="true"
         >
           <input {...getInputProps()} />
           <UploadCloud className="h-12 w-12 text-white/50 mx-auto mb-4" />

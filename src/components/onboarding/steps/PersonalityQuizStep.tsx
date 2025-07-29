@@ -4,6 +4,7 @@ import { ArrowLeft, Bot, Sparkles } from 'lucide-react'; // ArrowRight removed a
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { Card3D } from '@/components/ui/glass-components';
 import { useOnboarding } from '@/context/OnboardingContext'; // Added from main
+import { useOnboardingNavigation } from '@/hooks/useOnboardingNavigation';
 
 // Floating particles component (from glassmorphism version)
 const FloatingParticles = () => {
@@ -87,6 +88,15 @@ const PersonalityQuizStep: React.FC<PersonalityQuizStepProps> = ({ onNext, onBac
   const [answers, setAnswers] = useState<{[key: string]: string}>({}); // Typed from main
   const [selectedOption, setSelectedOption] = useState<string | null>(null); // Typed and from glass
   const { setPersonalityType } = useOnboarding(); // From main
+  const { handleAreaClick } = useOnboardingNavigation({ 
+    onNext: () => {
+      if (selectedOption) {
+        handleAnswer(selectedOption);
+      }
+    }, 
+    onBack,
+    disabled: !selectedOption 
+  });
 
   // Merged handleAnswer function
   const handleAnswer = (option: string) => {
@@ -113,7 +123,13 @@ const PersonalityQuizStep: React.FC<PersonalityQuizStepProps> = ({ onNext, onBac
       <FloatingParticles />
       
       <Card3D className="w-full max-w-2xl">
-        <div className="p-8">
+        <div 
+          className="p-8 cursor-pointer" 
+          onClick={handleAreaClick}
+          role="button"
+          tabIndex={0}
+          aria-label="Click anywhere or press Enter/Space to continue with selected answer"
+        >
           {/* Progress */}
           <div className="flex justify-between items-center mb-8">
             <div className="flex space-x-2">

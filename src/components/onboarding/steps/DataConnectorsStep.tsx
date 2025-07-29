@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, CheckCircle, Twitter, Github, Figma, Database, FileText, Share2 } from 'lucide-react';
 import { useOnboarding } from '@/context/OnboardingContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useOnboardingNavigation } from '@/hooks/useOnboardingNavigation';
 
 interface Connector {
   id: string;
@@ -26,9 +27,16 @@ const connectors: Connector[] = [
 
 const DataConnectorsStep: React.FC<DataConnectorsStepProps> = ({ onNext, onBack }) => {
   const { connectedAccounts, toggleConnectedAccount } = useOnboarding();
+  const { handleAreaClick } = useOnboardingNavigation({ onNext, onBack });
 
   return (
-    <div className="bg-background/20 backdrop-blur-sm border border-border rounded-lg max-w-3xl mx-auto p-8">
+    <div 
+      className="bg-background/20 backdrop-blur-sm border border-border rounded-lg max-w-3xl mx-auto p-8 cursor-pointer"
+      onClick={handleAreaClick}
+      role="button"
+      tabIndex={0}
+      aria-label="Click anywhere or press Enter/Space to continue to next step"
+    >
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold">Connect the Constellations</h2>
         <p className="text-muted-foreground">Link your existing digital universe to provide context for your AI.</p>
@@ -45,6 +53,7 @@ const DataConnectorsStep: React.FC<DataConnectorsStepProps> = ({ onNext, onBack 
                 isConnected ? 'bg-cyan-500/20 border-cyan-500 shadow-cyan-500/30' : 'bg-slate-700/30 border-slate-600 hover:bg-slate-600/40 hover:border-slate-500'
               }`}
               onClick={() => toggleConnectedAccount(connector.id)}
+              data-interactive="true"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.07, duration: 0.3 }}
