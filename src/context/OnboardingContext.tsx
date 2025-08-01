@@ -4,7 +4,6 @@ import { useToast } from '@/hooks/use-toast';
 
 interface OnboardingState {
   creatorName: string;
-  personalityType: string;
   connectedAccounts: string[];
   uploadedFiles: { type: 'image' | 'video' | 'voice'; name: string }[];
   preferences: {
@@ -16,7 +15,6 @@ interface OnboardingState {
 
 interface OnboardingContextType extends OnboardingState {
   setCreatorName: (name: string) => void;
-  setPersonalityType: (type: string) => void;
   toggleConnectedAccount: (account: string) => void;
   addUploadedFile: (file: { type: 'image' | 'video' | 'voice'; name: string }) => void;
   setPreferences: (prefs: Partial<OnboardingState['preferences']>) => void;
@@ -31,7 +29,6 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
   const [state, setState] = useState<OnboardingState>({
     creatorName: '',
-    personalityType: '',
     connectedAccounts: [],
     uploadedFiles: [],
     preferences: {
@@ -42,7 +39,6 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const setCreatorName = (name: string) => setState(s => ({ ...s, creatorName: name }));
-  const setPersonalityType = (type: string) => setState(s => ({ ...s, personalityType: type }));
   
   const toggleConnectedAccount = (account: string) => {
     setState(s => {
@@ -67,7 +63,6 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
       const { error } = await supabase
         .from('profiles')
         .update({
-          personality_type: state.personalityType,
           connected_accounts: state.connectedAccounts,
           uploaded_files: state.uploadedFiles,
           ai_preferences: state.preferences,
@@ -95,7 +90,7 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <OnboardingContext.Provider value={{ ...state, setCreatorName, setPersonalityType, toggleConnectedAccount, addUploadedFile, setPreferences, saveOnboardingData, loading }}>
+    <OnboardingContext.Provider value={{ ...state, setCreatorName, toggleConnectedAccount, addUploadedFile, setPreferences, saveOnboardingData, loading }}>
       {children}
     </OnboardingContext.Provider>
   );

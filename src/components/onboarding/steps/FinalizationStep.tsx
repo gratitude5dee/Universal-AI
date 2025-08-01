@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 
 const FinalizationStep = () => {
-  const { personalityType, connectedAccounts, uploadedFiles, preferences, saveOnboardingData, loading: saveLoading } = useOnboarding();
+  const { connectedAccounts, uploadedFiles, preferences, saveOnboardingData, loading: saveLoading } = useOnboarding();
   const navigate = useNavigate();
   const [isFinalizing, setIsFinalizing] = useState(false);
 
@@ -52,7 +52,7 @@ const FinalizationStep = () => {
         transition={{ delay: 0.3, duration: 0.4 }}
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-            <SummaryItem label="Creative Archetype" value={personalityType || 'The Universalist'} />
+            <SummaryItem label="Creative Archetype" value="The Universalist" />
             <SummaryItem label="Preferred LLM" value={preferences.llm} />
             <SummaryItem label="Connected Accounts" value={connectedAccounts.length.toString()} />
             <SummaryItem label="Training Files" value={uploadedFiles.length.toString()} />

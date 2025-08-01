@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import OnboardingLayout from '@/components/onboarding/OnboardingLayout';
 import WelcomeStep from '@/components/onboarding/steps/WelcomeStep';
-import PersonalityQuizStep from '@/components/onboarding/steps/PersonalityQuizStep';
 import DataConnectorsStep from '@/components/onboarding/steps/DataConnectorsStep';
 import TrainingDataStep from '@/components/onboarding/steps/TrainingDataStep';
 import PreferencesStep from '@/components/onboarding/steps/PreferencesStep';
@@ -17,7 +16,6 @@ const OnboardingPage = () => {
 
   const steps = [
     <WelcomeStep onNext={nextStep} />,
-    <PersonalityQuizStep onNext={nextStep} onBack={prevStep} />,
     <DataConnectorsStep onNext={nextStep} onBack={prevStep} />,
     <TrainingDataStep onNext={nextStep} onBack={prevStep} />,
     <PreferencesStep onNext={nextStep} onBack={prevStep} />,
