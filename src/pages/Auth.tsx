@@ -39,17 +39,8 @@ const AuthPage = () => {
           description: "You've been successfully logged in.",
         });
 
-        // Check if user has completed onboarding
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('onboarding_completed')
-          .single();
-
-        if (profile?.onboarding_completed) {
-          navigate('/home');
-        } else {
-          navigate('/onboarding');
-        }
+        // Navigate to home for now
+        navigate('/home');
       } else {
         // Sign up
         if (password !== confirmPassword) {
