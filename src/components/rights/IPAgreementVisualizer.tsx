@@ -102,7 +102,7 @@ const IPAgreementVisualizer = () => {
         {agreementTerms.map((term) => (
           <motion.div
             key={term.id}
-            className="border border-studio-sand/30 rounded-lg overflow-hidden"
+            className="glass-card border border-white/10 backdrop-blur-md rounded-lg overflow-hidden"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 100, damping: 20 }}
@@ -121,7 +121,7 @@ const IPAgreementVisualizer = () => {
             </div>
             
             {expanded === term.id && (
-              <div className="p-4 pt-0 border-t border-studio-sand/30">
+              <div className="p-4 pt-0 border-t border-white/10 backdrop-blur-md">
                 {editMode ? (
                   <Textarea 
                     className="w-full min-h-[80px]"

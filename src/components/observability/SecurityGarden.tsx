@@ -216,7 +216,7 @@ export const SecurityGarden = () => {
             
             <div className="space-y-4">
               {section.items.map((item) => (
-                <div key={item.name} className="border border-studio-sand/30 rounded-lg p-3">
+                <div key={item.name} className="glass-card border border-white/10 backdrop-blur-md rounded-lg p-3">
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="flex items-center gap-2">
@@ -236,7 +236,7 @@ export const SecurityGarden = () => {
               ))}
             </div>
             
-            <div className="mt-4 pt-3 border-t border-studio-sand/30">
+            <div className="mt-4 pt-3 border-t border-white/10 backdrop-blur-md">
               <Button variant="ghost" size="sm" className="text-sm w-full">
                 View All <ExternalLink className="ml-1 h-3 w-3" />
               </Button>

@@ -73,7 +73,7 @@ export const CreativeOutputs = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {outputs.map((output) => (
-        <div key={output.id} className="flex p-4 border border-studio-sand/30 rounded-xl hover:shadow-md transition-all">
+        <div key={output.id} className="flex p-4 glass-card border border-white/10 backdrop-blur-md rounded-xl hover:shadow-md transition-all">
           {output.type === "image" && output.preview ? (
             <div className="w-14 h-14 flex-shrink-0 rounded-lg mr-4 overflow-hidden">
               <img 

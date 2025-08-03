@@ -46,7 +46,7 @@ export const AgentStatusGrid = () => {
   return (
     <div className="space-y-4">
       {agents.map((agent) => (
-        <div key={agent.id} className="flex items-center justify-between p-3 border border-studio-sand/30 rounded-xl">
+        <div key={agent.id} className="flex items-center justify-between p-3 glass-card border border-white/10 backdrop-blur-md rounded-xl">
           <div className="flex items-center">
             <div className="bg-studio-accent/10 p-2 rounded-lg mr-3">
               <Bot className="h-4 w-4 text-studio-accent" />

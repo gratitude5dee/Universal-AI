@@ -122,10 +122,10 @@ const TreasureMap = () => {
             return (
               <motion.div
                 key={allocation.id}
-                className={`bg-white rounded-xl p-4 cursor-pointer hover:shadow-md transition-all border ${
+                className={`glass-card rounded-xl p-4 cursor-pointer hover:shadow-md transition-all border ${
                   selectedAllocation?.id === allocation.id 
                     ? `border-2 border-${allocation.color}` 
-                    : 'border-studio-sand/30'
+                    : 'border-white/10 backdrop-blur-md'
                 }`}
                 whileHover={{ y: -5 }}
                 onClick={() => handleAllocationClick(allocation)}

@@ -232,7 +232,7 @@ const TreasureJourney = () => {
               </div>
             </div>
             
-            <div className="bg-white rounded-xl p-4 mb-4 border border-studio-sand/30">
+            <div className="glass-card rounded-xl p-4 mb-4 border border-white/10 backdrop-blur-md">
               <h4 className="text-sm font-medium mb-3">Journey Path</h4>
               <div className="relative py-2">
                 <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>

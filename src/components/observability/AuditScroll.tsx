@@ -295,7 +295,7 @@ export const AuditScroll = () => {
         </div>
         
         {filteredLogs.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-studio-sand/30 flex justify-between items-center text-sm">
+          <div className="mt-4 pt-4 border-t border-white/10 backdrop-blur-md flex justify-between items-center text-sm">
             <span className="text-muted-foreground">
               Showing {filteredLogs.length} of {logs.length} logs
             </span>
@@ -315,7 +315,7 @@ export const AuditScroll = () => {
         </p>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-4 bg-white/70 rounded-xl">
+            <div className="p-4 glass-card rounded-xl">
             <div className="flex items-center gap-2 mb-2">
               <div className="bg-green-100 p-1.5 rounded-full">
                 <Shield className="h-4 w-4 text-green-600" />
@@ -330,7 +330,7 @@ export const AuditScroll = () => {
             </div>
           </div>
           
-          <div className="p-4 bg-white/70 rounded-xl">
+          <div className="p-4 glass-card rounded-xl">
             <div className="flex items-center gap-2 mb-2">
               <div className="bg-green-100 p-1.5 rounded-full">
                 <UserCheck className="h-4 w-4 text-green-600" />
@@ -345,7 +345,7 @@ export const AuditScroll = () => {
             </div>
           </div>
           
-          <div className="p-4 bg-white/70 rounded-xl">
+          <div className="p-4 glass-card rounded-xl">
             <div className="flex items-center gap-2 mb-2">
               <div className="bg-amber-100 p-1.5 rounded-full">
                 <svg className="h-4 w-4 text-amber-600" 
@@ -368,7 +368,7 @@ export const AuditScroll = () => {
             </div>
           </div>
           
-          <div className="p-4 bg-white/70 rounded-xl">
+          <div className="p-4 glass-card rounded-xl">
             <div className="flex items-center gap-2 mb-2">
               <div className="bg-green-100 p-1.5 rounded-full">
                 <FileCheck className="h-4 w-4 text-green-600" />

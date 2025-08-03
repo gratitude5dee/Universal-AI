@@ -188,7 +188,7 @@ export const BackupSanctuary = () => {
               key={backup.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-studio-sand/30 rounded-lg hover:bg-studio-sand/5 transition-colors"
+              className="flex flex-col sm:flex-row sm:items-center justify-between p-4 glass-card border border-white/10 backdrop-blur-md rounded-lg hover:bg-studio-sand/5 transition-colors"
             >
               <div className="flex items-start gap-3">
                 <div className="bg-studio-accent/10 p-2 rounded-full">

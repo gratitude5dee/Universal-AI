@@ -238,7 +238,7 @@ interface ChannelCardProps {
 }
 
 const ChannelCard = ({ name, icon, listeners, growth, color, suffix = "listeners" }: ChannelCardProps) => (
-  <div className="bg-white rounded-xl border border-studio-sand/30 p-4 hover:shadow-md transition-all">
+  <div className="glass-card rounded-xl border border-white/10 backdrop-blur-md p-4 hover:shadow-md transition-all">
     <div className="flex items-start justify-between">
       <div className="flex items-center">
         {icon}
@@ -265,7 +265,7 @@ interface ReleaseCardProps {
 }
 
 const ReleaseCard = ({ title, artist, image, date, streams }: ReleaseCardProps) => (
-  <div className="bg-white rounded-xl border border-studio-sand/30 overflow-hidden hover:shadow-md transition-all">
+  <div className="glass-card rounded-xl border border-white/10 backdrop-blur-md overflow-hidden hover:shadow-md transition-all">
     <div className="aspect-square bg-studio-sand/20 relative">
       <img src={image} alt={title} className="w-full h-full object-cover" />
     </div>

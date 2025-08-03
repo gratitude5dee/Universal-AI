@@ -86,21 +86,21 @@ const AccountSetupWizard: React.FC<AccountSetupWizardProps> = ({
         >
           {wizardStep === 1 && (
             <div className="grid grid-cols-3 gap-4">
-              <div onClick={() => setWizardStep(2)} className="bg-white p-5 rounded-xl border border-studio-sand/30 shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-studio-accent/50">
+              <div onClick={() => setWizardStep(2)} className="glass-card p-5 rounded-xl border border-white/10 backdrop-blur-md shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-studio-accent/50">
                 <div className="mb-3 bg-studio-highlight/30 w-12 h-12 flex items-center justify-center rounded-lg">
                   <Download className="h-6 w-6 text-studio-accent" />
                 </div>
                 <h3 className="text-lg font-medium mb-2">Payment Collection</h3>
                 <p className="text-muted-foreground text-sm">Receive payments from clients and services automatically.</p>
               </div>
-              <div onClick={() => setWizardStep(2)} className="bg-white p-5 rounded-xl border border-studio-sand/30 shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-studio-accent/50">
+              <div onClick={() => setWizardStep(2)} className="glass-card p-5 rounded-xl border border-white/10 backdrop-blur-md shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-studio-accent/50">
                 <div className="mb-3 bg-studio-highlight/30 w-12 h-12 flex items-center justify-center rounded-lg">
                   <Send className="h-6 w-6 text-studio-accent" />
                 </div>
                 <h3 className="text-lg font-medium mb-2">Disbursement</h3>
                 <p className="text-muted-foreground text-sm">Pay for services and subscriptions without manual approval.</p>
               </div>
-              <div onClick={() => setWizardStep(2)} className="bg-white p-5 rounded-xl border border-studio-sand/30 shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-studio-accent/50">
+              <div onClick={() => setWizardStep(2)} className="glass-card p-5 rounded-xl border border-white/10 backdrop-blur-md shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-studio-accent/50">
                 <div className="mb-3 bg-studio-highlight/30 w-12 h-12 flex items-center justify-center rounded-lg">
                   <Zap className="h-6 w-6 text-studio-accent" />
                 </div>
@@ -116,7 +116,7 @@ const AccountSetupWizard: React.FC<AccountSetupWizardProps> = ({
                 <input
                   type="text"
                   placeholder="Search agents..."
-                  className="w-full p-3 rounded-lg border border-studio-sand/30 mb-4 pl-10"
+                  className="w-full p-3 rounded-lg glass-card border border-white/10 backdrop-blur-md mb-4 pl-10"
                 />
                 <Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
               </div>
@@ -126,7 +126,7 @@ const AccountSetupWizard: React.FC<AccountSetupWizardProps> = ({
                   <div 
                     key={index}
                     onClick={() => setWizardStep(3)}
-                    className="flex items-center p-3 bg-white rounded-lg border border-studio-sand/30 cursor-pointer hover:border-studio-accent/50"
+                    className="flex items-center p-3 glass-card rounded-lg border border-white/10 backdrop-blur-md cursor-pointer hover:border-studio-accent/50"
                   >
                     <div className="bg-studio-highlight/20 w-10 h-10 rounded-full flex items-center justify-center mr-3">
                       <Bot className="h-5 w-5 text-studio-accent" />
@@ -144,21 +144,21 @@ const AccountSetupWizard: React.FC<AccountSetupWizardProps> = ({
 
           {wizardStep === 3 && (
             <div className="grid grid-cols-3 gap-4">
-              <div onClick={() => setWizardStep(4)} className="bg-white p-5 rounded-xl border border-studio-sand/30 shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-studio-accent/50">
+              <div onClick={() => setWizardStep(4)} className="glass-card p-5 rounded-xl border border-white/10 backdrop-blur-md shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-studio-accent/50">
                 <div className="mb-3 bg-studio-highlight/30 w-12 h-12 flex items-center justify-center rounded-lg">
                   <Landmark className="h-6 w-6 text-studio-accent" />
                 </div>
                 <h3 className="text-lg font-medium mb-2">Checking</h3>
                 <p className="text-muted-foreground text-sm">Standard account for regular transactions.</p>
               </div>
-              <div onClick={() => setWizardStep(4)} className="bg-white p-5 rounded-xl border border-studio-sand/30 shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-studio-accent/50">
+              <div onClick={() => setWizardStep(4)} className="glass-card p-5 rounded-xl border border-white/10 backdrop-blur-md shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-studio-accent/50">
                 <div className="mb-3 bg-studio-highlight/30 w-12 h-12 flex items-center justify-center rounded-lg">
                   <Wallet className="h-6 w-6 text-studio-accent" />
                 </div>
                 <h3 className="text-lg font-medium mb-2">Savings</h3>
                 <p className="text-muted-foreground text-sm">Optimized for saving funds with limited transactions.</p>
               </div>
-              <div onClick={() => setWizardStep(4)} className="bg-white p-5 rounded-xl border border-studio-sand/30 shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-studio-accent/50">
+              <div onClick={() => setWizardStep(4)} className="glass-card p-5 rounded-xl border border-white/10 backdrop-blur-md shadow-sm hover:shadow-md transition-all cursor-pointer hover:border-studio-accent/50">
                 <div className="mb-3 bg-studio-highlight/30 w-12 h-12 flex items-center justify-center rounded-lg">
                   <Globe className="h-6 w-6 text-studio-accent" />
                 </div>
@@ -170,7 +170,7 @@ const AccountSetupWizard: React.FC<AccountSetupWizardProps> = ({
 
           {wizardStep === 4 && (
             <div className="space-y-5">
-              <div className="bg-white p-5 rounded-xl border border-studio-sand/30">
+              <div className="glass-card p-5 rounded-xl border border-white/10 backdrop-blur-md">
                 <h3 className="text-lg font-medium mb-3">Initial Deposit</h3>
                 <div className="flex items-end gap-4 mb-5">
                   <div className="flex-1">
@@ -180,7 +180,7 @@ const AccountSetupWizard: React.FC<AccountSetupWizardProps> = ({
                       <input
                         type="text"
                         defaultValue="1000.00"
-                        className="w-full p-2 rounded-lg border border-studio-sand/30 pl-8"
+                        className="w-full p-2 rounded-lg glass-card border border-white/10 backdrop-blur-md pl-8"
                       />
                     </div>
                   </div>
@@ -196,7 +196,7 @@ const AccountSetupWizard: React.FC<AccountSetupWizardProps> = ({
                     </div>
                   </div>
                   
-                  <div className="flex items-center p-3 bg-white rounded-lg border border-studio-sand/30 cursor-pointer">
+                  <div className="flex items-center p-3 glass-card rounded-lg border border-white/10 backdrop-blur-md cursor-pointer">
                     <input type="radio" name="fundingSource" id="externalSource" className="mr-3" />
                     <div className="flex-1">
                       <label htmlFor="externalSource" className="font-medium cursor-pointer">Connect External Funding Source</label>
@@ -210,7 +210,7 @@ const AccountSetupWizard: React.FC<AccountSetupWizardProps> = ({
 
           {wizardStep === 5 && (
             <div className="space-y-5">
-              <div className="bg-white p-5 rounded-xl border border-studio-sand/30">
+              <div className="glass-card p-5 rounded-xl border border-white/10 backdrop-blur-md">
                 <h3 className="text-lg font-medium mb-4">Transaction Limits</h3>
                 
                 <div className="space-y-4">
@@ -267,7 +267,7 @@ const AccountSetupWizard: React.FC<AccountSetupWizardProps> = ({
 
           {wizardStep === 6 && (
             <div className="space-y-4">
-              <div className="bg-studio-sand/10 p-4 rounded-lg border border-studio-sand/30">
+              <div className="glass-card p-4 rounded-lg border border-white/10 backdrop-blur-md">
                 <div className="flex items-start mb-3">
                   <Shield className="h-5 w-5 text-studio-accent mr-2 mt-0.5" />
                   <h3 className="text-lg font-medium">Compliance Information</h3>

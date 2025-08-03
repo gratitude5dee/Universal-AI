@@ -152,7 +152,7 @@ const RightsJourney = () => {
           {licenseOptions.map((license, index) => (
             <motion.div
               key={license.id}
-              className="p-3 border border-studio-sand/30 rounded-lg"
+              className="p-3 glass-card border border-white/10 backdrop-blur-md rounded-lg"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
@@ -172,7 +172,7 @@ const RightsJourney = () => {
         </div>
       </div>
       
-      <div className="p-4 rounded-lg border border-studio-sand/30 mt-6">
+      <div className="p-4 rounded-lg glass-card border border-white/10 backdrop-blur-md mt-6">
         <div className="flex items-center gap-3 mb-3">
           <div className="bg-[#9b87f5]/10 p-2 rounded-md">
             <Coins size={18} className="text-[#9b87f5]" />

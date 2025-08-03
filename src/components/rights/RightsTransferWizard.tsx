@@ -208,7 +208,7 @@ const RightsTransferWizard = () => {
                     return (
                       <motion.div
                         key={type.id}
-                        className="p-4 border border-studio-sand/30 rounded-lg hover:border-[#9b87f5]/50 cursor-pointer"
+                        className="p-4 glass-card border border-white/10 backdrop-blur-md rounded-lg hover:border-[#9b87f5]/50 cursor-pointer"
                         whileHover={{ scale: 1.02, borderColor: "#9b87f5" }}
                       >
                         <div className="flex items-center gap-3">
@@ -233,7 +233,7 @@ const RightsTransferWizard = () => {
                     return (
                       <motion.div
                         key={type.id}
-                        className="p-4 border border-studio-sand/30 rounded-lg hover:border-[#9b87f5]/50 cursor-pointer"
+                        className="p-4 glass-card border border-white/10 backdrop-blur-md rounded-lg hover:border-[#9b87f5]/50 cursor-pointer"
                         whileHover={{ scale: 1.02, borderColor: "#9b87f5" }}
                       >
                         <div className="flex flex-col items-center text-center gap-2">
@@ -257,7 +257,7 @@ const RightsTransferWizard = () => {
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-4 border border-studio-sand/30 rounded-lg">
+                    <div className="p-4 glass-card border border-white/10 backdrop-blur-md rounded-lg">
                       <h5 className="font-medium mb-2">Rights Included</h5>
                       <div className="space-y-2">
                         <label className="flex items-center gap-2 text-sm">
@@ -283,7 +283,7 @@ const RightsTransferWizard = () => {
                       </div>
                     </div>
                     
-                    <div className="p-4 border border-studio-sand/30 rounded-lg">
+                    <div className="p-4 glass-card border border-white/10 backdrop-blur-md rounded-lg">
                       <h5 className="font-medium mb-2">Scope Limitations</h5>
                       <div className="space-y-2">
                         <label className="flex items-center gap-2 text-sm">

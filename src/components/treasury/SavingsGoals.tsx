@@ -20,7 +20,7 @@ interface SavingsGoalsProps {
 
 const SavingsGoals: React.FC<SavingsGoalsProps> = ({ goals, onAddToGoal }) => {
   return (
-    <div className="bg-studio-sand/10 rounded-xl p-5 border border-studio-sand/30">
+    <div className="glass-card rounded-xl p-5 border border-white/10 backdrop-blur-md">
       <h3 className="text-lg font-semibold mb-4 flex items-center">
         <Sparkles className="h-5 w-5 mr-2 text-studio-accent" />
         Enchanted Savings Goals

@@ -196,7 +196,7 @@ export const ResourceCapacity = () => {
               />
             </div>
             
-            <div className="flex justify-between items-center mt-4 pt-3 border-t border-studio-sand/30">
+            <div className="flex justify-between items-center mt-4 pt-3 border-t border-white/10 backdrop-blur-md">
               <div className="text-sm text-muted-foreground">
                 {resource.trend === "increasing" ? "Trending upward" : 
                  resource.trend === "decreasing" ? "Trending downward" : 

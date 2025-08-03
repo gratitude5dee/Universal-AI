@@ -89,7 +89,7 @@ const IndependentChannels = () => {
           <h2 className="text-xl font-bold mb-4">Platform Performance</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {platforms.map((platform, index) => (
-              <div key={index} className="bg-white p-6 rounded-xl border border-studio-sand/30 hover:shadow-md transition-all">
+              <div key={index} className="glass-card p-6 rounded-xl border border-white/10 backdrop-blur-md hover:shadow-md transition-all">
                 <div className="flex items-center mb-4">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-purple-100 mr-4">
                     <img src={platform.icon} alt={platform.name} className="w-8 h-8" />
@@ -114,7 +114,7 @@ const IndependentChannels = () => {
                   </div>
                 </div>
                 
-                <div className="mt-4 pt-4 border-t border-studio-sand/30 flex justify-end">
+                <div className="mt-4 pt-4 border-t border-white/10 backdrop-blur-md flex justify-end">
                   <button className="text-purple-600 text-sm font-medium hover:text-purple-700">
                     Manage Platform →
                   </button>
@@ -159,7 +159,7 @@ const IndependentChannels = () => {
                 { name: "Production Breakdown", type: "Tutorial", newContent: true, tier: "Super Fan" },
                 { name: "Livestream Q&A", type: "Event", newContent: false, tier: "Inner Circle" }
               ].map((content, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-white rounded-lg border border-studio-sand/30">
+                <div key={index} className="flex items-center justify-between p-3 glass-card rounded-lg border border-white/10 backdrop-blur-md">
                   <div className="flex items-center">
                     <div className="w-8 h-8 rounded-full flex items-center justify-center bg-studio-sand/20 mr-3">
                       <Music className="h-4 w-4 text-studio-clay" />

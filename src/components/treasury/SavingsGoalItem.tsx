@@ -22,7 +22,7 @@ const SavingsGoalItem: React.FC<SavingsGoalProps> = ({ goal, onAddToGoal }) => {
   const isComplete = goal.current >= goal.target;
 
   return (
-    <div className="bg-white/70 rounded-lg p-4">
+    <div className="glass-card rounded-lg p-4">
       <div className="flex justify-between items-center mb-2">
         <h4 className="font-medium">{goal.name}</h4>
         <div className="text-sm font-medium">
