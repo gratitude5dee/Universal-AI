@@ -235,7 +235,7 @@ const Gallery = () => {
         {/* Featured Assets Section */}
         <div className="space-y-6">
           <div className="relative overflow-hidden p-8 rounded-3xl bg-gradient-to-br from-studio-accent/5 via-white to-studio-sand/10 border border-studio-sand/30 shadow-xl shadow-studio-accent/5">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent opacity-50"></div>
+            <div className="absolute inset-0 glass-card border border-white/10 backdrop-blur-md opacity-50"></div>
             <div className="relative z-10">
               <VinylBookshelf 
                 title="Featured Collection"
