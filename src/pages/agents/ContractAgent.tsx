@@ -329,7 +329,7 @@ const StatsCard = ({ title, value, icon: Icon, trend, trendValue, accent = "stud
 const ContractTemplateCard = ({ title, icon: Icon, description, usage }) => (
     <motion.div 
         whileHover={{ scale: 1.05, y: -4 }}
-        className="p-6 bg-white/50 border border-studio-sand/30 rounded-xl text-center cursor-pointer hover:shadow-lg transition-all duration-300 group"
+        className="p-6 glass-card border border-white/10 rounded-xl text-center cursor-pointer hover:shadow-lg transition-all duration-300 group backdrop-blur-md"
     >
         <div className="w-16 h-16 rounded-xl bg-studio-accent/20 flex items-center justify-center mx-auto mb-4 group-hover:bg-studio-accent/30 transition-colors">
             <Icon size={28} className="text-studio-accent"/>
@@ -378,7 +378,7 @@ const ContractListItem = ({ name, status, date, type, value }) => {
                 </div>
                 <div className="text-right">
                     <p className="font-semibold text-studio-charcoal">{value}</p>
-                    <Button size="sm" variant="outline" className="mt-2 bg-white/80 border-studio-sand/50">
+                    <Button size="sm" variant="outline" className="mt-2 glass-card border border-white/10 backdrop-blur-md">
                         View Details
                     </Button>
                 </div>
@@ -395,7 +395,7 @@ const ActivityItem = ({ action, details, time, type }) => {
     };
 
     return (
-        <div className="flex items-center gap-3 p-3 bg-white/50 rounded-lg">
+        <div className="flex items-center gap-3 p-3 glass-card border border-white/10 rounded-lg backdrop-blur-md">
             <div className={`w-2 h-2 rounded-full ${typeStyles[type]}`}></div>
             <div className="flex-grow">
                 <p className="text-sm font-medium text-studio-charcoal">{action}</p>
