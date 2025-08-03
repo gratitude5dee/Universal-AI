@@ -13,7 +13,7 @@ import {
 
 export const navItems = [{
   name: "WZRD.tech",
-  path: "#",
+  path: "/home",
   icon: NavBrainIcon,
   hasSubmenu: true,
   submenuItems: [

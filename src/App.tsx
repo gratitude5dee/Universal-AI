@@ -16,8 +16,8 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/components/ui/ProtectedRoute";
 
 // Import all page components
-import Home from "./pages/Index";
-import Gallery from "./pages/Gallery";
+import Home from "./pages/Home";
+import AssetLibrary from "./pages/AssetLibrary";
 import CreateAgent from "./pages/CreateAgent";
 import Collection from "./pages/Collection";
 import AgentMarketplace from "./pages/AgentMarketplace";
@@ -125,7 +125,7 @@ function AppContent({ bypassAuth = false }: { bypassAuth?: boolean }) {
 
             {/* Dashboard and protected routes */}
             <Route path="/home" element={bypassAuth ? <Home /> : <ProtectedRoute><Home /></ProtectedRoute>} />
-            <Route path="/gallery" element={bypassAuth ? <Gallery /> : <ProtectedRoute><Gallery /></ProtectedRoute>} />
+            <Route path="/gallery" element={bypassAuth ? <AssetLibrary /> : <ProtectedRoute><AssetLibrary /></ProtectedRoute>} />
             <Route path="/create-agent" element={bypassAuth ? <CreateAgent /> : <ProtectedRoute><CreateAgent /></ProtectedRoute>} />
             <Route path="/collection" element={bypassAuth ? <Collection /> : <ProtectedRoute><Collection /></ProtectedRoute>} />
             <Route path="/agent-marketplace" element={bypassAuth ? <AgentMarketplace /> : <ProtectedRoute><AgentMarketplace /></ProtectedRoute>} />
