@@ -38,6 +38,7 @@ import WzrdCompanions from "./pages/wzrd/WzrdCompanions";
 import OnboardingPage from "./pages/Onboarding";
 import AuthPage from "./pages/Auth";
 import Touring from "./pages/Touring";
+import Profile from "./pages/Profile";
 
 // Event Toolkit pages
 import EventToolkitDashboard from "./pages/event-toolkit/Dashboard";
@@ -141,6 +142,9 @@ function AppContent({ bypassAuth = false }: { bypassAuth?: boolean }) {
             
             {/* Touring route */}
             <Route path="/touring" element={bypassAuth ? <Touring /> : <ProtectedRoute><Touring /></ProtectedRoute>} />
+            
+            {/* Profile route */}
+            <Route path="/profile" element={bypassAuth ? <Profile /> : <ProtectedRoute><Profile /></ProtectedRoute>} />
             
             {/* Event Toolkit routes */}
             <Route path="/event-toolkit/dashboard" element={bypassAuth ? <EventToolkitDashboard /> : <ProtectedRoute><EventToolkitDashboard /></ProtectedRoute>} />
