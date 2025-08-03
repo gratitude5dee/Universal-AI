@@ -21,13 +21,13 @@ const Header = () => {
             <FiMenu size={24} />
           </button>
           <a 
-            href="#" 
+            href="/landing-preview" 
             className="bg-white text-black font-semibold px-5 py-2.5 rounded-full text-sm transition-all duration-200 hover:scale-105 hover:shadow-lg"
             style={{
               boxShadow: '0 0 20px rgba(240, 240, 245, 0.2)'
             }}
           >
-            Download
+            Enter App
           </a>
         </div>
       </nav>
