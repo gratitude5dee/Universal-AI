@@ -8,7 +8,7 @@ import {
   Palette, BookOpen, Headphones, Infinity, UserRound, Users, Shield, Globe, 
   Database, ShoppingCart, Eye, Building, Trees, ArrowRightLeft, Share2, Link, Tv, 
   User, Music, Landmark, TrendingUp, Droplets, CreditCard, Calendar, UserCircle,
-  Briefcase, LayoutDashboard, FileText, QrCode, UserPlus, Upload, FilePlus
+  Briefcase, LayoutDashboard, FileText, QrCode, UserPlus, Upload, FilePlus, FilePieChart, Home, Banknote
 } from "lucide-react";
 
 export const navItems = [{
@@ -192,29 +192,29 @@ export const navItems = [{
   hasSubmenu: true,
   submenuItems: [
     {
-      name: "Overview",
-      path: "/treasury",
-      icon: NavWalletIcon
+      name: "Dashboard",
+      path: "/treasury?tab=dashboard",
+      icon: Home
+    },
+    {
+      name: "Income",
+      path: "/treasury?tab=income",
+      icon: Banknote
+    },
+    {
+      name: "Expenses",
+      path: "/treasury?tab=expenses",
+      icon: CreditCard
+    },
+    {
+      name: "Accounting",
+      path: "/treasury?tab=accounting",
+      icon: FilePieChart
     },
     {
       name: "Agent Banking",
       path: "/treasury?tab=banking",
-      icon: CreditCard
-    },
-    {
-      name: "On-Chain Actions",
-      path: "/treasury?tab=onchain",
       icon: Landmark
-    },
-    {
-      name: "Trading Agents",
-      path: "/treasury?tab=trading",
-      icon: TrendingUp
-    },
-    {
-      name: "Liquidity Agents",
-      path: "/treasury?tab=liquidity",
-      icon: Droplets
     }
   ]
 }, {
