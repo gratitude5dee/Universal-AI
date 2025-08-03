@@ -48,10 +48,6 @@ export const navItems = [{
     }
   ]
 }, {
-  name: "Dashboard",
-  path: "/",
-  icon: NavDashboardIcon
-}, {
   name: "Touring & Gigs",
   path: "/touring-gigs",
   icon: Calendar
