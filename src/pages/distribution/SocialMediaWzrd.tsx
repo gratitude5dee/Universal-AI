@@ -91,72 +91,96 @@ export default function SocialMediaWzrd() {
         {/* Header Section */}
         <motion.div 
           variants={itemVariants}
-          className="glass-card p-6 rounded-xl border border-white/10 backdrop-blur-md"
+          className="glass-card p-6 rounded-xl border border-white/10 backdrop-blur-md relative overflow-hidden"
         >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold text-foreground">
-                {format(currentDate, 'MMMM yyyy')}
-              </h1>
+          {/* Background texture */}
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGZpbHRlcj0idXJsKCNhKSIgb3BhY2l0eT0iLjA1IiBkPSJNMCAwaDMwMHYzMDBIMHoiLz48L3N2Zz4=')] opacity-30" />
+          
+          <div className="relative flex items-center justify-between mb-6">
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-4">
+                <div className="bg-studio-accent/20 p-3 rounded-xl">
+                  <CalendarIcon className="h-8 w-8 text-studio-accent" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-foreground">
+                    {format(currentDate, 'MMMM yyyy')}
+                  </h1>
+                  <p className="text-muted-foreground mt-1">Content calendar & strategy</p>
+                </div>
+              </div>
+              
               <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={navigateToPrevious}
-                  className="bg-secondary/20 border-white/10 hover:bg-secondary/30"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={navigateToNext}
-                  className="bg-secondary/20 border-white/10 hover:bg-secondary/30"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={navigateToToday}
-                  className="bg-secondary/20 border-white/10 hover:bg-secondary/30"
-                >
-                  Today
-                </Button>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={navigateToPrevious}
+                    className="bg-secondary/20 border-white/10 hover:bg-secondary/30 hover:border-white/20 transition-all duration-200"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={navigateToNext}
+                    className="bg-secondary/20 border-white/10 hover:bg-secondary/30 hover:border-white/20 transition-all duration-200"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={navigateToToday}
+                    className="bg-secondary/20 border-white/10 hover:bg-secondary/30 hover:border-white/20 transition-all duration-200"
+                  >
+                    Today
+                  </Button>
+                </motion.div>
               </div>
             </div>
 
             <div className="flex items-center gap-4">
-              <ToggleGroup
-                type="single"
-                value={viewMode}
-                onValueChange={(value) => value && setViewMode(value as 'month' | 'week')}
-                className="bg-secondary/20 p-1 rounded-lg"
-              >
-                <ToggleGroupItem 
-                  value="week" 
-                  className="data-[state=on]:bg-primary/20 data-[state=on]:text-primary border-none"
+              {/* Enhanced View Toggle */}
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-muted-foreground">View:</span>
+                <ToggleGroup
+                  type="single"
+                  value={viewMode}
+                  onValueChange={(value) => value && setViewMode(value as 'month' | 'week')}
+                  className="bg-white/10 backdrop-blur-md border border-white/10 p-1 rounded-xl shadow-lg"
                 >
-                  Week
-                </ToggleGroupItem>
-                <ToggleGroupItem 
-                  value="month"
-                  className="data-[state=on]:bg-primary/20 data-[state=on]:text-primary border-none"
-                >
-                  Month
-                </ToggleGroupItem>
-              </ToggleGroup>
+                  <ToggleGroupItem 
+                    value="week" 
+                    className="data-[state=on]:bg-studio-accent data-[state=on]:text-white border-none rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 hover:bg-white/10"
+                  >
+                    Week
+                  </ToggleGroupItem>
+                  <ToggleGroupItem 
+                    value="month"
+                    className="data-[state=on]:bg-studio-accent data-[state=on]:text-white border-none rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 hover:bg-white/10"
+                  >
+                    Month
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </div>
 
-              <Button
-                onClick={() => {
-                  setEditingPost(null);
-                  setIsModalOpen(true);
-                }}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Create Post
-              </Button>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button
+                  onClick={() => {
+                    setEditingPost(null);
+                    setIsModalOpen(true);
+                  }}
+                  className="bg-gradient-to-r from-studio-accent to-purple-600 hover:from-studio-accent/90 hover:to-purple-600/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Post
+                </Button>
+              </motion.div>
             </div>
           </div>
         </motion.div>

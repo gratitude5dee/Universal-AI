@@ -73,7 +73,7 @@ export const SocialCalendar: React.FC<SocialCalendarProps> = ({
 
     return (
       <motion.div 
-        className="glass-card p-6 rounded-xl border border-white/10 backdrop-blur-md"
+        className="glass-card p-6 rounded-xl border border-white/10 backdrop-blur-md relative overflow-hidden"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -144,10 +144,10 @@ export const SocialCalendar: React.FC<SocialCalendarProps> = ({
             {day}
           </div>
         ))}
-      </div>
+        </div>
 
-      {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-4">
+        {/* Calendar Grid */}
+        <div className="grid grid-cols-7 gap-4">
         {calendarDays.map((day, index) => {
           const dayPosts = getPostsForDay(day);
           const isCurrentMonth = isSameMonth(day, currentDate);
