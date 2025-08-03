@@ -40,6 +40,12 @@ import AuthPage from "./pages/Auth";
 import Touring from "./pages/Touring";
 import Profile from "./pages/Profile";
 
+// Agent pages
+import BookingAgent from "./pages/agents/BookingAgent";
+import InvoiceAgent from "./pages/agents/InvoiceAgent";
+import SocialMediaAgent from "./pages/agents/SocialMediaAgent";
+import ContractAgent from "./pages/agents/ContractAgent";
+
 // Event Toolkit pages
 import EventToolkitDashboard from "./pages/event-toolkit/Dashboard";
 import Gigs from "./pages/event-toolkit/Gigs";
@@ -145,6 +151,12 @@ function AppContent({ bypassAuth = false }: { bypassAuth?: boolean }) {
             
             {/* Profile route */}
             <Route path="/profile" element={bypassAuth ? <Profile /> : <ProtectedRoute><Profile /></ProtectedRoute>} />
+            
+            {/* Agent routes */}
+            <Route path="/collection/booking-agent" element={bypassAuth ? <BookingAgent /> : <ProtectedRoute><BookingAgent /></ProtectedRoute>} />
+            <Route path="/collection/invoice-agent" element={bypassAuth ? <InvoiceAgent /> : <ProtectedRoute><InvoiceAgent /></ProtectedRoute>} />
+            <Route path="/collection/social-media" element={bypassAuth ? <SocialMediaAgent /> : <ProtectedRoute><SocialMediaAgent /></ProtectedRoute>} />
+            <Route path="/collection/contract-agent" element={bypassAuth ? <ContractAgent /> : <ProtectedRoute><ContractAgent /></ProtectedRoute>} />
             
             {/* Event Toolkit routes */}
             <Route path="/event-toolkit/dashboard" element={bypassAuth ? <EventToolkitDashboard /> : <ProtectedRoute><EventToolkitDashboard /></ProtectedRoute>} />
