@@ -7,7 +7,7 @@ import {
 import { 
   Palette, BookOpen, Headphones, Infinity, UserRound, Users, Shield, Globe, 
   Database, ShoppingCart, Eye, Building, Trees, ArrowRightLeft, Share2, Link, Tv, 
-  User, Music, Landmark, TrendingUp, Droplets, CreditCard
+  User, Music, Landmark, TrendingUp, Droplets, CreditCard, Calendar, UserCircle
 } from "lucide-react";
 
 export const navItems = [{
@@ -49,6 +49,41 @@ export const navItems = [{
       name: "Companions",
       path: "/wzrd/companions",
       icon: UserRound
+    },
+    {
+      name: "Distribution",
+      path: "/distribution",
+      icon: Share2
+    },
+    {
+      name: "Social Media WZRD",
+      path: "/distribution/social-media",
+      icon: Globe
+    },
+    {
+      name: "On-Chain Distribution",
+      path: "/distribution/on-chain",
+      icon: Link
+    },
+    {
+      name: "Media Channels",
+      path: "/distribution/media-channels",
+      icon: Tv
+    },
+    {
+      name: "Independent Channels",
+      path: "/distribution/independent",
+      icon: User
+    },
+    {
+      name: "Sync Licensing",
+      path: "/distribution/sync-licensing",
+      icon: Music
+    },
+    {
+      name: "Touring & Gigs",
+      path: "/touring-gigs",
+      icon: Calendar
     }
   ]
 }, {
@@ -128,38 +163,6 @@ export const navItems = [{
     }
   ]
 }, {
-  name: "Distribution",
-  path: "/distribution",
-  icon: Share2,
-  hasSubmenu: true,
-  submenuItems: [
-    {
-      name: "Social Media WZRD",
-      path: "/distribution/social-media",
-      icon: Globe
-    },
-    {
-      name: "On-Chain Distribution",
-      path: "/distribution/on-chain",
-      icon: Link
-    },
-    {
-      name: "Media Channels",
-      path: "/distribution/media-channels",
-      icon: Tv
-    },
-    {
-      name: "Independent Channels",
-      path: "/distribution/independent",
-      icon: User
-    },
-    {
-      name: "Sync Licensing",
-      path: "/distribution/sync-licensing",
-      icon: Music
-    }
-  ]
-}, {
   name: "Treasury",
   path: "#",
   icon: NavWalletIcon,
@@ -191,6 +194,10 @@ export const navItems = [{
       icon: Droplets
     }
   ]
+}, {
+  name: "Profile",
+  path: "/profile",
+  icon: UserCircle
 }];
 
 export type NavItem = typeof navItems[0];
