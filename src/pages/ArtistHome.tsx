@@ -55,9 +55,27 @@ const Home = () => {
                   <p className="text-sm text-white/70">Active Releases</p>
                 </div>
               </div>
-              <div className="h-32 flex items-center justify-center text-white/50 bg-white/5 rounded-lg">
-                <Activity className="h-8 w-8 mr-3" />
-                <p>Streaming analytics chart visualization goes here</p>
+              <div className="h-32 bg-white/5 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm text-white/70">Streaming Analytics (Last 7 Days)</span>
+                  <span className="text-xs text-green-400">↗ +12.3%</span>
+                </div>
+                <div className="flex items-end h-16 gap-1">
+                  {[45, 52, 38, 61, 73, 67, 81].map((value, index) => (
+                    <div key={index} className="flex-1 bg-gradient-to-t from-primary/60 to-primary/20 rounded-t" 
+                         style={{ height: `${(value / 81) * 100}%` }}>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-between text-xs text-white/50 mt-2">
+                  <span>Mon</span>
+                  <span>Tue</span>
+                  <span>Wed</span>
+                  <span>Thu</span>
+                  <span>Fri</span>
+                  <span>Sat</span>
+                  <span>Sun</span>
+                </div>
               </div>
             </Card>
 
