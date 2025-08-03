@@ -51,7 +51,16 @@ export const navItems = [{
 }, {
   name: "Touring",
   path: "/touring",
-  icon: Calendar
+  icon: Calendar,
+  hasSubmenu: true,
+  submenuItems: [
+    { name: "Dashboard", path: "/event-toolkit/dashboard", icon: LayoutDashboard },
+    { name: "Gigs", path: "/event-toolkit/gigs", icon: Calendar },
+    { name: "Invoices", path: "/event-toolkit/invoices", icon: FileText },
+    { name: "Contacts", path: "/event-toolkit/contacts", icon: Users },
+    { name: "Content", path: "/event-toolkit/content", icon: Music },
+    { name: "QR Upload", path: "/event-toolkit/qr-upload", icon: QrCode },
+  ]
 }, {
   name: "Marketing & Distribution",
   path: "/distribution",
@@ -120,20 +129,6 @@ export const navItems = [{
       path: "/marketplace-launch",
       icon: NavMarketplaceIcon
     },
-    {
-      name: "Fan Experience Management",
-      path: "/event-toolkit/dashboard",
-      icon: Briefcase,
-      hasSubmenu: true,
-      submenuItems: [
-        { name: "Dashboard", path: "/event-toolkit/dashboard", icon: LayoutDashboard },
-        { name: "Gigs", path: "/event-toolkit/gigs", icon: Calendar },
-        { name: "Invoices", path: "/event-toolkit/invoices", icon: FileText },
-        { name: "Contacts", path: "/event-toolkit/contacts", icon: Users },
-        { name: "Content", path: "/event-toolkit/content", icon: Music },
-        { name: "QR Upload", path: "/event-toolkit/qr-upload", icon: QrCode },
-      ]
-    }
   ]
 }, {
   name: "Agents + Integrations",
