@@ -1,33 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Home, Banknote, CreditCard, FilePieChart, Landmark } from "lucide-react";
 import DashboardLayout from "@/layouts/dashboard-layout";
 import { Content } from "@/components/ui/content";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { motion } from 'framer-motion';
 
 // Import new financial components
-import FinancialOverview from "@/components/treasury/financials/FinancialOverview";
-import RevenueStreamsDashboard from "@/components/treasury/financials/RevenueStreamsDashboard";
-import ExpenseTracker from "@/components/treasury/financials/ExpenseTracker";
+import FinanceStatCard from "@/components/treasury/financials/FinanceStatCard";
+import RoyaltyStatements from "@/components/treasury/financials/RoyaltyStatements";
+import SplitSheets from "@/components/treasury/financials/SplitSheets";
+import Forecasting from "@/components/treasury/financials/Forecasting";
 import FinancialReports from "@/components/treasury/financials/FinancialReports";
-
-// Import existing components
-import AgentBanking from "@/components/treasury/AgentBanking";
 
 const TreasureVault = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [currentTab, setCurrentTab] = useState("dashboard");
+  const [currentTab, setCurrentTab] = useState("statements");
   
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const tab = params.get("tab");
-    if (tab && ["dashboard", "income", "expenses", "accounting", "banking"].includes(tab)) {
+    const validTabs = ["statements", "forecasting", "splits", "reports"];
+    if (tab && validTabs.includes(tab)) {
       setCurrentTab(tab);
     } else {
-      setCurrentTab("dashboard");
+      setCurrentTab("statements");
+      navigate(`${location.pathname}?tab=statements`, { replace: true });
     }
-  }, [location.search]);
+  }, [location.search, location.pathname, navigate]);
   
   const handleTabChange = (value: string) => {
     setCurrentTab(value);
@@ -37,38 +37,37 @@ const TreasureVault = () => {
   return (
     <DashboardLayout>
       <Content 
-        title="Finances" 
-        subtitle="Your complete financial command center for managing a modern creative business."
+        title="Finance & Royalties" 
+        subtitle="AI-powered financial management and royalty tracking"
       >
+        {/* Persistent Stat Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <FinanceStatCard title="Total Revenue" value="$29,006.35" subtitle="+12.5% from last quarter" />
+            <FinanceStatCard title="Pending Statements" value="0" subtitle="Awaiting processing" />
+            <FinanceStatCard title="Discrepancies" value="1" subtitle="Requires attention" attention />
+            <FinanceStatCard title="Next Forecast" value="$35,000" subtitle="85% confidence" />
+        </div>
+        
         <Tabs value={currentTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-6 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-1 shadow-lg">
-            <TabsTrigger value="dashboard" className="flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white transition-all duration-200 data-[state=active]:text-white data-[state=active]:bg-primary data-[state=active]:shadow-md">
-              <Home className="w-4 h-4" />
-              <span className="font-medium">Dashboard</span>
-            </TabsTrigger>
-            <TabsTrigger value="income" className="flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white transition-all duration-200 data-[state=active]:text-white data-[state=active]:bg-primary data-[state=active]:shadow-md">
-              <Banknote className="w-4 h-4" />
-              <span className="font-medium">Income</span>
-            </TabsTrigger>
-            <TabsTrigger value="expenses" className="flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white transition-all duration-200 data-[state=active]:text-white data-[state=active]:bg-primary data-[state=active]:shadow-md">
-              <CreditCard className="w-4 h-4" />
-              <span className="font-medium">Expenses</span>
-            </TabsTrigger>
-            <TabsTrigger value="accounting" className="flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white transition-all duration-200 data-[state=active]:text-white data-[state=active]:bg-primary data-[state=active]:shadow-md">
-              <FilePieChart className="w-4 h-4" />
-              <span className="font-medium">Accounting</span>
-            </TabsTrigger>
-            <TabsTrigger value="banking" className="flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white transition-all duration-200 data-[state=active]:text-white data-[state=active]:bg-primary data-[state=active]:shadow-md">
-              <Landmark className="w-4 h-4" />
-              <span className="font-medium">Agent Banking</span>
-            </TabsTrigger>
+          <TabsList className="bg-white/10 border border-white/20 rounded-lg">
+            <TabsTrigger value="statements" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary">Royalty Statements</TabsTrigger>
+            <TabsTrigger value="forecasting" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary">Forecasting</TabsTrigger>
+            <TabsTrigger value="splits" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary">Split Sheets</TabsTrigger>
+            <TabsTrigger value="reports" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary">Reports</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="dashboard"><FinancialOverview /></TabsContent>
-          <TabsContent value="income"><RevenueStreamsDashboard /></TabsContent>
-          <TabsContent value="expenses"><ExpenseTracker /></TabsContent>
-          <TabsContent value="accounting"><FinancialReports /></TabsContent>
-          <TabsContent value="banking"><AgentBanking /></TabsContent>
+          <motion.div
+            key={currentTab}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mt-6"
+          >
+            <TabsContent value="statements"><RoyaltyStatements /></TabsContent>
+            <TabsContent value="forecasting"><Forecasting /></TabsContent>
+            <TabsContent value="splits"><SplitSheets /></TabsContent>
+            <TabsContent value="reports"><FinancialReports /></TabsContent>
+          </motion.div>
         </Tabs>
       </Content>
     </DashboardLayout>

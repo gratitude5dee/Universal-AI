@@ -1,5 +1,5 @@
 // src/components/treasury/financials/financialsData.ts
-import { RevenueStream, Expense, TeamMember, Deal } from './types';
+import { RevenueStream, Expense, TeamMember, Deal, RoyaltyStatement, SplitSheet } from './types';
 import { Music, Mic, ShoppingBag, Tv, FileText, Clapperboard } from 'lucide-react';
 
 export const revenueStreamsData: RevenueStream[] = [
@@ -25,4 +25,24 @@ export const payrollData: TeamMember[] = [
 export const dealData: Deal[] = [
     { id: 'd1', project: 'Indie Film "Neon Sunset"', type: 'Sync', amount: 12500, status: 'Paid', dueDate: '2024-07-15' },
     { id: 'd2', project: 'Aura Headphones Campaign', type: 'Brand Partnership', amount: 25000, status: 'Pending', dueDate: '2024-08-10' },
+];
+
+export const royaltyStatementsData: RoyaltyStatement[] = [
+  { id: 'rs1', source: 'Spotify', artist: 'Luna Echo', period: 'Q4 2024', amount: 12450.32, status: 'processed', uploadDate: '2025-01-06' },
+  { id: 'rs2', source: 'ASCAP', artist: 'Phoenix Rising', period: 'Q4 2024', amount: 8920.15, status: 'discrepancy', uploadDate: '2025-01-03' },
+  { id: 'rs3', source: 'Apple Music', artist: 'Luna Echo', period: 'Q4 2024', amount: 7635.88, status: 'processed', uploadDate: '2025-01-04' },
+];
+
+export const splitSheetsData: SplitSheet[] = [
+  {
+    id: 'ss1',
+    songTitle: 'Midnight Dreams',
+    primaryArtist: 'Luna Echo',
+    status: 'approved',
+    collaborators: [
+      { name: 'Luna Echo', role: 'Artist/Writer', split: 60 },
+      { name: 'Mike Producer', role: 'Producer/Writer', split: 30 },
+      { name: 'Sarah Keys', role: 'Co-Writer', split: 10 },
+    ],
+  },
 ];

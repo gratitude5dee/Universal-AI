@@ -45,6 +45,30 @@ export interface Deal {
     dueDate: string;
 }
 
+export interface RoyaltyStatement {
+  id: string;
+  source: 'Spotify' | 'ASCAP' | 'Apple Music' | 'YouTube Music';
+  artist: string;
+  period: string;
+  amount: number;
+  status: 'processed' | 'discrepancy' | 'pending';
+  uploadDate: string;
+}
+
+export interface SplitSheetCollaborator {
+  name: string;
+  role: string;
+  split: number;
+}
+
+export interface SplitSheet {
+  id: string;
+  songTitle: string;
+  primaryArtist: string;
+  status: 'approved' | 'draft' | 'pending';
+  collaborators: SplitSheetCollaborator[];
+}
+
 export const formatCurrency = (amount: number): string => {
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
