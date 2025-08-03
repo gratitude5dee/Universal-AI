@@ -111,6 +111,21 @@ export const navItems = [{
       name: "Marketplace Launch",
       path: "/marketplace-launch",
       icon: NavMarketplaceIcon
+    },
+    {
+      name: "IP Portal",
+      path: "/rights",
+      icon: Shield
+    },
+    {
+      name: "Thread of Life",
+      path: "/thread-of-life",
+      icon: Trees
+    },
+    {
+      name: "Bridge",
+      path: "/bridge",
+      icon: ArrowRightLeft
     }
   ]
 }, {
@@ -143,28 +158,6 @@ export const navItems = [{
       name: "Observability",
       path: "/observability",
       icon: Eye
-    }
-  ]
-}, {
-  name: "Real World Assets",
-  path: "#",
-  icon: Building,
-  hasSubmenu: true,
-  submenuItems: [
-    {
-      name: "IP Portal",
-      path: "/rights",
-      icon: Shield
-    },
-    {
-      name: "Thread of Life",
-      path: "/thread-of-life",
-      icon: Trees
-    },
-    {
-      name: "Bridge",
-      path: "/bridge",
-      icon: ArrowRightLeft
     }
   ]
 }, {
