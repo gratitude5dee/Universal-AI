@@ -9,7 +9,7 @@ interface VinylBookshelfProps {
 const VinylBookshelf: React.FC<VinylBookshelfProps> = ({ assets, onSelectAsset }) => {
   return (
     <div className="bookshelf-container">
-      <div className="flex -space-x-40">
+      <div className="flex space-x-8">
         {assets.map((asset) => (
           <VinylRecord key={asset.id} asset={asset} onSelect={onSelectAsset} />
         ))}
