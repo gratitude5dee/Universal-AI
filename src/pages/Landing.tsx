@@ -416,40 +416,6 @@ const Landing = () => {
               </motion.div>
             </main>
 
-            {/* Partners Section */}
-            <section className="max-w-7xl mx-auto py-16 sm:py-24">
-              <motion.div
-                // initial={{ opacity: 0, y: 20 }} // Handled by parent
-                // whileInView={{ opacity: 1, y: 0 }} // Handled by parent
-                // viewport={{ once: true }} // Handled by parent
-                // transition={{ duration: 0.5 }} // Handled by parent
-                className="text-center mb-10"
-              >
-                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Trusted by Leading Partners</h2>
-                <p className="text-white/70 max-w-2xl mx-auto">
-                  Join the ecosystem of innovative companies leveraging UniversalAI to transform their creative workflows
-                </p>
-              </motion.div>
-
-              <div className="relative overflow-hidden py-6">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0A0F27] via-transparent to-[#0A0F27] z-10 pointer-events-none"></div>
-
-                <motion.div
-                  className="flex items-center"
-                  animate={{ x: [0, -1000] }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 30,
-                    ease: "linear",
-                    repeatType: "loop"
-                  }}
-                >
-                  {[...partners, ...partners].map((partner, index) => (
-                    <PartnerLogo key={`${partner.name}-${index}`} name={partner.name} logo={partner.logo} />
-                  ))}
-                </motion.div>
-              </div>
-            </section>
 
             {/* Features Section */}
             <section className="max-w-7xl mx-auto py-16 sm:py-24">
