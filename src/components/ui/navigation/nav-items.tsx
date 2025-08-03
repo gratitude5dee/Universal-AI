@@ -141,8 +141,31 @@ export const navItems = [{
     },
     {
       name: "My Collection",
-      path: "/collection",
-      icon: Database
+      path: "#",
+      icon: Database,
+      hasSubmenu: true,
+      submenuItems: [
+        {
+          name: "Booking Agent",
+          path: "/collection/booking-agent",
+          icon: Calendar
+        },
+        {
+          name: "Invoice Collection Agent",
+          path: "/collection/invoice-agent",
+          icon: CreditCard
+        },
+        {
+          name: "Social Media",
+          path: "/collection/social-media",
+          icon: Globe
+        },
+        {
+          name: "Contract Agent",
+          path: "/collection/contract-agent",
+          icon: Shield
+        }
+      ]
     },
     {
       name: "Agent Banking",
