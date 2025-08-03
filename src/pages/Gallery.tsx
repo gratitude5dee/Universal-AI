@@ -5,6 +5,7 @@ import { Filter, Plus, ChevronDown } from "lucide-react";
 import DashboardLayout from "@/layouts/dashboard-layout";
 import VinylBookshelf from "@/components/ui/VinylBookshelf";
 import AssetDetailModal from "@/components/ui/AssetDetailModal";
+import AssetFormModal from "@/components/ui/AssetFormModal";
 import { Asset } from "@/components/ui/VinylRecord";
 
 const galleryAssets: Asset[] = [
@@ -154,6 +155,10 @@ const galleryAssets: Asset[] = [
 
 const Gallery = () => {
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
+  const [assets, setAssets] = useState<Asset[]>(galleryAssets);
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [editingAsset, setEditingAsset] = useState<Asset | null>(null);
+  const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
 
   const handleSelectAsset = (asset: Asset) => {
     setSelectedAsset(asset);
@@ -163,50 +168,98 @@ const Gallery = () => {
     setSelectedAsset(null);
   };
 
+  const handleAddAsset = () => {
+    setFormMode('create');
+    setEditingAsset(null);
+    setIsFormModalOpen(true);
+  };
+
+  const handleEditAsset = (asset: Asset) => {
+    setFormMode('edit');
+    setEditingAsset(asset);
+    setIsFormModalOpen(true);
+  };
+
+  const handleSaveAsset = (assetData: Partial<Asset>) => {
+    if (formMode === 'create') {
+      const newAsset: Asset = {
+        ...assetData as Asset,
+        id: `asset-${Date.now()}`,
+        views: 0,
+        likes: 0,
+        awards: 0,
+        featured: false,
+        journey: [
+          { date: new Date().toISOString().split('T')[0], event: 'Created', chain: assetData.chain || 'Ethereum' }
+        ]
+      };
+      setAssets(prev => [...prev, newAsset]);
+    } else if (editingAsset) {
+      setAssets(prev => prev.map(asset => 
+        asset.id === editingAsset.id 
+          ? { ...asset, ...assetData }
+          : asset
+      ));
+    }
+    setIsFormModalOpen(false);
+  };
+
   return (
     <DashboardLayout>
-      <div className="space-y-8">
+      <div className="space-y-12">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-studio-charcoal to-studio-accent bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-studio-charcoal via-studio-accent to-studio-charcoal bg-clip-text text-transparent">
               Gallery
             </h1>
-            <p className="text-studio-muted mt-1">Your creative collection displayed beautifully</p>
+            <p className="text-studio-muted mt-2 text-lg">Your creative collection displayed beautifully</p>
           </div>
           
           <div className="flex flex-wrap items-center gap-3">
-            <button className="flex items-center gap-1 px-3 py-2 bg-white border border-studio-sand/50 text-studio-charcoal rounded-xl text-sm hover:bg-studio-sand/30 transition-colors">
+            <button className="flex items-center gap-2 px-4 py-3 bg-white/80 backdrop-blur-sm border border-studio-sand/50 text-studio-charcoal rounded-xl text-sm hover:bg-white hover:shadow-md transition-all duration-300">
               <Filter className="h-4 w-4" />
-              <span>Filter</span>
+              <span className="font-medium">Filter</span>
               <ChevronDown className="h-3 w-3 ml-1" />
             </button>
             
-            <button className="flex items-center gap-1 px-4 py-2 bg-studio-accent text-white rounded-xl text-sm hover:bg-studio-accent/90 transition-colors shadow-sm">
+            <button 
+              onClick={handleAddAsset}
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-studio-accent to-studio-accent/90 text-white rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-studio-accent/25 transition-all duration-300 transform hover:scale-105"
+            >
               <Plus className="h-4 w-4" />
-              <span>Add New</span>
+              <span>Create New Asset</span>
             </button>
           </div>
         </div>
 
         {/* Featured Assets Section */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-studio-charcoal">Featured Assets</h2>
-          <div className="relative overflow-hidden p-8 rounded-3xl bg-gradient-to-br from-studio-sand/30 to-studio-accent/10 border border-studio-sand/50">
-            <VinylBookshelf 
-              assets={galleryAssets.filter(asset => asset.featured)} 
-              onSelectAsset={handleSelectAsset} 
-            />
+        <div className="space-y-6">
+          <div className="relative overflow-hidden p-8 rounded-3xl bg-gradient-to-br from-studio-accent/5 via-white to-studio-sand/10 border border-studio-sand/30 shadow-xl shadow-studio-accent/5">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent opacity-50"></div>
+            <div className="relative z-10">
+              <VinylBookshelf 
+                title="Featured Collection"
+                assets={assets.filter(asset => asset.featured)} 
+                onSelectAsset={handleSelectAsset}
+                onAddAsset={handleAddAsset}
+              />
+            </div>
           </div>
         </div>
 
         {/* All Assets Section */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-studio-charcoal">All Assets</h2>
-          <div className="relative overflow-hidden p-8 rounded-3xl bg-gradient-to-br from-studio-sand/20 to-white border border-studio-sand/50">
-            <VinylBookshelf 
-              assets={galleryAssets} 
-              onSelectAsset={handleSelectAsset} 
-            />
+        <div className="space-y-6">
+          <div className="relative overflow-hidden p-8 rounded-3xl bg-gradient-to-br from-studio-sand/10 via-white to-studio-accent/5 border border-studio-sand/30 shadow-xl shadow-studio-sand/10">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_80%,rgba(120,119,198,0.1),transparent_50%)]"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(255,255,255,0.8),transparent_50%)]"></div>
+            <div className="relative z-10">
+              <VinylBookshelf 
+                title="Complete Collection"
+                assets={assets} 
+                onSelectAsset={handleSelectAsset}
+                onAddAsset={handleAddAsset}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -214,6 +267,14 @@ const Gallery = () => {
       {selectedAsset && (
         <AssetDetailModal asset={selectedAsset} onClose={handleCloseModal} />
       )}
+
+      <AssetFormModal
+        isOpen={isFormModalOpen}
+        onClose={() => setIsFormModalOpen(false)}
+        onSave={handleSaveAsset}
+        asset={editingAsset}
+        mode={formMode}
+      />
     </DashboardLayout>
   );
 };

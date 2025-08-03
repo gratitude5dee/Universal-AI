@@ -25,7 +25,7 @@ interface VinylRecordProps {
 const VinylRecord: React.FC<VinylRecordProps> = ({ asset, onSelect }) => {
   return (
     <motion.div
-      className="vinyl-record-wrapper cursor-pointer relative w-64 h-64 group"
+      className="vinyl-record-wrapper cursor-pointer relative w-64 h-64 group flex-shrink-0"
       whileHover={{ y: -20, scale: 1.05 }}
       onClick={() => onSelect(asset)}
     >
