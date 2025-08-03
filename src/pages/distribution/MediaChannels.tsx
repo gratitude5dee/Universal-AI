@@ -448,13 +448,13 @@ const MediaChannels = () => {
             <Button variant="outline" size="sm" className="w-full">Download</Button>
           </div>
           
-          <div className="bg-white p-4 rounded-xl border border-studio-sand/30">
+          <div className="glass-card p-4 rounded-xl border border-white/10 backdrop-blur-md">
             <h3 className="font-medium mb-2">Artist Photos</h3>
             <p className="text-sm text-studio-clay mb-3">High-resolution press photos and promotional images (ZIP, 24MB)</p>
             <Button variant="outline" size="sm" className="w-full">Download</Button>
           </div>
           
-          <div className="bg-white p-4 rounded-xl border border-studio-sand/30">
+          <div className="glass-card p-4 rounded-xl border border-white/10 backdrop-blur-md">
             <h3 className="font-medium mb-2">EPK (Electronic Press Kit)</h3>
             <p className="text-sm text-studio-clay mb-3">Complete electronic press kit with bio, photos, and music (ZIP, 48MB)</p>
             <Button variant="outline" size="sm" className="w-full">Download</Button>

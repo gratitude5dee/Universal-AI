@@ -77,7 +77,7 @@ const ContributionFlow = () => {
           {contributions.map((contribution, index) => (
             <motion.div
               key={contribution.id}
-              className="bg-white/70 rounded-xl p-4 border border-studio-sand/30 relative"
+              className="glass-card rounded-xl p-4 border border-white/10 backdrop-blur-md relative"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}

@@ -7,7 +7,7 @@ import { TreasureItemProps } from "./types";
 const TreasureItem: React.FC<TreasureItemProps> = ({ treasure, onClick, isSelected }) => {
   return (
     <motion.div
-      className="bg-white rounded-xl p-4 cursor-pointer border border-studio-sand/30 hover:shadow-md transition-all"
+      className="glass-card rounded-xl p-4 cursor-pointer border border-white/10 backdrop-blur-md hover:shadow-md transition-all"
       whileHover={{ y: -5, scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={() => onClick(treasure)}

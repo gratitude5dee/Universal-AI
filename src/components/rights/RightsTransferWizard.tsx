@@ -197,7 +197,7 @@ const RightsTransferWizard = () => {
               })}
             </div>
             
-            <div className="bg-white p-6 rounded-lg border border-studio-sand/30 mt-6">
+            <div className="glass-card p-6 rounded-lg border border-white/10 backdrop-blur-md mt-6">
               <h4 className="text-lg font-medium mb-2">{steps[currentStep-1].title}</h4>
               <p className="text-sm text-studio-clay mb-6">{steps[currentStep-1].description}</p>
               

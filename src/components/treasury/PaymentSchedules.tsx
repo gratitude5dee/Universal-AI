@@ -80,7 +80,7 @@ const PaymentSchedules = () => {
           {upcomingPayments.map((payment) => (
             <motion.div
               key={payment.id}
-              className="bg-white rounded-xl p-4 hover:shadow-md transition-all border border-studio-sand/30"
+              className="glass-card rounded-xl p-4 hover:shadow-md transition-all border border-white/10 backdrop-blur-md"
               whileHover={{ y: -3 }}
             >
               <div className="flex justify-between">
@@ -129,7 +129,7 @@ const PaymentSchedules = () => {
           {completedPayments.map((payment) => (
             <div
               key={payment.id}
-              className="bg-white/50 rounded-xl p-3 border border-studio-sand/20"
+              className="glass-card rounded-xl p-3 border border-white/10 backdrop-blur-md"
             >
               <div className="flex justify-between">
                 <div>

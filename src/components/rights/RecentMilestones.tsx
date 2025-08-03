@@ -60,7 +60,7 @@ const RecentMilestones = () => {
       {milestones.map((milestone, index) => (
         <motion.div
           key={index}
-          className="p-4 rounded-xl bg-white border border-studio-sand/30 relative overflow-hidden"
+          className="p-4 rounded-xl glass-card border border-white/10 backdrop-blur-md relative overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1 }}

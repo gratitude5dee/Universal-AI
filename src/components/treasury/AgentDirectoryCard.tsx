@@ -9,7 +9,7 @@ interface AgentDirectoryCardProps {
 
 const AgentDirectoryCard: React.FC<AgentDirectoryCardProps> = ({ agent }) => {
   return (
-    <div className="bg-white/80 rounded-lg border border-studio-sand/30 p-4 hover:shadow-md transition-all">
+    <div className="glass-card rounded-lg border border-white/10 backdrop-blur-md p-4 hover:shadow-md transition-all">
       <div className="flex items-start gap-3">
         <div 
           className="h-12 w-12 rounded-full bg-cover bg-center"

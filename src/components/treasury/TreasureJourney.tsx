@@ -139,7 +139,7 @@ const TreasureJourney = () => {
             return (
               <motion.div
                 key={journey.id}
-                className="bg-white rounded-xl p-4 cursor-pointer hover:shadow-md transition-all border border-studio-sand/30"
+                className="glass-card rounded-xl p-4 cursor-pointer hover:shadow-md transition-all border border-white/10 backdrop-blur-md"
                 whileHover={{ x: 5 }}
                 onClick={() => handleJourneyClick(journey)}
               >

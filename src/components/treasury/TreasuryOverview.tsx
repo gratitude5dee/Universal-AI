@@ -19,7 +19,7 @@ const TreasuryOverview: React.FC<TreasuryOverviewProps> = ({
     <div className="space-y-6">
       <div className="px-6 pb-6 grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Total Balance */}
-        <div className="bg-white/50 rounded-xl p-4 border border-studio-sand/30">
+        <div className="glass-card rounded-xl p-4 border border-white/10 backdrop-blur-md">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm text-muted-foreground">Total Treasury</p>
@@ -36,7 +36,7 @@ const TreasuryOverview: React.FC<TreasuryOverviewProps> = ({
         </div>
         
         {/* Performance */}
-        <div className="bg-white/50 rounded-xl p-4 border border-studio-sand/30">
+        <div className="glass-card rounded-xl p-4 border border-white/10 backdrop-blur-md">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm text-muted-foreground">Growth Rate</p>
@@ -52,7 +52,7 @@ const TreasuryOverview: React.FC<TreasuryOverviewProps> = ({
         </div>
         
         {/* Quick Actions */}
-        <div className="bg-white/50 rounded-xl p-4 border border-studio-sand/30">
+        <div className="glass-card rounded-xl p-4 border border-white/10 backdrop-blur-md">
           <p className="text-sm text-muted-foreground mb-2">Quick Spells</p>
           <div className="grid grid-cols-2 gap-2">
             <Button size="sm" variant="outline" className="text-xs h-9">Add Treasure</Button>

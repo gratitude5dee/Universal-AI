@@ -164,7 +164,7 @@ const RoyaltyScenarioModeler = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Royalty Splits Pie Chart */}
-          <div className="bg-white p-4 rounded-lg border border-studio-sand/30">
+          <div className="glass-card p-4 rounded-lg border border-white/10 backdrop-blur-md">
             <h4 className="text-sm font-medium mb-3">Royalty Distribution</h4>
             <div className="h-[200px]">
               <ResponsiveContainer width="100%" height="100%">
@@ -191,7 +191,7 @@ const RoyaltyScenarioModeler = () => {
           </div>
           
           {/* Revenue Breakdown */}
-          <div className="bg-white p-4 rounded-lg border border-studio-sand/30">
+          <div className="glass-card p-4 rounded-lg border border-white/10 backdrop-blur-md">
             <h4 className="text-sm font-medium mb-3">Revenue Breakdown</h4>
             <div className="h-[200px]">
               <ResponsiveContainer width="100%" height="100%">
@@ -210,7 +210,7 @@ const RoyaltyScenarioModeler = () => {
           </div>
           
           {/* Platform Distribution */}
-          <div className="bg-white p-4 rounded-lg border border-studio-sand/30">
+          <div className="glass-card p-4 rounded-lg border border-white/10 backdrop-blur-md">
             <h4 className="text-sm font-medium mb-3">Platform Distribution</h4>
             <div className="h-[200px]">
               <ResponsiveContainer width="100%" height="100%">

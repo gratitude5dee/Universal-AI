@@ -143,7 +143,7 @@ const CrystalBall = () => {
             return (
               <motion.div
                 key={forecast.id}
-                className={`bg-white rounded-xl p-4 cursor-pointer hover:shadow-md transition-all border border-studio-sand/30 ${
+                className={`glass-card rounded-xl p-4 cursor-pointer hover:shadow-md transition-all border border-white/10 backdrop-blur-md ${
                   selectedForecast?.id === forecast.id ? 'ring-2 ring-offset-2' : ''
                 }`}
                 style={{ 
@@ -273,7 +273,7 @@ const CrystalBall = () => {
             </div>
             
             {/* Detailed chart */}
-            <div className="bg-white rounded-xl p-4 mb-4 border border-studio-sand/30">
+            <div className="glass-card rounded-xl p-4 mb-4 border border-white/10 backdrop-blur-md">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="text-sm font-medium">Magical Trajectory</h4>
                 <div className="flex items-center text-xs">
