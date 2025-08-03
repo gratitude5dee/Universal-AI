@@ -38,27 +38,27 @@ const TreasureVault = () => {
     <DashboardLayout>
       <Content 
         title="Finances" 
-        subtitle="A complete overview of your creator economy, from streaming revenue to on-chain actions."
+        subtitle="Your complete financial command center for managing a modern creative business."
       >
         <Tabs value={currentTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid w-full grid-cols-5 mb-6 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-1 shadow-lg">
-            <TabsTrigger value="dashboard" className="flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white transition-all duration-200 data-[state=active]:text-white data-[state=active]:bg-white/20 data-[state=active]:shadow-md">
+            <TabsTrigger value="dashboard" className="flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white transition-all duration-200 data-[state=active]:text-white data-[state=active]:bg-primary data-[state=active]:shadow-md">
               <Home className="w-4 h-4" />
               <span className="font-medium">Dashboard</span>
             </TabsTrigger>
-            <TabsTrigger value="income" className="flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white transition-all duration-200 data-[state=active]:text-white data-[state=active]:bg-white/20 data-[state=active]:shadow-md">
+            <TabsTrigger value="income" className="flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white transition-all duration-200 data-[state=active]:text-white data-[state=active]:bg-primary data-[state=active]:shadow-md">
               <Banknote className="w-4 h-4" />
               <span className="font-medium">Income</span>
             </TabsTrigger>
-            <TabsTrigger value="expenses" className="flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white transition-all duration-200 data-[state=active]:text-white data-[state=active]:bg-white/20 data-[state=active]:shadow-md">
+            <TabsTrigger value="expenses" className="flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white transition-all duration-200 data-[state=active]:text-white data-[state=active]:bg-primary data-[state=active]:shadow-md">
               <CreditCard className="w-4 h-4" />
               <span className="font-medium">Expenses</span>
             </TabsTrigger>
-            <TabsTrigger value="accounting" className="flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white transition-all duration-200 data-[state=active]:text-white data-[state=active]:bg-white/20 data-[state=active]:shadow-md">
+            <TabsTrigger value="accounting" className="flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white transition-all duration-200 data-[state=active]:text-white data-[state=active]:bg-primary data-[state=active]:shadow-md">
               <FilePieChart className="w-4 h-4" />
               <span className="font-medium">Accounting</span>
             </TabsTrigger>
-            <TabsTrigger value="banking" className="flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white transition-all duration-200 data-[state=active]:text-white data-[state=active]:bg-white/20 data-[state=active]:shadow-md">
+            <TabsTrigger value="banking" className="flex items-center gap-2 px-4 py-2 text-white/70 hover:text-white transition-all duration-200 data-[state=active]:text-white data-[state=active]:bg-primary data-[state=active]:shadow-md">
               <Landmark className="w-4 h-4" />
               <span className="font-medium">Agent Banking</span>
             </TabsTrigger>

@@ -3,7 +3,7 @@ export interface FinancialMetric {
   title: string;
   value: string;
   change: string;
-  changeType: 'increase' | 'decrease';
+  changeType: 'increase' | 'decrease' | 'neutral';
 }
 
 export interface RevenueStream {

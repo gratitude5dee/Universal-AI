@@ -16,26 +16,24 @@ const ExpenseTracker = () => {
     ).map(([name, value]) => ({ name, value }));
 
     return (
-        <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-1">
-                    <Card className="bg-white/5 backdrop-blur-md border border-white/10 h-full">
-                        <CardHeader><CardTitle className="text-white">Expense Breakdown</CardTitle></CardHeader>
-                        <CardContent className="h-64">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <PieChart>
-                                    <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} fill="#8884d8" label>
-                                        {pieData.map((entry, index) => <Cell key={`cell-${index}`} fill={expenseCategories[entry.name]} />)}
-                                    </Pie>
-                                    <Tooltip formatter={(value) => formatCurrency(value as number)}/>
-                                </PieChart>
-                            </ResponsiveContainer>
-                        </CardContent>
-                    </Card>
-                </div>
-                <div className="lg:col-span-2">
-                   <PayrollManager />
-                </div>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+            <div className="lg:col-span-2">
+                <Card className="bg-white/5 backdrop-blur-md border border-white/10 h-full">
+                    <CardHeader><CardTitle className="text-white">Expense Breakdown (30d)</CardTitle></CardHeader>
+                    <CardContent className="h-80">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5}>
+                                    {pieData.map((entry, index) => <Cell key={`cell-${index}`} fill={expenseCategories[entry.name]} />)}
+                                </Pie>
+                                <Tooltip formatter={(value) => formatCurrency(value as number)}/>
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </CardContent>
+                </Card>
+            </div>
+            <div className="lg:col-span-3">
+               <PayrollManager />
             </div>
         </div>
     );
