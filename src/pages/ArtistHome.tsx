@@ -80,21 +80,21 @@ const Home = () => {
                     Financial Overview
                   </h2>
                   <div className="grid grid-cols-3 gap-4 mb-6">
-                    <div className="p-4 border border-studio-sand/30 rounded-lg text-center">
+                    <div className="p-4 glass-card border border-white/10 backdrop-blur-md rounded-lg text-center">
                       <div className="flex items-center justify-center mb-2">
                         <TrendingUp className="h-5 w-5 text-[#9b87f5] mr-2" />
                         <span className="text-2xl font-bold text-studio-charcoal">$12.4k</span>
                       </div>
                       <p className="text-sm text-studio-clay">Monthly Revenue</p>
                     </div>
-                    <div className="p-4 border border-studio-sand/30 rounded-lg text-center">
+                    <div className="p-4 glass-card border border-white/10 backdrop-blur-md rounded-lg text-center">
                       <div className="flex items-center justify-center mb-2">
                         <Users className="h-5 w-5 text-[#33C3F0] mr-2" />
                         <span className="text-2xl font-bold text-studio-charcoal">45.2k</span>
                       </div>
                       <p className="text-sm text-studio-clay">Monthly Listeners</p>
                     </div>
-                    <div className="p-4 border border-studio-sand/30 rounded-lg text-center">
+                    <div className="p-4 glass-card border border-white/10 backdrop-blur-md rounded-lg text-center">
                       <div className="flex items-center justify-center mb-2">
                         <Music className="h-5 w-5 text-[#F97316] mr-2" />
                         <span className="text-2xl font-bold text-studio-charcoal">23</span>
@@ -111,7 +111,7 @@ const Home = () => {
                       </h3>
                       <span className="text-xs text-green-500">↗ +12.3%</span>
                     </div>
-                    <div className="p-4 bg-[#F1F0FB] rounded-lg">
+                    <div className="p-4 glass-card border border-white/10 backdrop-blur-md rounded-lg">
                       <div className="flex items-end h-16 gap-1">
                         {[45, 52, 38, 61, 73, 67, 81].map((value, index) => (
                           <div key={index} className="flex-1 bg-gradient-to-t from-[#9b87f5]/60 to-[#9b87f5]/20 rounded-t" 
@@ -180,21 +180,21 @@ const Home = () => {
                     </h3>
                     <div className="space-y-2">
                       <motion.div 
-                        className="w-full text-left p-3 flex items-center justify-between rounded-lg bg-[#F1F0FB] text-sm"
+                        className="w-full text-left p-3 flex items-center justify-between rounded-lg glass-card border border-white/10 backdrop-blur-md text-sm"
                         whileHover={{ x: 3 }}
                       >
                         <span>✓ Google Calendar</span>
                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                       </motion.div>
                       <motion.div 
-                        className="w-full text-left p-3 flex items-center justify-between rounded-lg bg-[#F1F0FB] text-sm"
+                        className="w-full text-left p-3 flex items-center justify-between rounded-lg glass-card border border-white/10 backdrop-blur-md text-sm"
                         whileHover={{ x: 3 }}
                       >
                         <span>✓ Travel Apps</span>
                         <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                       </motion.div>
                       <motion.div 
-                        className="w-full text-left p-3 flex items-center justify-between rounded-lg bg-[#F1F0FB] text-sm"
+                        className="w-full text-left p-3 flex items-center justify-between rounded-lg glass-card border border-white/10 backdrop-blur-md text-sm"
                         whileHover={{ x: 3 }}
                       >
                         <span>✓ Social Media</span>
@@ -217,14 +217,14 @@ const Home = () => {
                     Schedule & Calendar
                   </h2>
                   <Tabs defaultValue="schedule">
-                    <TabsList className="grid w-full grid-cols-2 bg-[#F1F0FB]">
-                      <TabsTrigger value="schedule" className="data-[state=active]:bg-white">Schedule</TabsTrigger>
-                      <TabsTrigger value="calendar" className="data-[state=active]:bg-white">Calendar</TabsTrigger>
+                    <TabsList className="grid w-full grid-cols-2 glass-card border border-white/10 backdrop-blur-md">
+                      <TabsTrigger value="schedule" className="data-[state=active]:glass-card">Schedule</TabsTrigger>
+                      <TabsTrigger value="calendar" className="data-[state=active]:glass-card">Calendar</TabsTrigger>
                     </TabsList>
                     <TabsContent value="schedule">
                       <div className="mt-4 space-y-3">
                         <motion.div 
-                          className="flex items-center p-3 border border-studio-sand/30 rounded-lg hover:bg-[#F1F0FB]"
+                          className="flex items-center p-3 glass-card border border-white/10 backdrop-blur-md rounded-lg hover:bg-white/5"
                           whileHover={{ x: 3 }}
                         >
                           <Calendar className="h-4 w-4 text-[#33C3F0] mr-3" />
@@ -234,7 +234,7 @@ const Home = () => {
                           </div>
                         </motion.div>
                         <motion.div 
-                          className="flex items-center p-3 border border-studio-sand/30 rounded-lg hover:bg-[#F1F0FB]"
+                          className="flex items-center p-3 glass-card border border-white/10 backdrop-blur-md rounded-lg hover:bg-white/5"
                           whileHover={{ x: 3 }}
                         >
                           <Calendar className="h-4 w-4 text-green-500 mr-3" />
@@ -244,7 +244,7 @@ const Home = () => {
                           </div>
                         </motion.div>
                         <motion.div 
-                          className="flex items-center p-3 border border-studio-sand/30 rounded-lg hover:bg-[#F1F0FB]"
+                          className="flex items-center p-3 glass-card border border-white/10 backdrop-blur-md rounded-lg hover:bg-white/5"
                           whileHover={{ x: 3 }}
                         >
                           <Calendar className="h-4 w-4 text-[#9b87f5] mr-3" />
@@ -256,7 +256,7 @@ const Home = () => {
                       </div>
                     </TabsContent>
                     <TabsContent value="calendar">
-                       <div className="mt-4 p-8 bg-[#F1F0FB] rounded-lg text-center">
+                       <div className="mt-4 p-8 glass-card border border-white/10 backdrop-blur-md rounded-lg text-center">
                          <Calendar className="h-12 w-12 text-studio-clay mx-auto mb-4" />
                          <p className="text-sm text-studio-clay">Interactive calendar widget goes here</p>
                        </div>
