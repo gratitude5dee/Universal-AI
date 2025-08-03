@@ -96,16 +96,6 @@ export const navItems = [{
       icon: NavGalleryIcon
     },
     {
-      name: "Analytics",
-      path: "/analytics",
-      icon: NavAnalyticsIcon
-    },
-    {
-      name: "Marketplace Launch",
-      path: "/marketplace-launch",
-      icon: NavMarketplaceIcon
-    },
-    {
       name: "IP Portal",
       path: "/rights",
       icon: Shield
@@ -118,7 +108,20 @@ export const navItems = [{
     {
       name: "Bridge",
       path: "/bridge",
-      icon: ArrowRightLeft
+      icon: ArrowRightLeft,
+      hasSubmenu: true,
+      submenuItems: [
+        {
+          name: "Analytics",
+          path: "/analytics",
+          icon: NavAnalyticsIcon
+        },
+        {
+          name: "Marketplace Launch",
+          path: "/marketplace-launch",
+          icon: NavMarketplaceIcon
+        }
+      ]
     },
     {
       name: "Fan Experience Management",
