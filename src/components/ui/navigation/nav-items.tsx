@@ -11,6 +11,43 @@ import {
 } from "lucide-react";
 
 export const navItems = [{
+  name: "WZRD.tech",
+  path: "#",
+  icon: NavBrainIcon,
+  hasSubmenu: true,
+  submenuItems: [
+    {
+      name: "Studio",
+      path: "/wzrd/studio",
+      icon: Palette
+    },
+    {
+      name: "Library",
+      path: "/wzrd/library",
+      icon: BookOpen
+    },
+    {
+      name: "DeepResearch",
+      path: "/wzrd/research",
+      icon: NavBrainIcon
+    },
+    {
+      name: "Generative Podcasts",
+      path: "/wzrd/podcasts",
+      icon: Headphones
+    },
+    {
+      name: "Infinite Library",
+      path: "/wzrd/infinite-library",
+      icon: Infinity
+    },
+    {
+      name: "Companions",
+      path: "/wzrd/companions",
+      icon: UserRound
+    }
+  ]
+}, {
   name: "Dashboard",
   path: "/",
   icon: NavDashboardIcon
@@ -48,43 +85,6 @@ export const navItems = [{
       name: "Sync Licensing",
       path: "/distribution/sync-licensing",
       icon: Music
-    }
-  ]
-}, {
-  name: "WZRD.tech",
-  path: "#",
-  icon: NavBrainIcon,
-  hasSubmenu: true,
-  submenuItems: [
-    {
-      name: "Studio",
-      path: "/wzrd/studio",
-      icon: Palette
-    },
-    {
-      name: "Library",
-      path: "/wzrd/library",
-      icon: BookOpen
-    },
-    {
-      name: "DeepResearch",
-      path: "/wzrd/research",
-      icon: NavBrainIcon
-    },
-    {
-      name: "Generative Podcasts",
-      path: "/wzrd/podcasts",
-      icon: Headphones
-    },
-    {
-      name: "Infinite Library",
-      path: "/wzrd/infinite-library",
-      icon: Infinity
-    },
-    {
-      name: "Companions",
-      path: "/wzrd/companions",
-      icon: UserRound
     }
   ]
 }, {
