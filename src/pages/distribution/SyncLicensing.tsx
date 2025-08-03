@@ -116,8 +116,8 @@ const SyncLicensing = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
         <div className="glass-card p-6 lg:col-span-8">
           <h2 className="text-xl font-bold mb-4">Recent Licensing Deals</h2>
-          <div className="bg-white rounded-xl border border-studio-sand/30 overflow-hidden">
-            <table className="min-w-full divide-y divide-studio-sand/30">
+          <div className="glass-card rounded-xl border border-white/10 backdrop-blur-md overflow-hidden">
+            <table className="min-w-full divide-y divide-white/10">
               <thead className="bg-studio-sand/10">
                 <tr>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Project</th>
@@ -127,7 +127,7 @@ const SyncLicensing = () => {
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-studio-sand/30">
+              <tbody className="glass-card divide-y divide-white/10">
                 {recentDeals.map((deal, index) => (
                   <tr key={index} className="hover:bg-studio-sand/5">
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -169,7 +169,7 @@ const SyncLicensing = () => {
               { name: "Video Games", icon: Gamepad2, count: 5, revenue: "$42K", color: "bg-green-100" },
               { name: "Trailers", icon: Film, count: 3, revenue: "$28K", color: "bg-orange-100" }
             ].map((channel, index) => (
-              <div key={index} className="bg-white p-4 rounded-lg border border-studio-sand/30 flex items-center">
+              <div key={index} className="glass-card p-4 rounded-lg border border-white/10 backdrop-blur-md flex items-center">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${channel.color} mr-4`}>
                   <channel.icon className="h-6 w-6 text-studio-clay" />
                 </div>
@@ -191,7 +191,7 @@ const SyncLicensing = () => {
         <h2 className="text-xl font-bold mb-4">Licensable Music Packages</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {licensableMusic.map((package_, index) => (
-            <div key={index} className="bg-white p-6 rounded-xl border border-studio-sand/30 hover:shadow-md transition-all">
+            <div key={index} className="glass-card p-6 rounded-xl border border-white/10 backdrop-blur-md hover:shadow-md transition-all">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-purple-100 mr-4">
                   <Music className="h-6 w-6 text-purple-600" />
@@ -221,7 +221,7 @@ const SyncLicensing = () => {
                 </div>
               </div>
               
-              <div className="mt-4 pt-4 border-t border-studio-sand/30 flex justify-between">
+              <div className="mt-4 pt-4 border-t border-white/10 backdrop-blur-md flex justify-between">
                 <button className="text-purple-600 text-sm font-medium hover:text-purple-700">
                   Listen
                 </button>
