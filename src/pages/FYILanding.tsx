@@ -166,7 +166,7 @@ const FYILanding = () => {
         }}
       >
         <p className="text-sm">
-          © {new Date().getFullYear()} FYI. A UniversalAI Product.
+          © {new Date().getFullYear()} MUSICOS. A UniversalAI Product.
         </p>
       </footer>
     </div>

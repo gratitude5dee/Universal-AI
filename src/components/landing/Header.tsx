@@ -14,7 +14,7 @@ const Header = () => {
         }}
       >
         <a href="/" className="flex items-center">
-          <span className="text-white text-2xl font-bold">FYI</span>
+          <span className="text-white text-2xl font-bold">MUSICOS</span>
         </a>
         <div className="flex items-center gap-6">
           <button className="bg-none border-none text-white/70 cursor-pointer hidden md:block">
