@@ -1,8 +1,10 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useAuth } from "@/context/AuthContext";
 
 const Greeting = () => {
+  const { user } = useAuth();
   const [greeting, setGreeting] = useState("");
   const [timePhrase, setTimePhrase] = useState("");
   
@@ -39,7 +41,20 @@ const Greeting = () => {
     
     return () => clearInterval(intervalId);
   }, []);
-
+  
+  // Get user's name from profile or email
+  const getUserName = () => {
+    if (user?.user_metadata?.first_name) {
+      return user.user_metadata.first_name;
+    }
+    if (user?.user_metadata?.full_name) {
+      return user.user_metadata.full_name.split(' ')[0];
+    }
+    if (user?.email) {
+      return user.email.split('@')[0];
+    }
+    return "Artist";
+  };
   return (
     <div>
       <motion.h1 
@@ -48,7 +63,7 @@ const Greeting = () => {
         transition={{ duration: 0.5 }}
         className="text-xl md:text-2xl font-medium text-balance mb-1"
       >
-        {greeting}, <span className="text-studio-accent">Emma</span>
+        {greeting}, <span className="text-studio-accent">{getUserName()}</span>
       </motion.h1>
       <motion.p 
         initial={{ opacity: 0 }}
