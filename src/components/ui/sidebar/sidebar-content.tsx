@@ -21,6 +21,14 @@ interface SidebarContentProps {
       icon: React.ComponentType<{
         className?: string;
       }>;
+      hasSubmenu?: boolean;
+      submenuItems?: {
+        name: string;
+        path: string;
+        icon: React.ComponentType<{
+          className?: string;
+        }>;
+      }[];
     }[];
   }[];
   isCollapsed: boolean;
@@ -106,16 +114,27 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
     return false;
   };
 
-  // Function to check if a submenu has an active item
+  // Function to check if a submenu has an active item (with nested support)
   const hasActiveSubmenuItem = (submenuItems?: Array<{
     path: string;
+    hasSubmenu?: boolean;
+    submenuItems?: Array<{
+      path: string;
+    }>;
   }>) => {
     if (!submenuItems) return false;
     return submenuItems.some(subItem => {
       const basePath = subItem.path.split("?")[0];
       const hasTabParam = subItem.path.includes("?tab=");
       const matchesTab = subItem.path.includes(`tab=${currentTab}`);
-      return currentPath.startsWith(basePath) && (!hasTabParam || currentTab && matchesTab);
+      const directMatch = currentPath.startsWith(basePath) && (!hasTabParam || currentTab && matchesTab);
+      
+      // Check nested items if this submenu has nested items
+      if (subItem.hasSubmenu && subItem.submenuItems) {
+        return directMatch || hasActiveSubmenuItem(subItem.submenuItems);
+      }
+      
+      return directMatch;
     });
   };
 

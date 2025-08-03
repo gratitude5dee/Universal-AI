@@ -142,24 +142,32 @@ export const navItems = [{
       icon: NavAgentIcon
     },
     {
-      name: "Booking Agent",
-      path: "/collection/booking-agent",
-      icon: Calendar
-    },
-    {
-      name: "Invoice Agent",
-      path: "/collection/invoice-agent",
-      icon: CreditCard
-    },
-    {
-      name: "Social Media Agent",
-      path: "/collection/social-media",
-      icon: Globe
-    },
-    {
-      name: "Contract Agent",
-      path: "/collection/contract-agent",
-      icon: Shield
+      name: "My Agents",
+      path: "#",
+      icon: Database,
+      hasSubmenu: true,
+      submenuItems: [
+        {
+          name: "Booking Agent",
+          path: "/collection/booking-agent",
+          icon: Calendar
+        },
+        {
+          name: "Invoice Agent",
+          path: "/collection/invoice-agent",
+          icon: CreditCard
+        },
+        {
+          name: "Social Media Agent",
+          path: "/collection/social-media",
+          icon: Globe
+        },
+        {
+          name: "Contract Agent",
+          path: "/collection/contract-agent",
+          icon: Shield
+        }
+      ]
     },
     {
       name: "Agent Banking",
@@ -217,3 +225,8 @@ export const navItems = [{
 
 export type NavItem = typeof navItems[0];
 export type SubMenuItem = NavItem['submenuItems'][0];
+export type NestedSubMenuItem = {
+  name: string;
+  path: string;
+  icon: React.ComponentType<{ className?: string }>;
+};

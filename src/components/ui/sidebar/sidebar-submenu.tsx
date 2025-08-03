@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface SubmenuProps {
@@ -9,6 +10,12 @@ interface SubmenuProps {
     name: string;
     path: string;
     icon: React.ComponentType<{ className?: string; isGlowing?: boolean; glowColor?: "highlight" | "accent" | "white" }>;
+    hasSubmenu?: boolean;
+    submenuItems?: {
+      name: string;
+      path: string;
+      icon: React.ComponentType<{ className?: string; isGlowing?: boolean; glowColor?: "highlight" | "accent" | "white" }>;
+    }[];
   }[];
   currentPath: string;
   currentTab?: string | null;
@@ -23,6 +30,16 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
   currentTab,
   parentName,
 }) => {
+  const [nestedOpenSubmenus, setNestedOpenSubmenus] = React.useState<{[key: string]: boolean}>({});
+
+  const toggleNestedSubmenu = (name: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setNestedOpenSubmenus(prev => ({
+      ...prev,
+      [name]: !prev[name]
+    }));
+  };
   if (!submenuItems.length) return null;
 
   // Animation variants for menu items
@@ -59,6 +76,67 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
               
               const isSubItemActive = basePathMatch && 
                 (!subItem.path.includes("?tab=") || (currentTab && queryMatch));
+
+              if (subItem.hasSubmenu) {
+                // Handle nested submenu for collapsed state
+                return (
+                  <motion.div
+                    key={subItem.name}
+                    custom={index}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    variants={menuItemVariants}
+                    className="relative"
+                  >
+                    <div 
+                      className={`
+                        flex items-center px-3 py-2 rounded-lg text-xs transition-all duration-200 cursor-pointer
+                        ${nestedOpenSubmenus[subItem.name] ? 'bg-cyan-500/20 text-white font-medium' : 'text-blue-lightest hover:bg-cyan-500/10 hover:text-white'}
+                      `}
+                      onClick={(e) => toggleNestedSubmenu(subItem.name, e)}
+                    >
+                      <subItem.icon 
+                        className={`h-3.5 w-3.5 mr-2 ${nestedOpenSubmenus[subItem.name] ? 'text-cyan-400 icon-glow-cyan' : 'text-blue-lighter'}`}
+                        isGlowing={nestedOpenSubmenus[subItem.name]}
+                        glowColor="highlight" 
+                      />
+                      <span className="text-shadow-sm flex-1">{subItem.name}</span>
+                      <ChevronRight className={`h-3 w-3 transition-transform duration-200 ${nestedOpenSubmenus[subItem.name] ? 'rotate-90' : ''}`} />
+                    </div>
+                    {nestedOpenSubmenus[subItem.name] && subItem.submenuItems && (
+                      <div className="ml-6 mt-1 space-y-1">
+                        {subItem.submenuItems.map((nestedItem, nestedIndex) => {
+                          const nestedBasePathMatch = currentPath.startsWith(nestedItem.path.split("?")[0]);
+                          const nestedQueryMatch = nestedItem.path.includes(`tab=${currentTab}`);
+                          const isNestedActive = nestedBasePathMatch && 
+                            (!nestedItem.path.includes("?tab=") || (currentTab && nestedQueryMatch));
+
+                          return (
+                            <Link 
+                              key={nestedItem.name}
+                              to={nestedItem.path} 
+                              className={`
+                                flex items-center px-3 py-2 rounded-lg text-xs transition-all duration-200
+                                ${isNestedActive 
+                                  ? 'bg-cyan-500/30 text-white font-medium' 
+                                  : 'text-blue-lightest hover:bg-cyan-500/10 hover:text-white'}
+                              `}
+                            >
+                              <nestedItem.icon 
+                                className={`h-3 w-3 mr-2 ${isNestedActive ? 'text-cyan-400 icon-glow-cyan' : 'text-blue-lighter'}`}
+                                isGlowing={isNestedActive}
+                                glowColor="highlight" 
+                              />
+                              <span className="text-shadow-sm">{nestedItem.name}</span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </motion.div>
+                );
+              }
               
               return (
                 <motion.div
@@ -111,6 +189,86 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
             
             const isSubItemActive = basePathMatch && 
               (!subItem.path.includes("?tab=") || (currentTab && queryMatch));
+
+            if (subItem.hasSubmenu) {
+              // Handle nested submenu for expanded state
+              return (
+                <motion.div
+                  key={subItem.name}
+                  custom={index}
+                  initial="hidden"
+                  animate="visible"
+                  variants={menuItemVariants}
+                  className="space-y-1"
+                >
+                  <div 
+                    className={`
+                      flex items-center px-3 py-2 rounded-lg text-xs transition-all duration-200 relative group cursor-pointer
+                      ${nestedOpenSubmenus[subItem.name] ? 'bg-cyan-500/20 text-white font-medium' : 'text-blue-lightest hover:bg-cyan-500/10 hover:text-white'}
+                    `}
+                    onClick={(e) => toggleNestedSubmenu(subItem.name, e)}
+                  >
+                    <subItem.icon 
+                      className={`h-3.5 w-3.5 mr-2 ${nestedOpenSubmenus[subItem.name] ? 'text-cyan-400 icon-glow-cyan' : 'text-blue-lighter group-hover:text-blue-lightest'}`} 
+                      isGlowing={nestedOpenSubmenus[subItem.name]} 
+                      glowColor="highlight"
+                    />
+                    <span className="text-shadow-sm flex-1">{subItem.name}</span>
+                    <ChevronRight className={`h-3 w-3 transition-transform duration-200 ${nestedOpenSubmenus[subItem.name] ? 'rotate-90' : ''}`} />
+                  </div>
+                  <AnimatePresence>
+                    {nestedOpenSubmenus[subItem.name] && subItem.submenuItems && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0, overflow: 'hidden' }}
+                        animate={{ height: "auto", opacity: 1, overflow: 'visible' }}
+                        exit={{ height: 0, opacity: 0, overflow: 'hidden' }}
+                        transition={{ duration: 0.2, ease: "easeInOut" }}
+                        className="ml-6 space-y-1"
+                      >
+                        {subItem.submenuItems.map((nestedItem, nestedIndex) => {
+                          const nestedBasePathMatch = currentPath.startsWith(nestedItem.path.split("?")[0]);
+                          const nestedQueryMatch = nestedItem.path.includes(`tab=${currentTab}`);
+                          const isNestedActive = nestedBasePathMatch && 
+                            (!nestedItem.path.includes("?tab=") || (currentTab && nestedQueryMatch));
+
+                          return (
+                            <motion.div
+                              key={nestedItem.name}
+                              custom={nestedIndex}
+                              initial="hidden"
+                              animate="visible"
+                              variants={menuItemVariants}
+                            >
+                              <Link 
+                                to={nestedItem.path} 
+                                className={`
+                                  flex items-center px-3 py-2 rounded-lg text-xs transition-all duration-200 relative group
+                                  ${isNestedActive 
+                                    ? 'bg-cyan-500/30 text-white font-medium' 
+                                    : 'text-blue-lightest hover:bg-cyan-500/10 hover:text-white'}
+                                `}
+                              >
+                                <nestedItem.icon 
+                                  className={`h-3 w-3 mr-2 ${isNestedActive ? 'text-cyan-400 icon-glow-cyan' : 'text-blue-lighter group-hover:text-blue-lightest'}`} 
+                                  isGlowing={isNestedActive} 
+                                  glowColor="highlight"
+                                />
+                                <span className="text-shadow-sm">{nestedItem.name}</span>
+                                
+                                {/* Subtle active indicator */}
+                                {isNestedActive && (
+                                  <span className="absolute right-1 w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_5px_rgba(0,240,255,0.5)]"></span>
+                                )}
+                              </Link>
+                            </motion.div>
+                          );
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            }
             
             return (
               <motion.div
