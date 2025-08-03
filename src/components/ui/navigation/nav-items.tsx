@@ -7,7 +7,8 @@ import {
 import { 
   Palette, BookOpen, Headphones, Infinity, UserRound, Users, Shield, Globe, 
   Database, ShoppingCart, Eye, Building, Trees, ArrowRightLeft, Share2, Link, Tv, 
-  User, Music, Landmark, TrendingUp, Droplets, CreditCard, Calendar, UserCircle
+  User, Music, Landmark, TrendingUp, Droplets, CreditCard, Calendar, UserCircle,
+  Briefcase, LayoutDashboard, FileText, QrCode, UserPlus, Upload, FilePlus
 } from "lucide-react";
 
 export const navItems = [{
@@ -118,6 +119,20 @@ export const navItems = [{
       name: "Bridge",
       path: "/bridge",
       icon: ArrowRightLeft
+    },
+    {
+      name: "Fan Experience Management",
+      path: "/event-toolkit/dashboard",
+      icon: Briefcase,
+      hasSubmenu: true,
+      submenuItems: [
+        { name: "Dashboard", path: "/event-toolkit/dashboard", icon: LayoutDashboard },
+        { name: "Gigs", path: "/event-toolkit/gigs", icon: Calendar },
+        { name: "Invoices", path: "/event-toolkit/invoices", icon: FileText },
+        { name: "Contacts", path: "/event-toolkit/contacts", icon: Users },
+        { name: "Content", path: "/event-toolkit/content", icon: Music },
+        { name: "QR Upload", path: "/event-toolkit/qr-upload", icon: QrCode },
+      ]
     }
   ]
 }, {

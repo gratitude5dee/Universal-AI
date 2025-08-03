@@ -39,6 +39,18 @@ import OnboardingPage from "./pages/Onboarding";
 import AuthPage from "./pages/Auth";
 import Touring from "./pages/Touring";
 
+// Event Toolkit pages
+import EventToolkitDashboard from "./pages/event-toolkit/Dashboard";
+import Gigs from "./pages/event-toolkit/Gigs";
+import CreateGig from "./pages/event-toolkit/CreateGig";
+import Invoices from "./pages/event-toolkit/Invoices";
+import CreateInvoice from "./pages/event-toolkit/CreateInvoice";
+import Contacts from "./pages/event-toolkit/Contacts";
+import CreateContact from "./pages/event-toolkit/CreateContact";
+import ContentManager from "./pages/event-toolkit/ContentManager";
+import QrUploadManager from "./pages/event-toolkit/QrUploadManager";
+import CreateQrCampaign from "./pages/event-toolkit/CreateQrCampaign";
+
 // Conditionally import Crossmint only if we have a valid API key
 import { CrossmintProvider, CrossmintAuthProvider } from "@crossmint/client-sdk-react-ui";
 
@@ -129,6 +141,18 @@ function AppContent({ bypassAuth = false }: { bypassAuth?: boolean }) {
             
             {/* Touring route */}
             <Route path="/touring" element={bypassAuth ? <Touring /> : <ProtectedRoute><Touring /></ProtectedRoute>} />
+            
+            {/* Event Toolkit routes */}
+            <Route path="/event-toolkit/dashboard" element={bypassAuth ? <EventToolkitDashboard /> : <ProtectedRoute><EventToolkitDashboard /></ProtectedRoute>} />
+            <Route path="/event-toolkit/gigs" element={bypassAuth ? <Gigs /> : <ProtectedRoute><Gigs /></ProtectedRoute>} />
+            <Route path="/event-toolkit/gigs/new" element={bypassAuth ? <CreateGig /> : <ProtectedRoute><CreateGig /></ProtectedRoute>} />
+            <Route path="/event-toolkit/invoices" element={bypassAuth ? <Invoices /> : <ProtectedRoute><Invoices /></ProtectedRoute>} />
+            <Route path="/event-toolkit/invoices/new" element={bypassAuth ? <CreateInvoice /> : <ProtectedRoute><CreateInvoice /></ProtectedRoute>} />
+            <Route path="/event-toolkit/contacts" element={bypassAuth ? <Contacts /> : <ProtectedRoute><Contacts /></ProtectedRoute>} />
+            <Route path="/event-toolkit/contacts/new" element={bypassAuth ? <CreateContact /> : <ProtectedRoute><CreateContact /></ProtectedRoute>} />
+            <Route path="/event-toolkit/content" element={bypassAuth ? <ContentManager /> : <ProtectedRoute><ContentManager /></ProtectedRoute>} />
+            <Route path="/event-toolkit/qr-upload" element={bypassAuth ? <QrUploadManager /> : <ProtectedRoute><QrUploadManager /></ProtectedRoute>} />
+            <Route path="/event-toolkit/qr-upload/new" element={bypassAuth ? <CreateQrCampaign /> : <ProtectedRoute><CreateQrCampaign /></ProtectedRoute>} />
             
             {/* 404 */}
             <Route path="*" element={<NotFound />} />
