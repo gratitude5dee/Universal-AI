@@ -161,7 +161,7 @@ export const navItems = [{
     }
   ]
 }, {
-  name: "Treasury",
+  name: "Finances",
   path: "#",
   icon: NavWalletIcon,
   hasSubmenu: true,
