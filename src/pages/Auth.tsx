@@ -1,84 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
-import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { Bot, BarChart3, Coins, Users } from 'lucide-react';
 import Ambient from '@/components/ui/ambient';
+import { useAuth } from '@crossmint/client-sdk-react-ui';
 
 const AuthPage = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [username, setUsername] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { user, login } = useAuth();
 
-  const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (error) throw error;
-
-        toast({
-          title: "Welcome back!",
-          description: "You've been successfully logged in.",
-        });
-
-        // Navigate to home for now
-        navigate('/home');
-      } else {
-        // Sign up
-        if (password !== confirmPassword) {
-          throw new Error("Passwords don't match");
-        }
-
-        if (password.length < 6) {
-          throw new Error("Password must be at least 6 characters");
-        }
-
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/onboarding`,
-            data: {
-              username: username,
-              display_name: username,
-            }
-          }
-        });
-
-        if (error) throw error;
-
-        toast({
-          title: "Account created!",
-          description: "Please check your email to verify your account.",
-        });
-      }
-    } catch (error: any) {
-      toast({
-        title: "Authentication Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (user) {
+      navigate('/home');
     }
+  }, [user, navigate]);
+
+  const handleLogin = async () => {
+    try {
+      if (login) {
+        await login();
+      } else {
+        // Fallback if Crossmint is not available
+        navigate('/home');
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
+  };
+
+  const handleGuestAccess = () => {
+    navigate('/wzrd/studio');
   };
 
   return (
@@ -93,124 +45,89 @@ const AuthPage = () => {
       >
         <div className="bg-background/20 backdrop-blur-sm border border-border rounded-lg p-8">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-2">
-              {isLogin ? 'Welcome Back' : 'Join UniversalAI'}
+            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              WZRD Studio
             </h1>
-            <p className="text-muted-foreground">
-              {isLogin ? 'Sign in to continue your journey' : 'Begin your creative evolution'}
+            <p className="text-muted-foreground text-lg">
+              Sign in to access your creative workspace
             </p>
           </div>
 
-          <form onSubmit={handleAuth} className="space-y-6">
-            {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="username" className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Username
-                </Label>
-                <Input
-                  id="username"
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                  className="bg-background/50 border-border"
-                  placeholder="Choose your creator name"
-                />
-              </div>
-            )}
+          <div className="space-y-4">
+            <Button
+              onClick={handleLogin}
+              className="w-full bg-accent text-white hover:bg-accent/90 h-12 text-base font-medium"
+            >
+              Sign in with Crossmint
+            </Button>
 
-            <div className="space-y-2">
-              <Label htmlFor="email" className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="bg-background/50 border-border"
-                placeholder="Enter your email"
-              />
+            <div className="text-center text-sm text-muted-foreground">
+              or continue with
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password" className="flex items-center gap-2">
-                <Lock className="h-4 w-4" />
-                Password
-              </Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="bg-background/50 border-border pr-10"
-                  placeholder="Enter your password"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
-
-            {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="flex items-center gap-2">
-                  <Lock className="h-4 w-4" />
-                  Confirm Password
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    className="bg-background/50 border-border pr-10"
-                    placeholder="Confirm your password"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </Button>
-                </div>
-              </div>
-            )}
 
             <Button
-              type="submit"
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-              disabled={loading}
+              onClick={handleGuestAccess}
+              variant="outline"
+              className="w-full h-12 text-base font-medium bg-background/50 border-border hover:bg-background/70"
             >
-              {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
+              Enter as Guest
             </Button>
-          </form>
+          </div>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-muted-foreground">
-              {isLogin ? "Don't have an account?" : "Already have an account?"}
-              <Button
-                variant="ghost"
-                className="ml-2 h-auto p-0 text-primary hover:text-primary/80"
-                onClick={() => setIsLogin(!isLogin)}
-              >
-                {isLogin ? 'Sign up' : 'Sign in'}
-              </Button>
+          {/* Feature Icons */}
+          <div className="flex justify-center items-center gap-8 mt-8 pt-6 border-t border-border">
+            <motion.div
+              className="flex flex-col items-center gap-2 text-center cursor-pointer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                <Bot className="h-6 w-6 text-primary" />
+              </div>
+              <span className="text-xs text-muted-foreground">AI Agents</span>
+            </motion.div>
+
+            <motion.div
+              className="flex flex-col items-center gap-2 text-center cursor-pointer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
+                <BarChart3 className="h-6 w-6 text-accent" />
+              </div>
+              <span className="text-xs text-muted-foreground">Dashboard</span>
+            </motion.div>
+
+            <motion.div
+              className="flex flex-col items-center gap-2 text-center cursor-pointer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                <Coins className="h-6 w-6 text-primary" />
+              </div>
+              <span className="text-xs text-muted-foreground">Treasury</span>
+            </motion.div>
+
+            <motion.div
+              className="flex flex-col items-center gap-2 text-center cursor-pointer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
+                <Users className="h-6 w-6 text-accent" />
+              </div>
+              <span className="text-xs text-muted-foreground">Assistants</span>
+            </motion.div>
+          </div>
+
+          {/* Legal Text */}
+          <div className="text-center mt-6 pt-4">
+            <p className="text-xs text-muted-foreground">
+              By signing in, you agree to our{' '}
+              <span className="text-primary hover:underline cursor-pointer">Terms of Service</span>
+              {' '}and{' '}
+              <span className="text-primary hover:underline cursor-pointer">Privacy Policy</span>
             </p>
           </div>
         </div>
