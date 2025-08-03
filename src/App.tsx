@@ -16,7 +16,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/components/ui/ProtectedRoute";
 
 // Import all page components
-import Home from "./pages/Home";
+import Home from "./pages/ArtistHome";
 import AssetLibrary from "./pages/AssetLibrary";
 import CreateAgent from "./pages/CreateAgent";
 import Collection from "./pages/Collection";

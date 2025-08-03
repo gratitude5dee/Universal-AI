@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -51,6 +51,7 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
   };
 
   const [isHovered, setIsHovered] = React.useState(false);
+  const navigate = useNavigate();
 
   if (!item.hasSubmenu) {
     return (
@@ -117,7 +118,13 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
     <>
       <a 
         href="#" 
-        onClick={toggleSubmenu} 
+        onClick={toggleSubmenu}
+        onDoubleClick={(e) => {
+          e.preventDefault();
+          if (item.name === "WZRD.tech") {
+            navigate("/home");
+          }
+        }}
         className="relative block group" 
         title={isCollapsed ? item.name : ""}
         onMouseEnter={() => setIsHovered(true)}
