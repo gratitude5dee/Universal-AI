@@ -173,8 +173,8 @@ const MediaChannels = () => {
       </div>
 
       {/* Tab Navigation */}
-      <div className="mt-8 bg-white rounded-xl border border-studio-sand/30 overflow-hidden">
-        <div className="flex border-b border-studio-sand/30 overflow-x-auto">
+      <div className="mt-8 glass-card rounded-xl border border-white/10 backdrop-blur-md overflow-hidden">
+        <div className="flex border-b border-white/10 backdrop-blur-md overflow-x-auto">
           <button 
             className={`px-4 py-3 text-sm font-medium flex-shrink-0 ${activeTab === "appearances" ? "border-b-2 border-studio-accent text-studio-accent" : "text-studio-clay"}`}
             onClick={() => setActiveTab("appearances")}
@@ -222,7 +222,7 @@ const MediaChannels = () => {
                 {upcomingAppearances.map((appearance) => {
                   const AppearanceIcon = appearance.icon;
                   return (
-                    <div key={appearance.id} className="bg-white rounded-xl border border-studio-sand/30 p-4">
+                    <div key={appearance.id} className="glass-card rounded-xl border border-white/10 backdrop-blur-md p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
                           <div className={`p-2 rounded-lg mr-3 ${
@@ -247,7 +247,7 @@ const MediaChannels = () => {
                         </div>
                       </div>
                       
-                      <div className="flex justify-between mt-3 pt-3 border-t border-studio-sand/30">
+                      <div className="flex justify-between mt-3 pt-3 border-t border-white/10 backdrop-blur-md">
                         <div>
                           <span className={`px-2 py-1 text-xs rounded-full ${
                             appearance.status === "Confirmed" ? "bg-emerald-100 text-emerald-700" : 
@@ -293,7 +293,7 @@ const MediaChannels = () => {
                   </thead>
                   <tbody>
                     {distributionChannels.map((channel, index) => (
-                      <tr key={channel.name} className={`border-b border-studio-sand/30 ${index % 2 === 0 ? 'bg-white' : 'bg-studio-sand/5'}`}>
+                      <tr key={channel.name} className={`border-b border-white/10 backdrop-blur-md ${index % 2 === 0 ? 'glass-card' : 'bg-studio-sand/5'}`}>
                         <td className="px-4 py-3">
                           <div className="flex items-center">
                             <img src={channel.icon} alt={channel.name} className="w-8 h-8 rounded mr-3" />
@@ -336,7 +336,7 @@ const MediaChannels = () => {
                 </div>
               </div>
 
-              <div className="bg-white p-5 rounded-xl border border-studio-sand/30 mb-5">
+              <div className="glass-card p-5 rounded-xl border border-white/10 backdrop-blur-md mb-5">
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="font-medium">Radio Play Overview</h4>
                   <div className="text-sm text-studio-clay">Updated: Today at 09:34 AM</div>
@@ -375,7 +375,7 @@ const MediaChannels = () => {
                   </thead>
                   <tbody>
                     {radioPlayStats.map((station, index) => (
-                      <tr key={station.station} className={`border-b border-studio-sand/30 ${index % 2 === 0 ? 'bg-white' : 'bg-studio-sand/5'}`}>
+                      <tr key={station.station} className={`border-b border-white/10 backdrop-blur-md ${index % 2 === 0 ? 'glass-card' : 'bg-studio-sand/5'}`}>
                         <td className="px-4 py-3 font-medium">{station.station}</td>
                         <td className="px-4 py-3">{station.plays}</td>
                         <td className="px-4 py-3">{station.reach}</td>
@@ -401,19 +401,19 @@ const MediaChannels = () => {
                 </p>
                 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                  <div className="bg-white p-3 rounded-lg flex flex-col items-center">
+                  <div className="glass-card p-3 rounded-lg flex flex-col items-center">
                     <Tv className="h-6 w-6 text-studio-clay mb-2" />
                     <span className="text-sm">Television</span>
                   </div>
-                  <div className="bg-white p-3 rounded-lg flex flex-col items-center">
+                  <div className="glass-card p-3 rounded-lg flex flex-col items-center">
                     <Radio className="h-6 w-6 text-studio-clay mb-2" />
                     <span className="text-sm">Radio</span>
                   </div>
-                  <div className="bg-white p-3 rounded-lg flex flex-col items-center">
+                  <div className="glass-card p-3 rounded-lg flex flex-col items-center">
                     <Mic className="h-6 w-6 text-studio-clay mb-2" />
                     <span className="text-sm">Podcast</span>
                   </div>
-                  <div className="bg-white p-3 rounded-lg flex flex-col items-center">
+                  <div className="glass-card p-3 rounded-lg flex flex-col items-center">
                     <Music className="h-6 w-6 text-studio-clay mb-2" />
                     <span className="text-sm">Digital</span>
                   </div>
