@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Users, DollarSign, Bot, FileText, Sparkles } from "lucide-react";
+import { Calendar, Users, DollarSign, Bot, Music, Sparkles, Zap } from "lucide-react";
 import { 
   GlassPanel, 
   Card3D, 
@@ -11,8 +11,10 @@ import {
   HolographicText,
   ParticleField,
   MagneticButton,
-  ShimmerEffect 
+  ShimmerEffect,
+  NoiseTexture 
 } from "@/components/ui/glass-components";
+import { Content } from "@/components/ui/content";
 import GigManagerDashboard from "@/components/touring/GigManagerDashboard";
 import AIBookingAssistant from "@/components/touring/AIBookingAssistant";
 import TourCalendar from "@/components/touring/TourCalendar";
@@ -62,163 +64,227 @@ const Touring = () => {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
-      {/* Liquid Background Effects */}
-      <LiquidBackground colors={["purple", "cyan", "pink"]} count={4} baseSize={120} />
-      <ParticleField count={30} className="absolute inset-0 pointer-events-none" />
-      
-      {/* Floating Orbs */}
-      <FloatingOrb 
-        color="purple" 
-        size="128" 
-        position={{ top: "10%", left: "85%" }} 
-        delay={0} 
-        duration={8} 
-      />
-      <FloatingOrb 
-        color="cyan" 
-        size="96" 
-        position={{ top: "60%", left: "5%" }} 
-        delay={2} 
-        duration={10} 
-      />
+    <Content className="relative overflow-hidden">
+      {/* Ambient liquid background effects positioned behind content */}
+      <div className="absolute inset-0 pointer-events-none">
+        <LiquidBackground colors={["purple", "cyan", "pink"]} count={3} baseSize={80} />
+        <ParticleField count={25} className="opacity-30" />
+        
+        {/* Strategic floating orbs */}
+        <FloatingOrb 
+          color="purple" 
+          size="64" 
+          position={{ top: "15%", right: "10%" }} 
+          delay={0} 
+          duration={12} 
+        />
+        <FloatingOrb 
+          color="cyan" 
+          size="48" 
+          position={{ bottom: "20%", left: "8%" }} 
+          delay={3} 
+          duration={15} 
+        />
+        <FloatingOrb 
+          color="pink" 
+          size="56" 
+          position={{ top: "70%", right: "15%" }} 
+          delay={6} 
+          duration={10} 
+        />
+      </div>
 
+      {/* World-class header design */}
       <motion.div
-        variants={pageVariants}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        className="relative z-10 p-4 md:p-6"
+        initial={{ opacity: 0, y: -40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.8, ease: "easeOutCubic" }}
+        className="relative z-10 mb-12"
       >
-        <div className="mx-auto max-w-7xl space-y-8">
-          {/* Enhanced Header with Glass Effect */}
-          <motion.div
-            initial={{ opacity: 0, y: -30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.6 }}
-            className="text-center space-y-4"
+        <div className="text-center space-y-6">
+          <GradientBorder 
+            className="inline-block"
+            borderWidth={2}
+            animationDuration={12}
+            colors={["from-purple-400", "via-cyan-400", "via-pink-400", "to-purple-400"]}
           >
-            <GradientBorder 
-              className="inline-block"
-              borderWidth={3}
-              animationDuration={8}
-              colors={["from-purple-500", "via-cyan-500", "to-pink-500"]}
-            >
-              <GlassPanel className="px-8 py-4" blur="2xl" withBorder={false}>
+            <GlassPanel className="px-10 py-6" blur="3xl" withBorder={false}>
+              <motion.div
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.3, duration: 0.6, ease: "easeOutBack" }}
+              >
                 <HolographicText 
                   as="h1" 
-                  className="text-3xl md:text-5xl font-bold"
+                  className="text-4xl md:text-6xl font-extrabold tracking-tight"
                 >
-                  <Sparkles className="inline-block mr-3 h-8 w-8" />
-                  Touring Management
-                </HolographicText>
-              </GlassPanel>
-            </GradientBorder>
-            
-            <motion.p 
-              className="text-white/80 text-sm md:text-lg max-w-3xl mx-auto backdrop-blur-sm"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              Professional gig management with AI-powered booking assistance
-              <ShimmerEffect className="ml-2 inline-block" />
-            </motion.p>
-          </motion.div>
-
-          {/* Enhanced Tabs Navigation with Glass Effect */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-            >
-              <GlassPanel 
-                className="p-2" 
-                blur="3xl" 
-                withNoise={true}
-                withBorder={true}
-              >
-                <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-2 bg-transparent">
-                  {tabData.map((tab, index) => {
-                    const Icon = tab.icon;
-                    const isActive = activeTab === tab.value;
-                    
-                    return (
-                      <motion.div
-                        key={tab.value}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.3 + index * 0.1 }}
-                      >
-                        <MagneticButton asChild>
-                          <TabsTrigger
-                            value={tab.value}
-                            className={`
-                              flex items-center gap-2 relative overflow-hidden
-                              bg-white/5 hover:bg-white/10 border border-white/20 
-                              backdrop-blur-md transition-all duration-300
-                              ${isActive ? 'bg-purple-500/20 border-purple-400/50 text-purple-200' : 'text-white/70'}
-                            `}
-                          >
-                            <Icon className="h-4 w-4 z-10 relative" />
-                            <span className="hidden sm:inline z-10 relative">{tab.label}</span>
-                            {isActive && (
-                              <motion.div
-                                layoutId="activeTab"
-                                className="absolute inset-0 bg-gradient-to-r from-purple-500/30 to-cyan-500/30"
-                                initial={false}
-                                transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                              />
-                            )}
-                          </TabsTrigger>
-                        </MagneticButton>
-                      </motion.div>
-                    );
-                  })}
-                </TabsList>
-              </GlassPanel>
-            </motion.div>
-
-            {/* Enhanced Tab Content with 3D Cards */}
-            <div className="mt-8">
-              <AnimatePresence mode="wait">
-                {tabData.map((tab) => (
-                  <TabsContent 
-                    key={tab.value} 
-                    value={tab.value} 
-                    className="space-y-6 focus:outline-none"
+                  <motion.div 
+                    className="flex items-center justify-center gap-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
                   >
-                    <motion.div
-                      initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -30, scale: 0.95 }}
-                      transition={{ duration: 0.5, ease: "easeInOut" }}
-                    >
-                      <Card3D 
-                        className="w-full"
-                        maxRotation={5}
-                        scale={1.02}
-                        withLiquid={true}
-                      >
-                        <GlassPanel 
-                          className="p-6 md:p-8" 
-                          blur="2xl" 
-                          withNoise={true}
-                          withBorder={true}
-                        >
-                          {tab.component}
-                        </GlassPanel>
-                      </Card3D>
-                    </motion.div>
-                  </TabsContent>
-                ))}
-              </AnimatePresence>
-            </div>
-          </Tabs>
+                    <Music className="h-10 w-10 md:h-12 md:w-12 text-purple-400" />
+                    Touring Central
+                    <Zap className="h-8 w-8 md:h-10 md:w-10 text-cyan-400" />
+                  </motion.div>
+                </HolographicText>
+              </motion.div>
+            </GlassPanel>
+          </GradientBorder>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+            className="relative"
+          >
+            <p className="text-white/90 text-lg md:text-xl max-w-4xl mx-auto leading-relaxed">
+              Next-generation tour management with AI-powered booking intelligence
+            </p>
+            <ShimmerEffect className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-0.5" />
+          </motion.div>
         </div>
       </motion.div>
-    </div>
+
+      {/* Premium tabs with world-class liquid glass design */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.8 }}
+        className="relative z-10"
+      >
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          {/* Ultra-premium tab navigation */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="mb-10"
+          >
+            <GlassPanel 
+              className="p-3 max-w-4xl mx-auto" 
+              blur="3xl" 
+              withNoise={true}
+              withBorder={true}
+            >
+              <NoiseTexture opacity={0.02} />
+              <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-3 bg-transparent">
+                {tabData.map((tab, index) => {
+                  const Icon = tab.icon;
+                  const isActive = activeTab === tab.value;
+                  
+                  return (
+                    <motion.div
+                      key={tab.value}
+                      initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ 
+                        delay: 0.5 + index * 0.1, 
+                        duration: 0.5,
+                        ease: "easeOutBack"
+                      }}
+                    >
+                      <MagneticButton className="w-full">
+                        <TabsTrigger
+                          value={tab.value}
+                          className={`
+                            group flex items-center gap-3 relative overflow-hidden w-full
+                            bg-white/5 hover:bg-white/15 border border-white/20 
+                            backdrop-blur-xl transition-all duration-500 ease-out
+                            rounded-xl px-4 py-3 shadow-lg hover:shadow-2xl
+                            hover:scale-105 active:scale-95
+                            ${isActive 
+                              ? 'bg-gradient-to-r from-purple-500/30 to-cyan-500/20 border-purple-400/60 text-white shadow-purple-500/25' 
+                              : 'text-white/80 hover:text-white'}
+                          `}
+                        >
+                          <Icon className="h-5 w-5 z-10 relative transition-transform group-hover:scale-110" />
+                          <span className="hidden sm:inline z-10 relative font-medium">{tab.label}</span>
+                          
+                          {isActive && (
+                            <>
+                              <motion.div
+                                layoutId="activeTabBg"
+                                className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-cyan-500/20 to-pink-500/20 rounded-xl"
+                                initial={false}
+                                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                              />
+                              <motion.div
+                                className="absolute inset-0 bg-gradient-to-r from-purple-400/10 to-cyan-400/10 rounded-xl"
+                                animate={{ 
+                                  opacity: [0.5, 1, 0.5],
+                                  scale: [1, 1.02, 1]
+                                }}
+                                transition={{ 
+                                  duration: 3, 
+                                  repeat: Infinity,
+                                  ease: "easeInOut"
+                                }}
+                              />
+                            </>
+                          )}
+                          
+                          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        </TabsTrigger>
+                      </MagneticButton>
+                    </motion.div>
+                  );
+                })}
+              </TabsList>
+            </GlassPanel>
+          </motion.div>
+
+          {/* Premium content cards with advanced 3D effects */}
+          <AnimatePresence mode="wait">
+            {tabData.map((tab) => (
+              <TabsContent 
+                key={tab.value} 
+                value={tab.value} 
+                className="focus:outline-none"
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 60, scale: 0.9, rotateX: 10 }}
+                  animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+                  exit={{ opacity: 0, y: -60, scale: 0.9, rotateX: -10 }}
+                  transition={{ 
+                    duration: 0.7, 
+                    ease: "easeOutCubic",
+                    opacity: { duration: 0.4 }
+                  }}
+                  style={{ transformPerspective: 1000 }}
+                >
+                  <Card3D 
+                    className="w-full"
+                    maxRotation={3}
+                    scale={1.01}
+                    withLiquid={true}
+                  >
+                    <GlassPanel 
+                      className="p-8 md:p-12 min-h-[600px]" 
+                      blur="2xl" 
+                      withNoise={true}
+                      withBorder={true}
+                    >
+                      <div className="relative">
+                        <NoiseTexture opacity={0.015} />
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.2, duration: 0.6 }}
+                        >
+                          {tab.component}
+                        </motion.div>
+                      </div>
+                    </GlassPanel>
+                  </Card3D>
+                </motion.div>
+              </TabsContent>
+            ))}
+          </AnimatePresence>
+        </Tabs>
+      </motion.div>
+    </Content>
   );
 };
 
