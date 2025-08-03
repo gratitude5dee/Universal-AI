@@ -49,41 +49,6 @@ export const navItems = [{
       name: "Companions",
       path: "/wzrd/companions",
       icon: UserRound
-    },
-    {
-      name: "Distribution",
-      path: "/distribution",
-      icon: Share2
-    },
-    {
-      name: "Social Media WZRD",
-      path: "/distribution/social-media",
-      icon: Globe
-    },
-    {
-      name: "On-Chain Distribution",
-      path: "/distribution/on-chain",
-      icon: Link
-    },
-    {
-      name: "Media Channels",
-      path: "/distribution/media-channels",
-      icon: Tv
-    },
-    {
-      name: "Independent Channels",
-      path: "/distribution/independent",
-      icon: User
-    },
-    {
-      name: "Sync Licensing",
-      path: "/distribution/sync-licensing",
-      icon: Music
-    },
-    {
-      name: "Touring & Gigs",
-      path: "/touring-gigs",
-      icon: Calendar
     }
   ]
 }, {
@@ -162,6 +127,42 @@ export const navItems = [{
       icon: ArrowRightLeft
     }
   ]
+}, {
+  name: "Distribution",
+  path: "/distribution",
+  icon: Share2,
+  hasSubmenu: true,
+  submenuItems: [
+    {
+      name: "Social Media WZRD",
+      path: "/distribution/social-media",
+      icon: Globe
+    },
+    {
+      name: "On-Chain Distribution",
+      path: "/distribution/on-chain",
+      icon: Link
+    },
+    {
+      name: "Media Channels",
+      path: "/distribution/media-channels",
+      icon: Tv
+    },
+    {
+      name: "Independent Channels",
+      path: "/distribution/independent",
+      icon: User
+    },
+    {
+      name: "Sync Licensing",
+      path: "/distribution/sync-licensing",
+      icon: Music
+    }
+  ]
+}, {
+  name: "Touring & Gigs",
+  path: "/touring-gigs",
+  icon: Calendar
 }, {
   name: "Treasury",
   path: "#",
