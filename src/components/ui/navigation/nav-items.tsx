@@ -48,9 +48,17 @@ export const navItems = [{
     }
   ]
 }, {
-  name: "Touring & Gigs",
-  path: "/touring-gigs",
-  icon: Calendar
+  name: "Touring",
+  path: "#",
+  icon: Calendar,
+  hasSubmenu: true,
+  submenuItems: [
+    {
+      name: "Gigs",
+      path: "/touring-gigs",
+      icon: Calendar
+    }
+  ]
 }, {
   name: "Marketing & Distribution",
   path: "/distribution",
@@ -84,7 +92,7 @@ export const navItems = [{
     }
   ]
 }, {
-  name: "Projects",
+  name: "Content Library",
   path: "#",
   icon: Users,
   hasSubmenu: true,
@@ -106,7 +114,7 @@ export const navItems = [{
     }
   ]
 }, {
-  name: "Agents",
+  name: "Agents + Integrations",
   path: "#",
   icon: NavAgentIcon,
   hasSubmenu: true,
