@@ -83,7 +83,7 @@ const InvoiceAgent = () => {
                                 </CardHeader>
                                 <CardContent>
                                     <Tabs value={activeTab} onValueChange={setActiveTab}>
-                                        <TabsList className="bg-white/80 backdrop-blur-md border border-studio-sand/30 rounded-xl p-2">
+                                        <TabsList className="glass-card border border-white/10 rounded-xl p-2 backdrop-blur-md">
                                             <TabsTrigger 
                                                 value="overdue" 
                                                 className="data-[state=active]:bg-red-500/20 data-[state=active]:text-red-700"
@@ -188,7 +188,7 @@ const InvoiceAgent = () => {
 
                                     <div className="space-y-3">
                                         <Label className="font-medium text-studio-charcoal">Payment Terms (Days)</Label>
-                                        <select className="w-full bg-white/50 border border-studio-sand/50 rounded-lg p-3 text-studio-charcoal">
+                                        <select className="w-full glass-card border border-white/10 rounded-lg p-3 text-studio-charcoal backdrop-blur-md">
                                             <option value="15">Net 15</option>
                                             <option value="30" selected>Net 30</option>
                                             <option value="45">Net 45</option>
@@ -202,7 +202,7 @@ const InvoiceAgent = () => {
                                             type="number" 
                                             defaultValue="1.5" 
                                             step="0.1"
-                                            className="w-full bg-white/50 border border-studio-sand/50 rounded-lg p-3 text-studio-charcoal"
+                                            className="w-full glass-card border border-white/10 rounded-lg p-3 text-studio-charcoal backdrop-blur-md"
                                         />
                                     </div>
 

@@ -142,7 +142,7 @@ const ContractAgent = () => {
                                             <Search className="absolute left-3 top-2.5 h-4 w-4 text-studio-muted"/>
                                             <input 
                                                 placeholder="Search contracts..." 
-                                                className="w-full bg-white/50 border border-studio-sand/50 rounded-lg pl-10 pr-4 py-2 text-sm text-studio-charcoal placeholder:text-studio-muted focus:outline-none focus:ring-2 focus:ring-studio-accent/50"
+                                                className="w-full glass-card border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm text-studio-charcoal placeholder:text-studio-muted focus:outline-none focus:ring-2 focus:ring-studio-accent/50 backdrop-blur-md"
                                             />
                                         </div>
                                     </div>
@@ -223,7 +223,7 @@ const ContractAgent = () => {
 
                                     <div className="space-y-3">
                                         <Label className="font-medium text-studio-charcoal">Default Contract Terms</Label>
-                                        <select className="w-full bg-white/50 border border-studio-sand/50 rounded-lg p-3 text-studio-charcoal">
+                                        <select className="w-full glass-card border border-white/10 rounded-lg p-3 text-studio-charcoal backdrop-blur-md">
                                             <option value="standard">Standard Terms</option>
                                             <option value="artist-friendly" selected>Artist-Friendly</option>
                                             <option value="strict">Strict Protection</option>
@@ -232,7 +232,7 @@ const ContractAgent = () => {
 
                                     <div className="space-y-3">
                                         <Label className="font-medium text-studio-charcoal">Jurisdiction</Label>
-                                        <select className="w-full bg-white/50 border border-studio-sand/50 rounded-lg p-3 text-studio-charcoal">
+                                        <select className="w-full glass-card border border-white/10 rounded-lg p-3 text-studio-charcoal backdrop-blur-md">
                                             <option value="us" selected>United States</option>
                                             <option value="uk">United Kingdom</option>
                                             <option value="eu">European Union</option>

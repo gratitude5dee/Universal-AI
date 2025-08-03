@@ -224,7 +224,7 @@ const SocialMediaAgent = () => {
 
                                     <div className="space-y-3">
                                         <Label className="font-medium text-studio-charcoal">Posting Frequency</Label>
-                                        <select className="w-full bg-white/50 border border-studio-sand/50 rounded-lg p-3 text-studio-charcoal">
+                                        <select className="w-full glass-card border border-white/10 rounded-lg p-3 text-studio-charcoal backdrop-blur-md">
                                             <option value="conservative">Conservative (2-3 posts/day)</option>
                                             <option value="moderate" selected>Moderate (4-5 posts/day)</option>
                                             <option value="aggressive">Aggressive (6+ posts/day)</option>
@@ -280,7 +280,7 @@ const StatsCard = ({ title, value, icon: Icon, trend, trendValue, accent = "stud
 const ContentQueueItem = ({ platform, content, scheduledTime, engagement }) => (
     <motion.div 
         whileHover={{ scale: 1.01 }}
-        className="p-4 border border-studio-sand/30 rounded-xl bg-white/50 hover:shadow-lg transition-all duration-300"
+        className="p-4 glass-card border border-white/10 rounded-xl backdrop-blur-md hover:shadow-lg transition-all duration-300"
     >
         <div className="flex justify-between items-start mb-3">
             <div className="flex items-center gap-3">
@@ -310,7 +310,7 @@ const ContentQueueItem = ({ platform, content, scheduledTime, engagement }) => (
             <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white">
                 <Check size={16} className="mr-1" /> Approve
             </Button>
-            <Button size="sm" variant="outline" className="bg-white/80 border-studio-sand/50">
+            <Button size="sm" variant="outline" className="glass-card border border-white/10 backdrop-blur-md">
                 <Edit size={16} className="mr-1" /> Edit
             </Button>
             <Button size="sm" variant="ghost" className="text-red-500 hover:bg-red-50">

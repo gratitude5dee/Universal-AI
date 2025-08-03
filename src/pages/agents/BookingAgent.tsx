@@ -76,7 +76,7 @@ const BookingAgent = () => {
                                             <Calendar className="text-studio-accent" size={20} />
                                             Pending Booking Requests
                                         </CardTitle>
-                                        <Button variant="outline" size="sm" className="bg-white/50 border-studio-sand/50">
+                                        <Button variant="outline" size="sm" className="glass-card border border-white/10 backdrop-blur-md">
                                             View All
                                         </Button>
                                     </div>
@@ -302,7 +302,7 @@ const BookingRequestCard = ({ venue, date, offer, status }) => {
                 <Button size="sm" className="flex-1 bg-green-500 hover:bg-green-600 text-white">
                     <Check size={16} className="mr-1" /> Accept
                 </Button>
-                <Button size="sm" variant="outline" className="flex-1 bg-white/80 border-studio-sand/50">
+                <Button size="sm" variant="outline" className="flex-1 glass-card border border-white/10 backdrop-blur-md">
                     Negotiate
                 </Button>
                 <Button size="sm" variant="ghost" className="text-red-500 hover:bg-red-50">
@@ -316,7 +316,7 @@ const BookingRequestCard = ({ venue, date, offer, status }) => {
 const VenueCard = ({ name, location, capacity, match, genre }) => (
     <motion.div 
         whileHover={{ scale: 1.02 }}
-        className="p-4 bg-white/50 border border-studio-sand/30 rounded-xl hover:shadow-lg transition-all duration-300"
+        className="p-4 glass-card border border-white/10 rounded-xl backdrop-blur-md hover:shadow-lg transition-all duration-300"
     >
         <div className="flex items-center justify-between">
             <div className="flex-grow">
