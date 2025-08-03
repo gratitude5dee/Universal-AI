@@ -283,6 +283,60 @@
   }
 }
 
+/* Vinyl Bookshelf Styles */
+.bookshelf-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 4rem 2rem;
+  perspective: 1500px;
+  min-height: 500px;
+}
+
+.vinyl-record-wrapper {
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.vinyl-sleeve {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  box-shadow: -10px 0px 20px rgba(0, 0, 0, 0.5);
+  transform: rotateY(-35deg);
+  transition: transform 0.5s ease;
+}
+
+.vinyl-record-wrapper:hover .vinyl-sleeve {
+  transform: rotateY(-20deg) translateZ(10px);
+}
+
+.vinyl-disc {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 250px;
+  background-image: url('/vinyl-record.png');
+  background-size: cover;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  transition: transform 0.5s ease-out;
+  z-index: -1;
+}
+
+.vinyl-record-wrapper:hover .vinyl-disc {
+  transform: translateX(-25%);
+}
+
+.liquid-glass-modal {
+  background: rgba(10, 10, 20, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
 @keyframes aurora {
   from {
     background-position: 0% 0%;
