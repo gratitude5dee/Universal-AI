@@ -93,7 +93,7 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
               initial="hidden"
               animate="visible"
               variants={textVariants}
-              className="flex-1 text-[13px] font-medium text-shadow-sm"
+              className="flex-1 text-[13px] font-medium text-shadow-sm text-left"
             >
               {item.name}
             </motion.span>
