@@ -442,7 +442,7 @@ const MediaChannels = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white p-4 rounded-xl border border-studio-sand/30">
+          <div className="glass-card p-4 rounded-xl border border-white/10 backdrop-blur-md">
             <h3 className="font-medium mb-2">Press Release</h3>
             <p className="text-sm text-studio-clay mb-3">Official press release for the new album launch (PDF, 2MB)</p>
             <Button variant="outline" size="sm" className="w-full">Download</Button>
