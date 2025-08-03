@@ -52,7 +52,7 @@ export const navItems = [{
   path: "/touring-gigs",
   icon: Calendar
 }, {
-  name: "Distribution",
+  name: "Marketing & Distribution",
   path: "/distribution",
   icon: Share2,
   hasSubmenu: true,
