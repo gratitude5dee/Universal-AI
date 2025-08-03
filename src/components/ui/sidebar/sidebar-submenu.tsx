@@ -213,7 +213,7 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
                       isGlowing={nestedOpenSubmenus[subItem.name]} 
                       glowColor="highlight"
                     />
-                    <span className="text-shadow-sm flex-1">{subItem.name}</span>
+                    <span className="text-shadow-sm flex-1 text-left">{subItem.name}</span>
                     <ChevronRight className={`h-3 w-3 transition-transform duration-200 ${nestedOpenSubmenus[subItem.name] ? 'rotate-90' : ''}`} />
                   </div>
                   <AnimatePresence>
