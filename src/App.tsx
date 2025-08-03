@@ -37,6 +37,7 @@ import WzrdInfiniteLibrary from "./pages/wzrd/WzrdInfiniteLibrary";
 import WzrdCompanions from "./pages/wzrd/WzrdCompanions";
 import OnboardingPage from "./pages/Onboarding";
 import AuthPage from "./pages/Auth";
+import Touring from "./pages/Touring";
 
 // Conditionally import Crossmint only if we have a valid API key
 import { CrossmintProvider, CrossmintAuthProvider } from "@crossmint/client-sdk-react-ui";
@@ -125,6 +126,9 @@ function AppContent({ bypassAuth = false }: { bypassAuth?: boolean }) {
             <Route path="/wzrd/podcasts" element={bypassAuth ? <WzrdPodcasts /> : <ProtectedRoute><WzrdPodcasts /></ProtectedRoute>} />
             <Route path="/wzrd/infinite-library" element={bypassAuth ? <WzrdInfiniteLibrary /> : <ProtectedRoute><WzrdInfiniteLibrary /></ProtectedRoute>} />
             <Route path="/wzrd/companions" element={bypassAuth ? <WzrdCompanions /> : <ProtectedRoute><WzrdCompanions /></ProtectedRoute>} />
+            
+            {/* Touring route */}
+            <Route path="/touring" element={bypassAuth ? <Touring /> : <ProtectedRoute><Touring /></ProtectedRoute>} />
             
             {/* 404 */}
             <Route path="*" element={<NotFound />} />

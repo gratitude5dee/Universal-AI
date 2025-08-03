@@ -49,16 +49,8 @@ export const navItems = [{
   ]
 }, {
   name: "Touring",
-  path: "#",
-  icon: Calendar,
-  hasSubmenu: true,
-  submenuItems: [
-    {
-      name: "Gigs",
-      path: "/touring-gigs",
-      icon: Calendar
-    }
-  ]
+  path: "/touring",
+  icon: Calendar
 }, {
   name: "Marketing & Distribution",
   path: "/distribution",
