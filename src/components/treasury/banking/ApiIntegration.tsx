@@ -18,7 +18,7 @@ const ApiIntegration: React.FC = () => {
         </div>
         
         <div className="space-y-4">
-          <div className="p-4 bg-white rounded-lg border border-studio-sand/20">
+          <div className="p-4 glass-card border border-white/10 backdrop-blur-md rounded-lg">
             <div className="flex items-center justify-between mb-3">
               <div>
                 <h4 className="font-medium">Live API Key</h4>
@@ -43,7 +43,7 @@ const ApiIntegration: React.FC = () => {
             </div>
           </div>
           
-          <div className="p-4 bg-white rounded-lg border border-studio-sand/20">
+          <div className="p-4 glass-card border border-white/10 backdrop-blur-md rounded-lg">
             <div className="flex items-center justify-between mb-3">
               <div>
                 <h4 className="font-medium">Test API Key</h4>
@@ -77,7 +77,7 @@ const ApiIntegration: React.FC = () => {
           <div>
             <label className="text-sm font-medium block mb-1">Webhook URL</label>
             <div className="flex">
-              <input type="text" className="flex-1 rounded-l-md border border-studio-sand/30 p-2" placeholder="https://your-app.com/webhook" />
+              <input type="text" className="flex-1 rounded-l-md border border-white/10 backdrop-blur-md p-2 glass-card" placeholder="https://your-app.com/webhook" />
               <Button className="rounded-l-none">Save</Button>
             </div>
           </div>
