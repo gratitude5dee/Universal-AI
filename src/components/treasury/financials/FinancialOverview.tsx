@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import StatsCard from '@/components/ui/stats-card';
-import { DollarSign, TrendingUp, TrendingDown, FilePieChart, Mail, Send, Sparkles } from 'lucide-react';
+import { DollarSign, TrendingUp, TrendingDown, FilePieChart } from 'lucide-react';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
-import { Button } from '@/components/ui/button';
+import RealTimeDealsWidget from './RealTimeDealsWidget';
 
 const data = [
   { name: 'Apr', income: 18000, expenses: 12000 },
@@ -33,16 +33,7 @@ const FinancialOverview = () => (
                     </BarChart>
                 </ResponsiveContainer>
             </div>
-            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-lg p-6 flex flex-col">
-                 <h3 className="text-xl font-semibold mb-4 text-white">AI Brand Outreach</h3>
-                 <p className="text-white/70 text-sm mb-4">Launch an AI-powered cold outreach campaign to find brand partnerships.</p>
-                 <div className="space-y-3 mb-4 text-white/80">
-                    <div className="flex items-center gap-2 text-sm"><Sparkles size={16} className="text-cyan-400"/> Identifies brand alignment</div>
-                    <div className="flex items-center gap-2 text-sm"><Mail size={16} className="text-cyan-400"/> Drafts personalized emails</div>
-                    <div className="flex items-center gap-2 text-sm"><Send size={16} className="text-cyan-400"/> Manages follow-ups</div>
-                 </div>
-                 <Button className="mt-auto w-full bg-primary hover:bg-primary/90">Launch Campaign</Button>
-            </div>
+            <RealTimeDealsWidget />
         </div>
     </div>
 );
