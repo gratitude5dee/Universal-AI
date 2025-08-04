@@ -18,7 +18,6 @@ const DistributionLayout = ({ children, title, subtitle }: DistributionLayoutPro
 
   const tabs = [
     { value: "social-media", label: "Social Media WZRD", path: "/distribution/social-media" },
-    { value: "social-tokens", label: "Social Token Launchpad", path: "/distribution/social-tokens" },
     { value: "on-chain", label: "On-Chain Distribution", path: "/distribution/on-chain" },
     { value: "media-channels", label: "Media Channels", path: "/distribution/media-channels" },
     { value: "independent", label: "Independent Channels", path: "/distribution/independent" },
@@ -36,7 +35,7 @@ const DistributionLayout = ({ children, title, subtitle }: DistributionLayoutPro
               const tab = tabs.find(t => t.value === value);
               if (tab) navigate(tab.path);
             }}>
-              <TabsList className="grid grid-cols-2 md:grid-cols-6 w-full bg-transparent">
+              <TabsList className="grid grid-cols-2 md:grid-cols-5 w-full bg-transparent">
                 {tabs.map((tab) => (
                   <TabsTrigger 
                     key={tab.value} 

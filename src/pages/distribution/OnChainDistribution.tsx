@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { 
   Link, ArrowUpDown, Coins, ArrowRight, Settings, 
-  BarChart, Calendar, Plus, Users
+  BarChart, Calendar, Plus, Users, Rocket
 } from "lucide-react";
 import DistributionLayout from "@/layouts/distribution-layout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import PlatformSelector from "@/components/launchpad/PlatformSelector";
+import UnifiedLaunchForm from "@/components/launchpad/UnifiedLaunchForm";
+import { motion } from "framer-motion";
 
 const OnChainDistribution = () => {
-  const [activeTab, setActiveTab] = React.useState("overview");
+  const [activeTab, setActiveTab] = useState("overview");
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [launchpadTab, setLaunchpadTab] = useState("platforms");
 
   // Mock data for token balances
   const tokenBalances = [
@@ -88,140 +93,248 @@ const OnChainDistribution = () => {
           </Button>
         </div>
 
-        {/* Tabs for Active, Completed, Scheduled Campaigns */}
-        <Tabs defaultValue="active" className="w-full">
-          <TabsList className="w-full max-w-md mb-6">
-            <TabsTrigger value="active">Active</TabsTrigger>
-            <TabsTrigger value="completed">Completed</TabsTrigger>
-            <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
+        {/* Main Distribution Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="w-full max-w-2xl mb-6">
+            <TabsTrigger value="overview">Distribution Overview</TabsTrigger>
+            <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
+            <TabsTrigger value="launchpad" className="gap-2">
+              <Rocket className="h-4 w-4" />
+              Social Token Launchpad
+            </TabsTrigger>
           </TabsList>
-          <TabsContent value="active">
-            {distributionCampaigns
-              .filter((campaign) => campaign.status === "Active")
-              .map((campaign) => (
-                <div
-                  key={campaign.id}
-                  className="bg-white/80 rounded-xl p-4 mb-4 border border-studio-sand/30"
-                >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-medium">{campaign.name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {campaign.token} - {campaign.amount} tokens
-                      </p>
-                    </div>
-                    <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">
-                      {campaign.status}
-                    </span>
-                  </div>
-                  <div className="mt-2 flex justify-between items-center">
-                    <p className="text-sm text-muted-foreground">
-                      Recipients: {campaign.recipients}
-                    </p>
-                    <Button variant="link" size="sm">
-                      View Details
-                    </Button>
-                  </div>
+          <TabsContent value="overview" className="space-y-6">
+            {/* Community Engagement Tools */}
+            <div className="glass-card p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold flex items-center">
+                  <Users className="w-5 h-5 mr-2 text-studio-accent" />
+                  Community Engagement
+                </h3>
+                <Button variant="default" size="sm" className="bg-studio-accent gap-1">
+                  <Plus className="h-4 w-4" />
+                  Create Poll
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-white/80 rounded-xl p-4 border border-studio-sand/30">
+                  <h4 className="font-medium mb-2">Token-Gated Content</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Reward token holders with exclusive content and experiences.
+                  </p>
+                  <Button variant="outline" size="sm" className="mt-4">
+                    Create Token Gate
+                  </Button>
                 </div>
-              ))}
+
+                <div className="bg-white/80 rounded-xl p-4 border border-studio-sand/30">
+                  <h4 className="font-medium mb-2">On-Chain Polls</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Gather community feedback and make decisions transparently.
+                  </p>
+                  <Button variant="outline" size="sm" className="mt-4">
+                    Create New Poll
+                  </Button>
+                </div>
+              </div>
+            </div>
           </TabsContent>
-          <TabsContent value="completed">
-            {distributionCampaigns
-              .filter((campaign) => campaign.status === "Completed")
-              .map((campaign) => (
-                <div
-                  key={campaign.id}
-                  className="bg-white/80 rounded-xl p-4 mb-4 border border-studio-sand/30"
-                >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-medium">{campaign.name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {campaign.token} - {campaign.amount} tokens
-                      </p>
+
+          <TabsContent value="campaigns">
+            <Tabs defaultValue="active" className="w-full">
+              <TabsList className="w-full max-w-md mb-6">
+                <TabsTrigger value="active">Active</TabsTrigger>
+                <TabsTrigger value="completed">Completed</TabsTrigger>
+                <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="active">
+                {distributionCampaigns
+                  .filter((campaign) => campaign.status === "Active")
+                  .map((campaign) => (
+                    <div
+                      key={campaign.id}
+                      className="bg-white/80 rounded-xl p-4 mb-4 border border-studio-sand/30"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-medium">{campaign.name}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {campaign.token} - {campaign.amount} tokens
+                          </p>
+                        </div>
+                        <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">
+                          {campaign.status}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex justify-between items-center">
+                        <p className="text-sm text-muted-foreground">
+                          Recipients: {campaign.recipients}
+                        </p>
+                        <Button variant="link" size="sm">
+                          View Details
+                        </Button>
+                      </div>
                     </div>
-                    <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700">
-                      {campaign.status}
-                    </span>
-                  </div>
-                  <div className="mt-2 flex justify-between items-center">
-                    <p className="text-sm text-muted-foreground">
-                      Recipients: {campaign.recipients}
-                    </p>
-                    <Button variant="link" size="sm">
-                      View Details
-                    </Button>
-                  </div>
-                </div>
-              ))}
+                  ))}
+              </TabsContent>
+              
+              <TabsContent value="completed">
+                {distributionCampaigns
+                  .filter((campaign) => campaign.status === "Completed")
+                  .map((campaign) => (
+                    <div
+                      key={campaign.id}
+                      className="bg-white/80 rounded-xl p-4 mb-4 border border-studio-sand/30"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-medium">{campaign.name}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {campaign.token} - {campaign.amount} tokens
+                          </p>
+                        </div>
+                        <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700">
+                          {campaign.status}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex justify-between items-center">
+                        <p className="text-sm text-muted-foreground">
+                          Recipients: {campaign.recipients}
+                        </p>
+                        <Button variant="link" size="sm">
+                          View Details
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+              </TabsContent>
+              
+              <TabsContent value="scheduled">
+                {distributionCampaigns
+                  .filter((campaign) => campaign.status === "Scheduled")
+                  .map((campaign) => (
+                    <div
+                      key={campaign.id}
+                      className="bg-white/80 rounded-xl p-4 mb-4 border border-studio-sand/30"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-medium">{campaign.name}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {campaign.token} - {campaign.amount} tokens
+                          </p>
+                        </div>
+                        <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700">
+                          {campaign.status}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex justify-between items-center">
+                        <p className="text-sm text-muted-foreground">
+                          Recipients: {campaign.recipients}
+                        </p>
+                        <Button variant="link" size="sm">
+                          View Details
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+              </TabsContent>
+            </Tabs>
           </TabsContent>
-          <TabsContent value="scheduled">
-            {distributionCampaigns
-              .filter((campaign) => campaign.status === "Scheduled")
-              .map((campaign) => (
-                <div
-                  key={campaign.id}
-                  className="bg-white/80 rounded-xl p-4 mb-4 border border-studio-sand/30"
-                >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-medium">{campaign.name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {campaign.token} - {campaign.amount} tokens
-                      </p>
-                    </div>
-                    <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700">
-                      {campaign.status}
-                    </span>
-                  </div>
-                  <div className="mt-2 flex justify-between items-center">
-                    <p className="text-sm text-muted-foreground">
-                      Recipients: {campaign.recipients}
-                    </p>
-                    <Button variant="link" size="sm">
-                      View Details
-                    </Button>
-                  </div>
+
+          <TabsContent value="launchpad">
+            <div className="glass-card p-6">
+              <div className="flex items-center mb-6">
+                <Rocket className="w-6 h-6 mr-3 text-studio-accent" />
+                <div>
+                  <h3 className="text-xl font-semibold">Social Token Launchpad</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Create and deploy social tokens across multiple Web3 platforms
+                  </p>
                 </div>
-              ))}
+              </div>
+
+              <Tabs value={launchpadTab} onValueChange={setLaunchpadTab} className="w-full">
+                <TabsList className="bg-white/10 border border-white/20 rounded-lg mb-6">
+                  <TabsTrigger 
+                    value="platforms" 
+                    className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary"
+                  >
+                    1. Select Platforms
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="launch" 
+                    className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary"
+                    disabled={selectedPlatforms.length === 0}
+                  >
+                    2. Configure & Launch
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="manage" 
+                    className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary"
+                  >
+                    3. Manage Tokens
+                  </TabsTrigger>
+                </TabsList>
+
+                <motion.div
+                  key={launchpadTab}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <TabsContent value="platforms" className="mt-0">
+                    <PlatformSelector />
+                    {selectedPlatforms.length > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-6 text-center"
+                      >
+                        <Button
+                          onClick={() => setLaunchpadTab("launch")}
+                          className="bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700"
+                        >
+                          Continue to Launch →
+                        </Button>
+                      </motion.div>
+                    )}
+                  </TabsContent>
+
+                  <TabsContent value="launch" className="mt-0">
+                    <UnifiedLaunchForm 
+                      selectedPlatforms={selectedPlatforms}
+                      onLaunchComplete={() => setLaunchpadTab("manage")}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="manage" className="mt-0">
+                    <div className="glass-card rounded-xl p-12 border border-white/10 backdrop-blur-md text-center">
+                      <div className="text-6xl mb-4">🎉</div>
+                      <h4 className="text-white text-2xl font-bold mb-2">Token Management Dashboard</h4>
+                      <p className="text-white/70 mb-6">
+                        Your tokens have been successfully launched! Access advanced management features here.
+                      </p>
+                      <div className="flex flex-wrap justify-center gap-4">
+                        <Button variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20">
+                          View Analytics
+                        </Button>
+                        <Button variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20">
+                          Manage Community
+                        </Button>
+                        <Button variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20">
+                          Create Rewards
+                        </Button>
+                      </div>
+                    </div>
+                  </TabsContent>
+                </motion.div>
+              </Tabs>
+            </div>
           </TabsContent>
         </Tabs>
-      </div>
-
-      {/* Community Engagement Tools */}
-      <div className="glass-card p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold flex items-center">
-            <Users className="w-5 h-5 mr-2 text-studio-accent" />
-            Community Engagement
-          </h2>
-          <Button variant="default" size="sm" className="bg-studio-accent gap-1">
-            <Plus className="h-4 w-4" />
-            Create Poll
-          </Button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-white/80 rounded-xl p-4 border border-studio-sand/30">
-            <h3 className="font-medium mb-2">Token-Gated Content</h3>
-            <p className="text-sm text-muted-foreground">
-              Reward token holders with exclusive content and experiences.
-            </p>
-            <Button variant="outline" size="sm" className="mt-4">
-              Create Token Gate
-            </Button>
-          </div>
-
-          <div className="bg-white/80 rounded-xl p-4 border border-studio-sand/30">
-            <h3 className="font-medium mb-2">On-Chain Polls</h3>
-            <p className="text-sm text-muted-foreground">
-              Gather community feedback and make decisions transparently.
-            </p>
-            <Button variant="outline" size="sm" className="mt-4">
-              Create New Poll
-            </Button>
-          </div>
-        </div>
       </div>
     </DistributionLayout>
   );
