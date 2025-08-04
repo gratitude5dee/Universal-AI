@@ -19,7 +19,10 @@ import TextNode from './nodes/TextNode';
 import ImageNode from './nodes/ImageNode';
 import TaskNode from './nodes/TaskNode';
 import MoodboardNode from './nodes/MoodboardNode';
+import UserNode from './nodes/UserNode';
+import AINode from './nodes/AINode';
 import CanvasToolbar from './CanvasToolbar';
+import PromptPanel from './PromptPanel';
 import { motion } from 'framer-motion';
 
 const nodeTypes: NodeTypes = {
@@ -27,6 +30,8 @@ const nodeTypes: NodeTypes = {
   image: ImageNode,
   task: TaskNode,
   moodboard: MoodboardNode,
+  user: UserNode,
+  ai: AINode,
 };
 
 interface CreativeCanvasProps {
@@ -38,6 +43,7 @@ const CreativeCanvas: React.FC<CreativeCanvasProps> = ({ boardId, isReadOnly = f
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const { toast } = useToast();
 
   const onConnect = useCallback(
@@ -128,13 +134,49 @@ const CreativeCanvas: React.FC<CreativeCanvasProps> = ({ boardId, isReadOnly = f
       type,
       position: position || { x: Math.random() * 500, y: Math.random() * 500 },
       data: {
-        label: type === 'text' ? 'New Text' : `New ${type}`,
-        content: '',
+        text: type === 'user' ? 'Enter your prompt...' : `New ${type}`,
+        nodeType: type === 'user' ? 'user' : type === 'ai' ? 'ai' : 'system',
       },
     };
 
     setNodes((nds) => [...nds, newNode]);
   }, [setNodes]);
+
+  const updateNode = useCallback((nodeId: string, content: string) => {
+    setNodes((nds) =>
+      nds.map((node) =>
+        node.id === nodeId
+          ? { ...node, data: { ...node.data, text: content } }
+          : node
+      )
+    );
+  }, [setNodes]);
+
+  const addAIResponse = useCallback((parentNodeId: string, response: string) => {
+    const parentNode = nodes.find(n => n.id === parentNodeId);
+    if (!parentNode) return;
+
+    const aiNode: Node = {
+      id: `ai-${Date.now()}`,
+      type: 'ai',
+      position: {
+        x: parentNode.position.x + 50,
+        y: parentNode.position.y + 150,
+      },
+      data: {
+        text: response,
+        nodeType: 'ai',
+        isStreaming: !response,
+      },
+    };
+
+    setNodes((nds) => [...nds, aiNode]);
+    setEdges((eds) => [...eds, {
+      id: `${parentNodeId}-${aiNode.id}`,
+      source: parentNodeId,
+      target: aiNode.id,
+    }]);
+  }, [nodes, setNodes, setEdges]);
 
   if (isLoading) {
     return (
@@ -152,7 +194,18 @@ const CreativeCanvas: React.FC<CreativeCanvasProps> = ({ boardId, isReadOnly = f
       transition={{ duration: 0.5 }}
     >
       {!isReadOnly && (
-        <CanvasToolbar onAddNode={addNode} />
+        <>
+          <CanvasToolbar onAddNode={addNode} />
+          <div className="absolute top-0 right-0 h-full z-10">
+            <PromptPanel
+              selectedNode={selectedNode}
+              nodes={nodes}
+              boardId={boardId}
+              onUpdateNode={updateNode}
+              onAddAIResponse={addAIResponse}
+            />
+          </div>
+        </>
       )}
       
       <ReactFlow
@@ -161,6 +214,7 @@ const CreativeCanvas: React.FC<CreativeCanvasProps> = ({ boardId, isReadOnly = f
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onNodeClick={(_, node) => setSelectedNode(node)}
         nodeTypes={nodeTypes}
         fitView
         className="bg-transparent"
