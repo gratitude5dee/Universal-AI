@@ -177,11 +177,6 @@ export const navItems = [{
       icon: Zap
     },
     {
-      name: "Agent Banking",
-      path: "/treasury?tab=banking",
-      icon: CreditCard
-    },
-    {
       name: "Marketplace",
       path: "/agent-marketplace",
       icon: ShoppingCart
