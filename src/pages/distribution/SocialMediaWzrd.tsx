@@ -16,6 +16,7 @@ import {
   BarChart3
 } from "lucide-react";
 import { format, addMonths, subMonths } from "date-fns";
+import DashboardLayout from "@/layouts/dashboard-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -215,172 +216,174 @@ export default function SocialMediaWzrd() {
   );
 
   return (
-    <div className="p-6">
-      {/* Welcome Header */}
-      <div className="mb-8">
-        <div className="flex items-center mb-2">
-          <Star className="h-6 w-6 text-white mr-3" />
-          <h1 className="text-2xl font-bold text-white">Social Media WZRD</h1>
+    <DashboardLayout>
+      <div className="p-6">
+        {/* Welcome Header */}
+        <div className="mb-8">
+          <div className="flex items-center mb-2">
+            <Star className="h-6 w-6 text-white mr-3" />
+            <h1 className="text-2xl font-bold text-white">Social Media WZRD</h1>
+          </div>
+          <p className="text-blue-lightest/70">AI-powered social media content creation and management</p>
         </div>
-        <p className="text-blue-lightest/70">AI-powered social media content creation and management</p>
-      </div>
 
-      {/* Tab Navigation */}
-      <div className="mb-8">
-        <div className="flex space-x-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg p-1">
-          <div className="px-4 py-2 bg-orange-500 text-white rounded-md text-sm font-medium">
-            Social Media WZRD
-          </div>
-          <div className="px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 rounded-md text-sm font-medium cursor-pointer transition-colors">
-            Social Token Launchpad
-          </div>
-          <div className="px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 rounded-md text-sm font-medium cursor-pointer transition-colors">
-            On-Chain Distribution
-          </div>
-          <div className="px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 rounded-md text-sm font-medium cursor-pointer transition-colors">
-            Media Channels
-          </div>
-          <div className="px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 rounded-md text-sm font-medium cursor-pointer transition-colors">
-            Independent Channels
-          </div>
-          <div className="px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 rounded-md text-sm font-medium cursor-pointer transition-colors">
-            Sync Licensing
-          </div>
-        </div>
-      </div>
-
-      <QuickActions />
-      <PerformanceMetrics />
-
-      {/* Calendar Header */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-6"
-      >
-        <Card className="bg-white/5 backdrop-blur-md border border-white/10">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-4">
-                  <div className="bg-blue-primary/20 p-3 rounded-xl">
-                    <CalendarIcon className="h-8 w-8 text-blue-primary" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-white">
-                      {format(currentDate, 'MMMM yyyy')}
-                    </h2>
-                    <p className="text-blue-lightest/70">Content calendar & strategy</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={navigateToPrevious}
-                    className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={navigateToNext}
-                    className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={navigateToToday}
-                    className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
-                  >
-                    Today
-                  </Button>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-blue-lightest/70">View:</span>
-                  <ToggleGroup
-                    type="single"
-                    value={viewMode}
-                    onValueChange={(value) => value && setViewMode(value as 'month' | 'week')}
-                    className="bg-white/10 backdrop-blur-md border border-white/10 p-1 rounded-xl"
-                  >
-                    <ToggleGroupItem 
-                      value="week" 
-                      className="data-[state=on]:bg-blue-primary data-[state=on]:text-white border-none rounded-lg px-4 py-2 text-sm font-medium text-white/70"
-                    >
-                      Week
-                    </ToggleGroupItem>
-                    <ToggleGroupItem 
-                      value="month"
-                      className="data-[state=on]:bg-blue-primary data-[state=on]:text-white border-none rounded-lg px-4 py-2 text-sm font-medium text-white/70"
-                    >
-                      Month
-                    </ToggleGroupItem>
-                  </ToggleGroup>
-                </div>
-
-                <Button
-                  onClick={() => {
-                    setEditingPost(null);
-                    setIsModalOpen(true);
-                  }}
-                  className="bg-blue-primary hover:bg-blue-primary/80 text-white"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Post
-                </Button>
-              </div>
+        {/* Tab Navigation */}
+        <div className="mb-8">
+          <div className="flex space-x-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg p-1">
+            <div className="px-4 py-2 bg-orange-500 text-white rounded-md text-sm font-medium">
+              Social Media WZRD
             </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+            <div className="px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 rounded-md text-sm font-medium cursor-pointer transition-colors">
+              Social Token Launchpad
+            </div>
+            <div className="px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 rounded-md text-sm font-medium cursor-pointer transition-colors">
+              On-Chain Distribution
+            </div>
+            <div className="px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 rounded-md text-sm font-medium cursor-pointer transition-colors">
+              Media Channels
+            </div>
+            <div className="px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 rounded-md text-sm font-medium cursor-pointer transition-colors">
+              Independent Channels
+            </div>
+            <div className="px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 rounded-md text-sm font-medium cursor-pointer transition-colors">
+              Sync Licensing
+            </div>
+          </div>
+        </div>
 
-      {/* Main Content Area */}
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-        {/* Calendar */}
+        <QuickActions />
+        <PerformanceMetrics />
+
+        {/* Calendar Header */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="xl:col-span-3"
+          className="mb-6"
         >
-          <SocialCalendar
-            posts={posts}
-            currentDate={currentDate}
-            viewMode={viewMode}
-            onPostClick={handlePostClick}
-            onDateClick={handleDateClick}
-          />
+          <Card className="bg-white/5 backdrop-blur-md border border-white/10">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-blue-primary/20 p-3 rounded-xl">
+                      <CalendarIcon className="h-8 w-8 text-blue-primary" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white">
+                        {format(currentDate, 'MMMM yyyy')}
+                      </h2>
+                      <p className="text-blue-lightest/70">Content calendar & strategy</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={navigateToPrevious}
+                      className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={navigateToNext}
+                      className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={navigateToToday}
+                      className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
+                    >
+                      Today
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-blue-lightest/70">View:</span>
+                    <ToggleGroup
+                      type="single"
+                      value={viewMode}
+                      onValueChange={(value) => value && setViewMode(value as 'month' | 'week')}
+                      className="bg-white/10 backdrop-blur-md border border-white/10 p-1 rounded-xl"
+                    >
+                      <ToggleGroupItem 
+                        value="week" 
+                        className="data-[state=on]:bg-blue-primary data-[state=on]:text-white border-none rounded-lg px-4 py-2 text-sm font-medium text-white/70"
+                      >
+                        Week
+                      </ToggleGroupItem>
+                      <ToggleGroupItem 
+                        value="month"
+                        className="data-[state=on]:bg-blue-primary data-[state=on]:text-white border-none rounded-lg px-4 py-2 text-sm font-medium text-white/70"
+                      >
+                        Month
+                      </ToggleGroupItem>
+                    </ToggleGroup>
+                  </div>
+
+                  <Button
+                    onClick={() => {
+                      setEditingPost(null);
+                      setIsModalOpen(true);
+                    }}
+                    className="bg-blue-primary hover:bg-blue-primary/80 text-white"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Post
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </motion.div>
 
-        {/* Hashtag Manager */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="xl:col-span-1"
-        >
-          <HashtagManager onHashtagClick={handleHashtagClick} />
-        </motion.div>
+        {/* Main Content Area */}
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+          {/* Calendar */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="xl:col-span-3"
+          >
+            <SocialCalendar
+              posts={posts}
+              currentDate={currentDate}
+              viewMode={viewMode}
+              onPostClick={handlePostClick}
+              onDateClick={handleDateClick}
+            />
+          </motion.div>
+
+          {/* Hashtag Manager */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="xl:col-span-1"
+          >
+            <HashtagManager onHashtagClick={handleHashtagClick} />
+          </motion.div>
+        </div>
+
+        {/* Create/Edit Post Modal */}
+        <CreatePostModal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setEditingPost(null);
+          }}
+          post={editingPost}
+          onSave={handleSavePost}
+        />
       </div>
-
-      {/* Create/Edit Post Modal */}
-      <CreatePostModal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setEditingPost(null);
-        }}
-        post={editingPost}
-        onSave={handleSavePost}
-      />
-    </div>
+    </DashboardLayout>
   );
 }
