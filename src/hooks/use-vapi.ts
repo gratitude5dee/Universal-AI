@@ -1,22 +1,47 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import Vapi from '@vapi-ai/web';
- 
-const publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY || ""; 
-const assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID || ""; 
+import { supabase } from '@/integrations/supabase/client';
+
+interface VapiConfig {
+  publicKey: string;
+  assistantId: string;
+}
  
 const useVapi = () => {
   const [volumeLevel, setVolumeLevel] = useState(0);
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [conversation, setConversation] = useState<{ role: string, text: string }[]>([]);
+  const [vapiConfig, setVapiConfig] = useState<VapiConfig | null>(null);
   const vapiRef = useRef<any>(null);
+
+  // Fetch VAPI configuration securely from backend
+  useEffect(() => {
+    const fetchVapiConfig = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+
+        const { data, error } = await supabase.functions.invoke('get-vapi-config');
+        if (error) {
+          console.error('Failed to fetch VAPI config:', error);
+          return;
+        }
+        setVapiConfig(data);
+      } catch (error) {
+        console.error('Error fetching VAPI config:', error);
+      }
+    };
+    
+    fetchVapiConfig();
+  }, []);
  
   const initializeVapi = useCallback(() => {
-    if (!publicKey || !assistantId) {
-        console.warn("Vapi public key or assistant ID is not set in environment variables.");
+    if (!vapiConfig?.publicKey || !vapiConfig?.assistantId) {
+        console.warn("Vapi configuration not available.");
         return;
     }
     if (!vapiRef.current) {
-      const vapiInstance = new Vapi(publicKey);
+      const vapiInstance = new Vapi(vapiConfig.publicKey);
       vapiRef.current = vapiInstance;
  
       vapiInstance.on('call-start', () => {
@@ -46,7 +71,7 @@ const useVapi = () => {
         setIsSessionActive(false);
       });
     }
-  }, []);
+  }, [vapiConfig]);
  
   useEffect(() => {
     initializeVapi();
@@ -68,7 +93,7 @@ const useVapi = () => {
       if (isSessionActive) {
         await vapiRef.current.stop();
       } else {
-        await vapiRef.current.start(assistantId);
+        await vapiRef.current.start(vapiConfig?.assistantId);
       }
     } catch (err) {
       console.error('Error toggling Vapi session:', err);

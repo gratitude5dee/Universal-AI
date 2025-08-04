@@ -1037,55 +1037,46 @@ export type Database = {
         Row: {
           ai_preferences: Json | null
           avatar_url: string | null
-          claude_api_key: string | null
           connected_accounts: Json | null
           created_at: string
           id: string
           last_wallet_connection: string | null
-          luma_api_key: string | null
           onboarding_completed: boolean
           personality_type: string | null
           updated_at: string
           uploaded_files: Json | null
           username: string | null
           wallet_address: string | null
-          wallet_auth_token: string | null
           wallet_type: string | null
         }
         Insert: {
           ai_preferences?: Json | null
           avatar_url?: string | null
-          claude_api_key?: string | null
           connected_accounts?: Json | null
           created_at?: string
           id: string
           last_wallet_connection?: string | null
-          luma_api_key?: string | null
           onboarding_completed?: boolean
           personality_type?: string | null
           updated_at?: string
           uploaded_files?: Json | null
           username?: string | null
           wallet_address?: string | null
-          wallet_auth_token?: string | null
           wallet_type?: string | null
         }
         Update: {
           ai_preferences?: Json | null
           avatar_url?: string | null
-          claude_api_key?: string | null
           connected_accounts?: Json | null
           created_at?: string
           id?: string
           last_wallet_connection?: string | null
-          luma_api_key?: string | null
           onboarding_completed?: boolean
           personality_type?: string | null
           updated_at?: string
           uploaded_files?: Json | null
           username?: string | null
           wallet_address?: string | null
-          wallet_auth_token?: string | null
           wallet_type?: string | null
         }
         Relationships: []
@@ -1619,6 +1610,33 @@ export type Database = {
           total_credits?: number
           updated_at?: string
           used_credits?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_secrets: {
+        Row: {
+          created_at: string
+          encrypted_value: string
+          id: string
+          secret_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          encrypted_value: string
+          id?: string
+          secret_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          encrypted_value?: string
+          id?: string
+          secret_type?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
