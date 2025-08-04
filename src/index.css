@@ -97,6 +97,35 @@
     background: linear-gradient(135deg, rgba(20, 28, 68, 0.3), rgba(10, 15, 39, 0.4));
     border-color: rgba(0, 240, 255, 0.2);
   }
+
+  /* React Flow custom styles */
+  .react-flow__node {
+    @apply !bg-transparent !border-0 !shadow-none !p-0;
+  }
+
+  .react-flow__controls-glass {
+    @apply !bg-white/10 !backdrop-blur-xl !border !border-white/10 !rounded-lg;
+  }
+
+  .react-flow__controls-glass button {
+    @apply !bg-white/10 !border !border-white/20 !text-white hover:!bg-white/20 !transition-all !duration-200;
+  }
+
+  .react-flow__minimap-glass {
+    @apply !bg-white/10 !backdrop-blur-xl !border !border-white/10 !rounded-lg;
+  }
+
+  .react-flow__resize-control.handle {
+    @apply !bg-[#9b87f5] !border-[#9b87f5]/50 !opacity-70 hover:!opacity-100;
+  }
+
+  .react-flow__node-resizer {
+    @apply !border-[#9b87f5]/30;
+  }
+
+  .react-flow__attribution {
+    @apply !hidden;
+  }
   
   /* Card text colors for better readability */
   .card-heading {
