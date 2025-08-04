@@ -105,9 +105,12 @@ const DashboardFlow = () => {
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         connectionMode={ConnectionMode.Loose}
+        snapToGrid={true}
+        snapGrid={[20, 20]}
         fitView
         className="bg-transparent"
         style={{ backgroundColor: 'transparent' }}
+        defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
       >
         <Background 
           color="rgba(255, 255, 255, 0.1)" 
