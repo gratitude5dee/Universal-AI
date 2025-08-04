@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { LogOut } from "lucide-react";
 import SidebarNavItem from "./sidebar-nav-item";
 import SidebarSubmenu from "./sidebar-submenu";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 interface SidebarContentProps {
   navItems: {
     name: string;
@@ -36,6 +37,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   isCollapsed
 }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const currentPath = location.pathname;
   const searchParams = new URLSearchParams(location.search);
   const currentTab = searchParams.get("tab");
@@ -92,6 +94,18 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
       }));
     }
   }, [isCollapsed, navItems, currentPath, currentTab]);
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      toast.success("Successfully logged out!");
+      navigate("/landing");
+    } catch (error: any) {
+      console.error("Logout error:", error);
+      toast.error("Error logging out");
+    }
+  };
   const toggleSubmenu = (name: string, e: React.MouseEvent) => {
     e.preventDefault();
     if (!isCollapsed) {
@@ -167,7 +181,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
         
       <div className="mt-auto pt-3 border-t border-blue-primary/30">
         {/* Log Out button */}
-        <Link to="/logout" className={`flex items-center ${isCollapsed ? 'justify-center' : 'px-3'} py-2.5 text-sm text-blue-lightest hover:bg-blue-primary/30 hover:text-white rounded-lg transition-all duration-200 group`} title={isCollapsed ? "Log Out" : ""}>
+        <button onClick={handleLogout} className={`flex items-center ${isCollapsed ? 'justify-center' : 'px-3'} py-2.5 text-sm text-blue-lightest hover:bg-blue-primary/30 hover:text-white rounded-lg transition-all duration-200 group w-full`} title={isCollapsed ? "Log Out" : ""}>
           <div className={`${isCollapsed ? '' : 'mr-3'} h-5 w-5 text-blue-lighter flex items-center justify-center relative group-hover:text-white transition-colors duration-200`}>
             <LogOut className="h-5 w-5" />
             <span className="absolute inset-0 bg-transparent group-hover:bg-blue-primary/20 rounded-full transition-all duration-300 -z-10"></span>
@@ -175,7 +189,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
           {!isCollapsed && <motion.span initial="collapsed" animate="expanded" variants={textVariants} className="text-[13px] font-medium text-shadow-sm">
               Log Out
             </motion.span>}
-        </Link>
+        </button>
       </div>
     </>;
 };
