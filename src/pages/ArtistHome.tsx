@@ -6,9 +6,10 @@ import Siri from "@/components/vapi/Siri";
 import SuggestedActions from "@/components/home/SuggestedActions";
 import VinylBookshelf from "@/components/library/VinylBookshelf";
 import LiquidGlassModal from "@/components/library/LiquidGlassModal";
+import ChatInterface from "@/components/chat/ChatInterface";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, DollarSign, Activity, ListChecks, TrendingUp, Users, Music, Mic2, Headphones } from "lucide-react";
+import { Calendar, DollarSign, Activity, ListChecks, TrendingUp, Users, Music, Mic2, Headphones, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
 const Home = () => {
@@ -148,10 +149,25 @@ const Home = () => {
                 </div>
               </motion.div>
 
+              {/* Chat Interface */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <div className="glass-card p-6">
+                  <h2 className="text-xl font-medium flex items-center gap-2 mb-4">
+                    <MessageCircle className="text-[#9b87f5]" size={20} />
+                    Artist Assistant Chat
+                  </h2>
+                  <ChatInterface />
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
               >
                 <SuggestedActions />
               </motion.div>
