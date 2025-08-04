@@ -12,6 +12,7 @@ import { FileUploadModal } from "@/components/content/FileUploadModal";
 import { QRScannerModal } from "@/components/content/QRScannerModal";
 import { CreateFolderModal } from "@/components/content/CreateFolderModal";
 import { ContentGrid } from "@/components/content/ContentGrid";
+import { MacOSDesktop } from "@/components/content/MacOSDesktop";
 
 const ContentManager = () => {
   const {
@@ -255,7 +256,12 @@ const ContentManager = () => {
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
             </div>
           ) : (
-            <ContentGrid items={contentItems} onDelete={deleteContentItem} />
+            <MacOSDesktop 
+              items={contentItems} 
+              folders={folders}
+              onDelete={deleteContentItem}
+              onCreateFolder={createFolder}
+            />
           )}
         </Card>
 
