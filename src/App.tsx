@@ -81,10 +81,10 @@ function App() {
               <BrowserRouter>
                 <Routes>
                   {/* Public routes */}
-                  <Route path="/" element={<Index />} />
+                  <Route path="/" element={<FYILanding />} />
                   <Route path="/auth" element={<Auth />} />
+                  <Route path="/sign-in" element={<Index />} />
                   <Route path="/landing" element={<Landing />} />
-                  <Route path="/fyi" element={<FYILanding />} />
                   
                   {/* Protected routes */}
                   <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
