@@ -1,1 +1,10 @@
 project_id = "ixkkrousepsiorwlaycp"
+
+[functions.voice-management]
+verify_jwt = false
+
+[functions.podcast-generator]
+verify_jwt = false
+
+[functions.cerebras-research]
+verify_jwt = false
