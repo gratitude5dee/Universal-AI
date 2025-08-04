@@ -60,7 +60,6 @@ export const navItems = [{
     { name: "Gigs", path: "/event-toolkit/gigs", icon: Calendar },
     { name: "Invoices", path: "/event-toolkit/invoices", icon: FileText },
     { name: "Contacts", path: "/event-toolkit/contacts", icon: Users },
-    { name: "Content", path: "/event-toolkit/content", icon: Music },
     { name: "QR Upload", path: "/event-toolkit/qr-upload", icon: QrCode },
   ]
 }, {
@@ -105,6 +104,11 @@ export const navItems = [{
       name: "Asset Library",
       path: "/gallery",
       icon: NavGalleryIcon
+    },
+    {
+      name: "Content Manager",
+      path: "/event-toolkit/content",
+      icon: Music
     },
     {
       name: "IP Portal",
