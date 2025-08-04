@@ -8,7 +8,7 @@ const VoiceAssistantNode = memo(() => {
   return (
     <>
       <NodeResizer minWidth={350} minHeight={400} />
-      <div className="glass-card p-6 w-full h-full border border-white/10 backdrop-blur-md rounded-lg">
+      <div className="glass-card p-4 w-full h-full border-2 border-white/20 backdrop-blur-xl rounded-3xl overflow-hidden flex flex-col shadow-2xl">
         <h2 className="text-xl font-medium flex items-center gap-2 mb-4">
           <Mic2 className="text-[#9b87f5]" size={20} />
           Artist Voice Assistant

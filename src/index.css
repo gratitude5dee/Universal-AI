@@ -93,9 +93,16 @@
 
 @layer components {
   .glass-card {
-    @apply backdrop-blur-md border rounded-xl shadow-card-glow;
-    background: linear-gradient(135deg, rgba(20, 28, 68, 0.3), rgba(10, 15, 39, 0.4));
-    border-color: rgba(0, 240, 255, 0.2);
+    @apply backdrop-blur-xl border rounded-2xl shadow-2xl;
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.15) 0%, 
+      rgba(255, 255, 255, 0.05) 50%, 
+      rgba(255, 255, 255, 0.02) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 
+      0 8px 32px 0 rgba(31, 38, 135, 0.37),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.1);
   }
 
   /* React Flow custom styles */

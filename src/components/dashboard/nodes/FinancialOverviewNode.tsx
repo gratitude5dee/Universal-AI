@@ -7,7 +7,7 @@ const FinancialOverviewNode = memo(() => {
   return (
     <>
       <NodeResizer minWidth={400} minHeight={350} />
-      <div className="glass-card p-6 w-full h-full border border-white/10 backdrop-blur-md rounded-lg">
+      <div className="glass-card p-6 w-full h-full border-2 border-white/20 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl">
         <h2 className="text-xl font-medium flex items-center gap-2 mb-4">
           <TrendingUp className="text-[#9b87f5]" size={20} />
           Financial Overview
