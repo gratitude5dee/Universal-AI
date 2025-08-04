@@ -158,10 +158,16 @@ const ResearchInterface = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-gradient-to-br from-blue-darker via-blue-dark to-purple-900/80 relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(155,135,245,0.1),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(59,130,246,0.1),transparent_50%)]" />
+    <div className="flex flex-col h-full bg-gradient-to-br from-blue-darker/80 via-purple-900/60 to-blue-dark/90 relative overflow-hidden">
+      {/* Liquid Glass Background Effects */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(155,135,245,0.15),transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(59,130,246,0.12),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[conic-gradient(from_45deg_at_50%_50%,rgba(139,92,246,0.08),transparent_40%,rgba(59,130,246,0.06),transparent_80%)]" />
+      <div className="absolute inset-0 backdrop-blur-[1px] bg-gradient-to-br from-white/[0.02] via-transparent to-white/[0.01]" />
+      
+      {/* Floating Glass Orbs */}
+      <div className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-gradient-to-br from-purple-400/10 to-blue-500/10 backdrop-blur-sm animate-pulse" />
+      <div className="absolute bottom-1/3 right-1/4 w-24 h-24 rounded-full bg-gradient-to-br from-blue-400/8 to-purple-500/8 backdrop-blur-sm animate-pulse" style={{ animationDelay: '2s' }} />
       
       {/* Header */}
       <motion.div 
@@ -177,9 +183,9 @@ const ResearchInterface = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
-                DeepResearch
+                Music Industry DeepResearch
               </h1>
-              <p className="text-white/60 text-sm">Advanced AI-powered research across all your data</p>
+              <p className="text-white/60 text-sm">Expert AI research for music professionals, artists & industry leaders</p>
             </div>
           </div>
           
@@ -216,17 +222,17 @@ const ResearchInterface = () => {
               >
                 <div className="p-6 rounded-3xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 backdrop-blur-sm border border-white/10 mb-6">
                   <Search className="w-12 h-12 text-purple-300 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-white mb-2">Start Your Research</h3>
+                  <h3 className="text-xl font-semibold text-white mb-2">Start Your Music Research</h3>
                   <p className="text-white/60 max-w-md">
-                    Ask any question and I'll research across your apps, personal data, and the internet to provide comprehensive insights.
+                    Ask any music industry question and I'll research across streaming data, market trends, artist insights, and industry intelligence to provide expert analysis.
                   </p>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl">
                   {[
-                    { icon: <Target className="w-5 h-5" />, title: "Market Analysis", desc: "Research market trends and opportunities" },
-                    { icon: <BookOpen className="w-5 h-5" />, title: "Technical Deep Dive", desc: "Explore complex technical topics in detail" },
-                    { icon: <Zap className="w-5 h-5" />, title: "Competitive Intelligence", desc: "Analyze competitors and industry insights" }
+                    { icon: <Target className="w-5 h-5" />, title: "Market Trends", desc: "Analyze streaming trends and genre popularity across platforms" },
+                    { icon: <BookOpen className="w-5 h-5" />, title: "Artist Intelligence", desc: "Research artist careers, collaborations, and industry positioning" },
+                    { icon: <Zap className="w-5 h-5" />, title: "Industry Analytics", desc: "Deep dive into label strategies, revenue streams, and emerging markets" }
                   ].map((suggestion, idx) => (
                     <motion.div
                       key={idx}
@@ -359,7 +365,7 @@ const ResearchInterface = () => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Ask me anything... I'll research across all your data sources"
+            placeholder="Ask about music trends, artist strategies, industry insights, streaming data..."
             className="min-h-[60px] pr-16 bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-purple-400/50 focus:ring-purple-400/20 resize-none"
             disabled={isResearching}
           />
