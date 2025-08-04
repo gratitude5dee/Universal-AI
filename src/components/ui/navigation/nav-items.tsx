@@ -40,7 +40,7 @@ export const navItems = [{
       icon: Headphones
     },
     {
-      name: "Infinite Library",
+      name: "Infinite Canvas",
       path: "/wzrd/infinite-library",
       icon: Infinity
     },
