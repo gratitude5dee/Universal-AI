@@ -100,15 +100,14 @@ const FYILanding = () => {
                 textShadow: '0 0 80px rgba(255, 255, 255, 0.15)'
               }}
             >
-              The ultimate productivity tool for creatives{' '}
-              <span role="img" aria-label="fire">🔥</span>
+              Your Entire Creative Workflow, Unified and Amplified.
             </motion.h1>
             
             <motion.p 
               className="text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed"
               style={{ color: 'var(--text-secondary)' }}
             >
-              Brainstorm, collaborate, and manage your projects from idea to reality. All in one place.
+              From a spark of an idea to a global tour, manage every step of your creative career with an intelligent, all-in-one OS.
             </motion.p>
           </motion.div>
           
@@ -123,37 +122,37 @@ const FYILanding = () => {
 
         {/* Feature Sections */}
         <Section 
-          title="Turn ideas into projects" 
+          title="From Idea to IP: Structure Your Creativity." 
           mockupSrc={featureIdeasToProjects}
-          mockupAlt="Turning an idea into a Formula 1 project"
+          mockupAlt="Turning an idea into a structured project"
         >
-          FYI.AI takes your ideas to the next level by turning them into Projects. Turn dialogue into film treatments, verses into albums, and sketches into business plans. The applications are infinite.
+          FYI.AI transforms your raw ideas into actionable projects. Instantly convert conversations into film treatments, lyrics into album roadmaps, and sketches into business plans.
         </Section>
         
         <Section 
-          title="Stay in the loop" 
+          title="Effortless Collaboration: Centralize Your Comms." 
           mockupSrc={featureInTheLoop}
           mockupAlt="AI summarizing a team chat"
           reverse={true}
         >
-          Add FYI.AI to group chats to summarize conversations, recall key information, and schedule follow-ups. Never lose track of an important decision again.
+          Integrate FYI.AI into your team chats to get automated summaries, track key decisions, and create actionable follow-ups. Never lose a great idea in a long thread again.
         </Section>
         
         <Section 
-          title="Build and present" 
+          title="Professional Project Hubs: Showcase Your Work." 
           mockupSrc={featureBuildProjects}
           mockupAlt="Project gallery view"
         >
-          Organize your work into beautiful project spaces. Store files, manage assets, add team members, and present your work in a whole new way.
+          Organize your work into dynamic project spaces. Consolidate files, manage digital assets, assign tasks to team members, and present your vision with clarity and impact.
         </Section>
 
         <Section 
-          title="Never miss a deadline" 
+          title="Master Your Schedule: The Artist's Calendar." 
           mockupSrc={featureCalendar}
           mockupAlt="Scheduling an event in FYI Calendar"
           reverse={true}
         >
-          Keep track of project deadlines and deliverables with an integrated calendar. Schedule team meetings and launch calls directly from your workspace.
+          Keep every deadline, release date, and tour stop in view with an integrated calendar. Schedule team meetings, studio sessions, and launch events directly from your central workspace.
         </Section>
       </main>
       
