@@ -14,7 +14,7 @@ interface VinylRecordProps {
 const VinylRecord: React.FC<VinylRecordProps> = ({ asset, onSelect }) => {
   return (
     <motion.div
-      className="group relative w-full aspect-[1/1] cursor-pointer mt-[100px]"
+      className="group relative w-full aspect-[1/1] cursor-pointer mt-[50px]"
       whileHover="hover"
       onClick={onSelect}
     >
