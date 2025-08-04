@@ -125,6 +125,8 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
             navigate("/home");
           } else if (item.name === "Agents + Integrations") {
             navigate("/agents-integrations");
+          } else if (item.name === "Marketing & Distribution") {
+            navigate("/marketing-distribution");
           }
         }}
         className="relative block group" 

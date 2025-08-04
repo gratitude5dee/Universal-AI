@@ -65,7 +65,7 @@ export const navItems = [{
   ]
 }, {
   name: "Marketing & Distribution",
-  path: "/distribution",
+  path: "/marketing-distribution",
   icon: Share2,
   hasSubmenu: true,
   submenuItems: [

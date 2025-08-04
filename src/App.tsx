@@ -27,6 +27,7 @@ import SpellcraftContracts from "./pages/SpellcraftContracts";
 import Touring from "./pages/Touring";
 import Integrations from "./pages/Integrations";
 import AgentsIntegrations from "./pages/AgentsIntegrations";
+import MarketingDistribution from "./pages/MarketingDistribution";
 import Landing from "./pages/Landing";
 import FYILanding from "./pages/FYILanding";
 
@@ -93,6 +94,7 @@ function App() {
                   <Route path="/create-agent" element={<CreateAgent />} />
                   <Route path="/integrations" element={<Integrations />} />
                   <Route path="/agents-integrations" element={<AgentsIntegrations />} />
+                  <Route path="/marketing-distribution" element={<MarketingDistribution />} />
                   <Route path="/marketplace-launch" element={<MarketplaceLaunch />} />
                   <Route path="/observability" element={<Observability />} />
                   <Route path="/profile" element={<Profile />} />
