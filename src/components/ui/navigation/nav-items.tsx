@@ -1,3 +1,4 @@
+
 import { 
   NavHomeIcon, NavDashboardIcon, NavBrainIcon, NavGalleryIcon, NavWalletIcon, 
   NavAgentIcon, NavAnalyticsIcon, NavSettingsIcon, NavMarketplaceIcon
@@ -8,7 +9,8 @@ import {
   Palette, BookOpen, Headphones, Infinity, UserRound, Users, Shield, Globe, 
   Database, ShoppingCart, Eye, Building, Trees, ArrowRightLeft, Share2, Link, Tv, 
   User, Music, Landmark, TrendingUp, Droplets, CreditCard, Calendar, UserCircle,
-  Briefcase, LayoutDashboard, FileText, QrCode, UserPlus, Upload, FilePlus, FilePieChart, Home, Banknote
+  Briefcase, LayoutDashboard, FileText, QrCode, UserPlus, Upload, FilePlus, FilePieChart, 
+  Home, Banknote, Zap
 } from "lucide-react";
 
 export const navItems = [{
@@ -168,6 +170,11 @@ export const navItems = [{
           icon: Shield
         }
       ]
+    },
+    {
+      name: "Integrations",
+      path: "/integrations",
+      icon: Zap
     },
     {
       name: "Agent Banking",
