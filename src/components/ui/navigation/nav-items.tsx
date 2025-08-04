@@ -20,17 +20,17 @@ export const navItems = [{
   hasSubmenu: true,
   submenuItems: [
     {
-      name: "Studio",
+      name: "WZRD.Studio",
       path: "/wzrd/studio",
       icon: Palette
     },
     {
-      name: "Library",
+      name: "KNWLG WRKR",
       path: "/wzrd/library",
       icon: BookOpen
     },
     {
-      name: "DeepResearch",
+      name: "IndustryResearch",
       path: "/wzrd/research",
       icon: NavBrainIcon
     },
@@ -45,7 +45,7 @@ export const navItems = [{
       icon: Infinity
     },
     {
-      name: "Companions",
+      name: "Creative Assistants",
       path: "/wzrd/companions",
       icon: UserRound
     }
