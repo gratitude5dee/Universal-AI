@@ -58,7 +58,74 @@ const GenerativePodcastsInterface = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [volume, setVolume] = useState(0.8);
-  const [podcasts, setPodcasts] = useState<Podcast[]>([]);
+  const [podcasts, setPodcasts] = useState<Podcast[]>([
+    {
+      id: 'podcast_1',
+      title: 'The Future of Music AI',
+      description: 'Exploring how artificial intelligence is revolutionizing music creation, from composition to production.',
+      audioContent: 'data:audio/mp3;base64,', // Mock base64 - would contain actual audio
+      duration: 12,
+      generatedAt: '2024-01-15T10:30:00Z',
+      voiceId: 'aria_voice',
+      style: 'conversational',
+      size: 5420000
+    },
+    {
+      id: 'podcast_2', 
+      title: 'Artist Spotlight: Rising Stars in Hip-Hop',
+      description: 'Deep dive into emerging hip-hop artists who are reshaping the genre with innovative sounds and storytelling.',
+      audioContent: 'data:audio/mp3;base64,',
+      duration: 8,
+      generatedAt: '2024-01-14T14:20:00Z',
+      voiceId: 'roger_voice',
+      style: 'storytelling',
+      size: 3680000
+    },
+    {
+      id: 'podcast_3',
+      title: 'Streaming Wars: Platform Analysis 2024',
+      description: 'Comprehensive analysis of major streaming platforms, their strategies, and impact on artist revenues.',
+      audioContent: 'data:audio/mp3;base64,',
+      duration: 15,
+      generatedAt: '2024-01-13T09:15:00Z',
+      voiceId: 'sarah_voice',
+      style: 'news',
+      size: 6890000
+    },
+    {
+      id: 'podcast_4',
+      title: 'Music Production Masterclass',
+      description: 'Essential techniques and tools every music producer should know, from mixing to mastering.',
+      audioContent: 'data:audio/mp3;base64,',
+      duration: 18,
+      generatedAt: '2024-01-12T16:45:00Z',
+      voiceId: 'brian_voice',
+      style: 'educational',
+      size: 8320000
+    },
+    {
+      id: 'podcast_5',
+      title: 'Label Strategies in the Digital Age',
+      description: 'How record labels are adapting their business models for streaming, social media, and direct-to-fan platforms.',
+      audioContent: 'data:audio/mp3;base64,',
+      duration: 10,
+      generatedAt: '2024-01-11T11:30:00Z',
+      voiceId: 'charlie_voice',
+      style: 'conversational',
+      size: 4650000
+    },
+    {
+      id: 'podcast_6',
+      title: 'Global Music Markets: Emerging Trends',
+      description: 'Exploring how different regions are influencing global music trends and discovering new revenue opportunities.',
+      audioContent: 'data:audio/mp3;base64,',
+      duration: 14,
+      generatedAt: '2024-01-10T13:20:00Z',
+      voiceId: 'alice_voice',
+      style: 'news',
+      size: 6120000
+    }
+  ]);
   const [voices, setVoices] = useState<Voice[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isLoadingVoices, setIsLoadingVoices] = useState(true);
