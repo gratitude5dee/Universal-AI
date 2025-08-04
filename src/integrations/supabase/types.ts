@@ -14,6 +14,224 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_runs: {
+        Row: {
+          board_id: string
+          completed_at: string | null
+          created_at: string
+          created_nodes: Json | null
+          error_message: string | null
+          id: string
+          model: string
+          prompt: string
+          response: string | null
+          status: string
+          tokens_used: number | null
+          user_id: string
+        }
+        Insert: {
+          board_id: string
+          completed_at?: string | null
+          created_at?: string
+          created_nodes?: Json | null
+          error_message?: string | null
+          id?: string
+          model?: string
+          prompt: string
+          response?: string | null
+          status?: string
+          tokens_used?: number | null
+          user_id: string
+        }
+        Update: {
+          board_id?: string
+          completed_at?: string | null
+          created_at?: string
+          created_nodes?: Json | null
+          error_message?: string | null
+          id?: string
+          model?: string
+          prompt?: string
+          response?: string | null
+          status?: string
+          tokens_used?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_runs_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      board_collaborators: {
+        Row: {
+          board_id: string
+          created_at: string
+          email: string | null
+          id: string
+          invited_by: string
+          role: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          board_id: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          invited_by: string
+          role?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          board_id?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          invited_by?: string
+          role?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "board_collaborators_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      board_comments: {
+        Row: {
+          board_id: string
+          content: string
+          created_at: string
+          id: string
+          node_id: string | null
+          position_x: number | null
+          position_y: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          board_id: string
+          content: string
+          created_at?: string
+          id?: string
+          node_id?: string | null
+          position_x?: number | null
+          position_y?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          board_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          node_id?: string | null
+          position_x?: number | null
+          position_y?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "board_comments_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      board_shares: {
+        Row: {
+          board_id: string
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          share_id: string
+          title: string
+        }
+        Insert: {
+          board_id: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          share_id: string
+          title: string
+        }
+        Update: {
+          board_id?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          share_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "board_shares_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      boards: {
+        Row: {
+          canvas_data: Json
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean
+          slug: string | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          canvas_data?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          slug?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          canvas_data?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          slug?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       characters: {
         Row: {
           created_at: string | null
@@ -1606,6 +1824,10 @@ export type Database = {
           metadata?: Json
         }
         Returns: boolean
+      }
+      generate_board_slug: {
+        Args: { board_title: string }
+        Returns: string
       }
       get_available_credits: {
         Args: Record<PropertyKey, never>
