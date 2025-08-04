@@ -18,9 +18,9 @@ const DistributionLayout = ({ children, title, subtitle }: DistributionLayoutPro
 
   const tabs = [
     { value: "social-media", label: "Social Media WZRD", path: "/distribution/social-media" },
-    { value: "on-chain", label: "On-Chain Distribution", path: "/distribution/on-chain" },
     { value: "media-channels", label: "Media Channels", path: "/distribution/media-channels" },
     { value: "independent", label: "Independent Channels", path: "/distribution/independent" },
+    { value: "on-chain", label: "On-Chain Distribution", path: "/distribution/on-chain" },
     { value: "sync-licensing", label: "Sync Licensing", path: "/distribution/sync-licensing" },
   ];
 
