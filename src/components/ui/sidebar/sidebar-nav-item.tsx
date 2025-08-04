@@ -123,6 +123,8 @@ const SidebarNavItem: React.FC<NavItemProps> = ({
           e.preventDefault();
           if (item.name === "WZRD.tech") {
             navigate("/home");
+          } else if (item.name === "Agents + Integrations") {
+            navigate("/agents-integrations");
           }
         }}
         className="relative block group" 
