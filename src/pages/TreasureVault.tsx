@@ -11,6 +11,7 @@ import RoyaltyStatements from "@/components/treasury/financials/RoyaltyStatement
 import SplitSheets from "@/components/treasury/financials/SplitSheets";
 import Forecasting from "@/components/treasury/financials/Forecasting";
 import FinancialReports from "@/components/treasury/financials/FinancialReports";
+import MultiChainDashboard from "@/components/treasury/revenue/MultiChainDashboard";
 
 const TreasureVault = () => {
   const location = useLocation();
@@ -20,7 +21,7 @@ const TreasureVault = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const tab = params.get("tab");
-    const validTabs = ["statements", "forecasting", "splits", "reports"];
+    const validTabs = ["statements", "forecasting", "splits", "reports", "multichain"];
     if (tab && validTabs.includes(tab)) {
       setCurrentTab(tab);
     } else {
@@ -54,6 +55,7 @@ const TreasureVault = () => {
             <TabsTrigger value="forecasting" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary">Forecasting</TabsTrigger>
             <TabsTrigger value="splits" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary">Split Sheets</TabsTrigger>
             <TabsTrigger value="reports" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary">Reports</TabsTrigger>
+            <TabsTrigger value="multichain" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary">Multi-Chain Revenue</TabsTrigger>
           </TabsList>
           
           <motion.div
@@ -67,6 +69,7 @@ const TreasureVault = () => {
             <TabsContent value="forecasting"><Forecasting /></TabsContent>
             <TabsContent value="splits"><SplitSheets /></TabsContent>
             <TabsContent value="reports"><FinancialReports /></TabsContent>
+            <TabsContent value="multichain"><MultiChainDashboard /></TabsContent>
           </motion.div>
         </Tabs>
       </Content>
