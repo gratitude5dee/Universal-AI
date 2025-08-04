@@ -2,6 +2,7 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import SocialMediaWzrd from "./SocialMediaWzrd";
+import SocialTokens from "./SocialTokens";
 import OnChainDistribution from "./OnChainDistribution";
 import MediaChannels from "./MediaChannels";
 import IndependentChannels from "./IndependentChannels";
@@ -12,6 +13,7 @@ const Distribution = () => {
     <Routes>
       <Route index element={<Navigate to="/distribution/social-media" replace />} />
       <Route path="social-media" element={<SocialMediaWzrd />} />
+      <Route path="social-tokens" element={<SocialTokens />} />
       <Route path="on-chain" element={<OnChainDistribution />} />
       <Route path="media-channels" element={<MediaChannels />} />
       <Route path="independent" element={<IndependentChannels />} />
