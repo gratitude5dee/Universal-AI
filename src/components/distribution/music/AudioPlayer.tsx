@@ -34,6 +34,13 @@ export const AudioPlayer = ({ trackUrl, title, artist, coverArt }: AudioPlayerPr
     };
   }, []);
 
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.volume = volume[0];
+    }
+  }, [volume]);
+
   const togglePlayPause = () => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -62,38 +69,43 @@ export const AudioPlayer = ({ trackUrl, title, artist, coverArt }: AudioPlayerPr
   };
 
   return (
-    <div className="glass-card p-6 rounded-xl border border-white/10 backdrop-blur-md">
-      <audio ref={audioRef} src={trackUrl} volume={volume[0]} />
+    <div className="glass-card p-6 rounded-xl border border-white/10 backdrop-blur-md bg-gradient-to-br from-white/5 to-white/10">
+      <audio ref={audioRef} src={trackUrl} />
       
-      <div className="flex items-center gap-4 mb-4">
-        {coverArt && (
-          <img src={coverArt} alt={title} className="w-16 h-16 rounded-lg object-cover" />
+      <div className="flex items-center gap-6 mb-6">
+        {coverArt ? (
+          <img src={coverArt} alt={title} className="w-20 h-20 rounded-xl object-cover shadow-lg" />
+        ) : (
+          <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-studio-accent to-blue-500 flex items-center justify-center shadow-lg">
+            <Play className="w-8 h-8 text-white" />
+          </div>
         )}
-        <div>
-          <h4 className="font-semibold text-white">{title}</h4>
-          <p className="text-sm text-white/70">{artist}</p>
+        <div className="flex-1">
+          <h4 className="text-xl font-bold text-white mb-1">{title}</h4>
+          <p className="text-studio-accent font-medium">{artist}</p>
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm">
-            <SkipBack className="h-4 w-4" />
+          <Button variant="ghost" size="sm" className="text-white/60 hover:text-white hover:bg-white/10">
+            <SkipBack className="h-5 w-5" />
           </Button>
           
           <Button 
             onClick={togglePlayPause}
-            className="bg-studio-accent hover:bg-studio-accent/80"
+            size="lg"
+            className="bg-gradient-to-r from-studio-accent to-blue-500 hover:from-studio-accent/90 hover:to-blue-500/90 shadow-xl"
           >
-            {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+            {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
           </Button>
           
-          <Button variant="ghost" size="sm">
-            <SkipForward className="h-4 w-4" />
+          <Button variant="ghost" size="sm" className="text-white/60 hover:text-white hover:bg-white/10">
+            <SkipForward className="h-5 w-5" />
           </Button>
 
-          <div className="flex-1 flex items-center gap-2">
-            <span className="text-xs text-white/60">{formatTime(currentTime)}</span>
+          <div className="flex-1 flex items-center gap-3">
+            <span className="text-sm text-white/70 font-medium min-w-[45px]">{formatTime(currentTime)}</span>
             <Slider
               value={[duration > 0 ? (currentTime / duration) * 100 : 0]}
               onValueChange={handleProgressChange}
@@ -101,33 +113,38 @@ export const AudioPlayer = ({ trackUrl, title, artist, coverArt }: AudioPlayerPr
               step={1}
               className="flex-1"
             />
-            <span className="text-xs text-white/60">{formatTime(duration)}</span>
+            <span className="text-sm text-white/70 font-medium min-w-[45px]">{formatTime(duration)}</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Volume2 className="h-4 w-4 text-white/60" />
+          <div className="flex items-center gap-3">
+            <Volume2 className="h-5 w-5 text-white/60" />
             <Slider
               value={volume}
               onValueChange={setVolume}
               max={1}
               step={0.1}
-              className="w-20"
+              className="w-24"
             />
           </div>
         </div>
 
-        {/* Waveform visualization placeholder */}
-        <div className="h-16 bg-gradient-to-r from-studio-accent/20 to-blue-500/20 rounded-lg flex items-end gap-1 p-2">
-          {Array.from({ length: 40 }).map((_, index) => (
-            <div
-              key={index}
-              className="flex-1 bg-gradient-to-t from-studio-accent to-blue-500 rounded-t opacity-60"
-              style={{ 
-                height: `${Math.random() * 80 + 20}%`,
-                opacity: currentTime > (index / 40) * duration ? 1 : 0.3
-              }}
-            />
-          ))}
+        {/* Enhanced Waveform visualization */}
+        <div className="h-20 bg-gradient-to-r from-studio-accent/10 via-blue-500/10 to-purple-500/10 rounded-xl flex items-end gap-1 p-3 border border-white/5">
+          {Array.from({ length: 60 }).map((_, index) => {
+            const height = Math.random() * 80 + 20;
+            const isActive = currentTime > (index / 60) * duration;
+            return (
+              <div
+                key={index}
+                className={`flex-1 rounded-t transition-all duration-300 ${
+                  isActive 
+                    ? 'bg-gradient-to-t from-studio-accent via-blue-500 to-purple-400 opacity-100 shadow-sm' 
+                    : 'bg-gradient-to-t from-white/20 to-white/10 opacity-40'
+                }`}
+                style={{ height: `${height}%` }}
+              />
+            );
+          })}
         </div>
       </div>
     </div>
