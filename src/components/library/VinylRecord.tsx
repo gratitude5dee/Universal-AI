@@ -18,9 +18,21 @@ const VinylRecord: React.FC<VinylRecordProps> = ({ asset, onSelect }) => {
       whileHover="hover"
       onClick={onSelect}
     >
-      {/* Vinyl Sleeve */}
+      {/* Vinyl Record - Behind the sleeve */}
       <motion.div
-        className="absolute inset-0 bg-gray-800 rounded-lg shadow-lg flex items-center justify-center overflow-hidden border-2 border-gray-700"
+        className="absolute inset-0 top-[-5px] left-[5px] w-[95%] h-[95%] bg-black rounded-full flex items-center justify-center z-0"
+        variants={{
+          hover: { x: 30, y: -25, rotate: 10 },
+        }}
+        transition={{ type: "spring", stiffness: 300, damping: 15 }}
+      >
+        <div className="w-[30%] h-[30%] rounded-full" style={{ backgroundImage: `url(${asset.image})`, backgroundSize: 'cover' }}/>
+        <div className="absolute inset-0 bg-[radial-gradient(circle,transparent_30%,rgba(0,0,0,0.3)_70%)] opacity-20" />
+      </motion.div>
+
+      {/* Vinyl Sleeve - In front of the record */}
+      <motion.div
+        className="absolute inset-0 bg-gray-800 rounded-lg shadow-lg flex items-center justify-center overflow-hidden border-2 border-gray-700 z-10"
         variants={{
           hover: { y: -20, rotate: -3 },
         }}
@@ -32,18 +44,6 @@ const VinylRecord: React.FC<VinylRecordProps> = ({ asset, onSelect }) => {
           <h3 className="font-bold text-lg text-shadow-md">{asset.title}</h3>
           <p className="text-sm opacity-80 text-shadow-sm">{asset.artist}</p>
         </div>
-      </motion.div>
-      
-      {/* Vinyl Record */}
-      <motion.div
-        className="absolute inset-0 top-[-5px] left-[5px] w-[95%] h-[95%] bg-black rounded-full flex items-center justify-center"
-        variants={{
-          hover: { x: 30, y: -25, rotate: 10 },
-        }}
-        transition={{ type: "spring", stiffness: 300, damping: 15 }}
-      >
-        <div className="w-[30%] h-[30%] rounded-full" style={{ backgroundImage: `url(${asset.image})`, backgroundSize: 'cover' }}/>
-        <div className="absolute inset-0 bg-[radial-gradient(circle,transparent_30%,rgba(0,0,0,0.3)_70%)] opacity-20" />
       </motion.div>
     </motion.div>
   );
