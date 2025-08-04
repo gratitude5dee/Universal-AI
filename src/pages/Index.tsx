@@ -20,13 +20,8 @@ export default function Index() {
 
   const handleLogin = async () => {
     try {
-      // Check if login function exists (it will be undefined if Crossmint isn't properly configured)
-      if (login) {
-        await login();
-      } else {
-        // If Crossmint is not available, just navigate to home
-        navigate("/home");
-      }
+      // Navigate to auth page for Supabase authentication
+      navigate("/auth");
     } catch (error) {
       console.error("Login error:", error);
     }
@@ -51,7 +46,7 @@ export default function Index() {
       
       <div className="max-w-md w-full space-y-8 glass-card p-8 rounded-xl border border-white/10 relative z-10">
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-2 highlight-text">WZRD Studio</h1>
+          <h1 className="text-4xl font-bold mb-2 highlight-text">MusicOS</h1>
           <p className="text-lg cool-gray-text mb-8">Sign in to access your creative workspace</p>
         </div>
         
@@ -60,7 +55,7 @@ export default function Index() {
             className="w-full bg-futuristic-accent hover:bg-futuristic-accentLighter accent-glow"
             onClick={handleLogin}
           >
-            {login ? "Sign in with Crossmint" : "Continue to App"}
+            Sign In
           </Button>
           
           <div className="relative py-2">
