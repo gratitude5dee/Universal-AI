@@ -29,13 +29,20 @@ const WzrdInfiniteLibrary = () => {
 
     setIsCreating(true);
     try {
-      const { data: userData } = await supabase.auth.getUser();
+      console.log('Creating new canvas...');
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !userData.user) {
+        throw new Error('User not authenticated');
+      }
+
+      console.log('User authenticated:', userData.user.id);
       const { data, error } = await supabase
         .from('boards')
         .insert({
           title: newBoardTitle.trim(),
           description: 'Creative Canvas workspace',
-          user_id: userData.user?.id!,
+          user_id: userData.user.id,
           canvas_data: {
             nodes: [],
             edges: [],
@@ -45,8 +52,12 @@ const WzrdInfiniteLibrary = () => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database error:', error);
+        throw error;
+      }
 
+      console.log('Canvas created successfully:', data);
       setCurrentBoardId(data.id);
       setShowCanvas(true);
       setNewBoardTitle('');
@@ -56,9 +67,10 @@ const WzrdInfiniteLibrary = () => {
         description: "Your new creative canvas is ready!",
       });
     } catch (error) {
+      console.error('Error creating canvas:', error);
       toast({
         title: "Error creating canvas",
-        description: "Failed to create new canvas",
+        description: error instanceof Error ? error.message : "Failed to create new canvas",
         variant: "destructive",
       });
     } finally {

@@ -56,14 +56,19 @@ const CreativeCanvas: React.FC<CreativeCanvasProps> = ({ boardId, isReadOnly = f
 
   const loadCanvasData = async () => {
     try {
+      console.log('Loading canvas data for board:', boardId);
       const { data, error } = await supabase
         .from('boards')
         .select('canvas_data')
         .eq('id', boardId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error loading canvas:', error);
+        throw error;
+      }
 
+      console.log('Canvas data loaded:', data);
       if (data?.canvas_data) {
         const canvasData = data.canvas_data as any;
         setNodes(canvasData.nodes || []);
