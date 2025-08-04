@@ -165,7 +165,7 @@ const FYILanding = () => {
         }}
       >
         <p className="text-sm">
-          © {new Date().getFullYear()} MUSICOS. A UniversalAI Product.
+          © {new Date().getFullYear()} MUSICOS. A UniversalAI powered by 5-Dee Studios Product.
         </p>
       </footer>
     </div>
