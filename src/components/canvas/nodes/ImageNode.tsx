@@ -16,8 +16,8 @@ const ImageNode: React.FC<NodeProps> = ({ data, id }) => {
   }, []);
 
   const handleCancel = useCallback(() => {
-    setImageUrl(data?.imageUrl || '');
-    setAltText(data?.altText || '');
+    setImageUrl(String(data?.imageUrl || ''));
+    setAltText(String(data?.altText || ''));
     setIsEditing(false);
   }, [data?.imageUrl, data?.altText]);
 

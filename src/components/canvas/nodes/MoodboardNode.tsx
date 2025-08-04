@@ -25,8 +25,8 @@ const MoodboardNode: React.FC<NodeProps> = ({ data, id }) => {
   }, []);
 
   const handleCancel = useCallback(() => {
-    setTitle(data?.title || 'Moodboard');
-    setItems(data?.items || []);
+    setTitle(String(data?.title || 'Moodboard'));
+    setItems(Array.isArray(data?.items) ? data.items : []);
     setIsEditing(false);
   }, [data?.title, data?.items]);
 

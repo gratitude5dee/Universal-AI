@@ -24,8 +24,8 @@ const TaskNode: React.FC<NodeProps> = ({ data, id }) => {
   }, []);
 
   const handleCancel = useCallback(() => {
-    setTitle(data?.title || 'Task List');
-    setTasks(data?.tasks || []);
+    setTitle(String(data?.title || 'Task List'));
+    setTasks(Array.isArray(data?.tasks) ? data.tasks : []);
     setIsEditing(false);
   }, [data?.title, data?.tasks]);
 
