@@ -134,7 +134,7 @@ export const navItems = [{
   ]
 }, {
   name: "Agents + Integrations",
-  path: "#",
+  path: "/agents-integrations",
   icon: NavAgentIcon,
   hasSubmenu: true,
   submenuItems: [
