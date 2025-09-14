@@ -126,7 +126,7 @@ const FYILanding = () => {
           mockupSrc={featureIdeasToProjects}
           mockupAlt="Turning an idea into a structured project"
         >
-          FYI.AI transforms your raw ideas into actionable projects. Instantly convert conversations into film treatments, lyrics into album roadmaps, and sketches into business plans.
+          UniversalAI transforms your raw ideas into actionable projects. Instantly convert conversations into film treatments, lyrics into album roadmaps, and sketches into business plans.
         </Section>
         
         <Section 
@@ -135,7 +135,7 @@ const FYILanding = () => {
           mockupAlt="AI summarizing a team chat"
           reverse={true}
         >
-          Integrate FYI.AI into your team chats to get automated summaries, track key decisions, and create actionable follow-ups. Never lose a great idea in a long thread again.
+          Integrate UniversalAI into your team chats to get automated summaries, track key decisions, and create actionable follow-ups. Never lose a great idea in a long thread again.
         </Section>
         
         <Section 
