@@ -119,16 +119,24 @@ const WzrdStudio = () => {
               }}
             >
               <div className="bg-gradient-to-br from-blue-500/15 to-teal-500/15 backdrop-blur-xl rounded-2xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.15)] p-8 relative overflow-hidden h-full">
-                {/* Enhanced noise texture */}
-                <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay" style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                }} />
+                {/* Hero Image with glassmorphism */}
+                <div className="absolute top-4 left-4 right-4 h-32 rounded-xl overflow-hidden group-hover:h-36 transition-all duration-500 ease-out">
+                  <div className="relative w-full h-full">
+                    <img 
+                      src={wzrdStudioInterface} 
+                      alt="WZRD Work Interface" 
+                      className="w-full h-full object-cover rounded-xl opacity-60 group-hover:opacity-80 transition-all duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/10 to-black/40 rounded-xl"></div>
+                    <div className="absolute inset-0 backdrop-blur-[1px] bg-white/5 rounded-xl border border-white/10"></div>
+                  </div>
+                </div>
                 
                 {/* Floating orb effects */}
                 <div className="absolute top-4 right-4 w-20 h-20 rounded-full bg-gradient-to-br from-blue-400/20 to-teal-400/20 blur-xl"></div>
                 <div className="absolute bottom-8 left-6 w-16 h-16 rounded-full bg-gradient-to-br from-cyan-400/15 to-blue-400/15 blur-lg"></div>
                 
-                <div className="relative z-10">
+                <div className="relative z-10 mt-36 group-hover:mt-40 transition-all duration-500">
                   <div className="flex items-center mb-4">
                     <div className="bg-gradient-to-br from-blue-500/30 to-teal-500/30 backdrop-blur-sm p-3 rounded-xl border border-white/20">
                       <Briefcase className="h-6 w-6 text-white/90" />
@@ -165,8 +173,15 @@ const WzrdStudio = () => {
                   </Button>
                 </div>
                 
-                {/* Enhanced reflection effect */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 rounded-2xl"></div>
+                {/* WZRD Work Interface Image */}
+                <div className="absolute inset-0 rounded-2xl overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-500">
+                  <img 
+                    src={wzrdStudioInterface} 
+                    alt="WZRD Work Interface Preview" 
+                    className="w-full h-full object-cover rounded-2xl"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-transparent to-teal-500/20 rounded-2xl"></div>
+                </div>
               </div>
             </motion.div>
             
