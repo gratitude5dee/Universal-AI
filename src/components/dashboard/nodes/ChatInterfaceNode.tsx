@@ -7,19 +7,14 @@ import ChatInterface from '@/components/chat/ChatInterface';
 const ChatInterfaceNode = memo(() => {
   return (
     <>
-      <NodeResizer minWidth={470} minHeight={520} />
-      <div className="glass-card p-6 w-full h-full overflow-hidden flex flex-col relative group">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-violet-500/5 pointer-events-none rounded-[2.5rem]"></div>
-        <div className="relative z-10 flex flex-col h-full">
-          <h2 className="text-2xl font-semibold flex items-center gap-3 mb-6 flex-shrink-0 text-white">
-            <div className="p-2 glass-card-tertiary rounded-2xl">
-              <MessageCircle className="text-indigo-400" size={18} />
-            </div>
-            Assistant Chat
-          </h2>
-          <div className="flex-1 min-h-0 overflow-hidden glass-card-secondary p-4">
-            <ChatInterface />
-          </div>
+      <NodeResizer minWidth={450} minHeight={500} />
+      <div className="glass-card p-4 w-full h-full border-2 border-white/20 backdrop-blur-xl rounded-3xl overflow-hidden flex flex-col shadow-2xl">
+        <h2 className="text-lg font-medium flex items-center gap-2 mb-3 flex-shrink-0">
+          <MessageCircle className="text-[#9b87f5]" size={18} />
+          Artist Assistant Chat
+        </h2>
+        <div className="flex-1 min-h-0 overflow-hidden">
+          <ChatInterface />
         </div>
       </div>
     </>

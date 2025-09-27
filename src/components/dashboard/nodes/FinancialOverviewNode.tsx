@@ -1,80 +1,66 @@
 import React, { memo } from 'react';
 import { Handle, Position, NodeResizer } from '@xyflow/react';
 import { motion } from 'framer-motion';
-import { TrendingUp, DollarSign, Headphones, Disc, BarChart3 } from 'lucide-react';
+import { TrendingUp, Users, Music, Activity } from 'lucide-react';
 
 const FinancialOverviewNode = memo(() => {
   return (
     <>
-      <NodeResizer minWidth={420} minHeight={380} />
-      <Handle type="target" position={Position.Left} />
-      <Handle type="source" position={Position.Right} />
-      <div className="glass-card p-8 w-full h-full overflow-hidden relative group">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-blue-500/5 pointer-events-none rounded-[2.5rem]"></div>
-        <div className="relative z-10">
-          <h2 className="text-2xl font-semibold flex items-center gap-3 mb-6 text-white">
-            <div className="p-2 glass-card-tertiary rounded-2xl">
-              <TrendingUp className="text-emerald-400" size={20} />
+      <NodeResizer minWidth={400} minHeight={350} />
+      <div className="glass-card p-6 w-full h-full border-2 border-white/20 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl">
+        <h2 className="text-xl font-medium flex items-center gap-2 mb-4">
+          <TrendingUp className="text-[#9b87f5]" size={20} />
+          Financial Overview
+        </h2>
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="p-4 glass-card border border-white/10 backdrop-blur-md rounded-lg text-center">
+            <div className="flex items-center justify-center mb-2">
+              <TrendingUp className="h-5 w-5 text-[#9b87f5] mr-2" />
+              <span className="text-2xl font-bold text-studio-charcoal">$12.4k</span>
             </div>
-            Financial Overview
-          </h2>
-          <div className="grid grid-cols-3 gap-4 mb-8">
-            <motion.div 
-              className="glass-card-secondary p-5 text-center group/card"
-              whileHover={{ y: -3, scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            >
-              <div className="p-3 glass-card-tertiary rounded-2xl w-fit mx-auto mb-3 group-hover/card:scale-110 transition-transform duration-200">
-                <DollarSign className="h-5 w-5 text-emerald-400" />
-              </div>
-              <p className="text-xl font-bold text-white mb-1">$12,450</p>
-              <p className="text-sm text-white/70">Monthly Revenue</p>
-            </motion.div>
-            <motion.div 
-              className="glass-card-secondary p-5 text-center group/card"
-              whileHover={{ y: -3, scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            >
-              <div className="p-3 glass-card-tertiary rounded-2xl w-fit mx-auto mb-3 group-hover/card:scale-110 transition-transform duration-200">
-                <Headphones className="h-5 w-5 text-blue-400" />
-              </div>
-              <p className="text-xl font-bold text-white mb-1">89.2K</p>
-              <p className="text-sm text-white/70">Monthly Listeners</p>
-            </motion.div>
-            <motion.div 
-              className="glass-card-secondary p-5 text-center group/card"
-              whileHover={{ y: -3, scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            >
-              <div className="p-3 glass-card-tertiary rounded-2xl w-fit mx-auto mb-3 group-hover/card:scale-110 transition-transform duration-200">
-                <Disc className="h-5 w-5 text-purple-400" />
-              </div>
-              <p className="text-xl font-bold text-white mb-1">7</p>
-              <p className="text-sm text-white/70">Active Releases</p>
-            </motion.div>
+            <p className="text-sm text-studio-clay">Monthly Revenue</p>
           </div>
-          
-          <div className="glass-card-secondary p-6">
-            <h3 className="text-lg font-semibold mb-4 text-white flex items-center gap-3">
-              <div className="p-2 glass-card-tertiary rounded-xl">
-                <BarChart3 className="h-4 w-4 text-purple-400" />
-              </div>
+          <div className="p-4 glass-card border border-white/10 backdrop-blur-md rounded-lg text-center">
+            <div className="flex items-center justify-center mb-2">
+              <Users className="h-5 w-5 text-[#33C3F0] mr-2" />
+              <span className="text-2xl font-bold text-studio-charcoal">45.2k</span>
+            </div>
+            <p className="text-sm text-studio-clay">Monthly Listeners</p>
+          </div>
+          <div className="p-4 glass-card border border-white/10 backdrop-blur-md rounded-lg text-center">
+            <div className="flex items-center justify-center mb-2">
+              <Music className="h-5 w-5 text-[#F97316] mr-2" />
+              <span className="text-2xl font-bold text-studio-charcoal">23</span>
+            </div>
+            <p className="text-sm text-studio-clay">Active Releases</p>
+          </div>
+        </div>
+        
+        <div className="mt-4 pt-4 border-t border-studio-sand/30">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-sm font-medium flex items-center gap-1.5">
+              <Activity size={14} className="text-[#9b87f5]" />
               Streaming Analytics
             </h3>
-            <div className="flex items-end gap-3 h-24 mb-4">
-              {[65, 45, 78, 89, 56, 92, 67].map((height, i) => (
-                <motion.div
-                  key={i}
-                  className="bg-gradient-to-t from-purple-500 to-blue-400 flex-1 rounded-t-xl"
-                  style={{ height: `${height}%` }}
-                  initial={{ height: 0 }}
-                  animate={{ height: `${height}%` }}
-                  transition={{ delay: i * 0.1, duration: 0.8, type: "spring" }}
-                  whileHover={{ scale: 1.05 }}
-                />
+            <span className="text-xs text-green-500">↗ +12.3%</span>
+          </div>
+          <div className="p-4 glass-card border border-white/10 backdrop-blur-md rounded-lg">
+            <div className="flex items-end h-16 gap-1">
+              {[45, 52, 38, 61, 73, 67, 81].map((value, index) => (
+                <div key={index} className="flex-1 bg-gradient-to-t from-[#9b87f5]/60 to-[#9b87f5]/20 rounded-t" 
+                     style={{ height: `${(value / 81) * 100}%` }}>
+                </div>
               ))}
             </div>
-            <p className="text-sm text-white/80 font-medium">Daily Activity • <span className="text-emerald-400">+12.5%</span> this week</p>
+            <div className="flex justify-between text-xs text-studio-clay mt-2">
+              <span>Mon</span>
+              <span>Tue</span>
+              <span>Wed</span>
+              <span>Thu</span>
+              <span>Fri</span>
+              <span>Sat</span>
+              <span>Sun</span>
+            </div>
           </div>
         </div>
       </div>

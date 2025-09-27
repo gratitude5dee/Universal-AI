@@ -6,12 +6,9 @@ import Greeting from '@/components/ui/greeting';
 const GreetingNode = memo(() => {
   return (
     <>
-      <NodeResizer minWidth={350} minHeight={140} />
-      <div className="glass-card p-8 w-full h-full overflow-hidden relative group">
-        <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/2 pointer-events-none rounded-[2.5rem]"></div>
-        <div className="relative z-10">
-          <Greeting />
-        </div>
+      <NodeResizer minWidth={300} minHeight={120} />
+      <div className="glass-card p-6 w-full h-full border-2 border-white/20 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl">
+        <Greeting />
       </div>
     </>
   );

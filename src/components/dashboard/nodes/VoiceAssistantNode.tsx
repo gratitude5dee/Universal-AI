@@ -7,52 +7,42 @@ import Siri from '@/components/vapi/Siri';
 const VoiceAssistantNode = memo(() => {
   return (
     <>
-      <NodeResizer minWidth={370} minHeight={420} />
-      <div className="glass-card p-6 w-full h-full overflow-hidden flex flex-col relative group">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-cyan-500/5 pointer-events-none rounded-[2.5rem]"></div>
-        <div className="relative z-10 flex flex-col h-full">
-          <h2 className="text-2xl font-semibold flex items-center gap-3 mb-6 text-white">
-            <div className="p-2 glass-card-tertiary rounded-2xl">
-              <Mic2 className="text-blue-400" size={20} />
-            </div>
-            Voice Assistant
-          </h2>
-          <div className="flex-1 min-h-0 glass-card-secondary p-4 mb-6">
-            <Siri theme="ios9" />
-          </div>
-          <div className="flex-shrink-0">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-3 text-white">
-              <div className="p-1.5 glass-card-tertiary rounded-xl">
-                <Headphones size={14} className="text-cyan-400" />
-              </div>
-              Active Integrations
-            </h3>
-            <div className="space-y-3">
-              <motion.div 
-                className="glass-card-secondary p-4 flex items-center justify-between group/item"
-                whileHover={{ x: 4, scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 400 }}
-              >
-                <span className="text-white font-medium">✓ Google Calendar</span>
-                <div className="w-3 h-3 bg-emerald-400 rounded-full shadow-lg shadow-emerald-400/50 group-hover/item:scale-125 transition-transform"></div>
-              </motion.div>
-              <motion.div 
-                className="glass-card-secondary p-4 flex items-center justify-between group/item"
-                whileHover={{ x: 4, scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 400 }}
-              >
-                <span className="text-white font-medium">✓ Travel Apps</span>
-                <div className="w-3 h-3 bg-blue-400 rounded-full shadow-lg shadow-blue-400/50 group-hover/item:scale-125 transition-transform"></div>
-              </motion.div>
-              <motion.div 
-                className="glass-card-secondary p-4 flex items-center justify-between group/item"
-                whileHover={{ x: 4, scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 400 }}
-              >
-                <span className="text-white font-medium">✓ Social Media</span>
-                <div className="w-3 h-3 bg-purple-400 rounded-full shadow-lg shadow-purple-400/50 group-hover/item:scale-125 transition-transform"></div>
-              </motion.div>
-            </div>
+      <NodeResizer minWidth={350} minHeight={400} />
+      <div className="glass-card p-4 w-full h-full border-2 border-white/20 backdrop-blur-xl rounded-3xl overflow-hidden flex flex-col shadow-2xl">
+        <h2 className="text-xl font-medium flex items-center gap-2 mb-4">
+          <Mic2 className="text-[#9b87f5]" size={20} />
+          Artist Voice Assistant
+        </h2>
+        <div className="flex-1 min-h-0">
+          <Siri theme="ios9" />
+        </div>
+        <div className="mt-2 pt-2 border-t border-studio-sand/30 flex-shrink-0">
+          <h3 className="text-xs font-medium mb-2 flex items-center gap-1.5">
+            <Headphones size={12} className="text-[#9b87f5]" />
+            Active Integrations
+          </h3>
+          <div className="space-y-1 max-h-24 overflow-y-auto">
+            <motion.div 
+              className="w-full text-left p-2 flex items-center justify-between rounded-lg glass-card border border-white/10 backdrop-blur-md text-xs"
+              whileHover={{ x: 2 }}
+            >
+              <span>✓ Google Calendar</span>
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            </motion.div>
+            <motion.div 
+              className="w-full text-left p-3 flex items-center justify-between rounded-lg glass-card border border-white/10 backdrop-blur-md text-sm"
+              whileHover={{ x: 3 }}
+            >
+              <span>✓ Travel Apps</span>
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+            </motion.div>
+            <motion.div 
+              className="w-full text-left p-3 flex items-center justify-between rounded-lg glass-card border border-white/10 backdrop-blur-md text-sm"
+              whileHover={{ x: 3 }}
+            >
+              <span>✓ Social Media</span>
+              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+            </motion.div>
           </div>
         </div>
       </div>

@@ -18,24 +18,19 @@ const RecentCreationsNode = memo(() => {
 
   return (
     <>
-      <NodeResizer minWidth={420} minHeight={320} />
-      <div className="glass-card p-8 w-full h-full overflow-hidden relative group">
-        <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 via-transparent to-purple-500/5 pointer-events-none rounded-[2.5rem]"></div>
-        <div className="relative z-10">
-          <h2 className="text-2xl font-semibold flex items-center gap-3 mb-6 text-white">
-            <div className="p-2 glass-card-tertiary rounded-2xl">
-              <Music className="text-pink-400" size={20} />
-            </div>
-            Recent Creations
-          </h2>
-          <VinylBookshelf onRecordSelect={handleRecordSelect} title="" />
-          
-          <LiquidGlassModal 
-            isOpen={!!selectedAsset}
-            asset={selectedAsset}
-            onClose={handleCloseModal}
-          />
-        </div>
+      <NodeResizer minWidth={400} minHeight={300} />
+      <div className="glass-card p-6 w-full h-full border border-white/10 backdrop-blur-md rounded-lg">
+        <h2 className="text-xl font-medium flex items-center gap-2 mb-4">
+          <Music className="text-[#9b87f5]" size={20} />
+          Recent Creations
+        </h2>
+        <VinylBookshelf onRecordSelect={handleRecordSelect} title="" />
+        
+        <LiquidGlassModal 
+          isOpen={!!selectedAsset}
+          asset={selectedAsset}
+          onClose={handleCloseModal}
+        />
       </div>
     </>
   );
