@@ -107,8 +107,8 @@ export default function AuthPage() {
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
                 <Globe className="h-6 w-6 text-white" />
               </div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-primary to-accent bg-clip-text text-transparent">
-                UniversalAI
+              <h1 className="text-4xl font-bold text-white">
+                Welcome to UniversalAI
               </h1>
             </motion.div>
             <motion.p 
