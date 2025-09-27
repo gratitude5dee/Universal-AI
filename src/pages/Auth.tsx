@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Bot, BarChart3, Coins, Users } from "lucide-react";
-import Ambient from "@/components/ui/ambient";
+import { Eye, EyeOff, Bot, BarChart3, Coins, Users, Sparkles, Zap, Globe } from "lucide-react";
+import CosmicShader from "@/components/ui/shaders/CosmicShader";
 import { toast } from "sonner";
 
 export default function AuthPage() {
@@ -88,163 +88,258 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-transparent text-white p-4 relative overflow-hidden">
-      <Ambient showAsciiStreams={true} />
+      <CosmicShader />
+      
+      {/* Background gradient overlay for better readability */}
+      <div className="absolute inset-0 bg-gradient-to-br from-background/20 via-transparent to-background/40 z-0" />
       
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="w-full max-w-md relative z-10"
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="w-full max-w-lg relative z-10"
       >
-        <div className="bg-background/20 backdrop-blur-sm border border-border rounded-lg p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              MusicOS
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              {isLogin ? "Sign in to your account" : "Create your account"}
-            </p>
+        <div className="bg-background/10 backdrop-blur-xl border border-border/30 rounded-2xl p-10 shadow-2xl">
+          <div className="text-center mb-10">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="flex items-center justify-center gap-3 mb-6"
+            >
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                <Globe className="h-6 w-6 text-white" />
+              </div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-primary to-accent bg-clip-text text-transparent">
+                UniversalAI
+              </h1>
+            </motion.div>
+            <motion.p 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="text-muted-foreground text-lg font-medium"
+            >
+              {isLogin ? "Welcome back to the Creator OS" : "Join the Creator OS"}
+            </motion.p>
           </div>
 
-          <form onSubmit={handleAuth} className="space-y-6">
-            <div>
-              <Label htmlFor="email" className="text-white/80">Email</Label>
+          <motion.form 
+            onSubmit={handleAuth} 
+            className="space-y-7"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+          >
+            <motion.div
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.7, duration: 0.5 }}
+            >
+              <Label htmlFor="email" className="text-white/90 font-medium text-sm mb-3 block">
+                Email Address
+              </Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="mt-2 bg-white/10 border-white/20 text-white placeholder:text-white/50"
-                placeholder="Enter your email"
+                className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl backdrop-blur-sm hover:bg-white/10 focus:bg-white/10 transition-all duration-300"
+                placeholder="Enter your email address"
               />
-            </div>
+            </motion.div>
             
-            <div>
-              <Label htmlFor="password" className="text-white/80">Password</Label>
-              <div className="relative mt-2">
+            <motion.div
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.8, duration: 0.5 }}
+            >
+              <Label htmlFor="password" className="text-white/90 font-medium text-sm mb-3 block">
+                Password
+              </Label>
+              <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/50 pr-10"
+                  className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl backdrop-blur-sm hover:bg-white/10 focus:bg-white/10 transition-all duration-300 pr-12"
                   placeholder="Enter your password"
                   minLength={6}
                 />
-                <button
+                <motion.button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white transition-colors duration-200"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
+                </motion.button>
               </div>
-            </div>
+            </motion.div>
             
             {!isLogin && (
-              <div>
-                <Label htmlFor="confirmPassword" className="text-white/80">Confirm Password</Label>
+              <motion.div
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.9, duration: 0.5 }}
+              >
+                <Label htmlFor="confirmPassword" className="text-white/90 font-medium text-sm mb-3 block">
+                  Confirm Password
+                </Label>
                 <Input
                   id="confirmPassword"
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className="mt-2 bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                  className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl backdrop-blur-sm hover:bg-white/10 focus:bg-white/10 transition-all duration-300"
                   placeholder="Confirm your password"
                   minLength={6}
                 />
-              </div>
+              </motion.div>
             )}
             
-            <Button 
-              type="submit"
-              className="w-full bg-accent text-white hover:bg-accent/90 h-12 text-base font-medium"
-              disabled={isLoading}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 1.0, duration: 0.5 }}
             >
-              {isLoading ? "Processing..." : (isLogin ? "Sign In" : "Sign Up")}
-            </Button>
-          </form>
+              <Button 
+                type="submit"
+                className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white h-14 text-base font-semibold rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Processing...
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5" />
+                    {isLogin ? "Enter UniversalAI" : "Create Account"}
+                  </div>
+                )}
+              </Button>
+            </motion.div>
+          </motion.form>
           
-          <div className="text-center mt-4">
+          <motion.div 
+            className="text-center mt-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.1, duration: 0.5 }}
+          >
             <button
               onClick={() => setIsLogin(!isLogin)}
-              className="text-primary hover:text-primary/80 transition-colors text-sm"
+              className="text-primary hover:text-accent transition-colors text-sm font-medium hover:underline"
             >
               {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
             </button>
-          </div>
+          </motion.div>
           
-          <div className="text-center text-sm text-muted-foreground my-4">
-            or continue with
-          </div>
-          
-          <Button
-            onClick={handleGuestAccess}
-            variant="outline"
-            className="w-full h-12 text-base font-medium bg-background/50 border-border hover:bg-background/70"
+          <motion.div 
+            className="flex items-center gap-4 my-8"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.2, duration: 0.5 }}
           >
-            Enter as Guest
-          </Button>
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent to-border" />
+            <span className="text-sm text-muted-foreground font-medium">or continue with</span>
+            <div className="flex-1 h-px bg-gradient-to-l from-transparent to-border" />
+          </motion.div>
+          
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 1.3, duration: 0.5 }}
+          >
+            <Button
+              onClick={handleGuestAccess}
+              variant="outline"
+              className="w-full h-12 text-base font-medium bg-white/5 border-white/20 hover:bg-white/10 text-white rounded-xl backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]"
+            >
+              <div className="flex items-center gap-2">
+                <Zap className="h-5 w-5" />
+                Enter as Guest
+              </div>
+            </Button>
+          </motion.div>
 
           {/* Feature Icons */}
-          <div className="flex justify-center items-center gap-8 mt-8 pt-6 border-t border-border">
+          <motion.div 
+            className="grid grid-cols-4 gap-4 mt-10 pt-8 border-t border-border/30"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.4, duration: 0.6 }}
+          >
             <motion.div
-              className="flex flex-col items-center gap-2 text-center cursor-pointer"
-              whileHover={{ scale: 1.05 }}
+              className="flex flex-col items-center gap-3 text-center cursor-pointer group"
+              whileHover={{ scale: 1.1, y: -2 }}
               whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
-              <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                <Bot className="h-6 w-6 text-primary" />
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center backdrop-blur-sm border border-primary/20 group-hover:border-primary/40 transition-all duration-300">
+                <Bot className="h-7 w-7 text-primary group-hover:text-white transition-colors duration-300" />
               </div>
-              <span className="text-xs text-muted-foreground">AI Agents</span>
+              <span className="text-xs text-muted-foreground font-medium group-hover:text-white transition-colors duration-300">AI Agents</span>
             </motion.div>
 
             <motion.div
-              className="flex flex-col items-center gap-2 text-center cursor-pointer"
-              whileHover={{ scale: 1.05 }}
+              className="flex flex-col items-center gap-3 text-center cursor-pointer group"
+              whileHover={{ scale: 1.1, y: -2 }}
               whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
-              <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
-                <BarChart3 className="h-6 w-6 text-accent" />
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/40 flex items-center justify-center backdrop-blur-sm border border-accent/20 group-hover:border-accent/40 transition-all duration-300">
+                <BarChart3 className="h-7 w-7 text-accent group-hover:text-white transition-colors duration-300" />
               </div>
-              <span className="text-xs text-muted-foreground">Dashboard</span>
+              <span className="text-xs text-muted-foreground font-medium group-hover:text-white transition-colors duration-300">Analytics</span>
             </motion.div>
 
             <motion.div
-              className="flex flex-col items-center gap-2 text-center cursor-pointer"
-              whileHover={{ scale: 1.05 }}
+              className="flex flex-col items-center gap-3 text-center cursor-pointer group"
+              whileHover={{ scale: 1.1, y: -2 }}
               whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
-              <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                <Coins className="h-6 w-6 text-primary" />
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center backdrop-blur-sm border border-primary/20 group-hover:border-primary/40 transition-all duration-300">
+                <Coins className="h-7 w-7 text-primary group-hover:text-white transition-colors duration-300" />
               </div>
-              <span className="text-xs text-muted-foreground">Treasury</span>
+              <span className="text-xs text-muted-foreground font-medium group-hover:text-white transition-colors duration-300">Treasury</span>
             </motion.div>
 
             <motion.div
-              className="flex flex-col items-center gap-2 text-center cursor-pointer"
-              whileHover={{ scale: 1.05 }}
+              className="flex flex-col items-center gap-3 text-center cursor-pointer group"
+              whileHover={{ scale: 1.1, y: -2 }}
               whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
-              <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
-                <Users className="h-6 w-6 text-accent" />
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/40 flex items-center justify-center backdrop-blur-sm border border-accent/20 group-hover:border-accent/40 transition-all duration-300">
+                <Users className="h-7 w-7 text-accent group-hover:text-white transition-colors duration-300" />
               </div>
-              <span className="text-xs text-muted-foreground">Assistants</span>
+              <span className="text-xs text-muted-foreground font-medium group-hover:text-white transition-colors duration-300">Studio</span>
             </motion.div>
-          </div>
+          </motion.div>
 
           {/* Legal Text */}
-          <div className="text-center mt-6 pt-4">
-            <p className="text-xs text-muted-foreground">
+          <motion.div 
+            className="text-center mt-8 pt-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.6, duration: 0.5 }}
+          >
+            <p className="text-xs text-muted-foreground/80 leading-relaxed">
               By signing in, you agree to our{' '}
-              <span className="text-primary hover:underline cursor-pointer">Terms of Service</span>
+              <span className="text-primary hover:text-accent cursor-pointer transition-colors duration-200 hover:underline">Terms of Service</span>
               {' '}and{' '}
-              <span className="text-primary hover:underline cursor-pointer">Privacy Policy</span>
+              <span className="text-primary hover:text-accent cursor-pointer transition-colors duration-200 hover:underline">Privacy Policy</span>
             </p>
-          </div>
+          </motion.div>
         </div>
       </motion.div>
     </div>
