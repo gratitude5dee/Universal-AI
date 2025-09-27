@@ -1,15 +1,16 @@
 import React, { memo } from 'react';
 import { Handle, Position, NodeResizer } from '@xyflow/react';
 import { motion } from 'framer-motion';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import SuggestedActions from '@/components/home/SuggestedActions';
 
 const SuggestedActionsNode = memo(() => {
   return (
     <>
       <NodeResizer minWidth={400} minHeight={250} />
-      <div className="w-full h-full">
+      <ScrollArea className="w-full h-full">
         <SuggestedActions />
-      </div>
+      </ScrollArea>
     </>
   );
 });
