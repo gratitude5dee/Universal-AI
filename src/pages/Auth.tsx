@@ -90,9 +90,6 @@ export default function AuthPage() {
     <div className="min-h-screen flex items-center justify-center bg-transparent text-white p-4 relative overflow-hidden">
       <CosmicShader />
       
-      {/* Background gradient overlay for better readability */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background/5 via-transparent to-background/10 z-0" />
-      
       <motion.div
         initial={{ opacity: 0, y: 30, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
