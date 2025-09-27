@@ -7,58 +7,81 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 const ScheduleCalendarNode = memo(() => {
   return (
     <>
-      <NodeResizer minWidth={350} minHeight={350} />
-      <div className="glass-card p-6 w-full h-full border border-white/10 backdrop-blur-md rounded-lg">
-        <h2 className="text-xl font-medium flex items-center gap-2 mb-4">
-          <Calendar className="text-[#9b87f5]" size={20} />
-          Schedule & Calendar
-        </h2>
-        <Tabs defaultValue="schedule">
-          <TabsList className="grid w-full grid-cols-2 glass-card border border-white/10 backdrop-blur-md">
-            <TabsTrigger value="schedule" className="data-[state=active]:glass-card">Schedule</TabsTrigger>
-            <TabsTrigger value="calendar" className="data-[state=active]:glass-card">Calendar</TabsTrigger>
-          </TabsList>
-          <TabsContent value="schedule">
-            <div className="mt-4 space-y-3">
-              <motion.div 
-                className="flex items-center p-3 glass-card border border-white/10 backdrop-blur-md rounded-lg hover:bg-white/5"
-                whileHover={{ x: 3 }}
-              >
-                <Calendar className="h-4 w-4 text-[#33C3F0] mr-3" />
-                <div>
-                  <p className="text-sm font-medium text-studio-charcoal">Studio Session</p>
-                  <p className="text-xs text-studio-clay">2:00 PM - 5:00 PM</p>
-                </div>
-              </motion.div>
-              <motion.div 
-                className="flex items-center p-3 glass-card border border-white/10 backdrop-blur-md rounded-lg hover:bg-white/5"
-                whileHover={{ x: 3 }}
-              >
-                <Calendar className="h-4 w-4 text-green-500 mr-3" />
-                <div>
-                  <p className="text-sm font-medium text-studio-charcoal">Travel to Denver</p>
-                  <p className="text-xs text-studio-clay">Next Week</p>
-                </div>
-              </motion.div>
-              <motion.div 
-                className="flex items-center p-3 glass-card border border-white/10 backdrop-blur-md rounded-lg hover:bg-white/5"
-                whileHover={{ x: 3 }}
-              >
-                <Calendar className="h-4 w-4 text-[#9b87f5] mr-3" />
-                <div>
-                  <p className="text-sm font-medium text-studio-charcoal">Album Review</p>
-                  <p className="text-xs text-studio-clay">Friday 3:00 PM</p>
-                </div>
-              </motion.div>
+      <NodeResizer minWidth={380} minHeight={380} />
+      <div className="glass-card p-8 w-full h-full overflow-hidden relative group">
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-red-500/5 pointer-events-none rounded-[2.5rem]"></div>
+        <div className="relative z-10">
+          <h2 className="text-2xl font-semibold flex items-center gap-3 mb-6 text-white">
+            <div className="p-2 glass-card-tertiary rounded-2xl">
+              <Calendar className="text-orange-400" size={20} />
             </div>
-          </TabsContent>
-          <TabsContent value="calendar">
-             <div className="mt-4 p-8 glass-card border border-white/10 backdrop-blur-md rounded-lg text-center">
-               <Calendar className="h-12 w-12 text-studio-clay mx-auto mb-4" />
-               <p className="text-sm text-studio-clay">Interactive calendar widget goes here</p>
-             </div>
-          </TabsContent>
-        </Tabs>
+            Schedule & Calendar
+          </h2>
+          <Tabs defaultValue="schedule">
+            <TabsList className="grid w-full grid-cols-2 glass-card-secondary p-1 mb-6">
+              <TabsTrigger value="schedule" className="data-[state=active]:glass-card-tertiary data-[state=active]:text-white rounded-2xl py-3 font-semibold transition-all duration-200">Schedule</TabsTrigger>
+              <TabsTrigger value="calendar" className="data-[state=active]:glass-card-tertiary data-[state=active]:text-white rounded-2xl py-3 font-semibold transition-all duration-200">Calendar</TabsTrigger>
+            </TabsList>
+            <TabsContent value="schedule">
+              <div className="space-y-4">
+                <motion.div 
+                  className="glass-card-secondary p-5 group/item"
+                  whileHover={{ x: 4, scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 400 }}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 glass-card-tertiary rounded-xl group-hover/item:scale-110 transition-transform">
+                      <Calendar className="h-4 w-4 text-blue-400" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-white mb-1">Studio Session</p>
+                      <p className="text-sm text-white/70">2:00 PM - 5:00 PM</p>
+                    </div>
+                  </div>
+                </motion.div>
+                <motion.div 
+                  className="glass-card-secondary p-5 group/item"
+                  whileHover={{ x: 4, scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 400 }}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 glass-card-tertiary rounded-xl group-hover/item:scale-110 transition-transform">
+                      <Calendar className="h-4 w-4 text-emerald-400" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-white mb-1">Travel to Denver</p>
+                      <p className="text-sm text-white/70">Next Week</p>
+                    </div>
+                  </div>
+                </motion.div>
+                <motion.div 
+                  className="glass-card-secondary p-5 group/item"
+                  whileHover={{ x: 4, scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 400 }}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 glass-card-tertiary rounded-xl group-hover/item:scale-110 transition-transform">
+                      <Calendar className="h-4 w-4 text-purple-400" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-white mb-1">Album Review</p>
+                      <p className="text-sm text-white/70">Friday 3:00 PM</p>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </TabsContent>
+            <TabsContent value="calendar">
+              <div className="glass-card-secondary p-8 text-center">
+                <div className="p-4 glass-card-tertiary rounded-3xl w-fit mx-auto mb-6">
+                  <Calendar className="h-12 w-12 text-orange-400" />
+                </div>
+                <p className="text-lg font-semibold text-white mb-2">Interactive Calendar</p>
+                <p className="text-sm text-white/70">Full calendar integration coming soon</p>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </>
   );
