@@ -46,7 +46,7 @@ const WzrdStudio = () => {
                     <span className="inline-block h-3 w-3 rounded-full bg-studio-clay"></span>
                   </div>
                   
-                  <Button variant="outline" className="cursor-interactive bg-white/50 hover:bg-white/70 backdrop-blur-sm border border-white/30 text-blue-darker" onClick={() => window.open("https://wzrdflow.lovable.app", "_blank")}>
+                  <Button variant="outline" className="cursor-interactive bg-white/50 hover:bg-white/70 backdrop-blur-sm border border-white/30 text-blue-darker" onClick={() => window.open("https://wzrdstudio.lovable.app", "_blank")}>
                     <span>Visit WZRD.tech</span>
                     <ExternalLink className="ml-2 h-4 w-4" />
                   </Button>
