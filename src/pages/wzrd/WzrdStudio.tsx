@@ -4,7 +4,7 @@ import { Content } from "@/components/ui/content";
 import { Palette, ExternalLink, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import wzrdStudioInterface from "@/assets/wzrd-studio-interface.jpg";
+import wzrdStudioInterface from "@/assets/wzrd-studio-mockup.jpg";
 const WzrdStudio = () => {
   console.log("Rendering WzrdStudio component");
   return <DashboardLayout>
@@ -92,8 +92,15 @@ const WzrdStudio = () => {
                   </Button>
                 </div>
                 
-                {/* Enhanced reflection effect */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 rounded-2xl"></div>
+                {/* WZRD Studio Interface Image */}
+                <div className="absolute inset-0 rounded-2xl overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-500">
+                  <img 
+                    src={wzrdStudioInterface} 
+                    alt="WZRD Studio Interface Preview" 
+                    className="w-full h-full object-cover rounded-2xl"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-transparent to-pink-500/20 rounded-2xl"></div>
+                </div>
               </div>
             </motion.div>
             
