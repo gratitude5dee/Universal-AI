@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 const ScheduleCalendarNode = memo(() => {
   return (
     <>
-      <NodeResizer minWidth={350} minHeight={500} />
+      <NodeResizer minWidth={350} minHeight={350} />
       <div className="glass-card p-6 w-full h-full border border-white/10 backdrop-blur-md rounded-lg flex flex-col">
         <h2 className="text-xl font-medium flex items-center gap-2 mb-4 flex-shrink-0">
           <Calendar className="text-[#9b87f5]" size={20} />
