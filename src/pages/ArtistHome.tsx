@@ -15,7 +15,7 @@ const Home = () => {
           transition={{ duration: 0.5 }}
         >
           <div className="mb-6">
-            <h1 className="text-3xl font-semibold text-studio-charcoal mb-2">Artist Dashboard</h1>
+            <h1 className="text-3xl font-semibold text-white mb-2">UniversalAI : Creator Dashboard</h1>
             <p className="text-studio-clay">Drag, drop, and resize your dashboard components</p>
           </div>
           
