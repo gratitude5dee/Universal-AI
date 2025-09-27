@@ -86,7 +86,7 @@ const WzrdStudio = () => {
                   <Button 
                     variant="outline" 
                     className="w-full cursor-interactive bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white hover:text-white transition-all duration-300" 
-                    onClick={() => window.open("https://wzrdstudio.lovable.app", "_blank")}
+                    onClick={() => window.open("https://studio.wzrdtech.app", "_blank")}
                   >
                     <span>Launch Studio</span>
                     <ExternalLink className="ml-2 h-4 w-4" />
