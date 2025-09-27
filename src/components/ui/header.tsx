@@ -8,6 +8,7 @@ import { Settings } from "./Settings";
 
 const Header: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const {
     user
   } = useAuth();
@@ -41,7 +42,14 @@ const Header: React.FC = () => {
       }}
     >
       <div className="flex items-center">
-        <Link to="/" className="flex items-center mr-4">
+        <Link 
+          to="/" 
+          className="flex items-center mr-4"
+          onDoubleClick={(e) => {
+            e.preventDefault();
+            navigate("/home");
+          }}
+        >
           <div className="text-lg font-semibold tracking-tight">
             MusicOS<span className="text-studio-accent"></span>
           </div>
