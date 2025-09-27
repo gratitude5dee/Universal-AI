@@ -121,21 +121,21 @@ const RightsManagement = () => {
                     </h3>
                     <div className="space-y-2">
                       <motion.button 
-                        className="w-full text-left p-3 flex items-center justify-between rounded-lg bg-[#F1F0FB] text-sm hover:bg-[#E5DEFF]"
+                        className="w-full text-left p-3 flex items-center justify-between rounded-lg bg-gradient-to-br from-purple-500/10 to-blue-500/10 backdrop-blur-sm border border-white/10 text-sm hover:bg-gradient-to-br hover:from-purple-500/20 hover:to-blue-500/20 transition-all duration-300"
                         whileHover={{ x: 3 }}
                       >
                         <span>Register Copyright</span>
                         <ChevronRight size={16} />
                       </motion.button>
                       <motion.button 
-                        className="w-full text-left p-3 flex items-center justify-between rounded-lg bg-[#F1F0FB] text-sm hover:bg-[#E5DEFF]"
+                        className="w-full text-left p-3 flex items-center justify-between rounded-lg bg-gradient-to-br from-purple-500/10 to-blue-500/10 backdrop-blur-sm border border-white/10 text-sm hover:bg-gradient-to-br hover:from-purple-500/20 hover:to-blue-500/20 transition-all duration-300"
                         whileHover={{ x: 3 }}
                       >
                         <span>Trademark Creation</span>
                         <ChevronRight size={16} />
                       </motion.button>
                       <motion.button 
-                        className="w-full text-left p-3 flex items-center justify-between rounded-lg bg-[#F1F0FB] text-sm hover:bg-[#E5DEFF]"
+                        className="w-full text-left p-3 flex items-center justify-between rounded-lg bg-gradient-to-br from-purple-500/10 to-blue-500/10 backdrop-blur-sm border border-white/10 text-sm hover:bg-gradient-to-br hover:from-purple-500/20 hover:to-blue-500/20 transition-all duration-300"
                         whileHover={{ x: 3 }}
                       >
                         <span>View Smart Contracts</span>
@@ -182,17 +182,17 @@ const RightsManagement = () => {
                     </div>
                     
                     <div className="grid grid-cols-3 gap-3 mt-3">
-                      <div className="p-3 rounded-lg border border-studio-sand/30 text-center">
-                        <p className="text-xs text-studio-clay">Last 30 Days</p>
-                        <p className="text-lg font-medium mt-1">$1,245.80</p>
+                      <div className="p-3 rounded-lg bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm border border-white/10 text-center">
+                        <p className="text-xs text-white/70">Last 30 Days</p>
+                        <p className="text-lg font-medium mt-1 text-white">$1,245.80</p>
                       </div>
-                      <div className="p-3 rounded-lg border border-studio-sand/30 text-center">
-                        <p className="text-xs text-studio-clay">Platforms</p>
-                        <p className="text-lg font-medium mt-1">8</p>
+                      <div className="p-3 rounded-lg bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm border border-white/10 text-center">
+                        <p className="text-xs text-white/70">Platforms</p>
+                        <p className="text-lg font-medium mt-1 text-white">8</p>
                       </div>
-                      <div className="p-3 rounded-lg border border-studio-sand/30 text-center">
-                        <p className="text-xs text-studio-clay">Growth</p>
-                        <p className="text-lg font-medium text-green-500 mt-1">+24%</p>
+                      <div className="p-3 rounded-lg bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm border border-white/10 text-center">
+                        <p className="text-xs text-white/70">Growth</p>
+                        <p className="text-lg font-medium text-green-400 mt-1">+24%</p>
                       </div>
                     </div>
                   </div>
@@ -211,7 +211,7 @@ const RightsManagement = () => {
                   </h2>
                   <div className="space-y-4">
                     <motion.div 
-                      className="p-4 bg-[#F1F0FB] rounded-xl border border-studio-sand flex gap-3 items-center"
+                      className="p-4 bg-gradient-to-br from-purple-500/10 to-blue-500/10 backdrop-blur-sm border border-white/10 rounded-xl flex gap-3 items-center"
                       whileHover={{ scale: 1.02 }}
                       transition={{ type: "spring", stiffness: 400, damping: 10 }}
                     >
@@ -224,7 +224,7 @@ const RightsManagement = () => {
                       </div>
                     </motion.div>
                     
-                    <div className="text-sm text-studio-clay p-3 border border-dashed border-studio-sand/50 rounded-lg">
+                    <div className="text-sm text-white/70 p-3 border border-dashed border-white/20 rounded-lg bg-gradient-to-br from-blue-500/5 to-purple-500/5 backdrop-blur-sm">
                       <p className="mb-2"><strong>License Terms:</strong></p>
                       <ul className="list-disc pl-5 space-y-1">
                         <li>Share — copy and redistribute in any medium or format</li>
@@ -287,23 +287,23 @@ const RightsManagement = () => {
                   <Code className="text-[#9b87f5]" size={20} />
                   Smart Contract Documentation
                 </h2>
-                <div className="p-4 bg-[#F1F0FB] rounded-lg mb-4">
-                  <p className="text-sm text-studio-clay">Smart contracts provide automated enforcement of agreement terms and transparent tracking of all royalty distributions.</p>
+                <div className="p-4 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm border border-white/10 rounded-lg mb-4">
+                  <p className="text-sm text-white/70">Smart contracts provide automated enforcement of agreement terms and transparent tracking of all royalty distributions.</p>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 border border-studio-sand/30 rounded-lg">
-                    <h3 className="font-medium mb-2">Royalty Distribution Contract</h3>
-                    <p className="text-sm text-studio-clay mb-3">Automatically splits revenue between collaborators based on predefined percentages.</p>
+                  <div className="p-4 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm border border-white/10 rounded-lg">
+                    <h3 className="font-medium mb-2 text-white">Royalty Distribution Contract</h3>
+                    <p className="text-sm text-white/70 mb-3">Automatically splits revenue between collaborators based on predefined percentages.</p>
                     <div className="flex gap-2">
                       <Button variant="outline" size="sm" className="text-xs">View Contract</Button>
                       <Button variant="outline" size="sm" className="text-xs">Transaction History</Button>
                     </div>
                   </div>
                   
-                  <div className="p-4 border border-studio-sand/30 rounded-lg">
-                    <h3 className="font-medium mb-2">Rights Management Contract</h3>
-                    <p className="text-sm text-studio-clay mb-3">Maintains a verifiable record of all rights transfers and licensing agreements.</p>
+                  <div className="p-4 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm border border-white/10 rounded-lg">
+                    <h3 className="font-medium mb-2 text-white">Rights Management Contract</h3>
+                    <p className="text-sm text-white/70 mb-3">Maintains a verifiable record of all rights transfers and licensing agreements.</p>
                     <div className="flex gap-2">
                       <Button variant="outline" size="sm" className="text-xs">View Contract</Button>
                       <Button variant="outline" size="sm" className="text-xs">Transfer History</Button>
@@ -349,86 +349,86 @@ const RightsManagement = () => {
                 </h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="p-4 border border-studio-sand/30 rounded-lg text-center">
-                    <h3 className="text-sm font-medium mb-2">Total Revenue</h3>
+                  <div className="p-4 bg-gradient-to-br from-purple-500/10 to-blue-500/10 backdrop-blur-sm border border-white/10 rounded-lg text-center">
+                    <h3 className="text-sm font-medium mb-2 text-white">Total Revenue</h3>
                     <p className="text-3xl font-bold text-[#9b87f5]">$28,456</p>
-                    <p className="text-xs text-studio-clay mt-1">+18% from last quarter</p>
+                    <p className="text-xs text-white/70 mt-1">+18% from last quarter</p>
                   </div>
                   
-                  <div className="p-4 border border-studio-sand/30 rounded-lg text-center">
-                    <h3 className="text-sm font-medium mb-2">Active Licenses</h3>
+                  <div className="p-4 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm border border-white/10 rounded-lg text-center">
+                    <h3 className="text-sm font-medium mb-2 text-white">Active Licenses</h3>
                     <p className="text-3xl font-bold text-[#33C3F0]">12</p>
-                    <p className="text-xs text-studio-clay mt-1">Across 8 territories</p>
+                    <p className="text-xs text-white/70 mt-1">Across 8 territories</p>
                   </div>
                   
-                  <div className="p-4 border border-studio-sand/30 rounded-lg text-center">
-                    <h3 className="text-sm font-medium mb-2">Rights Transfers</h3>
+                  <div className="p-4 bg-gradient-to-br from-orange-500/10 to-red-500/10 backdrop-blur-sm border border-white/10 rounded-lg text-center">
+                    <h3 className="text-sm font-medium mb-2 text-white">Rights Transfers</h3>
                     <p className="text-3xl font-bold text-[#F97316]">3</p>
-                    <p className="text-xs text-studio-clay mt-1">2 pending approvals</p>
+                    <p className="text-xs text-white/70 mt-1">2 pending approvals</p>
                   </div>
                 </div>
                 
-                <div className="p-4 bg-[#F1F0FB] rounded-lg mb-6">
-                  <h3 className="font-medium mb-3">Revenue by Platform</h3>
+                <div className="p-4 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm border border-white/10 rounded-lg mb-6">
+                  <h3 className="font-medium mb-3 text-white">Revenue by Platform</h3>
                   <div className="h-[300px]">
                     {/* This would be a chart in a real implementation */}
                     <div className="w-full h-full flex items-center justify-center">
-                      <p className="text-studio-clay">Platform revenue visualization would appear here</p>
+                      <p className="text-white/70">Platform revenue visualization would appear here</p>
                     </div>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-4 border border-studio-sand/30 rounded-lg">
-                    <h3 className="font-medium mb-3">Usage Rights Activity</h3>
+                  <div className="p-4 bg-gradient-to-br from-green-500/10 to-blue-500/10 backdrop-blur-sm border border-white/10 rounded-lg">
+                    <h3 className="font-medium mb-3 text-white">Usage Rights Activity</h3>
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm">Reproduction Rights</span>
-                        <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                          <div className="h-full bg-green-500" style={{ width: "75%" }}></div>
+                        <span className="text-sm text-white/80">Reproduction Rights</span>
+                        <div className="w-32 h-2 bg-white/20 rounded-full overflow-hidden">
+                          <div className="h-full bg-green-400" style={{ width: "75%" }}></div>
                         </div>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm">Distribution Rights</span>
-                        <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                          <div className="h-full bg-green-500" style={{ width: "90%" }}></div>
+                        <span className="text-sm text-white/80">Distribution Rights</span>
+                        <div className="w-32 h-2 bg-white/20 rounded-full overflow-hidden">
+                          <div className="h-full bg-green-400" style={{ width: "90%" }}></div>
                         </div>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm">Derivative Works</span>
-                        <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                          <div className="h-full bg-amber-500" style={{ width: "40%" }}></div>
+                        <span className="text-sm text-white/80">Derivative Works</span>
+                        <div className="w-32 h-2 bg-white/20 rounded-full overflow-hidden">
+                          <div className="h-full bg-amber-400" style={{ width: "40%" }}></div>
                         </div>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm">Public Performance</span>
-                        <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                          <div className="h-full bg-red-500" style={{ width: "15%" }}></div>
+                        <span className="text-sm text-white/80">Public Performance</span>
+                        <div className="w-32 h-2 bg-white/20 rounded-full overflow-hidden">
+                          <div className="h-full bg-red-400" style={{ width: "15%" }}></div>
                         </div>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="p-4 border border-studio-sand/30 rounded-lg">
-                    <h3 className="font-medium mb-3">Licensing Recommendations</h3>
+                  <div className="p-4 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm border border-white/10 rounded-lg">
+                    <h3 className="font-medium mb-3 text-white">Licensing Recommendations</h3>
                     <ul className="space-y-2">
                       <li className="flex items-start gap-2 text-sm">
                         <div className="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center mt-0.5">
                           <Check size={10} className="text-white" />
                         </div>
-                        <span>Consider expanding to Asian markets based on current engagement trends</span>
+                        <span className="text-white/80">Consider expanding to Asian markets based on current engagement trends</span>
                       </li>
                       <li className="flex items-start gap-2 text-sm">
                         <div className="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center mt-0.5">
                           <Check size={10} className="text-white" />
                         </div>
-                        <span>Your derivative works rights are underutilized - potential for expansion</span>
+                        <span className="text-white/80">Your derivative works rights are underutilized - potential for expansion</span>
                       </li>
                       <li className="flex items-start gap-2 text-sm">
                         <div className="w-4 h-4 rounded-full bg-amber-500 flex items-center justify-center mt-0.5">
                           <AlertTriangle size={10} className="text-white" />
                         </div>
-                        <span>Consider renegotiating distribution terms with Platform X for better rates</span>
+                        <span className="text-white/80">Consider renegotiating distribution terms with Platform X for better rates</span>
                       </li>
                     </ul>
                   </div>
@@ -500,9 +500,9 @@ const RightsManagement = () => {
                 <div className="mt-6 pt-6 border-t border-studio-sand/30">
                   <h3 className="font-medium mb-4">Default Rights Settings</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-4 border border-studio-sand/30 rounded-lg">
-                      <h4 className="text-sm font-medium mb-2">Default License Template</h4>
-                      <select className="w-full p-2 rounded border border-studio-sand/50">
+                    <div className="p-4 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm border border-white/10 rounded-lg">
+                      <h4 className="text-sm font-medium mb-2 text-white">Default License Template</h4>
+                      <select className="w-full p-2 rounded bg-white/10 backdrop-blur-sm border border-white/20 text-white">
                         <option>Creative Commons Attribution</option>
                         <option>Creative Commons Attribution-ShareAlike</option>
                         <option>Creative Commons Non-Commercial</option>
@@ -511,9 +511,9 @@ const RightsManagement = () => {
                       </select>
                     </div>
                     
-                    <div className="p-4 border border-studio-sand/30 rounded-lg">
-                      <h4 className="text-sm font-medium mb-2">Automatic Rights Registration</h4>
-                      <select className="w-full p-2 rounded border border-studio-sand/50">
+                    <div className="p-4 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm border border-white/10 rounded-lg">
+                      <h4 className="text-sm font-medium mb-2 text-white">Automatic Rights Registration</h4>
+                      <select className="w-full p-2 rounded bg-white/10 backdrop-blur-sm border border-white/20 text-white">
                         <option>Register on creation</option>
                         <option>Register on publication</option>
                         <option>Register manually only</option>
@@ -557,7 +557,7 @@ const RightsManagement = () => {
               className={`px-4 py-2 rounded-lg text-sm transition-all ${
                 selectedAsset === asset 
                   ? 'bg-[#9b87f5] text-white' 
-                  : 'bg-white border border-studio-sand hover:border-[#9b87f5]/50'
+                  : 'bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm border border-white/10 text-white hover:border-[#9b87f5]/50'
               }`}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
