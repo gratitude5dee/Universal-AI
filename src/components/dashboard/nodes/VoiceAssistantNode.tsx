@@ -8,7 +8,7 @@ import Siri from '@/components/vapi/Siri';
 const VoiceAssistantNode = memo(() => {
   return (
     <>
-      <NodeResizer minWidth={350} minHeight={400} />
+      <NodeResizer minWidth={350} minHeight={550} />
       <div className="glass-card p-4 w-full h-full border-2 border-white/20 backdrop-blur-xl rounded-3xl flex flex-col shadow-2xl">
         <h2 className="text-xl font-medium flex items-center gap-2 mb-4">
           <Mic2 className="text-[#9b87f5]" size={20} />

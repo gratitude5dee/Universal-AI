@@ -19,7 +19,7 @@ const RecentCreationsNode = memo(() => {
 
   return (
     <>
-      <NodeResizer minWidth={400} minHeight={300} />
+      <NodeResizer minWidth={400} minHeight={450} />
       <div className="glass-card p-6 w-full h-full border border-white/10 backdrop-blur-md rounded-lg flex flex-col">
         <h2 className="text-xl font-medium flex items-center gap-2 mb-4 flex-shrink-0">
           <Music className="text-[#9b87f5]" size={20} />

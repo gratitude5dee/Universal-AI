@@ -8,7 +8,7 @@ import ChatInterface from '@/components/chat/ChatInterface';
 const ChatInterfaceNode = memo(() => {
   return (
     <>
-      <NodeResizer minWidth={450} minHeight={500} />
+      <NodeResizer minWidth={450} minHeight={600} />
       <div className="glass-card p-4 w-full h-full border-2 border-white/20 backdrop-blur-xl rounded-3xl flex flex-col shadow-2xl">
         <h2 className="text-lg font-medium flex items-center gap-2 mb-3 flex-shrink-0">
           <MessageCircle className="text-[#9b87f5]" size={18} />

@@ -7,7 +7,7 @@ import SuggestedActions from '@/components/home/SuggestedActions';
 const SuggestedActionsNode = memo(() => {
   return (
     <>
-      <NodeResizer minWidth={400} minHeight={250} />
+      <NodeResizer minWidth={400} minHeight={400} />
       <ScrollArea className="w-full h-full">
         <SuggestedActions />
       </ScrollArea>

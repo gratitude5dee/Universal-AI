@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 const FinancialOverviewNode = memo(() => {
   return (
     <>
-      <NodeResizer minWidth={400} minHeight={350} />
+      <NodeResizer minWidth={400} minHeight={500} />
       <div className="glass-card p-6 w-full h-full border-2 border-white/20 backdrop-blur-xl rounded-3xl shadow-2xl flex flex-col">
         <h2 className="text-xl font-medium flex items-center gap-2 mb-4 flex-shrink-0">
           <TrendingUp className="text-[#9b87f5]" size={20} />
