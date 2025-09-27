@@ -91,7 +91,7 @@ export default function AuthPage() {
       <CosmicShader />
       
       {/* Background gradient overlay for better readability */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background/20 via-transparent to-background/40 z-0" />
+      <div className="absolute inset-0 bg-gradient-to-br from-background/5 via-transparent to-background/10 z-0" />
       
       <motion.div
         initial={{ opacity: 0, y: 30, scale: 0.95 }}
