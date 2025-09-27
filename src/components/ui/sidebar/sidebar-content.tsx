@@ -148,8 +148,12 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   return <>
       <div className={`mb-8 mt-2 ${isCollapsed ? 'justify-center' : 'px-2'} flex items-center transition-all duration-300`}>
         <motion.div initial={false} animate={isCollapsed ? "collapsed" : "expanded"} variants={logoVariants} className="flex items-center">
-          <div className="relative">
-            <span className="bg-gradient-to-r from-blue-primary/50 to-blue-primary/30 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-300 shadow-[0_0_15px_rgba(59,130,246,0.5)] border border-blue-primary/30">
+          <div 
+            className="relative cursor-pointer" 
+            onClick={() => navigate("/home")}
+            title="Go to Dashboard"
+          >
+            <span className="bg-gradient-to-r from-blue-primary/50 to-blue-primary/30 w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-300 shadow-[0_0_15px_rgba(59,130,246,0.5)] border border-blue-primary/30 hover:shadow-[0_0_20px_rgba(59,130,246,0.7)]">
               <span className="text-blue-lightest font-semibold text-glow-blue text-xl">5</span>
             </span>
             <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-cyan-400 rounded-full shadow-[0_0_8px_rgba(0,240,255,0.8)] border border-white/30"></span>
