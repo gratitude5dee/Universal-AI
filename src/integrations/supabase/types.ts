@@ -2355,6 +2355,7 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: number
+          thumbnail_url: string | null
           title: string
           updated_at: string | null
           url: string
@@ -2364,6 +2365,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: number
+          thumbnail_url?: string | null
           title: string
           updated_at?: string | null
           url: string
@@ -2373,6 +2375,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: number
+          thumbnail_url?: string | null
           title?: string
           updated_at?: string | null
           url?: string
