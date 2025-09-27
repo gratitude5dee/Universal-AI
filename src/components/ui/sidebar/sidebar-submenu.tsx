@@ -112,6 +112,28 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
                           const isNestedActive = nestedBasePathMatch && 
                             (!nestedItem.path.includes("?tab=") || (currentTab && nestedQueryMatch));
 
+                          const isExternalLink = nestedItem.path.startsWith('http');
+                          
+                          if (isExternalLink) {
+                            return (
+                              <a 
+                                key={nestedItem.name}
+                                href={nestedItem.path}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`
+                                  flex items-center px-3 py-2 rounded-lg text-xs transition-all duration-200
+                                  text-blue-lightest hover:bg-cyan-500/10 hover:text-white
+                                `}
+                              >
+                                <nestedItem.icon 
+                                  className="h-3 w-3 mr-2 text-blue-lighter"
+                                />
+                                <span className="text-shadow-sm">{nestedItem.name}</span>
+                              </a>
+                            );
+                          }
+
                           return (
                             <Link 
                               key={nestedItem.name}
@@ -147,22 +169,39 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
                   exit="exit"
                   variants={menuItemVariants}
                 >
-                  <Link 
-                    to={subItem.path} 
-                    className={`
-                      flex items-center px-3 py-2 rounded-lg text-xs transition-all duration-200
-                      ${isSubItemActive 
-                        ? 'bg-cyan-500/20 text-white font-medium' 
-                        : 'text-blue-lightest hover:bg-cyan-500/10 hover:text-white'}
-                    `}
-                  >
-                    <subItem.icon 
-                      className={`h-3.5 w-3.5 mr-2 ${isSubItemActive ? 'text-cyan-400 icon-glow-cyan' : 'text-blue-lighter'}`}
-                      isGlowing={isSubItemActive}
-                      glowColor="highlight" 
-                    />
-                    <span className="text-shadow-sm">{subItem.name}</span>
-                  </Link>
+                  {subItem.path.startsWith('http') ? (
+                    <a 
+                      href={subItem.path}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`
+                        flex items-center px-3 py-2 rounded-lg text-xs transition-all duration-200
+                        text-blue-lightest hover:bg-cyan-500/10 hover:text-white
+                      `}
+                    >
+                      <subItem.icon 
+                        className="h-3.5 w-3.5 mr-2 text-blue-lighter"
+                      />
+                      <span className="text-shadow-sm">{subItem.name}</span>
+                    </a>
+                  ) : (
+                    <Link 
+                      to={subItem.path} 
+                      className={`
+                        flex items-center px-3 py-2 rounded-lg text-xs transition-all duration-200
+                        ${isSubItemActive 
+                          ? 'bg-cyan-500/20 text-white font-medium' 
+                          : 'text-blue-lightest hover:bg-cyan-500/10 hover:text-white'}
+                      `}
+                    >
+                      <subItem.icon 
+                        className={`h-3.5 w-3.5 mr-2 ${isSubItemActive ? 'text-cyan-400 icon-glow-cyan' : 'text-blue-lighter'}`}
+                        isGlowing={isSubItemActive}
+                        glowColor="highlight" 
+                      />
+                      <span className="text-shadow-sm">{subItem.name}</span>
+                    </Link>
+                  )}
                 </motion.div>
               );
             })}
@@ -239,27 +278,44 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
                               animate="visible"
                               variants={menuItemVariants}
                             >
-                              <Link 
-                                to={nestedItem.path} 
-                                className={`
-                                  flex items-center px-3 py-2 rounded-lg text-xs transition-all duration-200 relative group
-                                  ${isNestedActive 
-                                    ? 'bg-cyan-500/30 text-white font-medium' 
-                                    : 'text-blue-lightest hover:bg-cyan-500/10 hover:text-white'}
-                                `}
-                              >
-                                <nestedItem.icon 
-                                  className={`h-3 w-3 mr-2 ${isNestedActive ? 'text-cyan-400 icon-glow-cyan' : 'text-blue-lighter group-hover:text-blue-lightest'}`} 
-                                  isGlowing={isNestedActive} 
-                                  glowColor="highlight"
-                                />
-                                <span className="text-shadow-sm">{nestedItem.name}</span>
-                                
-                                {/* Subtle active indicator */}
-                                {isNestedActive && (
-                                  <span className="absolute right-1 w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_5px_rgba(0,240,255,0.5)]"></span>
-                                )}
-                              </Link>
+                              {nestedItem.path.startsWith('http') ? (
+                                <a 
+                                  href={nestedItem.path}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className={`
+                                    flex items-center px-3 py-2 rounded-lg text-xs transition-all duration-200 relative group
+                                    text-blue-lightest hover:bg-cyan-500/10 hover:text-white
+                                  `}
+                                >
+                                  <nestedItem.icon 
+                                    className="h-3 w-3 mr-2 text-blue-lighter group-hover:text-blue-lightest" 
+                                  />
+                                  <span className="text-shadow-sm">{nestedItem.name}</span>
+                                </a>
+                              ) : (
+                                <Link 
+                                  to={nestedItem.path} 
+                                  className={`
+                                    flex items-center px-3 py-2 rounded-lg text-xs transition-all duration-200 relative group
+                                    ${isNestedActive 
+                                      ? 'bg-cyan-500/30 text-white font-medium' 
+                                      : 'text-blue-lightest hover:bg-cyan-500/10 hover:text-white'}
+                                  `}
+                                >
+                                  <nestedItem.icon 
+                                    className={`h-3 w-3 mr-2 ${isNestedActive ? 'text-cyan-400 icon-glow-cyan' : 'text-blue-lighter group-hover:text-blue-lightest'}`} 
+                                    isGlowing={isNestedActive} 
+                                    glowColor="highlight"
+                                  />
+                                  <span className="text-shadow-sm">{nestedItem.name}</span>
+                                  
+                                  {/* Subtle active indicator */}
+                                  {isNestedActive && (
+                                    <span className="absolute right-1 w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_5px_rgba(0,240,255,0.5)]"></span>
+                                  )}
+                                </Link>
+                              )}
                             </motion.div>
                           );
                         })}
@@ -278,27 +334,44 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
                 animate="visible"
                 variants={menuItemVariants}
               >
-                <Link 
-                  to={subItem.path} 
-                  className={`
-                    flex items-center px-3 py-2 rounded-lg text-xs transition-all duration-200 relative group
-                    ${isSubItemActive 
-                      ? 'bg-cyan-500/20 text-white font-medium' 
-                      : 'text-blue-lightest hover:bg-cyan-500/10 hover:text-white'}
-                  `}
-                >
-                  <subItem.icon 
-                    className={`h-3.5 w-3.5 mr-2 ${isSubItemActive ? 'text-cyan-400 icon-glow-cyan' : 'text-blue-lighter group-hover:text-blue-lightest'}`} 
-                    isGlowing={isSubItemActive} 
-                    glowColor={isSubItemActive ? "highlight" : "highlight"}
-                  />
-                  <span className="text-shadow-sm">{subItem.name}</span>
-                  
-                  {/* Subtle active indicator */}
-                  {isSubItemActive && (
-                    <span className="absolute right-1 w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_5px_rgba(0,240,255,0.5)]"></span>
-                  )}
-                </Link>
+                {subItem.path.startsWith('http') ? (
+                  <a 
+                    href={subItem.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`
+                      flex items-center px-3 py-2 rounded-lg text-xs transition-all duration-200 relative group
+                      text-blue-lightest hover:bg-cyan-500/10 hover:text-white
+                    `}
+                  >
+                    <subItem.icon 
+                      className="h-3.5 w-3.5 mr-2 text-blue-lighter group-hover:text-blue-lightest" 
+                    />
+                    <span className="text-shadow-sm">{subItem.name}</span>
+                  </a>
+                ) : (
+                  <Link 
+                    to={subItem.path} 
+                    className={`
+                      flex items-center px-3 py-2 rounded-lg text-xs transition-all duration-200 relative group
+                      ${isSubItemActive 
+                        ? 'bg-cyan-500/20 text-white font-medium' 
+                        : 'text-blue-lightest hover:bg-cyan-500/10 hover:text-white'}
+                    `}
+                  >
+                    <subItem.icon 
+                      className={`h-3.5 w-3.5 mr-2 ${isSubItemActive ? 'text-cyan-400 icon-glow-cyan' : 'text-blue-lighter group-hover:text-blue-lightest'}`} 
+                      isGlowing={isSubItemActive} 
+                      glowColor={isSubItemActive ? "highlight" : "highlight"}
+                    />
+                    <span className="text-shadow-sm">{subItem.name}</span>
+                    
+                    {/* Subtle active indicator */}
+                    {isSubItemActive && (
+                      <span className="absolute right-1 w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_5px_rgba(0,240,255,0.5)]"></span>
+                    )}
+                  </Link>
+                )}
               </motion.div>
             );
           })}

@@ -90,7 +90,7 @@ export const navItems = [{
     },
     {
       name: "Sync Licensing",
-      path: "/distribution/sync-licensing",
+      path: "https://amerge.lovable.app",
       icon: Music
     }
   ]
