@@ -5,6 +5,7 @@ import { Palette, ExternalLink, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import wzrdStudioInterface from "@/assets/wzrd-studio-mockup.jpg";
+import wzrdWorkInterface from "@/assets/wzrd-work-interface.png";
 const WzrdStudio = () => {
   console.log("Rendering WzrdStudio component");
   return <DashboardLayout>
@@ -123,7 +124,7 @@ const WzrdStudio = () => {
                 <div className="absolute top-4 left-4 right-4 h-32 rounded-xl overflow-hidden group-hover:h-36 transition-all duration-500 ease-out">
                   <div className="relative w-full h-full">
                     <img 
-                      src={wzrdStudioInterface} 
+                      src={wzrdWorkInterface} 
                       alt="WZRD Work Interface" 
                       className="w-full h-full object-cover rounded-xl opacity-60 group-hover:opacity-80 transition-all duration-500"
                     />
@@ -166,7 +167,7 @@ const WzrdStudio = () => {
                   <Button 
                     variant="outline" 
                     className="w-full cursor-interactive bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white hover:text-white transition-all duration-300" 
-                    onClick={() => window.open("https://work.wzrdtech.xyz", "_blank")}
+                    onClick={() => window.open("https://wrk.wzrdtech.xyz", "_blank")}
                   >
                     <span>Launch Work</span>
                     <ExternalLink className="ml-2 h-4 w-4" />
@@ -176,7 +177,7 @@ const WzrdStudio = () => {
                 {/* WZRD Work Interface Image */}
                 <div className="absolute inset-0 rounded-2xl overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-500">
                   <img 
-                    src={wzrdStudioInterface} 
+                    src={wzrdWorkInterface} 
                     alt="WZRD Work Interface Preview" 
                     className="w-full h-full object-cover rounded-2xl"
                   />
