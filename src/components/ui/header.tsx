@@ -51,7 +51,7 @@ const Header: React.FC = () => {
           }}
         >
           <div className="text-lg font-semibold tracking-tight">
-            MusicOS<span className="text-studio-accent"></span>
+            UniversalAI<span className="text-studio-accent"></span>
           </div>
         </Link>
         
