@@ -11,14 +11,26 @@ const WzrdStudio = () => {
   return <DashboardLayout>
       <Content title="WZRD.tech Studio" subtitle="Create magical digital experiences with our advanced creative tools">
         <div className="glass-card p-6">
-          <div className="flex items-center mb-8">
-            <div className="bg-gradient-to-br from-purple-500/20 to-blue-500/20 backdrop-blur-sm p-4 rounded-2xl mr-6 border border-white/10">
-              <Palette className="h-10 w-10 text-white/90" />
-            </div>
-            <div>
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">Creative Studio</h2>
-              <p className="text-white/70 text-lg">Professional-grade creative wizardry tools</p>
-            </div>
+          <div className="flex flex-col items-center text-center mb-12 max-w-3xl mx-auto">
+            <motion.div 
+              className="relative mb-6"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/30 to-blue-500/30 blur-2xl rounded-full"></div>
+              <div className="relative bg-gradient-to-br from-purple-500/20 to-blue-500/20 backdrop-blur-sm p-6 rounded-3xl border border-white/20 shadow-2xl">
+                <Palette className="h-12 w-12 text-white/90" />
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent mb-3 tracking-tight">Creative Studio</h2>
+              <p className="text-white/70 text-xl leading-relaxed">Professional-grade creative wizardry tools</p>
+            </motion.div>
           </div>
           
           {/* Side by side cards container */}
