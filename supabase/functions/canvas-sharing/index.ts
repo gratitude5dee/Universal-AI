@@ -10,6 +10,25 @@ const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+type CanvasShareSettings = {
+  isPublic?: boolean;
+  allowComments?: boolean;
+  allowDownloads?: boolean;
+  expiresAt?: string | null;
+  title?: string;
+  description?: string | null;
+};
+
+type CanvasSharingPayload = {
+  action: string;
+  boardId?: string;
+  shareId?: string;
+  settings?: CanvasShareSettings;
+  content?: string;
+  guestName?: string | null;
+  guestEmail?: string | null;
+};
+
 function generateShareId(): string {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
@@ -20,12 +39,16 @@ serve(async (req) => {
   }
 
   try {
-    const { action, boardId, shareId, settings } = await req.json();
+    const payload = await req.json() as CanvasSharingPayload;
+    const { action, boardId, shareId, settings } = payload;
 
     let result;
 
     switch (action) {
       case 'create_share':
+        if (!boardId) {
+          throw new Error('Board ID is required');
+        }
         // Get user from auth header
         const authHeader = req.headers.get('Authorization');
         if (!authHeader) {
@@ -42,7 +65,7 @@ serve(async (req) => {
         // Verify user owns the board or is a collaborator with edit access
         const { data: board } = await supabase
           .from('boards')
-          .select('user_id, title')
+          .select('user_id, title, description')
           .eq('id', boardId)
           .single();
 
@@ -76,6 +99,9 @@ serve(async (req) => {
           .single();
 
         if (existingShare) {
+          const shareTitle = settings?.title ?? board.title;
+          const shareDescription =
+            settings?.description ?? board.description ?? null;
           // Update existing share
           const { error: updateError } = await supabase
             .from('board_shares')
@@ -84,6 +110,8 @@ serve(async (req) => {
               allow_comments: settings?.allowComments ?? false,
               allow_downloads: settings?.allowDownloads ?? false,
               expires_at: settings?.expiresAt || null,
+              title: shareTitle,
+              description: shareDescription,
               updated_at: new Date().toISOString()
             })
             .eq('board_id', boardId);
@@ -96,7 +124,10 @@ serve(async (req) => {
         } else {
           // Create new share
           const newShareId = generateShareId();
-          
+          const shareTitle = settings?.title ?? board.title;
+          const shareDescription =
+            settings?.description ?? board.description ?? null;
+
           const { error: shareError } = await supabase
             .from('board_shares')
             .insert({
@@ -106,7 +137,9 @@ serve(async (req) => {
               is_public: settings?.isPublic ?? true,
               allow_comments: settings?.allowComments ?? false,
               allow_downloads: settings?.allowDownloads ?? false,
-              expires_at: settings?.expiresAt || null
+              expires_at: settings?.expiresAt || null,
+              title: shareTitle,
+              description: shareDescription
             });
 
           if (shareError) {
@@ -118,6 +151,9 @@ serve(async (req) => {
         break;
 
       case 'get_shared_board':
+        if (!shareId) {
+          throw new Error('Share ID is required');
+        }
         // Get publicly shared board (no auth required)
         const { data: sharedBoard, error: shareError } = await supabase
           .from('board_shares')
@@ -160,6 +196,9 @@ serve(async (req) => {
         break;
 
       case 'add_comment':
+        if (!shareId) {
+          throw new Error('Share ID is required');
+        }
         // Add comment to shared board
         const commentAuthHeader = req.headers.get('Authorization');
         let commentUserId = null;
@@ -181,7 +220,11 @@ serve(async (req) => {
           throw new Error('Comments not allowed on this board');
         }
 
-        const { content, guestName, guestEmail } = await req.json();
+        const { content, guestName, guestEmail } = payload;
+
+        if (!content || typeof content !== 'string' || content.trim().length === 0) {
+          throw new Error('Comment content is required');
+        }
 
         const { data: comment, error: commentError } = await supabase
           .from('board_comments')
@@ -210,6 +253,9 @@ serve(async (req) => {
         break;
 
       case 'get_comments':
+        if (!shareId) {
+          throw new Error('Share ID is required');
+        }
         // Get comments for shared board
         const { data: commentsBoard } = await supabase
           .from('board_shares')
@@ -242,6 +288,9 @@ serve(async (req) => {
         break;
 
       case 'delete_share':
+        if (!boardId) {
+          throw new Error('Board ID is required');
+        }
         // Delete share (owner only)
         const deleteAuthHeader = req.headers.get('Authorization');
         if (!deleteAuthHeader) {

@@ -1,15 +1,30 @@
 
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import DashboardLayout from "@/layouts/dashboard-layout";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Infinity, Save, Share, Download } from "lucide-react";
+import { Infinity, Save, Share, Download, Loader2, Plus } from "lucide-react";
 import CreativeCanvas from "@/components/canvas/CreativeCanvas";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ensureBoardForUser, type BoardRow } from "./boardLoader";
 
 const WzrdInfiniteLibrary = () => {
   const [isDemo, setIsDemo] = useState(true); // Start in demo mode
   const { toast } = useToast();
+  const { user } = useAuth();
+  const [boards, setBoards] = useState<BoardRow[]>([]);
+  const [selectedBoardId, setSelectedBoardId] = useState<string | null>(null);
+  const [isBoardsLoading, setIsBoardsLoading] = useState(true);
+  const [isCreatingBoard, setIsCreatingBoard] = useState(false);
 
   const handleSave = () => {
     toast({
@@ -32,6 +47,96 @@ const WzrdInfiniteLibrary = () => {
     });
   };
 
+  const createBoard = useCallback(async (): Promise<BoardRow | null> => {
+    if (!user) return null;
+
+    setIsCreatingBoard(true);
+    try {
+      const { data, error } = await supabase
+        .from("boards")
+        .insert({
+          title: "Untitled Canvas",
+          user_id: user.id,
+          is_public: false,
+          canvas_data: {
+            nodes: [],
+            edges: [],
+            viewport: { x: 0, y: 0, zoom: 1 },
+          },
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setBoards((prev) => [data, ...prev.filter((board) => board.id !== data.id)]);
+      setSelectedBoardId(data.id);
+      toast({
+        title: "Canvas ready",
+        description: "A fresh board has been created for you.",
+      });
+
+      return data;
+    } catch (error) {
+      console.error("Error creating board", error);
+      toast({
+        title: "Unable to create board",
+        description: "Please try again in a moment.",
+        variant: "destructive",
+      });
+      return null;
+    } finally {
+      setIsCreatingBoard(false);
+    }
+  }, [toast, user]);
+
+  const loadBoards = useCallback(async () => {
+    if (!user) {
+      setBoards([]);
+      setSelectedBoardId(null);
+      setIsBoardsLoading(false);
+      return;
+    }
+
+    setIsBoardsLoading(true);
+    try {
+      const result = await ensureBoardForUser({
+        fetchBoards: async () => {
+          const { data, error } = await supabase
+            .from("boards")
+            .select(
+              "id, title, created_at, updated_at, user_id, is_public, slug, description, thumbnail_url, canvas_data"
+            )
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false });
+
+          if (error) {
+            throw error;
+          }
+
+          return data ?? [];
+        },
+        createBoard,
+      });
+
+      setBoards(result.boards);
+      setSelectedBoardId(result.activeBoardId);
+    } catch (error) {
+      console.error("Error loading boards", error);
+      toast({
+        title: "Unable to load canvases",
+        description: "Please refresh the page to try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsBoardsLoading(false);
+    }
+  }, [createBoard, toast, user]);
+
+  useEffect(() => {
+    void loadBoards();
+  }, [loadBoards]);
+
   return (
     <DashboardLayout>
       <div className="h-full flex flex-col">
@@ -48,8 +153,40 @@ const WzrdInfiniteLibrary = () => {
               </p>
             </div>
           </div>
-          
-          <div className="flex items-center gap-2">
+
+          <div className="flex items-center gap-2 flex-wrap justify-end">
+            <div className="flex items-center gap-2">
+              <Select
+                value={selectedBoardId ?? undefined}
+                onValueChange={setSelectedBoardId}
+                disabled={isBoardsLoading || boards.length === 0}
+              >
+                <SelectTrigger className="w-48 bg-white/10 border-white/20 text-white">
+                  <SelectValue placeholder={isBoardsLoading ? "Loading canvases..." : "Select a canvas"} />
+                </SelectTrigger>
+                <SelectContent className="bg-studio-clay text-white">
+                  {boards.map((board) => (
+                    <SelectItem key={board.id} value={board.id}>
+                      {board.title || "Untitled Canvas"}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={createBoard}
+                disabled={isCreatingBoard || isBoardsLoading}
+                className="text-white border-white/30 hover:bg-white/10"
+              >
+                {isCreatingBoard ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Plus className="w-4 h-4 mr-2" />
+                )}
+                New Canvas
+              </Button>
+            </div>
             <Button
               variant="outline"
               size="sm"
@@ -82,8 +219,15 @@ const WzrdInfiniteLibrary = () => {
 
         {/* Canvas Area */}
         <div className="flex-1 relative">
-          <CreativeCanvas isReadOnly={false} />
-          
+          {isBoardsLoading || !selectedBoardId ? (
+            <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-white/80">
+              <Loader2 className="h-8 w-8 animate-spin" />
+              <p className="text-sm">Preparing your canvas workspace...</p>
+            </div>
+          ) : (
+            <CreativeCanvas boardId={selectedBoardId} isReadOnly={false} />
+          )}
+
           {/* Welcome overlay for first-time users */}
           {isDemo && (
             <div className="absolute top-4 right-4 z-50">

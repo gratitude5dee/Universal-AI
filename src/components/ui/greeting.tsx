@@ -1,12 +1,45 @@
-
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const Greeting = () => {
   const { user } = useAuth();
   const [greeting, setGreeting] = useState("");
   const [timePhrase, setTimePhrase] = useState("");
+  const [profileName, setProfileName] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchProfileName = async () => {
+      if (!user?.id) {
+        if (isMounted) setProfileName(null);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('display_name')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (!isMounted) return;
+
+      if (error) {
+        setProfileName(null);
+        return;
+      }
+
+      setProfileName(data?.display_name ?? null);
+    };
+
+    fetchProfileName();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user?.id]);
   
   useEffect(() => {
     const getGreeting = () => {
@@ -44,6 +77,9 @@ const Greeting = () => {
   
   // Get user's name from profile or email
   const getUserName = () => {
+    if (profileName) {
+      return profileName;
+    }
     if (user?.user_metadata?.first_name) {
       return user.user_metadata.first_name;
     }

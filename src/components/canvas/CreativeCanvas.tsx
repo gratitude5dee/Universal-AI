@@ -139,6 +139,7 @@ const CreativeCanvas: React.FC<CreativeCanvasProps> = ({ boardId, isReadOnly = f
         .update({
           content: canvasData,
           canvas_data: canvasData,
+          content: canvasData,
           updated_at: new Date().toISOString()
         })
         .eq('id', boardId);
