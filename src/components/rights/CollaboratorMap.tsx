@@ -143,7 +143,7 @@ const CollaboratorMap = ({ collaborators, onToggleDetails }: CollaboratorMapProp
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7 }}
       >
-        <Button size="sm" variant="outline" className="bg-white">
+        <Button size="sm" variant="outline" className="bg-transparent backdrop-blur-sm border-white/20 text-white hover:bg-white/10">
           <UserPlus size={14} className="mr-1" />
           Add
         </Button>
