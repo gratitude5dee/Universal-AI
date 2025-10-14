@@ -282,12 +282,14 @@ export type Database = {
       }
       boards: {
         Row: {
+          content: Json
           canvas_data: Json
           content: Json
           created_at: string
           description: string | null
           id: string
           is_public: boolean
+          source_project_id: string | null
           slug: string | null
           source_project_id: string | null
           thumbnail_url: string | null
@@ -296,12 +298,14 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          content?: Json
           canvas_data?: Json
           content?: Json
           created_at?: string
           description?: string | null
           id?: string
           is_public?: boolean
+          source_project_id?: string | null
           slug?: string | null
           source_project_id?: string | null
           thumbnail_url?: string | null
@@ -310,12 +314,14 @@ export type Database = {
           user_id: string
         }
         Update: {
+          content?: Json
           canvas_data?: Json
           content?: Json
           created_at?: string
           description?: string | null
           id?: string
           is_public?: boolean
+          source_project_id?: string | null
           slug?: string | null
           source_project_id?: string | null
           thumbnail_url?: string | null
@@ -1557,6 +1563,7 @@ export type Database = {
           id: string
           main_message: string | null
           product_name: string | null
+          source_board_id: string | null
           selected_storyline_id: string | null
           special_requests: string | null
           style_reference_asset_id: string | null
@@ -1583,6 +1590,7 @@ export type Database = {
           id?: string
           main_message?: string | null
           product_name?: string | null
+          source_board_id?: string | null
           selected_storyline_id?: string | null
           special_requests?: string | null
           style_reference_asset_id?: string | null
@@ -1609,6 +1617,7 @@ export type Database = {
           id?: string
           main_message?: string | null
           product_name?: string | null
+          source_board_id?: string | null
           selected_storyline_id?: string | null
           special_requests?: string | null
           style_reference_asset_id?: string | null

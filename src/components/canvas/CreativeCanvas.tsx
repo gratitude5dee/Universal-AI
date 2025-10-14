@@ -34,6 +34,41 @@ const nodeTypes: NodeTypes = {
   ai: AINode,
 };
 
+const defaultCanvasPayload = {
+  nodes: [],
+  edges: [],
+  viewport: { x: 0, y: 0, zoom: 1 },
+};
+
+type CanvasPayload = typeof defaultCanvasPayload & Record<string, unknown>;
+
+const scoreCanvasPayload = (payload: unknown) => {
+  if (!payload || typeof payload !== 'object') return -1;
+
+  const typedPayload = payload as Partial<CanvasPayload>;
+  const nodes = Array.isArray(typedPayload.nodes) ? typedPayload.nodes.length : 0;
+  const edges = Array.isArray(typedPayload.edges) ? typedPayload.edges.length : 0;
+  const keys = Object.keys(typedPayload).length;
+
+  return nodes * 2 + edges + (keys > 0 ? 1 : 0);
+};
+
+const resolveCanvasPayload = (content?: unknown, canvasData?: unknown): CanvasPayload => {
+  const contentScore = scoreCanvasPayload(content);
+  const canvasDataScore = scoreCanvasPayload(canvasData);
+
+  const payload =
+    (contentScore >= canvasDataScore ? content : canvasData)
+      ?? content
+      ?? canvasData
+      ?? defaultCanvasPayload;
+
+  return {
+    ...defaultCanvasPayload,
+    ...(typeof payload === 'object' ? payload : {}),
+  } as CanvasPayload;
+};
+
 interface CreativeCanvasProps {
   boardId?: string;
   isReadOnly?: boolean;
@@ -65,7 +100,7 @@ const CreativeCanvas: React.FC<CreativeCanvasProps> = ({ boardId, isReadOnly = f
       console.log('Loading canvas data for board:', boardId);
       const { data, error } = await supabase
         .from('boards')
-        .select('canvas_data')
+        .select('content, canvas_data')
         .eq('id', boardId)
         .single();
 
@@ -75,11 +110,9 @@ const CreativeCanvas: React.FC<CreativeCanvasProps> = ({ boardId, isReadOnly = f
       }
 
       console.log('Canvas data loaded:', data);
-      if (data?.canvas_data) {
-        const canvasData = data.canvas_data as any;
-        setNodes(canvasData.nodes || []);
-        setEdges(canvasData.edges || []);
-      }
+      const canvasPayload = resolveCanvasPayload(data?.content, data?.canvas_data);
+      setNodes(canvasPayload.nodes || []);
+      setEdges(canvasPayload.edges || []);
     } catch (error) {
       toast({
         title: "Error loading canvas",
@@ -104,6 +137,7 @@ const CreativeCanvas: React.FC<CreativeCanvasProps> = ({ boardId, isReadOnly = f
       const { error } = await supabase
         .from('boards')
         .update({
+          content: canvasData,
           canvas_data: canvasData,
           content: canvasData,
           updated_at: new Date().toISOString()
