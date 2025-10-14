@@ -134,9 +134,9 @@ export type Database = {
         Row: {
           board_id: string
           created_at: string
-          email: string | null
           id: string
           invited_by: string
+          invited_email: string | null
           role: string
           status: string
           updated_at: string
@@ -145,9 +145,9 @@ export type Database = {
         Insert: {
           board_id: string
           created_at?: string
-          email?: string | null
           id?: string
           invited_by: string
+          invited_email?: string | null
           role?: string
           status?: string
           updated_at?: string
@@ -156,9 +156,9 @@ export type Database = {
         Update: {
           board_id?: string
           created_at?: string
-          email?: string | null
           id?: string
           invited_by?: string
+          invited_email?: string | null
           role?: string
           status?: string
           updated_at?: string
@@ -1411,6 +1411,7 @@ export type Database = {
           avatar_url: string | null
           connected_accounts: Json | null
           created_at: string
+          email: string | null
           id: string
           last_wallet_connection: string | null
           onboarding_completed: boolean
@@ -1426,6 +1427,7 @@ export type Database = {
           avatar_url?: string | null
           connected_accounts?: Json | null
           created_at?: string
+          email?: string | null
           id: string
           last_wallet_connection?: string | null
           onboarding_completed?: boolean
@@ -1441,6 +1443,7 @@ export type Database = {
           avatar_url?: string | null
           connected_accounts?: Json | null
           created_at?: string
+          email?: string | null
           id?: string
           last_wallet_connection?: string | null
           onboarding_completed?: boolean
