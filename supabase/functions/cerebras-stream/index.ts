@@ -85,7 +85,8 @@ serve(async (req) => {
         user_id: user.id,
         prompt: lineage.map(node => `${node.data.nodeType}: ${node.data.text}`).join('\n\n'),
         model: model,
-        status: 'pending'
+        provider: 'cerebras',
+        status: 'running'
       })
       .select()
       .single();
@@ -148,6 +149,8 @@ serve(async (req) => {
     }
 
     // Create a transform stream to handle the response
+    let hasStartedStreaming = false;
+
     const stream = new ReadableStream({
       async start(controller) {
         const reader = response.body!.getReader();
@@ -185,7 +188,15 @@ serve(async (req) => {
                   if (parsed.choices && parsed.choices[0]?.delta?.content) {
                     const content = parsed.choices[0].delta.content;
                     fullResponse += content;
-                    
+
+                    if (!hasStartedStreaming) {
+                      hasStartedStreaming = true;
+                      await supabase
+                        .from('ai_runs')
+                        .update({ status: 'streaming' })
+                        .eq('id', aiRun.id);
+                    }
+
                     // Forward the chunk to the client
                     controller.enqueue(new TextEncoder().encode(`data: ${data}\n\n`));
                   }
