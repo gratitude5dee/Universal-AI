@@ -20,12 +20,17 @@ serve(async (req) => {
   }
 
   try {
-    const { action, boardId, shareId, settings } = await req.json();
+    const requestData = await req.json();
+    const { action } = requestData;
 
     let result;
 
     switch (action) {
-      case 'create_share':
+      case 'create_share': {
+        if (!requestData.boardId) {
+          throw new Error('Board ID is required');
+        }
+
         // Get user from auth header
         const authHeader = req.headers.get('Authorization');
         if (!authHeader) {
@@ -34,7 +39,7 @@ serve(async (req) => {
 
         const token = authHeader.replace('Bearer ', '');
         const { data: { user }, error: userError } = await supabase.auth.getUser(token);
-        
+
         if (userError || !user) {
           throw new Error('Invalid token');
         }
@@ -42,8 +47,8 @@ serve(async (req) => {
         // Verify user owns the board or is a collaborator with edit access
         const { data: board } = await supabase
           .from('boards')
-          .select('user_id, title')
-          .eq('id', boardId)
+          .select('user_id, title, description')
+          .eq('id', requestData.boardId)
           .single();
 
         if (!board) {
@@ -56,7 +61,7 @@ serve(async (req) => {
           const { data: collaborator } = await supabase
             .from('board_collaborators')
             .select('role')
-            .eq('board_id', boardId)
+            .eq('board_id', requestData.boardId)
             .eq('user_id', user.id)
             .eq('status', 'accepted')
             .single();
@@ -71,8 +76,8 @@ serve(async (req) => {
         // Check if share already exists
         const { data: existingShare } = await supabase
           .from('board_shares')
-          .select('share_id, is_public, expires_at')
-          .eq('board_id', boardId)
+          .select('id, share_id, title, description')
+          .eq('board_id', requestData.boardId)
           .single();
 
         if (existingShare) {
@@ -80,13 +85,10 @@ serve(async (req) => {
           const { error: updateError } = await supabase
             .from('board_shares')
             .update({
-              is_public: settings?.isPublic ?? true,
-              allow_comments: settings?.allowComments ?? false,
-              allow_downloads: settings?.allowDownloads ?? false,
-              expires_at: settings?.expiresAt || null,
-              updated_at: new Date().toISOString()
+              title: requestData.settings?.title ?? existingShare.title,
+              description: requestData.settings?.description ?? existingShare.description
             })
-            .eq('board_id', boardId);
+            .eq('board_id', requestData.boardId);
 
           if (updateError) {
             throw new Error('Failed to update share settings');
@@ -96,17 +98,15 @@ serve(async (req) => {
         } else {
           // Create new share
           const newShareId = generateShareId();
-          
+
           const { error: shareError } = await supabase
             .from('board_shares')
             .insert({
-              board_id: boardId,
+              board_id: requestData.boardId,
               share_id: newShareId,
               created_by: user.id,
-              is_public: settings?.isPublic ?? true,
-              allow_comments: settings?.allowComments ?? false,
-              allow_downloads: settings?.allowDownloads ?? false,
-              expires_at: settings?.expiresAt || null
+              title: requestData.settings?.title ?? board.title,
+              description: requestData.settings?.description ?? board.description
             });
 
           if (shareError) {
@@ -116,87 +116,96 @@ serve(async (req) => {
           result = { shareId: newShareId };
         }
         break;
+      }
 
-      case 'get_shared_board':
+      case 'get_shared_board': {
+        if (!requestData.shareId) {
+          throw new Error('Share ID is required');
+        }
+
         // Get publicly shared board (no auth required)
         const { data: sharedBoard, error: shareError } = await supabase
           .from('board_shares')
           .select(`
             board_id,
-            is_public,
-            allow_comments,
-            allow_downloads,
-            expires_at,
+            title,
+            description,
             boards:board_id (
               id,
               title,
               description,
-              content,
+              canvas_data,
               created_at,
               updated_at,
               creator:user_id (username)
             )
           `)
-          .eq('share_id', shareId)
-          .eq('is_public', true)
+          .eq('share_id', requestData.shareId)
           .single();
 
         if (shareError || !sharedBoard) {
-          throw new Error('Shared board not found or not public');
+          throw new Error('Shared board not found');
         }
 
-        // Check if share has expired
-        if (sharedBoard.expires_at && new Date(sharedBoard.expires_at) < new Date()) {
-          throw new Error('Share link has expired');
-        }
-
-        result = { 
+        result = {
           board: sharedBoard.boards,
           settings: {
-            allowComments: sharedBoard.allow_comments,
-            allowDownloads: sharedBoard.allow_downloads
+            allowComments: false,
+            allowDownloads: false,
+            isPublic: true,
+            expiresAt: null
+          },
+          share: {
+            title: sharedBoard.title,
+            description: sharedBoard.description
           }
         };
         break;
+      }
 
-      case 'add_comment':
+      case 'add_comment': {
+        if (!requestData.shareId) {
+          throw new Error('Share ID is required');
+        }
+
         // Add comment to shared board
         const commentAuthHeader = req.headers.get('Authorization');
         let commentUserId = null;
-        
+
         if (commentAuthHeader) {
           const commentToken = commentAuthHeader.replace('Bearer ', '');
           const { data: { user: commentUser } } = await supabase.auth.getUser(commentToken);
           commentUserId = commentUser?.id;
         }
 
-        // Get share settings
-        const { data: shareSettings } = await supabase
-          .from('board_shares')
-          .select('board_id, allow_comments')
-          .eq('share_id', shareId)
-          .single();
-
-        if (!shareSettings || !shareSettings.allow_comments) {
-          throw new Error('Comments not allowed on this board');
+        if (!commentUserId) {
+          throw new Error('Authentication required to comment on shared boards');
         }
 
-        const { content, guestName, guestEmail } = await req.json();
+        const { data: shareRecord } = await supabase
+          .from('board_shares')
+          .select('board_id')
+          .eq('share_id', requestData.shareId)
+          .single();
+
+        if (!shareRecord) {
+          throw new Error('Share not found');
+        }
+
+        if (!requestData.content) {
+          throw new Error('Comment content is required');
+        }
 
         const { data: comment, error: commentError } = await supabase
           .from('board_comments')
           .insert({
-            board_id: shareSettings.board_id,
+            board_id: shareRecord.board_id,
             user_id: commentUserId,
-            content,
-            guest_name: !commentUserId ? guestName : null,
-            guest_email: !commentUserId ? guestEmail : null
+            content: requestData.content
           })
           .select(`
             id,
             content,
-            guest_name,
-            guest_email,
             created_at,
             user:user_id (username)
           `)
@@ -208,17 +217,22 @@ serve(async (req) => {
 
         result = { comment };
         break;
+      }
 
-      case 'get_comments':
+      case 'get_comments': {
         // Get comments for shared board
+        if (!requestData.shareId) {
+          throw new Error('Share ID is required');
+        }
+
         const { data: commentsBoard } = await supabase
           .from('board_shares')
-          .select('board_id, allow_comments')
-          .eq('share_id', shareId)
+          .select('board_id')
+          .eq('share_id', requestData.shareId)
           .single();
 
-        if (!commentsBoard || !commentsBoard.allow_comments) {
-          throw new Error('Comments not available');
+        if (!commentsBoard) {
+          throw new Error('Share not found');
         }
 
         const { data: comments, error: commentsError } = await supabase
@@ -226,8 +240,6 @@ serve(async (req) => {
           .select(`
             id,
             content,
-            guest_name,
-            guest_email,
             created_at,
             user:user_id (username)
           `)
@@ -240,8 +252,9 @@ serve(async (req) => {
 
         result = { comments };
         break;
+      }
 
-      case 'delete_share':
+      case 'delete_share': {
         // Delete share (owner only)
         const deleteAuthHeader = req.headers.get('Authorization');
         if (!deleteAuthHeader) {
@@ -255,10 +268,14 @@ serve(async (req) => {
           throw new Error('Invalid token');
         }
 
+        if (!requestData.boardId) {
+          throw new Error('Board ID is required');
+        }
+
         const { data: deleteBoard } = await supabase
           .from('boards')
           .select('user_id')
-          .eq('id', boardId)
+          .eq('id', requestData.boardId)
           .single();
 
         if (!deleteBoard || deleteBoard.user_id !== deleteUser.id) {
@@ -268,7 +285,7 @@ serve(async (req) => {
         const { error: deleteError } = await supabase
           .from('board_shares')
           .delete()
-          .eq('board_id', boardId);
+          .eq('board_id', requestData.boardId);
 
         if (deleteError) {
           throw new Error('Failed to delete share');
@@ -276,6 +293,7 @@ serve(async (req) => {
 
         result = { success: true, message: 'Share deleted' };
         break;
+      }
 
       default:
         throw new Error('Invalid action');

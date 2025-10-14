@@ -34,11 +34,15 @@ serve(async (req) => {
     let result;
 
     switch (action) {
-      case 'create_from_board':
+      case 'create_from_board': {
+        if (!boardId) {
+          throw new Error('Board ID is required');
+        }
+
         // Create a new project from board content
         const { data: board } = await supabase
           .from('boards')
-          .select('title, description, content')
+          .select('title, description, canvas_data')
           .eq('id', boardId)
           .single();
 
@@ -50,10 +54,9 @@ serve(async (req) => {
           .from('projects')
           .insert({
             user_id: user.id,
-            title: data.title || `Project from ${board.title}`,
-            description: data.description || board.description,
-            concept_text: JSON.stringify(board.content),
-            source_board_id: boardId
+            title: data?.title || `Project from ${board.title}`,
+            description: data?.description || board.description,
+            concept_text: JSON.stringify(board.canvas_data)
           })
           .select()
           .single();
@@ -64,8 +67,13 @@ serve(async (req) => {
 
         result = { project };
         break;
+      }
 
-      case 'sync_to_project':
+      case 'sync_to_project': {
+        if (!boardId || !projectId) {
+          throw new Error('Board ID and Project ID are required');
+        }
+
         // Sync board content to existing project
         const { data: existingProject } = await supabase
           .from('projects')
@@ -79,7 +87,7 @@ serve(async (req) => {
 
         const { data: syncBoard } = await supabase
           .from('boards')
-          .select('content')
+          .select('canvas_data')
           .eq('id', boardId)
           .single();
 
@@ -90,7 +98,7 @@ serve(async (req) => {
         const { error: syncError } = await supabase
           .from('projects')
           .update({
-            concept_text: JSON.stringify(syncBoard.content),
+            concept_text: JSON.stringify(syncBoard.canvas_data),
             updated_at: new Date().toISOString()
           })
           .eq('id', projectId);
@@ -101,13 +109,18 @@ serve(async (req) => {
 
         result = { success: true };
         break;
+      }
 
-      case 'get_project_boards':
+      case 'get_project_boards': {
         // Get all boards linked to a project
+        if (!projectId) {
+          throw new Error('Project ID is required');
+        }
+
         const { data: projectBoards, error: boardsError } = await supabase
           .from('boards')
-          .select('id, title, description, created_at, updated_at')
-          .eq('source_project_id', projectId)
+          .select('id, title, description, created_at, updated_at, canvas_data')
+          .contains('canvas_data', { metadata: { sourceProjectId: projectId } })
           .eq('user_id', user.id);
 
         if (boardsError) {
@@ -116,9 +129,14 @@ serve(async (req) => {
 
         result = { boards: projectBoards };
         break;
+      }
 
-      case 'create_board_from_project':
+      case 'create_board_from_project': {
         // Create a new board from project content
+        if (!projectId) {
+          throw new Error('Project ID is required');
+        }
+
         const { data: sourceProject } = await supabase
           .from('projects')
           .select('title, description, concept_text')
@@ -130,21 +148,53 @@ serve(async (req) => {
           throw new Error('Project not found');
         }
 
-        let boardContent = {};
-        try {
-          boardContent = JSON.parse(sourceProject.concept_text || '{}');
-        } catch {
-          boardContent = { text: sourceProject.concept_text || '' };
+        let boardContent: unknown = {};
+        if (sourceProject.concept_text) {
+          try {
+            boardContent = JSON.parse(sourceProject.concept_text);
+          } catch {
+            boardContent = { text: sourceProject.concept_text };
+          }
+        }
+
+        const baseCanvas =
+          boardContent && typeof boardContent === 'object'
+            ? boardContent as Record<string, unknown>
+            : {};
+
+        const rawMetadata = (baseCanvas as Record<string, unknown>)['metadata'];
+        const existingMetadata =
+          rawMetadata && typeof rawMetadata === 'object'
+            ? rawMetadata as Record<string, unknown>
+            : {};
+
+        const canvasData: Record<string, unknown> = {
+          ...baseCanvas,
+          metadata: {
+            ...existingMetadata,
+            sourceProjectId: projectId
+          }
+        };
+
+        if (!Array.isArray(canvasData['nodes'] as unknown[])) {
+          canvasData['nodes'] = [];
+        }
+
+        if (!Array.isArray(canvasData['edges'] as unknown[])) {
+          canvasData['edges'] = [];
+        }
+
+        if (!(canvasData['viewport'] && typeof canvasData['viewport'] === 'object')) {
+          canvasData['viewport'] = { x: 0, y: 0, zoom: 1 };
         }
 
         const { data: newBoard, error: newBoardError } = await supabase
           .from('boards')
           .insert({
             user_id: user.id,
-            title: data.title || `Board from ${sourceProject.title}`,
-            description: data.description || sourceProject.description,
-            content: boardContent,
-            source_project_id: projectId
+            title: data?.title || `Board from ${sourceProject.title}`,
+            description: data?.description || sourceProject.description,
+            canvas_data: canvasData
           })
           .select()
           .single();
@@ -155,6 +205,7 @@ serve(async (req) => {
 
         result = { board: newBoard };
         break;
+      }
 
       default:
         throw new Error('Invalid action');
