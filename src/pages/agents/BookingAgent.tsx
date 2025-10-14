@@ -4,6 +4,7 @@ import DashboardLayout from "@/layouts/dashboard-layout";
 import { WorkflowSidebar } from "@/components/touring/WorkflowSidebar";
 import { AIAssistantPanel } from "@/components/touring/AIAssistantPanel";
 import BookingWorkflowTracker from "@/components/touring/BookingWorkflowTracker";
+import { KanbanBoard } from "@/components/touring/KanbanBoard";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -11,9 +12,10 @@ import { EmailComposer } from "@/components/touring/EmailComposer";
 import { ContractGenerator } from "@/components/touring/ContractGenerator";
 import { InvoiceGenerator } from "@/components/touring/InvoiceGenerator";
 import { EventAssetsGenerator } from "@/components/touring/EventAssetsGenerator";
-import { Calendar, DollarSign, MapPin, Clock, Mail, FileText, Image } from "lucide-react";
+import { Calendar, DollarSign, MapPin, Clock, Mail, FileText, Image, LayoutGrid, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Booking {
   id: string;
@@ -40,6 +42,7 @@ const BookingAgent = () => {
   const [selectedStage, setSelectedStage] = useState<string | null>("all");
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [activeDialog, setActiveDialog] = useState<"email" | "contract" | "invoice" | "assets" | null>(null);
+  const [viewMode, setViewMode] = useState<"list" | "kanban">("list");
 
   useEffect(() => {
     fetchBookings();
@@ -108,21 +111,59 @@ const BookingAgent = () => {
   return (
     <DashboardLayout>
       <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
-        {/* Left Sidebar - Workflow Pipeline */}
-        <div className="w-80 flex-shrink-0">
-          <WorkflowSidebar
-            bookings={bookings}
-            selectedStage={selectedStage}
-            onStageSelect={setSelectedStage}
-            onBookingSelect={(booking) => setSelectedBooking(booking)}
-            selectedBookingId={selectedBooking?.id || null}
-          />
-        </div>
+        {/* Left Sidebar - Workflow Pipeline (hidden in Kanban view) */}
+        {viewMode === "list" && (
+          <div className="w-80 flex-shrink-0">
+            <WorkflowSidebar
+              bookings={bookings}
+              selectedStage={selectedStage}
+              onStageSelect={setSelectedStage}
+              onBookingSelect={(booking) => setSelectedBooking(booking)}
+              selectedBookingId={selectedBooking?.id || null}
+            />
+          </div>
+        )}
 
         {/* Center Workspace */}
         <div className="flex-1 overflow-auto bg-background/30">
-          <div className="p-6">
-            {selectedBooking ? (
+          {/* View Toggle Header */}
+          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-foreground">
+                  {viewMode === "kanban" ? "Booking Pipeline" : "Booking Details"}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {viewMode === "kanban" 
+                    ? `${bookings.length} total bookings across all stages` 
+                    : "Manage your venue bookings"}
+                </p>
+              </div>
+              <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as "list" | "kanban")}>
+                <TabsList>
+                  <TabsTrigger value="list" className="gap-2">
+                    <List className="h-4 w-4" />
+                    List
+                  </TabsTrigger>
+                  <TabsTrigger value="kanban" className="gap-2">
+                    <LayoutGrid className="h-4 w-4" />
+                    Kanban
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+          </div>
+
+          <div className={viewMode === "kanban" ? "" : "p-6"}>
+            {viewMode === "kanban" ? (
+              <KanbanBoard 
+                bookings={bookings} 
+                onSelectBooking={(booking) => {
+                  setSelectedBooking(booking);
+                  setViewMode("list");
+                }}
+              />
+            ) : selectedBooking ? (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -227,10 +268,12 @@ const BookingAgent = () => {
           </div>
         </div>
 
-        {/* Right Sidebar - AI Assistant */}
-        <div className="w-96 flex-shrink-0">
-          <AIAssistantPanel selectedBooking={selectedBooking} />
-        </div>
+        {/* Right Sidebar - AI Assistant (hidden in Kanban view) */}
+        {viewMode === "list" && (
+          <div className="w-96 flex-shrink-0">
+            <AIAssistantPanel selectedBooking={selectedBooking} />
+          </div>
+        )}
       </div>
 
       {/* Dialogs */}
