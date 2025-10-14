@@ -3129,9 +3129,11 @@ export type Database = {
           updated_at: string | null
           user_id: string
           venue_capacity: number | null
+          venue_city: string | null
           venue_contact_email: string | null
           venue_location: string | null
           venue_name: string
+          venue_state: string | null
           workflow_stage: string | null
         }
         Insert: {
@@ -3153,9 +3155,11 @@ export type Database = {
           updated_at?: string | null
           user_id: string
           venue_capacity?: number | null
+          venue_city?: string | null
           venue_contact_email?: string | null
           venue_location?: string | null
           venue_name: string
+          venue_state?: string | null
           workflow_stage?: string | null
         }
         Update: {
@@ -3177,9 +3181,11 @@ export type Database = {
           updated_at?: string | null
           user_id?: string
           venue_capacity?: number | null
+          venue_city?: string | null
           venue_contact_email?: string | null
           venue_location?: string | null
           venue_name?: string
+          venue_state?: string | null
           workflow_stage?: string | null
         }
         Relationships: [
