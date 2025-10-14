@@ -10,13 +10,22 @@ const CreateAgent = () => {
   const [currentStep, setCurrentStep] = useState<'form' | 'secrets' | 'confirmation'>('form');
   const [activeSection, setActiveSection] = useState<string>("name");
   
-  // Wizard view state
+  // Wizard view state - Phase 1 Enhanced Wizard (7 steps)
   const [wizardStep, setWizardStep] = useState(1);
-  const [agentPurpose, setAgentPurpose] = useState("art");
+  const [archetype, setArchetype] = useState("");
+  const [template, setTemplate] = useState<string | null>(null);
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [avatar, setAvatar] = useState<string | null>(null);
+  const [voiceProvider, setVoiceProvider] = useState("none");
+  const [voiceId, setVoiceId] = useState("");
+  const [bio, setBio] = useState<string[]>([""]);
+  const [lore, setLore] = useState<string[]>([]);
+  const [topics, setTopics] = useState<string[]>([]);
+  const [adjectives, setAdjectives] = useState<string[]>([]);
   const [blockchain, setBlockchain] = useState("ethereum");
   const [aiModel, setAiModel] = useState("gpt-4o");
-  const [outputFormat, setOutputFormat] = useState("image");
-  const [feePercentage, setFeePercentage] = useState("5");
+  const [launchMode, setLaunchMode] = useState("immediate");
 
   // Handle scrolling to update the active section in the form view
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -69,16 +78,34 @@ const CreateAgent = () => {
                   <WizardView 
                     wizardStep={wizardStep}
                     setWizardStep={setWizardStep}
-                    agentPurpose={agentPurpose}
-                    setAgentPurpose={setAgentPurpose}
+                    archetype={archetype}
+                    setArchetype={setArchetype}
+                    template={template}
+                    setTemplate={setTemplate}
+                    name={name}
+                    setName={setName}
+                    username={username}
+                    setUsername={setUsername}
+                    avatar={avatar}
+                    setAvatar={setAvatar}
+                    voiceProvider={voiceProvider}
+                    setVoiceProvider={setVoiceProvider}
+                    voiceId={voiceId}
+                    setVoiceId={setVoiceId}
+                    bio={bio}
+                    setBio={setBio}
+                    lore={lore}
+                    setLore={setLore}
+                    topics={topics}
+                    setTopics={setTopics}
+                    adjectives={adjectives}
+                    setAdjectives={setAdjectives}
                     blockchain={blockchain}
                     setBlockchain={setBlockchain}
                     aiModel={aiModel}
                     setAiModel={setAiModel}
-                    outputFormat={outputFormat}
-                    setOutputFormat={setOutputFormat}
-                    feePercentage={feePercentage}
-                    setFeePercentage={setFeePercentage}
+                    launchMode={launchMode}
+                    setLaunchMode={setLaunchMode}
                   />
                 </TabsContent>
                 
