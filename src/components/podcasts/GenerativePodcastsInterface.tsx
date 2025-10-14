@@ -270,7 +270,11 @@ const GenerativePodcastsInterface = () => {
           },
           body: formData,
         }
-      );
+      const { data, error } = await supabase.functions.invoke('voice-management', {
+        body: formData,
+      });
+
+      if (error) throw error;
 
       const result = await response.json();
 
