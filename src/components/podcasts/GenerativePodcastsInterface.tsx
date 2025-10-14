@@ -146,11 +146,7 @@ const GenerativePodcastsInterface = () => {
   const { toast } = useToast();
 
   // Load voices on component mount
-  useEffect(() => {
-    loadVoices();
-  }, []);
-
-  const loadVoices = async () => {
+  const loadVoices = useCallback(async () => {
     try {
       setIsLoadingVoices(true);
       const { data, error } = await supabase.functions.invoke('voice-management', {
@@ -158,10 +154,16 @@ const GenerativePodcastsInterface = () => {
       });
 
       if (error) throw error;
+      if (!data?.success) {
+        throw new Error(data?.error || 'Unable to load voices');
+      }
 
-      setVoices(data.voices || []);
-      if (data.voices?.length > 0) {
-        setSelectedVoice(data.voices[0].voice_id);
+      const authorizedVoices: Voice[] = data.voices || [];
+      setVoices(authorizedVoices);
+      if (authorizedVoices.length > 0) {
+        setSelectedVoice(authorizedVoices[0].voice_id);
+      } else {
+        setSelectedVoice('');
       }
     } catch (error) {
       console.error('Error loading voices:', error);
@@ -173,7 +175,11 @@ const GenerativePodcastsInterface = () => {
     } finally {
       setIsLoadingVoices(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    loadVoices();
+  }, [loadVoices]);
 
   const generatePodcast = async () => {
     if (!title || !script || !selectedVoice) {
@@ -236,6 +242,18 @@ const GenerativePodcastsInterface = () => {
     }
 
     try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = sessionData?.session;
+
+      if (!session) {
+        toast({
+          title: "Authentication Required",
+          description: "Please sign in to clone a voice.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const formData = new FormData();
       formData.append('name', voiceName);
       formData.append('description', voiceDescription);
@@ -247,13 +265,16 @@ const GenerativePodcastsInterface = () => {
         `https://ixkkrousepsiorwlaycp.functions.supabase.co/functions/v1/voice-management?action=clone`,
         {
           method: 'POST',
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
           body: formData,
         }
       );
 
       const result = await response.json();
 
-      if (!result.success) {
+      if (!response.ok || !result.success) {
         throw new Error(result.error);
       }
 

@@ -2299,6 +2299,33 @@ export type Database = {
         }
         Relationships: []
       }
+      voice_clones: {
+        Row: {
+          created_at: string
+          id: string
+          metadata: Json | null
+          updated_at: string
+          user_id: string
+          voice_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          updated_at?: string
+          user_id: string
+          voice_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          updated_at?: string
+          user_id?: string
+          voice_id?: string
+        }
+        Relationships: []
+      }
       venues: {
         Row: {
           address: string | null
