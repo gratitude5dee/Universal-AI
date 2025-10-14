@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import DashboardLayout from '@/layouts/dashboard-layout';
 import { motion } from 'framer-motion';
-import { Shield, FileText, Plus, Search, Mic, MapPin, Handshake, Bot, Clock, Users, Settings } from 'lucide-react';
+import { Shield, FileText, Plus, Search, Mic, MapPin, Handshake, Bot, Clock, Users, Settings, Sparkles } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { ContractWizard } from '@/components/contracts/ContractWizard';
+import AIAssistantSidebar from '@/components/contracts/AIAssistantSidebar';
+import { AdvancedContractTable } from '@/components/contracts/AdvancedContractTable';
 
 const ContractAgent = () => {
-    const [activeTab, setActiveTab] = useState("templates");
+    const [activeTab, setActiveTab] = useState("overview");
+    const [showWizard, setShowWizard] = useState(false);
 
     const containerVariants = {
         hidden: { opacity: 0 },
