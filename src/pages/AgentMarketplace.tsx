@@ -1,29 +1,45 @@
 import React, { useState } from "react";
 import DashboardLayout from "@/layouts/dashboard-layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Grid2x2, 
-  List, 
-  Tag, 
-  Search, 
-  Star, 
-  Sparkles, 
-  ArrowUpRight, 
-  Activity,
-  Sliders,
-  BadgeDollarSign
-} from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import AgentCatalog from "@/components/marketplace/AgentCatalog";
+import SearchFilters from "@/components/marketplace/SearchFilters";
+import EnhancedAgentCard from "@/components/marketplace/EnhancedAgentCard";
+import { FilterState, MarketplaceListing } from "@/types/marketplace";
+import { Grid2x2, Activity } from "lucide-react";
 import AgentComparison from "@/components/marketplace/AgentComparison";
-import CategoryNav from "@/components/marketplace/CategoryNav";
 
 const AgentMarketplace = () => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [filterOpen, setFilterOpen] = useState(false);
+  const [filters, setFilters] = useState<FilterState>({
+    search: '',
+    categories: [],
+    priceModel: [],
+    minRating: 0,
+    sortBy: 'popularity'
+  });
+
+  // Mock marketplace listings
+  const mockListings: MarketplaceListing[] = [
+    {
+      id: '1',
+      agentId: '1',
+      name: 'CodeWhiz Pro',
+      description: 'AI-powered code assistant with multi-language support and real-time error detection',
+      longDescription: '',
+      creator: { id: '1', name: 'TechCorp', avatar: 'https://api.dicebear.com/7.x/shapes/svg?seed=tech' },
+      category: ['Technical', 'Development'],
+      pricing: { model: 'subscription', price: 9.99, currency: 'USD' },
+      rating: 4.8,
+      reviewCount: 234,
+      installCount: 12500,
+      features: ['Code completion', 'Error detection', 'Refactoring'],
+      screenshots: ['https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400'],
+      dependencies: [],
+      requiredPlugins: [],
+      lastUpdated: new Date(),
+      version: '2.4.1'
+    }
+  ];
 
   return (
     <DashboardLayout>
@@ -48,89 +64,14 @@ const AgentMarketplace = () => {
               </TabsTrigger>
             </TabsList>
 
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <div className="relative flex-1 sm:w-80">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50 h-4 w-4" />
-                <Input 
-                  placeholder="Search agents..." 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/50"
-                />
-              </div>
-              
-              <Button 
-                variant="outline" 
-                size="icon"
-                onClick={() => setFilterOpen(!filterOpen)}
-                className={`${filterOpen ? "bg-white/20" : "bg-white/10"} border-white/20 text-white hover:bg-white/30`}
-              >
-                <Sliders className="h-4 w-4" />
-              </Button>
-              
-              <div className="hidden sm:flex border border-white/20 rounded-md">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={`rounded-r-none ${viewMode === 'grid' ? 'bg-white/20' : 'bg-white/10'} text-white hover:bg-white/30`}
-                  onClick={() => setViewMode("grid")}
-                >
-                  <Grid2x2 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={`rounded-l-none ${viewMode === 'list' ? 'bg-white/20' : 'bg-white/10'} text-white hover:bg-white/30`}
-                  onClick={() => setViewMode("list")}
-                >
-                  <List className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+            <SearchFilters filters={filters} onFiltersChange={setFilters} />
           </div>
 
           <TabsContent value="browse" className="space-y-6 mt-0">
-            {filterOpen && (
-              <div className="glass-card p-4 animate-in fade-in-50 slide-in-from-top-5 duration-300 backdrop-blur-md bg-white/10 border border-white/20 shadow-card-glow">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div>
-                    <h3 className="text-sm font-medium mb-2 text-white text-shadow-sm">Agent Type</h3>
-                    <div className="flex flex-wrap gap-2">
-                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Creative</Button>
-                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Analytical</Button>
-                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Conversational</Button>
-                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Assistive</Button>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium mb-2 text-white text-shadow-sm">Pricing Model</h3>
-                    <div className="flex flex-wrap gap-2">
-                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Free</Button>
-                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Subscription</Button>
-                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Pay-per-use</Button>
-                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">One-time</Button>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium mb-2 text-white text-shadow-sm">Base Model</h3>
-                    <div className="flex flex-wrap gap-2">
-                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">GPT-4o</Button>
-                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Claude 3</Button>
-                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Gemini Pro</Button>
-                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">Mixtral</Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="md:col-span-1">
-                <CategoryNav selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
-              </div>
-              <div className="md:col-span-3">
-                <AgentCatalog viewMode={viewMode} searchQuery={searchQuery} selectedCategory={selectedCategory} />
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {mockListings.map((listing) => (
+                <EnhancedAgentCard key={listing.id} listing={listing} />
+              ))}
             </div>
           </TabsContent>
 

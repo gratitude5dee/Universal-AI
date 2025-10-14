@@ -21,6 +21,7 @@ import Bridge from "./pages/Bridge";
 import AgentMarketplace from "./pages/AgentMarketplace";
 import CreateAgent from "./pages/CreateAgent";
 import MarketplaceLaunch from "./pages/MarketplaceLaunch";
+import AgentDetail from "./pages/marketplace/AgentDetail";
 import Observability from "./pages/Observability";
 import Profile from "./pages/Profile";
 import Projects from "./pages/Projects";
@@ -97,6 +98,7 @@ function App() {
                   <Route path="/thread-of-life" element={<ProtectedRoute><ThreadOfLife /></ProtectedRoute>} />
                   <Route path="/bridge" element={<ProtectedRoute><Bridge /></ProtectedRoute>} />
                   <Route path="/agent-marketplace" element={<ProtectedRoute><AgentMarketplace /></ProtectedRoute>} />
+                  <Route path="/marketplace/agents/:agentId" element={<ProtectedRoute><AgentDetail /></ProtectedRoute>} />
                   <Route path="/create-agent" element={<ProtectedRoute><CreateAgent /></ProtectedRoute>} />
                   <Route path="/integrations" element={<ProtectedRoute><Integrations /></ProtectedRoute>} />
                   <Route path="/agents-integrations" element={<ProtectedRoute><AgentsIntegrations /></ProtectedRoute>} />
