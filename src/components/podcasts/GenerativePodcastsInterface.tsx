@@ -778,7 +778,7 @@ const GenerativePodcastsInterface = () => {
             
             <div className="mt-4">
               <div className="flex items-center justify-between text-xs text-gray-400 mb-1">
-                <span>0:00</span>
+                <span>{formatDurationLabel(audioRef.current?.currentTime ?? 0)}</span>
                 <span>{formatDurationLabel(currentPodcast.duration_seconds)}</span>
               </div>
               <div className="w-full bg-gray-700 rounded-full h-1">
