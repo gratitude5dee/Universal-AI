@@ -23,6 +23,7 @@ import CreateAgent from "./pages/CreateAgent";
 import MarketplaceLaunch from "./pages/MarketplaceLaunch";
 import AgentDetail from "./pages/marketplace/AgentDetail";
 import Observability from "./pages/Observability";
+import EnhancedObservability from "./pages/EnhancedObservability";
 import Profile from "./pages/Profile";
 import Projects from "./pages/Projects";
 import SpellcraftContracts from "./pages/SpellcraftContracts";
@@ -105,6 +106,7 @@ function App() {
                   <Route path="/marketing-distribution" element={<ProtectedRoute><MarketingDistribution /></ProtectedRoute>} />
                   <Route path="/marketplace-launch" element={<ProtectedRoute><MarketplaceLaunch /></ProtectedRoute>} />
                   <Route path="/observability" element={<ProtectedRoute><Observability /></ProtectedRoute>} />
+                  <Route path="/observatory" element={<ProtectedRoute><EnhancedObservability /></ProtectedRoute>} />
                   <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                   <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
                   <Route path="/spellcraft-contracts" element={<ProtectedRoute><SpellcraftContracts /></ProtectedRoute>} />
