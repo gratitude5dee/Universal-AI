@@ -47,11 +47,10 @@ import QrUploadManager from "./pages/event-toolkit/QrUploadManager";
 import CreateQrCampaign from "./pages/event-toolkit/CreateQrCampaign";
 
 // Agent Collection Pages
-import EnhancedBookingAgent from "@/components/touring/EnhancedBookingAgent";
+import BookingAgent from "./pages/agents/BookingAgent";
 import InvoiceAgent from "./pages/agents/InvoiceAgent";
 import SocialMediaAgent from "./pages/agents/SocialMediaAgent";
 import ContractAgent from "./pages/agents/ContractAgent";
-import DashboardLayout from '@/layouts/dashboard-layout';
 
 // Distribution Pages
 import DistributionOverview from "./pages/distribution/DistributionOverview";
@@ -126,7 +125,7 @@ function App() {
                   <Route path="/event-toolkit/qr-upload/create" element={<ProtectedRoute><CreateQrCampaign /></ProtectedRoute>} />
 
                   {/* Agent Collection Routes - Protected */}
-                  <Route path="/collection/booking-agent" element={<ProtectedRoute><DashboardLayout><EnhancedBookingAgent /></DashboardLayout></ProtectedRoute>} />
+                  <Route path="/collection/booking-agent" element={<ProtectedRoute><BookingAgent /></ProtectedRoute>} />
                   <Route path="/collection/invoice-agent" element={<ProtectedRoute><InvoiceAgent /></ProtectedRoute>} />
                   <Route path="/collection/social-media" element={<ProtectedRoute><SocialMediaAgent /></ProtectedRoute>} />
                   <Route path="/collection/contract-agent" element={<ProtectedRoute><ContractAgent /></ProtectedRoute>} />
