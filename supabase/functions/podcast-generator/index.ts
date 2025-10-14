@@ -187,8 +187,9 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in podcast-generator function:', error);
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     return new Response(JSON.stringify({ 
-      error: error.message,
+      error: errorMessage,
       timestamp: new Date().toISOString()
     }), {
       status: 500,

@@ -371,25 +371,19 @@ const GenerativePodcastsInterface = () => {
         formData.append('files', file);
       });
 
-      const response = await fetch(
-        `https://ixkkrousepsiorwlaycp.functions.supabase.co/functions/v1/voice-management?action=clone`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-          },
-          body: formData,
-        }
       const { data, error } = await supabase.functions.invoke('voice-management', {
-        body: formData,
+        body: { 
+          action: 'clone',
+          name: voiceName,
+          description: voiceDescription,
+          files: uploadedFiles 
+        },
       });
 
       if (error) throw error;
 
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.error);
+      if (!data?.success) {
+        throw new Error(data?.error || 'Failed to clone voice');
       }
 
       setVoiceName('');
@@ -404,9 +398,10 @@ const GenerativePodcastsInterface = () => {
 
     } catch (error) {
       console.error('Error cloning voice:', error);
+      const errorMessage = error instanceof Error ? error.message : "Failed to clone voice. Please try again.";
       toast({
         title: "Cloning Failed",
-        description: error.message || "Failed to clone voice. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     }

@@ -85,7 +85,7 @@ serve(async (req) => {
             .eq('status', 'accepted')
             .single();
 
-          hasAccess = collaborator && (collaborator.role === 'editor' || collaborator.role === 'admin');
+          hasAccess = (collaborator && (collaborator.role === 'editor' || collaborator.role === 'admin')) ?? false;
         }
 
         if (!hasAccess) {
@@ -100,9 +100,9 @@ serve(async (req) => {
           .single();
 
         if (existingShare) {
-          const shareTitle = settings?.title ?? board.title;
+          const shareTitle = requestData.settings?.title ?? board.title;
           const shareDescription =
-            settings?.description ?? board.description ?? null;
+            requestData.settings?.description ?? board.description ?? null;
           // Update existing share
           const { error: updateError } = await supabase
             .from('board_shares')
@@ -330,9 +330,10 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in canvas-sharing:', error);
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     return new Response(JSON.stringify({ 
       success: false, 
-      error: error.message 
+      error: errorMessage 
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

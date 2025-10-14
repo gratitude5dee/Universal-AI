@@ -208,13 +208,14 @@ serve(async (req) => {
           }
         } catch (error) {
           console.error('Stream processing error:', error);
+          const errorMessage = error instanceof Error ? error.message : 'Stream processing failed';
           
           // Update AI run with error
           await supabase
             .from('ai_runs')
             .update({
               status: 'failed',
-              error_message: error.message
+              error_message: errorMessage
             })
             .eq('id', aiRun.id);
 
@@ -234,7 +235,8 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in cerebras-stream function:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
     });

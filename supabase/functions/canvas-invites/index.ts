@@ -59,13 +59,13 @@ serve(async (req) => {
         const normalizedEmail = email.toLowerCase();
 
         // Find user by email through auth admin API
-        const { data: invitedUserData, error: invitedUserError } = await supabase.auth.admin.getUserByEmail(normalizedEmail);
+        const { data: { users }, error: invitedUserError } = await supabase.auth.admin.listUsers();
+        const invitedUser = users?.find(u => u.email?.toLowerCase() === normalizedEmail);
+        const invitedUserId = invitedUser?.id ?? null;
 
         if (invitedUserError) {
-          throw new Error('Failed to lookup user');
+          console.error('Error listing users:', invitedUserError);
         }
-
-        const invitedUserId = invitedUserData?.user?.id ?? null;
 
         // Check if already a collaborator by user or email
         if (invitedUserId) {
@@ -270,9 +270,10 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in canvas-invites:', error);
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     return new Response(JSON.stringify({ 
       success: false, 
-      error: error.message 
+      error: errorMessage 
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

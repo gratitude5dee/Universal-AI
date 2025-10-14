@@ -185,8 +185,9 @@ Current research context: ${context || 'General research query'}`;
 
   } catch (error) {
     console.error('Error in cerebras-research function:', error);
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     return new Response(JSON.stringify({ 
-      error: error.message,
+      error: errorMessage,
       timestamp: new Date().toISOString()
     }), {
       status: 500,
