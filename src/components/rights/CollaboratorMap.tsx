@@ -12,7 +12,7 @@ interface CollaboratorMapProps {
 
 const CollaboratorMap = ({ collaborators, onToggleDetails }: CollaboratorMapProps) => {
   return (
-    <div className="relative h-[220px] p-4 rounded-xl bg-[#F1F0FB] overflow-hidden flex items-center justify-center">
+    <div className="relative h-[220px] p-4 rounded-xl bg-transparent overflow-hidden flex items-center justify-center">
       {/* Lines connecting collaborators */}
       <svg className="absolute inset-0 w-full h-full z-0" xmlns="http://www.w3.org/2000/svg">
         <defs>
