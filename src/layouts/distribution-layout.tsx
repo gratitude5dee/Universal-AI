@@ -21,7 +21,7 @@ const DistributionLayout = ({ children, title, subtitle }: DistributionLayoutPro
     { value: "media-channels", label: "Media Channels", path: "/distribution/media-channels" },
     { value: "independent", label: "Independent Channels", path: "/distribution/independent" },
     { value: "on-chain", label: "On-Chain Distribution", path: "/distribution/on-chain" },
-    { value: "sync-licensing", label: "Sync Licensing", path: "https://sync.universal-ai.xyz", external: true },
+    { value: "sync-licensing", label: "Sync Licensing", path: "https://sync.universal-ai.xyz/", external: true },
   ];
 
   const currentTab = tabs.find(tab => tab.path === currentPath)?.value || "social-media";
