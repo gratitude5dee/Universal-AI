@@ -71,17 +71,24 @@
     scroll-behavior: smooth;
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
   html, body {
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
     overflow-x: hidden;
-    color: var(--text-primary);
-    font-family: var(--font-primary);
+    color: hsl(var(--text-primary));
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: var(--background);
+    background-color: hsl(var(--bg-primary));
 
     /* Animated Aurora Background */
     background-image: radial-gradient(at 20% 80%, var(--accent-glow-1) 0px, transparent 50%),
@@ -90,6 +97,42 @@
     background-repeat: no-repeat;
     background-size: 200% 200%;
     animation: aurora 25s ease-in-out infinite alternate;
+  }
+
+  /* Accessibility: Focus visible styles */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--accent-purple));
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+  }
+
+  /* Accessibility: Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Accessibility: Skip to main content link */
+  .skip-to-main {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: hsl(var(--accent-purple));
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    z-index: 9999;
+    border-radius: 0 0 4px 0;
+  }
+
+  .skip-to-main:focus {
+    top: 0;
   }
 
   /* Noise Overlay */
