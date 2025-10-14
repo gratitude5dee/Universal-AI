@@ -113,7 +113,12 @@ const BookingAgent = () => {
       <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
         {/* Left Sidebar - Workflow Pipeline (hidden in Kanban view) */}
         {viewMode === "list" && (
-          <div className="w-80 flex-shrink-0">
+          <motion.div 
+            className="w-80 flex-shrink-0"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
+          >
             <WorkflowSidebar
               bookings={bookings}
               selectedStage={selectedStage}
@@ -121,16 +126,21 @@ const BookingAgent = () => {
               onBookingSelect={(booking) => setSelectedBooking(booking)}
               selectedBookingId={selectedBooking?.id || null}
             />
-          </div>
+          </motion.div>
         )}
 
         {/* Center Workspace */}
-        <div className="flex-1 overflow-auto bg-background/30">
+        <motion.div 
+          className="flex-1 overflow-auto bg-background/30"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+        >
           {/* View Toggle Header */}
-          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border p-4">
+          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-xl border-b border-white/10 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold text-foreground">
+                <h2 className="text-xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
                   {viewMode === "kanban" ? "Booking Pipeline" : "Booking Details"}
                 </h2>
                 <p className="text-sm text-muted-foreground">
@@ -140,12 +150,18 @@ const BookingAgent = () => {
                 </p>
               </div>
               <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as "list" | "kanban")}>
-                <TabsList>
-                  <TabsTrigger value="list" className="gap-2">
+                <TabsList className="glass-card border-white/10 p-1 bg-background/50 backdrop-blur-xl">
+                  <TabsTrigger 
+                    value="list" 
+                    className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                  >
                     <List className="h-4 w-4" />
                     List
                   </TabsTrigger>
-                  <TabsTrigger value="kanban" className="gap-2">
+                  <TabsTrigger 
+                    value="kanban" 
+                    className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-blue-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+                  >
                     <LayoutGrid className="h-4 w-4" />
                     Kanban
                   </TabsTrigger>
@@ -176,13 +192,13 @@ const BookingAgent = () => {
                 />
 
                 {/* Booking Details Card */}
-                <Card className="bg-card border-border">
+                <Card className="glass-card border-white/10 backdrop-blur-xl shadow-xl shadow-purple-500/10">
                   <CardContent className="p-6">
                     <div className="space-y-6">
                       {/* Header */}
                       <div className="flex items-start justify-between">
                         <div>
-                          <h2 className="text-2xl font-bold text-foreground mb-1">
+                          <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-1">
                             {selectedBooking.venue_name}
                           </h2>
                           <div className="flex items-center gap-2 text-muted-foreground">
@@ -190,72 +206,107 @@ const BookingAgent = () => {
                             <span>{selectedBooking.venue_location}</span>
                           </div>
                         </div>
-                        <Badge className="bg-primary/20 text-primary border-primary/30 text-lg px-4 py-1">
+                        <Badge className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 border-purple-500/30 text-lg px-4 py-1">
                           {selectedBooking.status}
                         </Badge>
                       </div>
 
                       {/* Event Details */}
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="flex items-center gap-3 p-4 bg-background/50 rounded-lg border border-border">
-                          <Calendar className="h-5 w-5 text-primary" />
+                        <motion.div 
+                          className="flex items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm"
+                          whileHover={{ scale: 1.02, borderColor: "rgba(168, 85, 247, 0.3)" }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <Calendar className="h-5 w-5 text-purple-400" />
                           <div>
                             <p className="text-xs text-muted-foreground">Event Date</p>
                             <p className="text-sm font-semibold text-foreground">
                               {new Date(selectedBooking.event_date).toLocaleDateString()}
                             </p>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-3 p-4 bg-background/50 rounded-lg border border-border">
-                          <Clock className="h-5 w-5 text-primary" />
+                        </motion.div>
+                        <motion.div 
+                          className="flex items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm"
+                          whileHover={{ scale: 1.02, borderColor: "rgba(59, 130, 246, 0.3)" }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <Clock className="h-5 w-5 text-blue-400" />
                           <div>
                             <p className="text-xs text-muted-foreground">Event Time</p>
                             <p className="text-sm font-semibold text-foreground">
                               {selectedBooking.event_time}
                             </p>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-3 p-4 bg-green-500/10 rounded-lg border border-green-500/30">
+                        </motion.div>
+                        <motion.div 
+                          className="flex items-center gap-3 p-4 bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-xl border border-green-500/30 backdrop-blur-sm"
+                          whileHover={{ scale: 1.02, borderColor: "rgba(34, 197, 94, 0.5)" }}
+                          transition={{ duration: 0.2 }}
+                        >
                           <DollarSign className="h-5 w-5 text-green-400" />
                           <div>
                             <p className="text-xs text-green-400/80">Offer Amount</p>
-                            <p className="text-sm font-bold text-green-400">
+                            <p className="text-sm font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
                               ${selectedBooking.offer_amount.toLocaleString()}
                             </p>
                           </div>
-                        </div>
+                        </motion.div>
                       </div>
 
                       {/* Action Buttons */}
-                      <div className="flex gap-3 pt-4 border-t border-border">
+                      <div className="flex gap-3 pt-4 border-t border-white/10">
                         {(() => {
                           const nextAction = getNextAction(selectedBooking);
                           const ActionIcon = nextAction.icon;
                           return (
-                            <Button
-                              onClick={() => handleAction(selectedBooking, nextAction.action)}
-                              className="flex items-center gap-2 bg-primary hover:bg-primary/90"
+                            <motion.div
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
                             >
-                              <ActionIcon className="h-4 w-4" />
-                              {nextAction.label}
-                            </Button>
+                              <Button
+                                onClick={() => handleAction(selectedBooking, nextAction.action)}
+                                className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 shadow-lg shadow-purple-500/20"
+                              >
+                                <ActionIcon className="h-4 w-4" />
+                                {nextAction.label}
+                              </Button>
+                            </motion.div>
                           );
                         })()}
-                        <Button variant="outline" className="flex items-center gap-2">
-                          <Mail className="h-4 w-4" />
-                          Send Email
-                        </Button>
+                        <motion.div
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <Button 
+                            variant="outline" 
+                            className="flex items-center gap-2 bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 backdrop-blur-sm"
+                          >
+                            <Mail className="h-4 w-4" />
+                            Send Email
+                          </Button>
+                        </motion.div>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
               </motion.div>
             ) : (
-              <div className="flex items-center justify-center h-full">
-                <Card className="bg-card/50 border-border max-w-md">
+              <motion.div 
+                className="flex items-center justify-center h-full"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Card className="glass-card border-white/10 backdrop-blur-xl shadow-xl shadow-purple-500/5 max-w-md">
                   <CardContent className="p-12 text-center">
-                    <Calendar className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-foreground mb-2">
+                    <motion.div
+                      animate={{ scale: [1, 1.05, 1], rotate: [0, 5, -5, 0] }}
+                      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      <Calendar className="h-16 w-16 text-purple-400/50 mx-auto mb-4" />
+                    </motion.div>
+                    <h3 className="text-lg font-semibold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-2">
                       Select a Booking
                     </h3>
                     <p className="text-sm text-muted-foreground">
@@ -263,16 +314,21 @@ const BookingAgent = () => {
                     </p>
                   </CardContent>
                 </Card>
-              </div>
+              </motion.div>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Right Sidebar - AI Assistant (hidden in Kanban view) */}
         {viewMode === "list" && (
-          <div className="w-96 flex-shrink-0">
+          <motion.div 
+            className="w-96 flex-shrink-0"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+          >
             <AIAssistantPanel selectedBooking={selectedBooking} />
-          </div>
+          </motion.div>
         )}
       </div>
 

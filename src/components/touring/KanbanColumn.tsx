@@ -43,23 +43,23 @@ export const KanbanColumn = ({
   );
 
   return (
-    <Card className="flex flex-col h-full min-w-[320px]">
+    <Card className="flex flex-col h-full min-w-[320px] glass-card border-white/10 backdrop-blur-xl shadow-lg">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className={`p-2 rounded-lg ${color}`}>
+            <div className={`p-2 rounded-lg ${color} backdrop-blur-sm`}>
               <Icon className="h-4 w-4" />
             </div>
             <div>
-              <h3 className="font-semibold text-[hsl(var(--text-primary))]">
+              <h3 className="font-semibold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
                 {title}
               </h3>
-              <p className="text-xs text-[hsl(var(--text-secondary))]">
+              <p className="text-xs text-muted-foreground">
                 {bookings.length} booking{bookings.length !== 1 ? "s" : ""}
               </p>
             </div>
           </div>
-          <Badge variant="outline" className="text-xs">
+          <Badge className="text-xs bg-gradient-to-r from-green-500/20 to-emerald-500/20 border-green-500/30">
             ${(totalValue / 1000).toFixed(0)}k
           </Badge>
         </div>

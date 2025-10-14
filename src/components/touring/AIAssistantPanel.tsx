@@ -225,12 +225,19 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({ selectedBook
   }
 
   return (
-    <div className="h-full flex flex-col bg-card/50 backdrop-blur-sm border-l border-border">
+    <div className="h-full flex flex-col bg-gradient-to-b from-purple-500/5 via-blue-500/5 to-background/30 backdrop-blur-xl border-l border-white/10">
       {/* Header */}
-      <CardHeader className="border-b border-border">
+      <CardHeader className="border-b border-white/10">
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Sparkles className="h-5 w-5 text-primary" />
-          AI Assistant
+          <motion.div
+            animate={{ rotate: [0, 360] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          >
+            <Sparkles className="h-5 w-5 text-purple-400" />
+          </motion.div>
+          <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+            AI Assistant
+          </span>
         </CardTitle>
         <p className="text-xs text-muted-foreground mt-1">
           Get intelligent recommendations and insights
@@ -293,7 +300,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({ selectedBook
                     size="sm"
                     onClick={() => handleQuickAction(action.action)}
                     disabled={isLoading || !selectedBooking}
-                    className="h-auto py-3 flex flex-col items-center gap-2 hover:bg-primary/10 hover:border-primary/50"
+                    className="h-auto py-3 flex flex-col items-center gap-2 bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 hover:scale-105 hover:shadow-lg transition-all duration-200 backdrop-blur-sm"
                   >
                     <ActionIcon className={`h-4 w-4 ${action.color}`} />
                     <span className="text-xs">{action.label}</span>
@@ -364,7 +371,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({ selectedBook
       </ScrollArea>
 
       {/* Chat Input */}
-      <div className="p-4 border-t border-border bg-background/50">
+      <div className="p-4 border-t border-white/10 bg-gradient-to-t from-background/80 to-background/50 backdrop-blur-xl">
         <div className="flex items-center gap-2">
           <Input
             value={message}
@@ -372,13 +379,13 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({ selectedBook
             onKeyPress={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
             placeholder="Ask AI anything..."
             disabled={isLoading}
-            className="flex-1 bg-background border-border text-sm"
+            className="flex-1 bg-white/5 border-white/10 text-sm backdrop-blur-sm hover:bg-white/10 focus:border-purple-500/50 transition-all"
           />
           <Button
             size="icon"
             variant="ghost"
             onClick={() => setIsListening(!isListening)}
-            className={isListening ? "text-red-500 animate-pulse" : ""}
+            className={`hover:bg-white/10 ${isListening ? "text-red-500 animate-pulse" : ""}`}
             disabled={isLoading}
           >
             <Mic className="h-4 w-4" />
@@ -387,7 +394,7 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({ selectedBook
             size="icon"
             onClick={handleSendMessage}
             disabled={!message.trim() || isLoading}
-            className="bg-primary hover:bg-primary/90"
+            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 shadow-lg shadow-purple-500/20"
           >
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />

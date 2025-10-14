@@ -60,10 +60,12 @@ export const WorkflowSidebar: React.FC<WorkflowSidebarProps> = ({
     : bookings.filter(b => b.workflow_stage === selectedStage);
 
   return (
-    <div className="h-full flex flex-col bg-card/50 backdrop-blur-sm border-r border-border">
+    <div className="h-full flex flex-col bg-gradient-to-b from-background/50 to-background/30 backdrop-blur-xl border-r border-white/10">
       {/* Header */}
-      <div className="p-4 border-b border-border">
-        <h2 className="text-lg font-bold text-foreground">Booking Pipeline</h2>
+      <div className="p-4 border-b border-white/10">
+        <h2 className="text-lg font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+          Booking Pipeline
+        </h2>
         <p className="text-xs text-muted-foreground mt-1">Track your deals through each stage</p>
       </div>
 
@@ -80,10 +82,10 @@ export const WorkflowSidebar: React.FC<WorkflowSidebarProps> = ({
                 onClick={() => onStageSelect(stage.id)}
                 className={`w-full text-left transition-all ${
                   isActive 
-                    ? 'bg-primary/20 border-primary/50' 
-                    : 'bg-background/50 border-border hover:bg-background/80 hover:border-primary/30'
-                } border rounded-lg p-3`}
-                whileHover={{ x: 4 }}
+                    ? 'bg-gradient-to-r from-purple-500/20 to-blue-500/20 border-purple-500/50 shadow-lg shadow-purple-500/10' 
+                    : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 hover:shadow-md'
+                } border rounded-xl p-3 backdrop-blur-sm`}
+                whileHover={{ x: 4, scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <div className="flex items-center justify-between">
@@ -121,10 +123,11 @@ export const WorkflowSidebar: React.FC<WorkflowSidebarProps> = ({
                     onClick={() => onBookingSelect(booking)}
                     className={`w-full text-left transition-all ${
                       selectedBookingId === booking.id
-                        ? 'bg-primary/10 border-primary'
-                        : 'bg-background/30 border-border hover:bg-background/60'
-                    } border rounded-md p-2`}
-                    whileHover={{ x: 2 }}
+                        ? 'bg-gradient-to-r from-purple-500/10 to-blue-500/10 border-purple-500/50 shadow-lg shadow-purple-500/10'
+                        : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
+                    } border rounded-lg p-2.5 backdrop-blur-sm`}
+                    whileHover={{ x: 3, scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
@@ -148,11 +151,11 @@ export const WorkflowSidebar: React.FC<WorkflowSidebarProps> = ({
       </ScrollArea>
 
       {/* Pipeline Stats */}
-      <div className="p-4 border-t border-border bg-background/50">
+      <div className="p-4 border-t border-white/10 bg-gradient-to-t from-background/80 to-background/50 backdrop-blur-xl">
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-xs text-muted-foreground">Total Pipeline</span>
-            <span className="text-sm font-bold text-foreground">
+            <span className="text-sm font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
               ${bookings.reduce((sum, b) => sum + b.offer_amount, 0).toLocaleString()}
             </span>
           </div>
