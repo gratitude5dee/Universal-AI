@@ -10,6 +10,43 @@ const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+const defaultCanvasPayload = {
+  nodes: [],
+  edges: [],
+  viewport: { x: 0, y: 0, zoom: 1 },
+};
+
+type BoardContentLike = Record<string, unknown> | null | undefined;
+
+const scoreCanvasPayload = (payload: BoardContentLike) => {
+  if (!payload || typeof payload !== 'object') return -1;
+  const nodes = Array.isArray((payload as { nodes?: unknown }).nodes)
+    ? ((payload as { nodes?: unknown }).nodes as unknown[]).length
+    : 0;
+  const edges = Array.isArray((payload as { edges?: unknown }).edges)
+    ? ((payload as { edges?: unknown }).edges as unknown[]).length
+    : 0;
+
+  const keys = Object.keys(payload as Record<string, unknown>).length;
+  return nodes * 2 + edges + (keys > 0 ? 1 : 0);
+};
+
+const resolveBoardContent = (board: {
+  content?: BoardContentLike;
+  canvas_data?: BoardContentLike;
+}) => {
+  const contentScore = scoreCanvasPayload(board.content);
+  const canvasScore = scoreCanvasPayload(board.canvas_data);
+
+  if (canvasScore > contentScore) {
+    return (board.canvas_data as Record<string, unknown>) ?? defaultCanvasPayload;
+  }
+
+  return (board.content as Record<string, unknown>)
+    ?? (board.canvas_data as Record<string, unknown>)
+    ?? defaultCanvasPayload;
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -50,6 +87,8 @@ serve(async (req) => {
           throw new Error('Board not found');
         }
 
+        const boardContent = resolveBoardContent(board);
+
         const { data: project, error: projectError } = await supabase
           .from('projects')
           .insert({
@@ -63,6 +102,20 @@ serve(async (req) => {
 
         if (projectError) {
           throw new Error('Failed to create project');
+        }
+
+        const { error: boardLinkError } = await supabase
+          .from('boards')
+          .update({
+            source_project_id: project.id,
+            content: boardContent,
+            canvas_data: boardContent,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', boardId);
+
+        if (boardLinkError) {
+          throw new Error('Failed to update board link');
         }
 
         result = { project };
@@ -95,6 +148,8 @@ serve(async (req) => {
           throw new Error('Board not found');
         }
 
+        const boardContentToSync = resolveBoardContent(syncBoard);
+
         const { error: syncError } = await supabase
           .from('projects')
           .update({
@@ -105,6 +160,20 @@ serve(async (req) => {
 
         if (syncError) {
           throw new Error('Failed to sync to project');
+        }
+
+        const { error: boardSyncError } = await supabase
+          .from('boards')
+          .update({
+            content: boardContentToSync,
+            canvas_data: boardContentToSync,
+            source_project_id: projectId,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', boardId);
+
+        if (boardSyncError) {
+          throw new Error('Failed to update board content');
         }
 
         result = { success: true };
@@ -127,7 +196,12 @@ serve(async (req) => {
           throw new Error('Failed to fetch project boards');
         }
 
-        result = { boards: projectBoards };
+        result = {
+          boards: (projectBoards || []).map((board) => ({
+            ...board,
+            content: resolveBoardContent(board),
+          })),
+        };
         break;
       }
 
@@ -201,6 +275,19 @@ serve(async (req) => {
 
         if (newBoardError) {
           throw new Error('Failed to create board');
+        }
+
+        const { error: projectLinkError } = await supabase
+          .from('projects')
+          .update({
+            source_board_id: newBoard.id,
+            concept_text: JSON.stringify(boardContent),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', projectId);
+
+        if (projectLinkError) {
+          throw new Error('Failed to update project link');
         }
 
         result = { board: newBoard };

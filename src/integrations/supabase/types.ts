@@ -23,6 +23,7 @@ export type Database = {
           error_message: string | null
           id: string
           model: string
+          provider: string | null
           prompt: string
           response: string | null
           status: string
@@ -37,6 +38,7 @@ export type Database = {
           error_message?: string | null
           id?: string
           model?: string
+          provider?: string | null
           prompt: string
           response?: string | null
           status?: string
@@ -51,6 +53,7 @@ export type Database = {
           error_message?: string | null
           id?: string
           model?: string
+          provider?: string | null
           prompt?: string
           response?: string | null
           status?: string
@@ -134,9 +137,9 @@ export type Database = {
         Row: {
           board_id: string
           created_at: string
-          email: string | null
           id: string
           invited_by: string
+          invited_email: string | null
           role: string
           status: string
           updated_at: string
@@ -145,9 +148,9 @@ export type Database = {
         Insert: {
           board_id: string
           created_at?: string
-          email?: string | null
           id?: string
           invited_by: string
+          invited_email?: string | null
           role?: string
           status?: string
           updated_at?: string
@@ -156,9 +159,9 @@ export type Database = {
         Update: {
           board_id?: string
           created_at?: string
-          email?: string | null
           id?: string
           invited_by?: string
+          invited_email?: string | null
           role?: string
           status?: string
           updated_at?: string
@@ -179,34 +182,40 @@ export type Database = {
           board_id: string
           content: string
           created_at: string
+          guest_email: string | null
+          guest_name: string | null
           id: string
           node_id: string | null
           position_x: number | null
           position_y: number | null
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           board_id: string
           content: string
           created_at?: string
+          guest_email?: string | null
+          guest_name?: string | null
           id?: string
           node_id?: string | null
           position_x?: number | null
           position_y?: number | null
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           board_id?: string
           content?: string
           created_at?: string
+          guest_email?: string | null
+          guest_name?: string | null
           id?: string
           node_id?: string | null
           position_x?: number | null
           position_y?: number | null
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -220,31 +229,46 @@ export type Database = {
       }
       board_shares: {
         Row: {
+          allow_comments: boolean
+          allow_downloads: boolean
           board_id: string
           created_at: string
           created_by: string
           description: string | null
+          expires_at: string | null
           id: string
+          is_public: boolean
           share_id: string
           title: string
+          updated_at: string
         }
         Insert: {
+          allow_comments?: boolean
+          allow_downloads?: boolean
           board_id: string
           created_at?: string
           created_by: string
           description?: string | null
+          expires_at?: string | null
           id?: string
+          is_public?: boolean
           share_id: string
           title: string
+          updated_at?: string
         }
         Update: {
+          allow_comments?: boolean
+          allow_downloads?: boolean
           board_id?: string
           created_at?: string
           created_by?: string
           description?: string | null
+          expires_at?: string | null
           id?: string
+          is_public?: boolean
           share_id?: string
           title?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -258,42 +282,62 @@ export type Database = {
       }
       boards: {
         Row: {
+          content: Json
           canvas_data: Json
+          content: Json
           created_at: string
           description: string | null
           id: string
           is_public: boolean
+          source_project_id: string | null
           slug: string | null
+          source_project_id: string | null
           thumbnail_url: string | null
           title: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          content?: Json
           canvas_data?: Json
+          content?: Json
           created_at?: string
           description?: string | null
           id?: string
           is_public?: boolean
+          source_project_id?: string | null
           slug?: string | null
+          source_project_id?: string | null
           thumbnail_url?: string | null
           title?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          content?: Json
           canvas_data?: Json
+          content?: Json
           created_at?: string
           description?: string | null
           id?: string
           is_public?: boolean
+          source_project_id?: string | null
           slug?: string | null
+          source_project_id?: string | null
           thumbnail_url?: string | null
           title?: string
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "boards_source_project_id_fkey"
+            columns: ["source_project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       characters: {
         Row: {
@@ -1371,6 +1415,53 @@ export type Database = {
             columns: ["workflow_id"]
             isOneToOne: false
             referencedRelation: "workflows"
+          referencedColumns: ["id"]
+        },
+      ]
+    }
+      podcasts: {
+        Row: {
+          audio_base64: string | null
+          audio_url: string | null
+          created_at: string
+          description: string | null
+          duration: number | null
+          id: string
+          style: string | null
+          title: string
+          user_id: string
+          voice_id: string | null
+        }
+        Insert: {
+          audio_base64?: string | null
+          audio_url?: string | null
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          id?: string
+          style?: string | null
+          title: string
+          user_id: string
+          voice_id?: string | null
+        }
+        Update: {
+          audio_base64?: string | null
+          audio_url?: string | null
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          id?: string
+          style?: string | null
+          title?: string
+          user_id?: string
+          voice_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "podcasts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -1411,6 +1502,7 @@ export type Database = {
           avatar_url: string | null
           connected_accounts: Json | null
           created_at: string
+          email: string | null
           id: string
           last_wallet_connection: string | null
           onboarding_completed: boolean
@@ -1426,6 +1518,7 @@ export type Database = {
           avatar_url?: string | null
           connected_accounts?: Json | null
           created_at?: string
+          email?: string | null
           id: string
           last_wallet_connection?: string | null
           onboarding_completed?: boolean
@@ -1441,6 +1534,7 @@ export type Database = {
           avatar_url?: string | null
           connected_accounts?: Json | null
           created_at?: string
+          email?: string | null
           id?: string
           last_wallet_connection?: string | null
           onboarding_completed?: boolean
@@ -1469,9 +1563,11 @@ export type Database = {
           id: string
           main_message: string | null
           product_name: string | null
+          source_board_id: string | null
           selected_storyline_id: string | null
           special_requests: string | null
           style_reference_asset_id: string | null
+          source_board_id: string | null
           target_audience: string | null
           title: string
           tone: string | null
@@ -1494,9 +1590,11 @@ export type Database = {
           id?: string
           main_message?: string | null
           product_name?: string | null
+          source_board_id?: string | null
           selected_storyline_id?: string | null
           special_requests?: string | null
           style_reference_asset_id?: string | null
+          source_board_id?: string | null
           target_audience?: string | null
           title?: string
           tone?: string | null
@@ -1519,9 +1617,11 @@ export type Database = {
           id?: string
           main_message?: string | null
           product_name?: string | null
+          source_board_id?: string | null
           selected_storyline_id?: string | null
           special_requests?: string | null
           style_reference_asset_id?: string | null
+          source_board_id?: string | null
           target_audience?: string | null
           title?: string
           tone?: string | null
@@ -1542,6 +1642,13 @@ export type Database = {
             columns: ["style_reference_asset_id"]
             isOneToOne: false
             referencedRelation: "media_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_source_board_id_fkey"
+            columns: ["source_board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
             referencedColumns: ["id"]
           },
         ]
@@ -2296,6 +2403,33 @@ export type Database = {
           secret_type?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      voice_clones: {
+        Row: {
+          created_at: string
+          id: string
+          metadata: Json | null
+          updated_at: string
+          user_id: string
+          voice_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          updated_at?: string
+          user_id: string
+          voice_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          updated_at?: string
+          user_id?: string
+          voice_id?: string
         }
         Relationships: []
       }

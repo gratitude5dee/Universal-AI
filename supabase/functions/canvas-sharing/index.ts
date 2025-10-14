@@ -10,6 +10,25 @@ const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+type CanvasShareSettings = {
+  isPublic?: boolean;
+  allowComments?: boolean;
+  allowDownloads?: boolean;
+  expiresAt?: string | null;
+  title?: string;
+  description?: string | null;
+};
+
+type CanvasSharingPayload = {
+  action: string;
+  boardId?: string;
+  shareId?: string;
+  settings?: CanvasShareSettings;
+  content?: string;
+  guestName?: string | null;
+  guestEmail?: string | null;
+};
+
 function generateShareId(): string {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
@@ -81,6 +100,9 @@ serve(async (req) => {
           .single();
 
         if (existingShare) {
+          const shareTitle = settings?.title ?? board.title;
+          const shareDescription =
+            settings?.description ?? board.description ?? null;
           // Update existing share
           const { error: updateError } = await supabase
             .from('board_shares')

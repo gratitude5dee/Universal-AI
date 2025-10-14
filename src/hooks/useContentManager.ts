@@ -70,7 +70,14 @@ export const useContentManager = () => {
   };
 
   // Upload file to Supabase Storage
-  const uploadFile = async (file: File, folderId?: string) => {
+  const uploadFile = async (
+    file: File,
+    folderId?: string
+  ): Promise<{
+    publicUrl: string;
+    filePath: string;
+    fileType: 'audio' | 'video' | 'image' | 'document';
+  } | null> => {
     try {
       setUploading(true);
 
@@ -124,6 +131,8 @@ export const useContentManager = () => {
 
       // Refresh content
       await fetchContent();
+
+      return { publicUrl, filePath, fileType };
     } catch (error) {
       console.error('Error uploading file:', error);
       toast({
@@ -131,6 +140,7 @@ export const useContentManager = () => {
         description: "Failed to upload file. Please try again.",
         variant: "destructive"
       });
+      return null;
     } finally {
       setUploading(false);
     }
