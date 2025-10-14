@@ -103,8 +103,9 @@ const CreativeCanvas: React.FC<CreativeCanvasProps> = ({ boardId, isReadOnly = f
 
       const { error } = await supabase
         .from('boards')
-        .update({ 
+        .update({
           canvas_data: canvasData,
+          content: canvasData,
           updated_at: new Date().toISOString()
         })
         .eq('id', boardId);
