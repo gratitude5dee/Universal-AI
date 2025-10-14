@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.53.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -20,13 +21,57 @@ serve(async (req) => {
 
   try {
     const cerebrasApiKey = Deno.env.get('CEREBRAS_API_KEY');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     if (!cerebrasApiKey) {
       throw new Error('CEREBRAS_API_KEY is not configured');
     }
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error('Supabase credentials are not configured');
+    }
 
     const { query, context, sources = [], sessionId }: ResearchRequest = await req.json();
-    
+
     console.log(`Research request - Session: ${sessionId}, Query: ${query.substring(0, 100)}...`);
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    const sessionIdentifier = sessionId || `research_${crypto.randomUUID()}`;
+    let sessionRecordId: string | null = null;
+
+    const sessionTimestamp = new Date().toISOString();
+
+    const { data: existingSession, error: existingSessionError } = await supabase
+      .from('research_sessions')
+      .select('id')
+      .eq('session_identifier', sessionIdentifier)
+      .maybeSingle();
+
+    if (existingSessionError) {
+      console.error('Error loading research session:', existingSessionError);
+      throw new Error('Failed to load research session');
+    }
+
+    if (existingSession) {
+      sessionRecordId = existingSession.id;
+    } else {
+      const { data: createdSession, error: createSessionError } = await supabase
+        .from('research_sessions')
+        .insert({
+          session_identifier: sessionIdentifier,
+          updated_at: sessionTimestamp,
+          last_message_at: sessionTimestamp
+        })
+        .select('id')
+        .single();
+
+      if (createSessionError || !createdSession) {
+        console.error('Error creating research session:', createSessionError);
+        throw new Error('Failed to create research session');
+      }
+
+      sessionRecordId = createdSession.id;
+    }
 
     // Build system prompt for research
     const systemPrompt = `You are an advanced AI research assistant with access to deep knowledge across multiple domains. You excel at:
@@ -76,11 +121,60 @@ Current research context: ${context || 'General research query'}`;
     const data = await response.json();
     console.log('Cerebras API response received successfully');
 
+    const responseTimestamp = new Date().toISOString();
+
+    if (sessionRecordId) {
+      const { error: userMessageError } = await supabase
+        .from('research_messages')
+        .insert({
+          session_id: sessionRecordId,
+          role: 'user',
+          content: query,
+          sources: sources.length ? sources : null,
+          created_at: sessionTimestamp
+        });
+
+      if (userMessageError) {
+        console.error('Error storing user research message:', userMessageError);
+        throw new Error('Failed to store research message');
+      }
+
+      const { error: assistantMessageError } = await supabase
+        .from('research_messages')
+        .insert({
+          session_id: sessionRecordId,
+          role: 'assistant',
+          content: data.choices[0].message.content,
+          sources: sources.length ? sources : null,
+          tokens_used: data.usage?.total_tokens || 0,
+          model: 'llama3.1-70b',
+          created_at: responseTimestamp
+        });
+
+      if (assistantMessageError) {
+        console.error('Error storing assistant research message:', assistantMessageError);
+        throw new Error('Failed to store research response');
+      }
+
+      const { error: updateSessionError } = await supabase
+        .from('research_sessions')
+        .update({
+          updated_at: responseTimestamp,
+          last_message_at: responseTimestamp
+        })
+        .eq('id', sessionRecordId);
+
+      if (updateSessionError) {
+        console.error('Error updating research session timestamps:', updateSessionError);
+        throw new Error('Failed to update research session');
+      }
+    }
+
     const researchResult = {
       content: data.choices[0].message.content,
       sources: sources,
-      sessionId: sessionId,
-      timestamp: new Date().toISOString(),
+      sessionId: sessionIdentifier,
+      timestamp: responseTimestamp,
       model: 'llama3.1-70b',
       tokensUsed: data.usage?.total_tokens || 0
     };

@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Play, 
-  Pause, 
-  SkipForward, 
-  SkipBack, 
-  Volume2, 
+import {
+  Play,
+  Pause,
+  SkipForward,
+  SkipBack,
+  Volume2,
   Heart,
-  Share,
   MoreHorizontal,
   Plus,
   Mic,
@@ -15,10 +14,8 @@ import {
   Sparkles,
   Download,
   Clock,
-  User,
-  Trash2,
-  Settings,
-  Radio
+  Radio,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -32,17 +29,33 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
+import { useAuth } from '@/context/AuthContext';
 
 interface Podcast {
   id: string;
   title: string;
   description: string;
-  audioContent: string;
+  audioContent?: string;
+  audioUrl?: string;
   duration: number;
-  generatedAt: string;
+  createdAt: string;
+  voiceId?: string;
+  style?: string;
+}
+
+type PodcastRow = Database['public']['Tables']['podcasts']['Row'];
+
+interface PodcastFunctionResponse {
+  id: string;
+  title: string;
+  description: string;
+  script?: string;
+  audioContent: string;
   voiceId: string;
   style: string;
-  size: number;
+  duration: number;
+  generatedAt: string;
 }
 
 interface Voice {
@@ -58,74 +71,8 @@ const GenerativePodcastsInterface = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [volume, setVolume] = useState(0.8);
-  const [podcasts, setPodcasts] = useState<Podcast[]>([
-    {
-      id: 'podcast_1',
-      title: 'The Future of Music AI',
-      description: 'Exploring how artificial intelligence is revolutionizing music creation, from composition to production.',
-      audioContent: 'data:audio/mp3;base64,', // Mock base64 - would contain actual audio
-      duration: 12,
-      generatedAt: '2024-01-15T10:30:00Z',
-      voiceId: 'aria_voice',
-      style: 'conversational',
-      size: 5420000
-    },
-    {
-      id: 'podcast_2', 
-      title: 'Artist Spotlight: Rising Stars in Hip-Hop',
-      description: 'Deep dive into emerging hip-hop artists who are reshaping the genre with innovative sounds and storytelling.',
-      audioContent: 'data:audio/mp3;base64,',
-      duration: 8,
-      generatedAt: '2024-01-14T14:20:00Z',
-      voiceId: 'roger_voice',
-      style: 'storytelling',
-      size: 3680000
-    },
-    {
-      id: 'podcast_3',
-      title: 'Streaming Wars: Platform Analysis 2024',
-      description: 'Comprehensive analysis of major streaming platforms, their strategies, and impact on artist revenues.',
-      audioContent: 'data:audio/mp3;base64,',
-      duration: 15,
-      generatedAt: '2024-01-13T09:15:00Z',
-      voiceId: 'sarah_voice',
-      style: 'news',
-      size: 6890000
-    },
-    {
-      id: 'podcast_4',
-      title: 'Music Production Masterclass',
-      description: 'Essential techniques and tools every music producer should know, from mixing to mastering.',
-      audioContent: 'data:audio/mp3;base64,',
-      duration: 18,
-      generatedAt: '2024-01-12T16:45:00Z',
-      voiceId: 'brian_voice',
-      style: 'educational',
-      size: 8320000
-    },
-    {
-      id: 'podcast_5',
-      title: 'Label Strategies in the Digital Age',
-      description: 'How record labels are adapting their business models for streaming, social media, and direct-to-fan platforms.',
-      audioContent: 'data:audio/mp3;base64,',
-      duration: 10,
-      generatedAt: '2024-01-11T11:30:00Z',
-      voiceId: 'charlie_voice',
-      style: 'conversational',
-      size: 4650000
-    },
-    {
-      id: 'podcast_6',
-      title: 'Global Music Markets: Emerging Trends',
-      description: 'Exploring how different regions are influencing global music trends and discovering new revenue opportunities.',
-      audioContent: 'data:audio/mp3;base64,',
-      duration: 14,
-      generatedAt: '2024-01-10T13:20:00Z',
-      voiceId: 'alice_voice',
-      style: 'news',
-      size: 6120000
-    }
-  ]);
+  const [podcasts, setPodcasts] = useState<Podcast[]>([]);
+  const [isLoadingPodcasts, setIsLoadingPodcasts] = useState(false);
   const [voices, setVoices] = useState<Voice[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isLoadingVoices, setIsLoadingVoices] = useState(true);
@@ -141,9 +88,58 @@ const GenerativePodcastsInterface = () => {
   const [voiceName, setVoiceName] = useState('');
   const [voiceDescription, setVoiceDescription] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  
+
   const audioRef = useRef<HTMLAudioElement>(null);
   const { toast } = useToast();
+  const { user, loading: authLoading } = useAuth();
+
+  const mapPodcastRow = useCallback((row: PodcastRow): Podcast => ({
+    id: row.id,
+    title: row.title,
+    description: row.description ?? '',
+    audioContent: row.audio_base64 ?? undefined,
+    audioUrl: row.audio_url ?? undefined,
+    duration: row.duration ?? 0,
+    createdAt: row.created_at,
+    voiceId: row.voice_id ?? undefined,
+    style: row.style ?? 'Custom',
+  }), []);
+
+  const fetchPodcasts = useCallback(async () => {
+    if (!user) {
+      setPodcasts([]);
+      setCurrentPodcast(null);
+      setIsPlaying(false);
+      setProgress(0);
+      setIsLoadingPodcasts(false);
+      return;
+    }
+
+    setIsLoadingPodcasts(true);
+
+    try {
+      const { data, error } = await supabase
+        .from('podcasts')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      setPodcasts((data ?? []).map(mapPodcastRow));
+    } catch (error) {
+      console.error('Error loading podcasts:', error);
+      toast({
+        title: 'Error loading podcasts',
+        description: 'We could not load your podcasts. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoadingPodcasts(false);
+    }
+  }, [user, mapPodcastRow, toast]);
 
   // Load voices on component mount
   const loadVoices = useCallback(async () => {
@@ -191,10 +187,19 @@ const GenerativePodcastsInterface = () => {
       return;
     }
 
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to generate and save podcasts.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsGenerating(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('podcast-generator', {
+      const { data, error } = await supabase.functions.invoke<PodcastFunctionResponse>('podcast-generator', {
         body: {
           title,
           description,
@@ -205,25 +210,55 @@ const GenerativePodcastsInterface = () => {
       });
 
       if (error) throw error;
+      if (!data) {
+        throw new Error('Podcast generation returned no data.');
+      }
 
-      const newPodcast: Podcast = data;
-      setPodcasts(prev => [newPodcast, ...prev]);
-      
+      const generatedPodcast = data;
+
+      if (!generatedPodcast.audioContent) {
+        throw new Error('Audio content missing from generation response.');
+      }
+
+      const { data: insertedPodcast, error: insertError } = await supabase
+        .from('podcasts')
+        .insert({
+          user_id: user.id,
+          title: generatedPodcast.title,
+          description: generatedPodcast.description ?? description ?? null,
+          audio_base64: generatedPodcast.audioContent,
+          voice_id: generatedPodcast.voiceId,
+          style: generatedPodcast.style ?? podcastStyle,
+          duration: generatedPodcast.duration ?? Math.max(Math.ceil(script.length / 150), 1),
+        })
+        .select()
+        .single();
+
+      if (insertError || !insertedPodcast) {
+        throw insertError || new Error('Failed to save the generated podcast.');
+      }
+
+      const savedPodcast = mapPodcastRow(insertedPodcast);
+      setPodcasts(prev => [savedPodcast, ...prev]);
+      setCurrentPodcast(savedPodcast);
+      setProgress(0);
+
       // Clear form
       setTitle('');
       setDescription('');
       setScript('');
-      
+
       toast({
         title: "Podcast Generated!",
-        description: `"${newPodcast.title}" has been created successfully.`,
+        description: `"${savedPodcast.title}" has been created successfully.`,
       });
 
     } catch (error) {
       console.error('Error generating podcast:', error);
+      const message = error instanceof Error ? error.message : 'Failed to generate podcast. Please try again.';
       toast({
         title: "Generation Failed",
-        description: error.message || "Failed to generate podcast. Please try again.",
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -303,25 +338,60 @@ const GenerativePodcastsInterface = () => {
   };
 
   const playPodcast = (podcast: Podcast) => {
+    if (!podcast.audioUrl && !podcast.audioContent) {
+      toast({
+        title: 'Audio unavailable',
+        description: 'This podcast does not have audio data yet.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     if (currentPodcast?.id === podcast.id && isPlaying) {
       setIsPlaying(false);
       audioRef.current?.pause();
-    } else {
-      setCurrentPodcast(podcast);
-      setIsPlaying(true);
-      
-      if (audioRef.current) {
+      return;
+    }
+
+    setCurrentPodcast(podcast);
+    setProgress(0);
+
+    if (audioRef.current) {
+      if (podcast.audioUrl) {
+        audioRef.current.src = podcast.audioUrl;
+      } else if (podcast.audioContent) {
         audioRef.current.src = `data:audio/mp3;base64,${podcast.audioContent}`;
-        audioRef.current.play();
       }
+
+      audioRef.current.currentTime = 0;
+      void audioRef.current.play();
+      setIsPlaying(true);
     }
   };
 
   const downloadPodcast = (podcast: Podcast) => {
-    const link = document.createElement('a');
-    link.href = `data:audio/mp3;base64,${podcast.audioContent}`;
-    link.download = `${podcast.title}.mp3`;
-    link.click();
+    if (podcast.audioUrl) {
+      const link = document.createElement('a');
+      link.href = podcast.audioUrl;
+      link.download = `${podcast.title}.mp3`;
+      link.rel = 'noopener';
+      link.click();
+      return;
+    }
+
+    if (podcast.audioContent) {
+      const link = document.createElement('a');
+      link.href = `data:audio/mp3;base64,${podcast.audioContent}`;
+      link.download = `${podcast.title}.mp3`;
+      link.click();
+      return;
+    }
+
+    toast({
+      title: 'Download unavailable',
+      description: 'No audio data is available to download for this podcast.',
+      variant: 'destructive',
+    });
   };
 
   return (
@@ -335,7 +405,10 @@ const GenerativePodcastsInterface = () => {
             setProgress((audio.currentTime / audio.duration) * 100);
           }
         }}
-        onEnded={() => setIsPlaying(false)}
+        onEnded={() => {
+          setIsPlaying(false);
+          setProgress(0);
+        }}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
       />
@@ -519,7 +592,15 @@ const GenerativePodcastsInterface = () => {
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
         <div className="flex-1 p-6 overflow-y-auto">
-          {podcasts.length === 0 ? (
+          {isLoadingPodcasts ? (
+            <div className="flex flex-col items-center justify-center h-full text-center">
+              <Loader2 className="w-12 h-12 text-green-400 animate-spin mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Loading podcasts</h3>
+              <p className="text-gray-400 max-w-md">
+                We&apos;re fetching your saved episodes.
+              </p>
+            </div>
+          ) : podcasts.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <div className="bg-gray-800 rounded-full p-6 mb-6">
                 <Radio className="w-12 h-12 text-green-400" />

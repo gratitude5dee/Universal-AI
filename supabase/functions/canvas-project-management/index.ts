@@ -62,6 +62,15 @@ serve(async (req) => {
           throw new Error('Failed to create project');
         }
 
+        const { error: boardLinkError } = await supabase
+          .from('boards')
+          .update({ source_project_id: project.id })
+          .eq('id', boardId);
+
+        if (boardLinkError) {
+          throw new Error('Failed to link board to project');
+        }
+
         result = { project };
         break;
 
