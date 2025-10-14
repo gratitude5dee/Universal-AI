@@ -301,15 +301,15 @@ const GenerativePodcastsInterface = () => {
 
       const { data: insertedPodcast, error: insertError } = await supabase
         .from('podcasts')
-        .insert({
+        .insert([{
           user_id: user.id,
           title: generatedPodcast.title,
           description: generatedPodcast.description ?? description ?? null,
-          audio_base64: generatedPodcast.audioContent,
+          audio_url: '', // Placeholder, will be updated after upload
           voice_id: generatedPodcast.voiceId,
           style: generatedPodcast.style ?? podcastStyle,
-          duration: generatedPodcast.duration ?? Math.max(Math.ceil(script.length / 150), 1),
-        })
+          duration: generatedPodcast.duration ?? Math.max(Math.ceil(script.length / 150), 1)
+        }])
         .select()
         .single();
 
