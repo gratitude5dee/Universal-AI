@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { GitBranch, Eye, TrendingUp, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LineageDrawer } from "./LineageDrawer";
+import { RoyaltyStackModal } from "./RoyaltyStackModal";
 
 interface IPNode {
   id: string;
@@ -37,7 +39,8 @@ export const IPLineagePanel = () => {
   const splits = simulationPrice ? calculateSplits(parseFloat(simulationPrice)) : null;
 
   return (
-    <div className="glass-card border border-white/10 rounded-xl p-6 h-full">
+    <>
+      <div className="glass-card border border-white/10 rounded-xl p-6 h-full">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-medium text-white flex items-center gap-2">
           <GitBranch className="w-5 h-5 text-primary" />
@@ -175,5 +178,9 @@ export const IPLineagePanel = () => {
         </div>
       </div>
     </div>
+
+      <LineageDrawer isOpen={showLineageDrawer} onClose={() => setShowLineageDrawer(false)} />
+      <RoyaltyStackModal isOpen={showRoyaltyModal} onClose={() => setShowRoyaltyModal(false)} />
+    </>
   );
 };

@@ -17,10 +17,12 @@ import IPAgreementVisualizer from "@/components/rights/IPAgreementVisualizer";
 import RightsTransferWizard from "@/components/rights/RightsTransferWizard";
 import StoryPortal from "@/components/rights/StoryPortal";
 import { Shield } from "lucide-react";
+import { IPRegistrationWizard } from "@/components/rights/IPRegistrationWizard";
 
 const RightsManagement = () => {
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [isStoryPortalOpen, setIsStoryPortalOpen] = useState(false);
+  const [isRegistrationWizardOpen, setIsRegistrationWizardOpen] = useState(false);
 
   return (
     <NetworkProvider>
@@ -34,7 +36,10 @@ const RightsManagement = () => {
             <div className="flex items-center gap-3">
               <NetworkSwitcher />
               <WalletStatusPanel />
-              <Button className="bg-primary hover:bg-primary/80">
+              <Button 
+                className="bg-primary hover:bg-primary/80"
+                onClick={() => setIsRegistrationWizardOpen(true)}
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Asset
               </Button>
@@ -113,6 +118,7 @@ const RightsManagement = () => {
       </DashboardLayout>
 
       {isStoryPortalOpen && <StoryPortal isOpen={isStoryPortalOpen} onClose={() => setIsStoryPortalOpen(false)} />}
+      <IPRegistrationWizard isOpen={isRegistrationWizardOpen} onClose={() => setIsRegistrationWizardOpen(false)} />
     </NetworkProvider>
   );
 };
