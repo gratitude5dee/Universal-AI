@@ -35,10 +35,13 @@ serve(async (req) => {
     if (bookingError) throw bookingError;
 
     // Calculate total from line items
-    const total = lineItems.reduce((sum: number, item: any) => sum + parseFloat(item.amount), 0);
+    const total = lineItems.reduce((sum: number, item: any) => sum + parseFloat(item.amount || 0), 0);
 
-    // Generate invoice number
+    // Generate invoice number with timestamp
     const invoiceNumber = `INV-${Date.now().toString().slice(-8)}`;
+    
+    // Due date is 30 days from now
+    const dueDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
     // Create invoice in database
     const { data: invoice, error: invoiceError } = await supabase
@@ -47,7 +50,7 @@ serve(async (req) => {
         invoice_number: invoiceNumber,
         gig_id: booking.gig_id,
         amount: total,
-        due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
+        due_date: dueDate,
         status: 'pending',
         notes: JSON.stringify(lineItems)
       })
@@ -61,7 +64,8 @@ serve(async (req) => {
       .from('venue_bookings')
       .update({ 
         invoice_id: invoice.id,
-        workflow_stage: 'invoice'
+        workflow_stage: 'invoice',
+        status: 'paid'
       })
       .eq('id', bookingId);
 
@@ -74,7 +78,7 @@ serve(async (req) => {
           invoiceNumber,
           lineItems,
           total,
-          dueDate: invoice.due_date
+          dueDate
         }
       }),
       { 

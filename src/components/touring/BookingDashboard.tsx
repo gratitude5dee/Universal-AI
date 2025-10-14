@@ -39,6 +39,41 @@ export const BookingDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchBookings();
+
+    // Subscribe to real-time updates
+    const channel = supabase
+      .channel('venue_bookings_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'venue_bookings'
+        },
+        (payload) => {
+          console.log('Booking change detected:', payload);
+          
+          if (payload.eventType === 'INSERT') {
+            setBookings(prev => [payload.new as Booking, ...prev]);
+          } else if (payload.eventType === 'UPDATE') {
+            setBookings(prev => prev.map(b => 
+              b.id === payload.new.id ? payload.new as Booking : b
+            ));
+          } else if (payload.eventType === 'DELETE') {
+            setBookings(prev => prev.filter(b => b.id !== payload.old.id));
+          }
+          
+          toast({
+            title: "Booking updated",
+            description: "Your bookings have been refreshed",
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchBookings = async () => {
