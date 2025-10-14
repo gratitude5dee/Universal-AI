@@ -5,6 +5,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { GenerativeReasoningPanel } from "./GenerativeReasoningPanel";
+import { GenerativeCostBreakdown } from "./GenerativeCostBreakdown";
+import { GenerativeKeyFeatures } from "./GenerativeKeyFeatures";
 import type { VenueComponent } from "./types";
 
 interface GenerativeVenueCardProps {
@@ -49,7 +52,14 @@ export const GenerativeVenueCard: React.FC<GenerativeVenueCardProps> = ({ compon
         stiffness: 100
       }}
     >
-      <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:bg-white/10 transition-all duration-300 overflow-hidden group">
+      <Card className="glass-card border-border hover:border-primary/50 hover:shadow-card-glow transition-all duration-300 overflow-hidden group">
+        {/* AI Recommended Badge */}
+        <div className="absolute top-2 left-2 z-10">
+          <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white border-none">
+            <Sparkles className="h-3 w-3 mr-1" />
+            AI Recommended
+          </Badge>
+        </div>
         <div className="relative h-48 overflow-hidden">
           <img 
             src={props.image} 
@@ -93,31 +103,74 @@ export const GenerativeVenueCard: React.FC<GenerativeVenueCardProps> = ({ compon
         </div>
 
         <CardContent className="p-4 space-y-4">
-          {/* AI Reasoning */}
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            <TooltipProvider>
-              <Tooltip open={showReasoning} onOpenChange={setShowReasoning}>
-                <TooltipTrigger asChild>
-                  <button 
-                    className="w-full text-left p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition-colors"
-                    onClick={() => setShowReasoning(!showReasoning)}
-                  >
-                    <div className="flex items-start gap-2">
-                      <Info className="h-4 w-4 text-purple-400 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-white/90 line-clamp-2">{props.reasoning}</p>
-                    </div>
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className="max-w-sm bg-black/90 backdrop-blur-xl border-white/20">
-                  <p className="text-white/90">{props.reasoning}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </motion.div>
+          {/* AI Reasoning Panel */}
+          <GenerativeReasoningPanel
+            reasoning={props.reasoning}
+            matchScore={props.matchScore}
+            delay={400}
+          />
+
+          {/* Key Features */}
+          {props.keyFeatures && props.keyFeatures.length > 0 && (
+            <GenerativeKeyFeatures
+              features={props.keyFeatures}
+              delay={600}
+            />
+          )}
+
+          {/* Cost Breakdown */}
+          {props.costBreakdown && props.costBreakdown.length > 0 && (
+            <GenerativeCostBreakdown
+              items={props.costBreakdown}
+              delay={800}
+            />
+          )}
+
+          {/* Setup Suggestions */}
+          {props.setupSuggestions && props.setupSuggestions.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+              className="space-y-2"
+            >
+              <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-purple-400" />
+                Suggested Setup
+              </h4>
+              <ul className="space-y-1 text-sm text-muted-foreground">
+                {props.setupSuggestions.map((suggestion, idx) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="text-primary mt-1">•</span>
+                    <span>{suggestion}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          )}
+
+          {/* Catering Recommendations */}
+          {props.cateringSuggestions && props.cateringSuggestions.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.2 }}
+              className="space-y-2"
+            >
+              <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-green-400" />
+                Catering Recommendations
+              </h4>
+              <ul className="space-y-1 text-sm text-muted-foreground">
+                {props.cateringSuggestions.map((suggestion, idx) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="text-green-500 mt-1">•</span>
+                    <span>{suggestion}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          )}
 
           {/* Venue Details */}
           <div className="grid grid-cols-2 gap-3">

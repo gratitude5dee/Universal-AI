@@ -126,6 +126,26 @@ const EnhancedVenueCard: React.FC<VenueCardProps> = ({ venue, status = "new", on
               </div>
             </div>
 
+            {/* Date and Time Pickers for New/Negotiating Status */}
+            {(status === "new" || status === "negotiating") && (
+              <div className="grid grid-cols-2 gap-2 py-2">
+                <div>
+                  <label className="text-xs text-muted-foreground mb-1 block">Date</label>
+                  <input
+                    type="date"
+                    className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground mb-1 block">Time</label>
+                  <input
+                    type="time"
+                    className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  />
+                </div>
+              </div>
+            )}
+
             {/* Details Grid */}
             <div className="grid grid-cols-2 gap-3 py-3">
               <div className="flex items-center gap-2 text-sm">
