@@ -27,6 +27,8 @@ const ContractAgent = () => {
 
     return (
         <DashboardLayout>
+            {showWizard && <ContractWizard onClose={() => setShowWizard(false)} />}
+            
             <div className="space-y-8 mb-10">
                 {/* Enhanced Header */}
                 <motion.div 
@@ -35,19 +37,28 @@ const ContractAgent = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
                 >
-                    <div className="flex items-center gap-4 mb-6">
-                        <div className="bg-studio-accent/20 p-3 rounded-full">
-                            <motion.div
-                                animate={{ rotate: 360 }}
-                                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                            >
-                                <Shield className="h-6 w-6 text-studio-accent" />
-                            </motion.div>
+                    <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-4">
+                            <div className="bg-studio-accent/20 p-3 rounded-full">
+                                <motion.div
+                                    animate={{ rotate: 360 }}
+                                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                                >
+                                    <Shield className="h-6 w-6 text-studio-accent" />
+                                </motion.div>
+                            </div>
+                            <div>
+                                <h1 className="text-3xl font-semibold text-white">AI Contract Agent</h1>
+                                <p className="text-white/70 mt-1">Generate, manage, and track your business and legal agreements with intelligent automation</p>
+                            </div>
                         </div>
-                        <div>
-                            <h1 className="text-3xl font-semibold text-studio-charcoal">AI Contract Agent</h1>
-                            <p className="text-studio-muted mt-1">Generate, manage, and track your business and legal agreements with intelligent automation</p>
-                        </div>
+                        <Button 
+                            onClick={() => setShowWizard(true)}
+                            className="bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white shadow-lg"
+                        >
+                            <Sparkles size={16} className="mr-2" />
+                            Create Contract
+                        </Button>
                     </div>
                 </motion.div>
 
@@ -64,146 +75,118 @@ const ContractAgent = () => {
                     <StatsCard title="Compliance Score" value="98%" icon={Users} trend="up" trendValue="+2%" accent="purple" />
                 </motion.div>
 
-                {/* Main Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Left Column - Contract Management */}
-                    <div className="lg:col-span-2 space-y-6">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
-                        >
-                            <Card className="glass-card hover:shadow-xl transition-all duration-300">
-                                <CardHeader>
-                                    <div className="flex items-center justify-between">
-                                        <CardTitle className="flex items-center gap-2">
-                                            <Bot className="text-studio-accent" size={20} />
-                                            Smart Contract Templates
-                                        </CardTitle>
-                                        <Button className="bg-studio-accent hover:bg-studio-accent/90 text-white">
-                                            <Plus size={16} className="mr-2" />
-                                            Create Custom
-                                        </Button>
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <p className="text-studio-muted mb-6">Select a template to begin. The AI will guide you through customizing it for your specific needs.</p>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                        <ContractTemplateCard 
-                                            title="Performance Agreement" 
-                                            icon={Mic} 
-                                            description="Comprehensive venue performance contracts"
-                                            usage="24 times"
-                                        />
-                                        <ContractTemplateCard 
-                                            title="Musician Rider" 
-                                            icon={MapPin} 
-                                            description="Technical and hospitality requirements"
-                                            usage="18 times"
-                                        />
-                                        <ContractTemplateCard 
-                                            title="Collaboration Split Sheet" 
-                                            icon={Handshake} 
-                                            description="Revenue sharing agreements"
-                                            usage="15 times"
-                                        />
-                                        <ContractTemplateCard 
-                                            title="Management Agreement" 
-                                            icon={Users} 
-                                            description="Artist management contracts"
-                                            usage="8 times"
-                                        />
-                                        <ContractTemplateCard 
-                                            title="Licensing Agreement" 
-                                            icon={Shield} 
-                                            description="Music licensing and sync rights"
-                                            usage="12 times"
-                                        />
-                                        <ContractTemplateCard 
-                                            title="Recording Contract" 
-                                            icon={FileText} 
-                                            description="Studio recording agreements"
-                                            usage="6 times"
-                                        />
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </motion.div>
+                {/* Main Tabs */}
+                <Tabs value={activeTab} onValueChange={setActiveTab}>
+                    <TabsList className="bg-white/10 border border-white/20">
+                        <TabsTrigger value="overview" className="data-[state=active]:bg-studio-accent">
+                            Overview
+                        </TabsTrigger>
+                        <TabsTrigger value="contracts" className="data-[state=active]:bg-studio-accent">
+                            Contracts
+                        </TabsTrigger>
+                        <TabsTrigger value="templates" className="data-[state=active]:bg-studio-accent">
+                            Templates
+                        </TabsTrigger>
+                        <TabsTrigger value="settings" className="data-[state=active]:bg-studio-accent">
+                            Settings
+                        </TabsTrigger>
+                    </TabsList>
 
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.3 }}
-                        >
-                            <Card className="glass-card hover:shadow-xl transition-all duration-300">
-                                <CardHeader>
-                                    <div className="flex justify-between items-center">
-                                        <CardTitle className="flex items-center gap-2">
-                                            <FileText className="text-studio-accent" size={20} />
-                                            Recent Contracts
-                                        </CardTitle>
-                                        <div className="relative w-64">
-                                            <Search className="absolute left-3 top-2.5 h-4 w-4 text-studio-muted"/>
-                                            <input 
-                                                placeholder="Search contracts..." 
-                                                className="w-full glass-card border border-white/10 rounded-lg pl-10 pr-4 py-2 text-sm text-studio-charcoal placeholder:text-studio-muted focus:outline-none focus:ring-2 focus:ring-studio-accent/50 backdrop-blur-md"
+                    <TabsContent value="overview" className="mt-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div className="lg:col-span-2">
+                                <AdvancedContractTable />
+                            </div>
+                            <div>
+                                <AIAssistantSidebar />
+                            </div>
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="contracts" className="mt-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div className="lg:col-span-2">
+                                <AdvancedContractTable />
+                            </div>
+                            <div>
+                                <AIAssistantSidebar />
+                            </div>
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="templates" className="mt-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div className="lg:col-span-2 space-y-6">
+                                <Card className="glass-card hover:shadow-xl transition-all duration-300">
+                                    <CardHeader>
+                                        <div className="flex items-center justify-between">
+                                            <CardTitle className="flex items-center gap-2 text-white">
+                                                <Bot className="text-studio-accent" size={20} />
+                                                Smart Contract Templates
+                                            </CardTitle>
+                                            <Button 
+                                                onClick={() => setShowWizard(true)}
+                                                className="bg-studio-accent hover:bg-studio-accent/90 text-white"
+                                            >
+                                                <Plus size={16} className="mr-2" />
+                                                Create Custom
+                                            </Button>
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <p className="text-white/70 mb-6">Select a template to begin. The AI will guide you through customizing it for your specific needs.</p>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                            <ContractTemplateCard 
+                                                title="Performance Agreement" 
+                                                icon={Mic} 
+                                                description="Comprehensive venue performance contracts"
+                                                usage="24 times"
+                                            />
+                                            <ContractTemplateCard 
+                                                title="Musician Rider" 
+                                                icon={MapPin} 
+                                                description="Technical and hospitality requirements"
+                                                usage="18 times"
+                                            />
+                                            <ContractTemplateCard 
+                                                title="Collaboration Split Sheet" 
+                                                icon={Handshake} 
+                                                description="Revenue sharing agreements"
+                                                usage="15 times"
+                                            />
+                                            <ContractTemplateCard 
+                                                title="Management Agreement" 
+                                                icon={Users} 
+                                                description="Artist management contracts"
+                                                usage="8 times"
+                                            />
+                                            <ContractTemplateCard 
+                                                title="Licensing Agreement" 
+                                                icon={Shield} 
+                                                description="Music licensing and sync rights"
+                                                usage="12 times"
+                                            />
+                                            <ContractTemplateCard 
+                                                title="Recording Contract" 
+                                                icon={FileText} 
+                                                description="Studio recording agreements"
+                                                usage="6 times"
                                             />
                                         </div>
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="space-y-3">
-                                        <ContractListItem 
-                                            name="Performance at The Fillmore" 
-                                            status="Signed" 
-                                            date="Nov 1, 2024"
-                                            type="Performance"
-                                            value="$2,500"
-                                        />
-                                        <ContractListItem 
-                                            name="Collaboration with PixelDreamer" 
-                                            status="Draft" 
-                                            date="Oct 28, 2024"
-                                            type="Collaboration"
-                                            value="50/50 Split"
-                                        />
-                                        <ContractListItem 
-                                            name="Sync License for 'Indie Spirit'" 
-                                            status="Negotiating" 
-                                            date="Oct 25, 2024"
-                                            type="Licensing"
-                                            value="$1,200"
-                                        />
-                                        <ContractListItem 
-                                            name="Management Agreement - Q4" 
-                                            status="Under Review" 
-                                            date="Oct 20, 2024"
-                                            type="Management"
-                                            value="15% Commission"
-                                        />
-                                        <ContractListItem 
-                                            name="Recording Studio Contract" 
-                                            status="Signed" 
-                                            date="Oct 15, 2024"
-                                            type="Recording"
-                                            value="$800/day"
-                                        />
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </motion.div>
-                    </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                            <div>
+                                <AIAssistantSidebar />
+                            </div>
+                        </div>
+                    </TabsContent>
 
-                    {/* Right Column - Agent Settings & Analytics */}
-                    <div className="space-y-6">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.4 }}
-                        >
+                    <TabsContent value="settings" className="mt-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <Card className="glass-card hover:shadow-xl transition-all duration-300">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
+                                    <CardTitle className="flex items-center gap-2 text-white">
                                         <Settings className="text-studio-accent" size={20} />
                                         Agent Settings
                                     </CardTitle>
@@ -211,33 +194,33 @@ const ContractAgent = () => {
                                 <CardContent className="space-y-6">
                                     <div className="flex items-center justify-between p-3 bg-white/10 rounded-lg">
                                         <div>
-                                            <Label className="font-medium text-studio-charcoal">Auto-Generate Clauses</Label>
-                                            <p className="text-xs text-studio-muted mt-1">AI-powered legal clause suggestions</p>
+                                            <Label className="font-medium text-white">Auto-Generate Clauses</Label>
+                                            <p className="text-xs text-white/60 mt-1">AI-powered legal clause suggestions</p>
                                         </div>
                                         <Switch defaultChecked />
                                     </div>
 
                                     <div className="flex items-center justify-between p-3 bg-white/10 rounded-lg">
                                         <div>
-                                            <Label className="font-medium text-studio-charcoal">Compliance Checking</Label>
-                                            <p className="text-xs text-studio-muted mt-1">Automatic legal compliance verification</p>
+                                            <Label className="font-medium text-white">Compliance Checking</Label>
+                                            <p className="text-xs text-white/60 mt-1">Automatic legal compliance verification</p>
                                         </div>
                                         <Switch defaultChecked />
                                     </div>
 
                                     <div className="space-y-3">
-                                        <Label className="font-medium text-studio-charcoal">Default Contract Terms</Label>
-                                        <select className="w-full glass-card border border-white/10 rounded-lg p-3 text-studio-charcoal backdrop-blur-md">
+                                        <Label className="font-medium text-white">Default Contract Terms</Label>
+                                        <select className="w-full glass-card border border-white/10 rounded-lg p-3 text-white backdrop-blur-md bg-white/10">
                                             <option value="standard">Standard Terms</option>
-                                            <option value="artist-friendly" selected>Artist-Friendly</option>
+                                            <option value="artist-friendly">Artist-Friendly</option>
                                             <option value="strict">Strict Protection</option>
                                         </select>
                                     </div>
 
                                     <div className="space-y-3">
-                                        <Label className="font-medium text-studio-charcoal">Jurisdiction</Label>
-                                        <select className="w-full glass-card border border-white/10 rounded-lg p-3 text-studio-charcoal backdrop-blur-md">
-                                            <option value="us" selected>United States</option>
+                                        <Label className="font-medium text-white">Jurisdiction</Label>
+                                        <select className="w-full glass-card border border-white/10 rounded-lg p-3 text-white backdrop-blur-md bg-white/10">
+                                            <option value="us">United States</option>
                                             <option value="uk">United Kingdom</option>
                                             <option value="eu">European Union</option>
                                             <option value="ca">Canada</option>
@@ -249,32 +232,26 @@ const ContractAgent = () => {
                                     </Button>
                                 </CardContent>
                             </Card>
-                        </motion.div>
 
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.5 }}
-                        >
                             <Card className="glass-card hover:shadow-xl transition-all duration-300">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
+                                    <CardTitle className="flex items-center gap-2 text-white">
                                         <Shield className="text-studio-accent" size={20} />
                                         Legal Insights
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                                        <h4 className="font-medium text-green-800 mb-2">Compliance Status</h4>
-                                        <p className="text-sm text-green-700">All contracts meet current legal standards</p>
+                                    <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+                                        <h4 className="font-medium text-green-400 mb-2">Compliance Status</h4>
+                                        <p className="text-sm text-green-300/80">All contracts meet current legal standards</p>
                                         <div className="flex justify-between items-center mt-3">
-                                            <span className="text-xs text-green-600">Last updated: Today</span>
-                                            <span className="text-sm font-bold text-green-800">98% Score</span>
+                                            <span className="text-xs text-green-300/60">Last updated: Today</span>
+                                            <span className="text-sm font-bold text-green-400">98% Score</span>
                                         </div>
                                     </div>
 
                                     <div className="space-y-3">
-                                        <h4 className="font-medium text-studio-charcoal">Recent Activity</h4>
+                                        <h4 className="font-medium text-white">Recent Activity</h4>
                                         <div className="space-y-2">
                                             <ActivityItem 
                                                 action="Contract generated"
@@ -298,9 +275,9 @@ const ContractAgent = () => {
                                     </div>
                                 </CardContent>
                             </Card>
-                        </motion.div>
-                    </div>
-                </div>
+                        </div>
+                    </TabsContent>
+                </Tabs>
             </div>
         </DashboardLayout>
     );
