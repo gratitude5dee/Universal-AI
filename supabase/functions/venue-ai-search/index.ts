@@ -20,7 +20,7 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
-    const systemPrompt = `You are a venue search AI that generates UI components in real-time.
+    const systemPrompt = `You are a venue search AI that generates UI components in real-time with enhanced details.
 
 For each query, analyze and extract:
 1. Location (city, neighborhood, region)
@@ -37,14 +37,20 @@ For filters extracted:
 {"type":"filter","filter":"capacity","value":{"min":200,"max":500},"confidence":0.9}
 {"type":"filter","filter":"genre","value":"Jazz","confidence":0.88}
 
-For venue matches:
-{"type":"venue","props":{"id":"1","venueName":"Blue Note Jazz Club","matchScore":95,"reasoning":"Perfect intimate jazz venue with excellent acoustics and professional sound system. Capacity fits your requirement.","capacity":300,"price":2500,"amenities":["Sound System","Lighting","Bar","Stage"],"location":"San Francisco, CA","address":"131 W 3rd St","image":"/jazz-club-interior.png"},"delay":200}
+For venue matches with FULL DETAILS:
+{"type":"venue","props":{"id":"1","venueName":"Blue Note Jazz Club","matchScore":95,"reasoning":"Perfect intimate jazz venue with excellent acoustics and professional sound system. Capacity fits your requirement. Located in the heart of SF's music district with easy public transit access.","capacity":300,"price":2500,"amenities":["Sound System","Lighting","Bar","Stage"],"location":"San Francisco, CA","address":"131 W 3rd St","image":"/placeholder.svg","keyFeatures":[{"label":"Professional Acoustics","icon":"music"},{"label":"In-House Sound Tech","icon":"users"},{"label":"Green Room","icon":"star"}],"setupSuggestions":["Stage positioned for optimal sightlines from all seats","Wireless mic system included for crowd interaction","Lighting rig can accommodate custom presets"],"cateringSuggestions":["Full bar service with craft cocktails","Light appetizers and small plates available","Vegan and gluten-free options for backstage"],"costBreakdown":[{"label":"Venue Rental","amount":2500},{"label":"Sound & Lighting","amount":500},{"label":"Staff (4 hours)","amount":800},{"label":"Catering (50 guests)","amount":1200}]},"delay":200}
 
 For suggestions:
 {"type":"suggestion","content":"Consider booking on weeknights for 20% lower rates","category":"pricing"}
-{"type":"suggestion","content":"SFJAZZ Center also available nearby","category":"alternative"}
+{"type":"suggestion","content":"SFJAZZ Center also available nearby with 700 capacity","category":"alternative"}
 
-Keep responses concise and actionable. Generate 3-5 venue matches maximum.`;
+CRITICAL: For each venue, ALWAYS include:
+- keyFeatures (3-5 unique selling points)
+- setupSuggestions (2-3 practical setup tips)
+- cateringSuggestions (2-3 food/beverage options)
+- costBreakdown (itemized costs with realistic amounts)
+
+Generate 3-5 venue matches maximum. Make reasoning detailed and specific.`;
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',

@@ -5,6 +5,7 @@ import BookingStatusTabs from "./BookingStatusTabs";
 import EnhancedVenueCard from "./EnhancedVenueCard";
 import BookingWorkflowTracker from "./BookingWorkflowTracker";
 import AIRecommenderModal from "./AIRecommenderModal";
+import VenueCategoryCards from "./VenueCategoryCards";
 
 const mockVenues = [
   {
@@ -158,6 +159,14 @@ const EnhancedBookingAgent = () => {
           </div>
         </motion.div>
       )}
+
+      {/* Venue Category Cards */}
+      <VenueCategoryCards 
+        onCategorySelect={(categoryId) => {
+          console.log('Selected category:', categoryId);
+          // Filter venues by category
+        }}
+      />
 
       {/* Status Tabs and Content */}
       <BookingStatusTabs

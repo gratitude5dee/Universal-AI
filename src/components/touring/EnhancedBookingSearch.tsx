@@ -140,15 +140,45 @@ const EnhancedBookingSearch: React.FC<EnhancedBookingSearchProps> = ({
       className="space-y-6"
     >
       <form onSubmit={handleSubmit} className="relative">
-        <div className="glass-card p-6">
+        <div className="glass-card p-6 bg-card/80 backdrop-blur-xl">
+          {/* Mode Toggle Tabs */}
+          <div className="flex items-center gap-2 mb-4 p-1 bg-accent/50 rounded-lg w-fit">
+            <button
+              type="button"
+              onClick={() => setUseGenerativeUI(false)}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                !useGenerativeUI
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Search Venues
+            </button>
+            <button
+              type="button"
+              onClick={() => setUseGenerativeUI(true)}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${
+                useGenerativeUI
+                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <Sparkles className="h-4 w-4" />
+              AI Recommender
+              <Badge variant="secondary" className="ml-1 bg-green-500/20 text-green-400 border-green-500/30 text-xs">
+                NEW
+              </Badge>
+            </button>
+          </div>
+
           <div className="flex items-center gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Find me jazz venues in SF with 200-500 capacity..."
-                className="pl-12 pr-32 h-14 bg-background/50 border-border text-foreground placeholder:text-muted-foreground text-lg"
+                placeholder={useGenerativeUI ? "Describe your ideal venue... (e.g., 'cozy jazz club in SF for 300 people')" : "Find me jazz venues in SF with 200-500 capacity..."}
+                className="pl-12 pr-32 h-14 bg-background border-border text-foreground placeholder:text-muted-foreground text-lg focus:ring-2 focus:ring-primary/50"
                 disabled={isGenerating}
               />
               <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
@@ -176,7 +206,12 @@ const EnhancedBookingSearch: React.FC<EnhancedBookingSearchProps> = ({
             
             <Button
               type="submit"
-              className="h-14 px-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              size="lg"
+              className={`h-14 px-8 ${
+                useGenerativeUI
+                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                  : 'bg-primary hover:bg-primary/90'
+              }`}
               disabled={isGenerating}
             >
               {isGenerating ? (
@@ -186,8 +221,8 @@ const EnhancedBookingSearch: React.FC<EnhancedBookingSearchProps> = ({
                 </>
               ) : (
                 <>
-                  <Search className="h-5 w-5 mr-2" />
-                  Search
+                  {useGenerativeUI ? <Sparkles className="h-5 w-5 mr-2" /> : <Search className="h-5 w-5 mr-2" />}
+                  {useGenerativeUI ? 'Get AI Recommendations' : 'Search'}
                 </>
               )}
             </Button>
@@ -199,15 +234,19 @@ const EnhancedBookingSearch: React.FC<EnhancedBookingSearchProps> = ({
                 <Filter className="h-3 w-3 mr-1" />
                 Filters
               </Badge>
-              <Badge variant="outline" className="cursor-pointer hover:bg-accent">
-                200-500 capacity
-              </Badge>
-              <Badge variant="outline" className="cursor-pointer hover:bg-accent">
-                Jazz venues
-              </Badge>
-              <Badge variant="outline" className="cursor-pointer hover:bg-accent">
-                Available March 2024
-              </Badge>
+              {!useGenerativeUI && (
+                <>
+                  <Badge variant="outline" className="cursor-pointer hover:bg-accent">
+                    200-500 capacity
+                  </Badge>
+                  <Badge variant="outline" className="cursor-pointer hover:bg-accent">
+                    Jazz venues
+                  </Badge>
+                  <Badge variant="outline" className="cursor-pointer hover:bg-accent">
+                    Available March 2024
+                  </Badge>
+                </>
+              )}
             </div>
 
             <div className="flex items-center gap-2">
@@ -216,20 +255,10 @@ const EnhancedBookingSearch: React.FC<EnhancedBookingSearchProps> = ({
                 onClick={onMapToggle}
                 variant="outline"
                 size="sm"
-                className={`${showMap ? 'bg-primary/20 border-primary' : ''}`}
+                className={`${showMap ? 'bg-primary/20 border-primary text-primary' : ''} hover:bg-primary/10`}
               >
                 <Map className="h-4 w-4 mr-2" />
                 {showMap ? 'Hide' : 'Show'} Map
-              </Button>
-              
-              <Button
-                type="button"
-                onClick={() => setUseGenerativeUI(!useGenerativeUI)}
-                size="sm"
-                className={`${useGenerativeUI ? 'bg-gradient-to-r from-purple-600 to-indigo-600' : 'bg-gradient-to-r from-gray-600 to-gray-700'} hover:from-purple-700 hover:to-indigo-700`}
-              >
-                <Sparkles className="h-4 w-4 mr-2" />
-                {useGenerativeUI ? 'AI Mode ✨' : 'Standard Mode'}
               </Button>
             </div>
           </div>
