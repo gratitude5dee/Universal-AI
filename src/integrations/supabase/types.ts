@@ -23,6 +23,7 @@ export type Database = {
           error_message: string | null
           id: string
           model: string
+          provider: string | null
           prompt: string
           response: string | null
           status: string
@@ -37,6 +38,7 @@ export type Database = {
           error_message?: string | null
           id?: string
           model?: string
+          provider?: string | null
           prompt: string
           response?: string | null
           status?: string
@@ -51,6 +53,7 @@ export type Database = {
           error_message?: string | null
           id?: string
           model?: string
+          provider?: string | null
           prompt?: string
           response?: string | null
           status?: string
