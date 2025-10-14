@@ -42,7 +42,7 @@ const ResearchInterface = () => {
   const [messages, setMessages] = useState<ResearchMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isResearching, setIsResearching] = useState(false);
-  const [sessionId] = useState(() => `research_${Date.now()}`);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -78,8 +78,88 @@ const ResearchInterface = () => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
+  const refreshSessionHistory = useCallback(async (activeSessionId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('research_sessions')
+        .select(`
+          id,
+          session_identifier,
+          research_messages (
+            id,
+            role,
+            content,
+            sources,
+            tokens_used,
+            model,
+            created_at
+          )
+        `)
+        .eq('session_identifier', activeSessionId)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Failed to load research history:', error);
+        toast({
+          title: 'History Error',
+          description: 'Unable to load previous research messages.',
+          variant: 'destructive'
+        });
+        return;
+      }
+
+      const historyMessages: ResearchMessage[] = (data?.research_messages ?? [])
+        .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+        .map((message) => ({
+          id: message.id,
+          content: message.content ?? '',
+          role: (message.role ?? 'assistant') as 'user' | 'assistant',
+          timestamp: new Date(message.created_at),
+          sources: Array.isArray(message.sources) ? message.sources : undefined,
+          tokensUsed: typeof message.tokens_used === 'number' ? message.tokens_used : undefined,
+          model: message.model ?? undefined
+        }));
+
+      setMessages(historyMessages);
+    } catch (err) {
+      console.error('Unexpected error loading research history:', err);
+      toast({
+        title: 'History Error',
+        description: 'An unexpected error occurred while loading messages.',
+        variant: 'destructive'
+      });
+    }
+  }, [toast]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const storedSessionId = window.localStorage.getItem('researchSessionId');
+    const activeSessionId = storedSessionId || `research_${Date.now()}`;
+
+    if (!storedSessionId) {
+      window.localStorage.setItem('researchSessionId', activeSessionId);
+    }
+
+    setSessionId(activeSessionId);
+  }, []);
+
+  useEffect(() => {
+    if (!sessionId) return;
+
+    refreshSessionHistory(sessionId);
+  }, [sessionId, refreshSessionHistory]);
+
   const handleResearch = async () => {
     if (!inputValue.trim() || isResearching) return;
+    if (!sessionId) {
+      toast({
+        title: 'Session Not Ready',
+        description: 'Please wait while we prepare your research session.',
+        variant: 'destructive'
+      });
+      return;
+    }
 
     const userMessage: ResearchMessage = {
       id: `msg_${Date.now()}`,
@@ -111,6 +191,13 @@ const ResearchInterface = () => {
 
       console.log('Research response received:', data);
 
+      if (data?.sessionId && data.sessionId !== sessionId) {
+        setSessionId(data.sessionId);
+        if (typeof window !== 'undefined') {
+          window.localStorage.setItem('researchSessionId', data.sessionId);
+        }
+      }
+
       const assistantMessage: ResearchMessage = {
         id: `msg_${Date.now()}`,
         content: data.content,
@@ -122,6 +209,10 @@ const ResearchInterface = () => {
       };
 
       setMessages(prev => [...prev, assistantMessage]);
+
+      if (data?.sessionId) {
+        await refreshSessionHistory(data.sessionId);
+      }
 
       toast({
         title: "Research Complete",
