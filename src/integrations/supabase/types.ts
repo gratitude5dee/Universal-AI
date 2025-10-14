@@ -289,6 +289,7 @@ export type Database = {
           id: string
           is_public: boolean
           slug: string | null
+          source_project_id: string | null
           thumbnail_url: string | null
           title: string
           updated_at: string
@@ -302,6 +303,7 @@ export type Database = {
           id?: string
           is_public?: boolean
           slug?: string | null
+          source_project_id?: string | null
           thumbnail_url?: string | null
           title?: string
           updated_at?: string
@@ -315,12 +317,21 @@ export type Database = {
           id?: string
           is_public?: boolean
           slug?: string | null
+          source_project_id?: string | null
           thumbnail_url?: string | null
           title?: string
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "boards_source_project_id_fkey"
+            columns: ["source_project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       characters: {
         Row: {
@@ -1546,6 +1557,7 @@ export type Database = {
           selected_storyline_id: string | null
           special_requests: string | null
           style_reference_asset_id: string | null
+          source_board_id: string | null
           target_audience: string | null
           title: string
           tone: string | null
@@ -1571,6 +1583,7 @@ export type Database = {
           selected_storyline_id?: string | null
           special_requests?: string | null
           style_reference_asset_id?: string | null
+          source_board_id?: string | null
           target_audience?: string | null
           title?: string
           tone?: string | null
@@ -1596,6 +1609,7 @@ export type Database = {
           selected_storyline_id?: string | null
           special_requests?: string | null
           style_reference_asset_id?: string | null
+          source_board_id?: string | null
           target_audience?: string | null
           title?: string
           tone?: string | null
@@ -1616,6 +1630,13 @@ export type Database = {
             columns: ["style_reference_asset_id"]
             isOneToOne: false
             referencedRelation: "media_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_source_board_id_fkey"
+            columns: ["source_board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
             referencedColumns: ["id"]
           },
         ]
