@@ -1371,6 +1371,53 @@ export type Database = {
             columns: ["workflow_id"]
             isOneToOne: false
             referencedRelation: "workflows"
+          referencedColumns: ["id"]
+        },
+      ]
+    }
+      podcasts: {
+        Row: {
+          audio_base64: string | null
+          audio_url: string | null
+          created_at: string
+          description: string | null
+          duration: number | null
+          id: string
+          style: string | null
+          title: string
+          user_id: string
+          voice_id: string | null
+        }
+        Insert: {
+          audio_base64?: string | null
+          audio_url?: string | null
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          id?: string
+          style?: string | null
+          title: string
+          user_id: string
+          voice_id?: string | null
+        }
+        Update: {
+          audio_base64?: string | null
+          audio_url?: string | null
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          id?: string
+          style?: string | null
+          title?: string
+          user_id?: string
+          voice_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "podcasts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
