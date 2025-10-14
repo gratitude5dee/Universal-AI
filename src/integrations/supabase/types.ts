@@ -179,34 +179,40 @@ export type Database = {
           board_id: string
           content: string
           created_at: string
+          guest_email: string | null
+          guest_name: string | null
           id: string
           node_id: string | null
           position_x: number | null
           position_y: number | null
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           board_id: string
           content: string
           created_at?: string
+          guest_email?: string | null
+          guest_name?: string | null
           id?: string
           node_id?: string | null
           position_x?: number | null
           position_y?: number | null
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           board_id?: string
           content?: string
           created_at?: string
+          guest_email?: string | null
+          guest_name?: string | null
           id?: string
           node_id?: string | null
           position_x?: number | null
           position_y?: number | null
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -220,31 +226,46 @@ export type Database = {
       }
       board_shares: {
         Row: {
+          allow_comments: boolean
+          allow_downloads: boolean
           board_id: string
           created_at: string
           created_by: string
           description: string | null
+          expires_at: string | null
           id: string
+          is_public: boolean
           share_id: string
           title: string
+          updated_at: string
         }
         Insert: {
+          allow_comments?: boolean
+          allow_downloads?: boolean
           board_id: string
           created_at?: string
           created_by: string
           description?: string | null
+          expires_at?: string | null
           id?: string
+          is_public?: boolean
           share_id: string
           title: string
+          updated_at?: string
         }
         Update: {
+          allow_comments?: boolean
+          allow_downloads?: boolean
           board_id?: string
           created_at?: string
           created_by?: string
           description?: string | null
+          expires_at?: string | null
           id?: string
+          is_public?: boolean
           share_id?: string
           title?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -259,6 +280,7 @@ export type Database = {
       boards: {
         Row: {
           canvas_data: Json
+          content: Json
           created_at: string
           description: string | null
           id: string
@@ -271,6 +293,7 @@ export type Database = {
         }
         Insert: {
           canvas_data?: Json
+          content?: Json
           created_at?: string
           description?: string | null
           id?: string
@@ -283,6 +306,7 @@ export type Database = {
         }
         Update: {
           canvas_data?: Json
+          content?: Json
           created_at?: string
           description?: string | null
           id?: string
