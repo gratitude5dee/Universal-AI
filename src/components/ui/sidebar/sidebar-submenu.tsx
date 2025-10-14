@@ -337,8 +337,6 @@ const SidebarSubmenu: React.FC<SubmenuProps> = ({
                 {subItem.path.startsWith('http') ? (
                   <a 
                     href={subItem.path}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className={`
                       flex items-center px-3 py-2 rounded-lg text-xs transition-all duration-200 relative group
                       text-blue-lightest hover:bg-cyan-500/10 hover:text-white
