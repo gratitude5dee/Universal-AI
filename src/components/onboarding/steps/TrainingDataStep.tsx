@@ -1,10 +1,12 @@
-import React, { useCallback, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, UploadCloud, File, Video, Mic, CheckCircle, Sparkles, Zap } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { ArrowLeft, ArrowRight, UploadCloud, File, Video, Mic, CheckCircle } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useOnboardingNavigation } from '@/hooks/useOnboardingNavigation';
+import { useOnboarding } from '@/context/OnboardingContext';
+import { useContentManager } from '@/hooks/useContentManager';
+import { useToast } from '@/hooks/use-toast';
 
 // Liquid Glass Background
 const LiquidGlassBackground = () => {
@@ -49,19 +51,21 @@ const HolographicFileCard = ({ file, status, index }) => {
             <span className="text-white font-medium">{file.name}</span>
           </div>
           
-          {!status.completed ? (
+          {status?.error ? (
+            <span className="text-sm text-red-400">Upload failed</span>
+          ) : !status?.completed ? (
             <div className="relative w-24 h-2">
               <div className="absolute inset-0 bg-white/10 rounded-full overflow-hidden">
                 <motion.div
                   className="h-full bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full"
                   initial={{ width: 0 }}
-                  animate={{ width: `${status.progress}%` }}
+                  animate={{ width: `${status?.progress ?? 0}%` }}
                   transition={{ duration: 0.3 }}
                 />
               </div>
               <motion.div
                 className="absolute top-0 h-full w-4 bg-white/30 blur-md"
-                animate={{ left: `${Math.max(0, status.progress - 2)}%` }}
+                animate={{ left: `${Math.max(0, (status?.progress ?? 0) - 2)}%` }}
               />
             </div>
           ) : (
@@ -79,43 +83,112 @@ const HolographicFileCard = ({ file, status, index }) => {
   );
 };
 
+type LocalUpload = { id: string; name: string; type: 'image' | 'video' | 'voice' };
+type FileStatus = { progress: number; completed: boolean; error?: boolean };
+
 const TrainingDataStep = ({ onNext, onBack }) => {
-  const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [fileStatuses, setFileStatuses] = useState({});
-  const dropzoneRef = useRef(null);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const { handleAreaClick } = useOnboardingNavigation({ 
-    onNext, 
-    onBack, 
-    disabled: uploadedFiles.length === 0 
+  const [uploadedFiles, setUploadedFiles] = useState<LocalUpload[]>([]);
+  const [fileStatuses, setFileStatuses] = useState<Record<string, FileStatus>>({});
+  const { uploadedFiles: onboardingFiles, addUploadedFile } = useOnboarding();
+  const { uploadFile } = useContentManager();
+  const { toast } = useToast();
+  const { handleAreaClick } = useOnboardingNavigation({
+    onNext,
+    onBack,
+    disabled: onboardingFiles.length === 0
   });
 
-  const gradientX = useTransform(mouseX, [0, 1], ['40%', '60%']);
-  const gradientY = useTransform(mouseY, [0, 1], ['40%', '60%']);
+  useEffect(() => {
+    if (onboardingFiles.length === 0) return;
 
-  const onDrop = useCallback((acceptedFiles) => {
-    acceptedFiles.forEach(file => {
-      const type = file.type.startsWith('image') ? 'image' :
-                   file.type.startsWith('video') ? 'video' : 'voice';
-      
-      setUploadedFiles(prev => [...prev, { name: file.name, type, size: file.size }]);
-      setFileStatuses(prev => ({ ...prev, [file.name]: { progress: 0, completed: false } }));
-      
-      // Simulate upload progress
-      const interval = setInterval(() => {
-        setFileStatuses(prev => {
-          const current = prev[file.name];
-          if (current && current.progress < 100) {
-            return { ...prev, [file.name]: { ...current, progress: current.progress + 10 } };
-          } else {
-            clearInterval(interval);
-            return { ...prev, [file.name]: { progress: 100, completed: true } };
-          }
-        });
-      }, 200);
+    setUploadedFiles(prev => {
+      if (prev.length > 0) return prev;
+      return onboardingFiles.map(file => ({
+        id: file.storagePath || `${file.name}-${file.uploadedAt}`,
+        name: file.name,
+        type: file.type
+      }));
     });
-  }, []);
+
+    setFileStatuses(prev => {
+      if (Object.keys(prev).length > 0) return prev;
+      return onboardingFiles.reduce((acc, file) => {
+        const key = file.storagePath || `${file.name}-${file.uploadedAt}`;
+        acc[key] = { progress: 100, completed: true, error: false };
+        return acc;
+      }, {} as Record<string, FileStatus>);
+    });
+  }, [onboardingFiles]);
+
+  const mapToTrainingType = (mimeType: string) => {
+    if (mimeType.startsWith('image')) return 'image';
+    if (mimeType.startsWith('video')) return 'video';
+    return 'voice';
+  };
+
+  const normalizeContentType = (type: 'audio' | 'video' | 'image' | 'document') => {
+    if (type === 'audio') return 'voice';
+    if (type === 'video') return 'video';
+    if (type === 'image') return 'image';
+    return 'voice';
+  };
+
+  const onDrop = useCallback(async (acceptedFiles) => {
+    for (const file of acceptedFiles) {
+      const trainingType = mapToTrainingType(file.type);
+      const fileId = `${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`;
+
+      setUploadedFiles(prev => {
+        if (prev.some(existing => existing.id === fileId)) return prev;
+        return [...prev, { id: fileId, name: file.name, type: trainingType }];
+      });
+      setFileStatuses(prev => ({
+        ...prev,
+        [fileId]: { progress: 10, completed: false, error: false }
+      }));
+
+      try {
+        setFileStatuses(prev => ({
+          ...prev,
+          [fileId]: { ...(prev[fileId] || {}), progress: 50, completed: false, error: false }
+        }));
+
+        const uploadResult = await uploadFile(file);
+
+        if (!uploadResult) {
+          throw new Error('Upload failed');
+        }
+
+        const normalizedType = normalizeContentType(uploadResult.fileType);
+
+        addUploadedFile({
+          name: file.name,
+          type: normalizedType,
+          size: file.size,
+          url: uploadResult.publicUrl,
+          storagePath: uploadResult.filePath,
+          mimeType: file.type,
+          uploadedAt: new Date().toISOString()
+        });
+
+        setFileStatuses(prev => ({
+          ...prev,
+          [fileId]: { progress: 100, completed: true, error: false }
+        }));
+      } catch (error) {
+        console.error('Error uploading training file', error);
+        setFileStatuses(prev => ({
+          ...prev,
+          [fileId]: { progress: 0, completed: false, error: true }
+        }));
+        toast({
+          title: 'Upload failed',
+          description: 'We could not upload this file. Please try again.',
+          variant: 'destructive'
+        });
+      }
+    }
+  }, [addUploadedFile, toast, uploadFile]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -162,9 +235,9 @@ const TrainingDataStep = ({ onNext, onBack }) => {
             <div className="space-y-3">
               {uploadedFiles.map((file, index) => (
                 <HolographicFileCard
-                  key={file.name}
+                  key={file.id || file.name}
                   file={file}
-                  status={fileStatuses[file.name] || { progress: 0, completed: false }}
+                  status={fileStatuses[file.id || file.name] || { progress: 0, completed: false }}
                   index={index}
                 />
               ))}
@@ -183,7 +256,7 @@ const TrainingDataStep = ({ onNext, onBack }) => {
           </Button>
           <Button
             onClick={onNext}
-            disabled={uploadedFiles.length === 0}
+            disabled={onboardingFiles.length === 0}
             className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600"
           >
             Next <ArrowRight className="ml-2 h-4 w-4" />

@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Play, 
-  Pause, 
-  SkipForward, 
-  SkipBack, 
-  Volume2, 
+import {
+  Play,
+  Pause,
+  SkipForward,
+  SkipBack,
+  Volume2,
   Heart,
-  Share,
   MoreHorizontal,
   Plus,
   Mic,
@@ -15,10 +14,8 @@ import {
   Sparkles,
   Download,
   Clock,
-  User,
-  Trash2,
-  Settings,
-  Radio
+  Radio,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -32,6 +29,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
+import { useAuth } from '@/context/AuthContext';
 
 interface Podcast {
   id: string;
@@ -82,6 +81,7 @@ const GenerativePodcastsInterface = () => {
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const { toast } = useToast();
+  const { user, loading: authLoading } = useAuth();
 
   const getDurationMinutes = (seconds?: number | null) => {
     if (!seconds || seconds <= 0) {
@@ -217,10 +217,16 @@ const GenerativePodcastsInterface = () => {
       });
 
       if (error) throw error;
+      if (!data?.success) {
+        throw new Error(data?.error || 'Unable to load voices');
+      }
 
-      setVoices(data.voices || []);
-      if (data.voices?.length > 0) {
-        setSelectedVoice(data.voices[0].voice_id);
+      const authorizedVoices: Voice[] = data.voices || [];
+      setVoices(authorizedVoices);
+      if (authorizedVoices.length > 0) {
+        setSelectedVoice(authorizedVoices[0].voice_id);
+      } else {
+        setSelectedVoice('');
       }
     } catch (error) {
       console.error('Error loading voices:', error);
@@ -249,10 +255,19 @@ const GenerativePodcastsInterface = () => {
       return;
     }
 
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to generate and save podcasts.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsGenerating(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('podcast-generator', {
+      const { data, error } = await supabase.functions.invoke<PodcastFunctionResponse>('podcast-generator', {
         body: {
           title,
           description,
@@ -263,6 +278,38 @@ const GenerativePodcastsInterface = () => {
       });
 
       if (error) throw error;
+      if (!data) {
+        throw new Error('Podcast generation returned no data.');
+      }
+
+      const generatedPodcast = data;
+
+      if (!generatedPodcast.audioContent) {
+        throw new Error('Audio content missing from generation response.');
+      }
+
+      const { data: insertedPodcast, error: insertError } = await supabase
+        .from('podcasts')
+        .insert({
+          user_id: user.id,
+          title: generatedPodcast.title,
+          description: generatedPodcast.description ?? description ?? null,
+          audio_base64: generatedPodcast.audioContent,
+          voice_id: generatedPodcast.voiceId,
+          style: generatedPodcast.style ?? podcastStyle,
+          duration: generatedPodcast.duration ?? Math.max(Math.ceil(script.length / 150), 1),
+        })
+        .select()
+        .single();
+
+      if (insertError || !insertedPodcast) {
+        throw insertError || new Error('Failed to save the generated podcast.');
+      }
+
+      const savedPodcast = mapPodcastRow(insertedPodcast);
+      setPodcasts(prev => [savedPodcast, ...prev]);
+      setCurrentPodcast(savedPodcast);
+      setProgress(0);
 
       if (!data?.success || !data.podcast) {
         throw new Error(data?.error || 'Failed to generate podcast');
@@ -275,17 +322,18 @@ const GenerativePodcastsInterface = () => {
       setTitle('');
       setDescription('');
       setScript('');
-      
+
       toast({
         title: "Podcast Generated!",
-        description: `"${newPodcast.title}" has been created successfully.`,
+        description: `"${savedPodcast.title}" has been created successfully.`,
       });
 
     } catch (error) {
       console.error('Error generating podcast:', error);
+      const message = error instanceof Error ? error.message : 'Failed to generate podcast. Please try again.';
       toast({
         title: "Generation Failed",
-        description: error.message || "Failed to generate podcast. Please try again.",
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -304,6 +352,18 @@ const GenerativePodcastsInterface = () => {
     }
 
     try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = sessionData?.session;
+
+      if (!session) {
+        toast({
+          title: "Authentication Required",
+          description: "Please sign in to clone a voice.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const formData = new FormData();
       formData.append('name', voiceName);
       formData.append('description', voiceDescription);
@@ -315,13 +375,20 @@ const GenerativePodcastsInterface = () => {
         `https://ixkkrousepsiorwlaycp.functions.supabase.co/functions/v1/voice-management?action=clone`,
         {
           method: 'POST',
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
           body: formData,
         }
-      );
+      const { data, error } = await supabase.functions.invoke('voice-management', {
+        body: formData,
+      });
+
+      if (error) throw error;
 
       const result = await response.json();
 
-      if (!result.success) {
+      if (!response.ok || !result.success) {
         throw new Error(result.error);
       }
 
