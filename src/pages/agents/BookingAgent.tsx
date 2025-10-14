@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import DashboardLayout from "@/layouts/dashboard-layout";
+import BookingAgentLayout from "@/layouts/booking-agent-layout";
 import { WorkflowSidebar } from "@/components/touring/WorkflowSidebar";
 import { AIAssistantPanel } from "@/components/touring/AIAssistantPanel";
 import BookingWorkflowTracker from "@/components/touring/BookingWorkflowTracker";
@@ -100,16 +100,16 @@ const BookingAgent = () => {
 
   if (loading) {
     return (
-      <DashboardLayout>
+      <BookingAgentLayout>
         <div className="flex items-center justify-center min-h-screen">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
         </div>
-      </DashboardLayout>
+      </BookingAgentLayout>
     );
   }
 
   return (
-    <DashboardLayout>
+    <BookingAgentLayout>
       <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
         {/* Left Sidebar - Workflow Pipeline (hidden in Kanban view) */}
         {viewMode === "list" && (
@@ -327,7 +327,7 @@ const BookingAgent = () => {
           />
         </>
       )}
-    </DashboardLayout>
+    </BookingAgentLayout>
   );
 };
 

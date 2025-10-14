@@ -2,7 +2,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import { WalletProvider } from "@/context/WalletContext";
 import { OnboardingProvider } from "@/context/OnboardingContext";
@@ -48,6 +48,9 @@ import CreateQrCampaign from "./pages/event-toolkit/CreateQrCampaign";
 
 // Agent Collection Pages
 import BookingAgent from "./pages/agents/BookingAgent";
+import BookyView from "./pages/agents/BookyView";
+import ContractsView from "./pages/agents/ContractsView";
+import PaymentsView from "./pages/agents/PaymentsView";
 import InvoiceAgent from "./pages/agents/InvoiceAgent";
 import SocialMediaAgent from "./pages/agents/SocialMediaAgent";
 import ContractAgent from "./pages/agents/ContractAgent";
@@ -125,7 +128,11 @@ function App() {
                   <Route path="/event-toolkit/qr-upload/create" element={<ProtectedRoute><CreateQrCampaign /></ProtectedRoute>} />
 
                   {/* Agent Collection Routes - Protected */}
-                  <Route path="/collection/booking-agent" element={<ProtectedRoute><BookingAgent /></ProtectedRoute>} />
+                  <Route path="/collection/booking-agent" element={<Navigate to="/collection/booking-agent/gigs" replace />} />
+                  <Route path="/collection/booking-agent/gigs" element={<ProtectedRoute><BookingAgent /></ProtectedRoute>} />
+                  <Route path="/collection/booking-agent/booky" element={<ProtectedRoute><BookyView /></ProtectedRoute>} />
+                  <Route path="/collection/booking-agent/contracts" element={<ProtectedRoute><ContractsView /></ProtectedRoute>} />
+                  <Route path="/collection/booking-agent/payments" element={<ProtectedRoute><PaymentsView /></ProtectedRoute>} />
                   <Route path="/collection/invoice-agent" element={<ProtectedRoute><InvoiceAgent /></ProtectedRoute>} />
                   <Route path="/collection/social-media" element={<ProtectedRoute><SocialMediaAgent /></ProtectedRoute>} />
                   <Route path="/collection/contract-agent" element={<ProtectedRoute><ContractAgent /></ProtectedRoute>} />
