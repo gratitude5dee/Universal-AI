@@ -126,17 +126,17 @@ const RevenueJourney = () => {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-1">
-            <DollarSign className="h-4 w-4 text-studio-accent" />
-            <span className="font-semibold text-lg">$580</span>
+            <DollarSign className="h-4 w-4 text-[hsl(var(--success))]" />
+            <span className="font-semibold text-lg text-[hsl(var(--text-primary))]">$580</span>
           </div>
-          <div className="flex items-center text-xs text-studio-clay gap-1">
+          <div className="flex items-center text-xs text-[hsl(var(--text-secondary))] gap-1">
             <TrendingUp className="h-3 w-3" />
             <span>18% increase this month</span>
           </div>
         </div>
         
         <motion.button 
-          className="text-sm flex items-center gap-1 text-studio-accent"
+          className="text-sm flex items-center gap-1 text-[hsl(var(--accent-purple))] hover:text-[hsl(var(--accent-purple-light))] transition-colors"
           whileHover={{ scale: 1.05 }}
           onClick={celebrateMilestone}
         >

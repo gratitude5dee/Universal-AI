@@ -42,8 +42,8 @@ export const IPLineagePanel = () => {
     <>
       <div className="glass-card border border-white/10 rounded-xl p-6 h-full">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-medium text-white flex items-center gap-2">
-          <GitBranch className="w-5 h-5 text-primary" />
+        <h3 className="text-lg font-medium text-[hsl(var(--text-primary))] flex items-center gap-2">
+          <GitBranch className="w-5 h-5 text-[hsl(var(--accent-purple))]" />
           IP Lineage & Royalty
         </h3>
       </div>
@@ -115,12 +115,12 @@ export const IPLineagePanel = () => {
       <div className="border-t border-white/10 pt-4 space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs text-white/50 mb-1">Royalty Policy</p>
+            <p className="text-xs text-[hsl(var(--text-tertiary))] mb-1">Royalty Policy</p>
             <div className="flex items-center gap-2">
-              <span className="px-2 py-1 rounded bg-primary/20 text-primary text-xs font-medium border border-primary/30">
+              <span className="px-2 py-1 rounded bg-[hsl(var(--accent-purple))]/20 text-[hsl(var(--accent-purple))] text-xs font-medium border border-[hsl(var(--accent-purple))]/30">
                 {royaltyPolicy.type}
               </span>
-              <span className="text-sm text-white/70">{royaltyPolicy.description}</span>
+              <span className="text-sm text-[hsl(var(--text-secondary))]">{royaltyPolicy.description}</span>
             </div>
           </div>
           <button
@@ -143,7 +143,7 @@ export const IPLineagePanel = () => {
 
         {/* Simulation */}
         <div>
-          <label className="text-xs text-white/50 mb-2 block">Simulate License Price</label>
+          <label className="text-xs text-[hsl(var(--text-tertiary))] mb-2 block">Simulate License Price</label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/50">$</span>
             <Input
@@ -162,16 +162,16 @@ export const IPLineagePanel = () => {
               className="mt-3 space-y-2 p-3 bg-white/5 rounded-lg border border-white/10"
             >
               <div className="flex items-center justify-between text-xs">
-                <span className="text-white/70">Creator (70%)</span>
-                <span className="text-white font-medium">${splits.creator.toFixed(2)}</span>
+                <span className="text-[hsl(var(--text-secondary))]">Creator (70%)</span>
+                <span className="text-[hsl(var(--text-primary))] font-medium">${splits.creator.toFixed(2)}</span>
               </div>
               <div className="flex items-center justify-between text-xs">
-                <span className="text-white/70">Collaborator A (15%)</span>
-                <span className="text-white font-medium">${splits.collaboratorA.toFixed(2)}</span>
+                <span className="text-[hsl(var(--text-secondary))]">Collaborator A (15%)</span>
+                <span className="text-[hsl(var(--text-primary))] font-medium">${splits.collaboratorA.toFixed(2)}</span>
               </div>
               <div className="flex items-center justify-between text-xs">
-                <span className="text-white/70">Collaborator B (15%)</span>
-                <span className="text-white font-medium">${splits.collaboratorB.toFixed(2)}</span>
+                <span className="text-[hsl(var(--text-secondary))]">Collaborator B (15%)</span>
+                <span className="text-[hsl(var(--text-primary))] font-medium">${splits.collaboratorB.toFixed(2)}</span>
               </div>
             </motion.div>
           )}
