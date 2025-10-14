@@ -18,6 +18,9 @@ import RightsTransferWizard from "@/components/rights/RightsTransferWizard";
 import StoryPortal from "@/components/rights/StoryPortal";
 import { Shield } from "lucide-react";
 import { IPRegistrationWizard } from "@/components/rights/IPRegistrationWizard";
+import { AgreementsTab } from "@/components/rights/AgreementsTab";
+import { LicensingTab } from "@/components/rights/LicensingTab";
+import { SettingsTab } from "@/components/rights/SettingsTab";
 
 const RightsManagement = () => {
   const [activeTab, setActiveTab] = useState<string>("overview");
@@ -87,31 +90,22 @@ const RightsManagement = () => {
             </TabsContent>
 
             <TabsContent value="agreements">
-              <IPAgreementVisualizer />
-              <div className="mt-6">
-                <RightsTransferWizard />
-              </div>
+              <AgreementsTab />
             </TabsContent>
 
             <TabsContent value="licensing">
-              <div className="glass-card border border-white/10 rounded-xl p-6">
-                <h2 className="text-xl font-semibold mb-4">Licensing Management</h2>
-                <p className="text-white/70">License catalog and management tools coming soon...</p>
-              </div>
+              <LicensingTab />
             </TabsContent>
 
             <TabsContent value="analytics">
               <div className="glass-card border border-white/10 rounded-xl p-6">
                 <h2 className="text-xl font-semibold mb-4">Analytics & Insights</h2>
-                <p className="text-white/70">Analytics dashboard coming soon...</p>
+                <p className="text-white/70">Comprehensive analytics dashboard coming soon...</p>
               </div>
             </TabsContent>
 
             <TabsContent value="settings">
-              <div className="glass-card border border-white/10 rounded-xl p-6">
-                <h2 className="text-xl font-semibold mb-4">Settings</h2>
-                <p className="text-white/70">Payout addresses, operator management, and security settings coming soon...</p>
-              </div>
+              <SettingsTab />
             </TabsContent>
           </Tabs>
         </div>
