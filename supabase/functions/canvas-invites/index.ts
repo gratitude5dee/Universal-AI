@@ -16,7 +16,13 @@ serve(async (req) => {
   }
 
   try {
-    const { action, boardId, email, collaboratorId, role = 'viewer' } = await req.json();
+    const {
+      action,
+      boardId,
+      email,
+      collaboratorId,
+      role = 'viewer'
+    } = await req.json();
 
     // Get user from auth header
     const authHeader = req.headers.get('Authorization');
@@ -34,7 +40,11 @@ serve(async (req) => {
     let result;
 
     switch (action) {
-      case 'send_invite':
+      case 'send_invite': {
+        if (!boardId || !email) {
+          throw new Error('Board ID and email are required');
+        }
+
         // Verify user owns the board
         const { data: board } = await supabase
           .from('boards')
@@ -46,28 +56,40 @@ serve(async (req) => {
           throw new Error('Board not found or access denied');
         }
 
-        // Check if user exists by email
-        const { data: invitedUser } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('email', email)
-          .single();
+        const normalizedEmail = email.toLowerCase();
 
-        let invitedUserId = null;
-        if (invitedUser) {
-          invitedUserId = invitedUser.id;
-          
-          // Check if already a collaborator
-          const { data: existingCollab } = await supabase
+        // Find user by email through auth admin API
+        const { data: invitedUserData, error: invitedUserError } = await supabase.auth.admin.getUserByEmail(normalizedEmail);
+
+        if (invitedUserError) {
+          throw new Error('Failed to lookup user');
+        }
+
+        const invitedUserId = invitedUserData?.user?.id ?? null;
+
+        // Check if already a collaborator by user or email
+        if (invitedUserId) {
+          const { data: existingByUser } = await supabase
             .from('board_collaborators')
             .select('id')
             .eq('board_id', boardId)
             .eq('user_id', invitedUserId)
             .single();
 
-          if (existingCollab) {
+          if (existingByUser) {
             throw new Error('User is already a collaborator');
           }
+        }
+
+        const { data: existingByEmail } = await supabase
+          .from('board_collaborators')
+          .select('id')
+          .eq('board_id', boardId)
+          .eq('email', normalizedEmail)
+          .single();
+
+        if (existingByEmail) {
+          throw new Error('An invitation has already been sent to this email');
         }
 
         // Create collaboration record
@@ -76,9 +98,9 @@ serve(async (req) => {
           .insert({
             board_id: boardId,
             user_id: invitedUserId,
-            invited_email: email,
+            email: normalizedEmail,
             role,
-            status: invitedUserId ? 'pending' : 'invited',
+            status: 'pending',
             invited_by: user.id
           })
           .select()
@@ -91,17 +113,22 @@ serve(async (req) => {
         // TODO: Send email invitation here
         // This would typically integrate with an email service
 
-        result = { 
+        result = {
           collaboration,
           message: invitedUserId ? 'Invitation sent to existing user' : 'Invitation sent to email'
         };
         break;
+      }
 
-      case 'accept_invite':
+      case 'accept_invite': {
+        if (!collaboratorId) {
+          throw new Error('Collaborator ID is required');
+        }
+
         // Accept a collaboration invitation
         const { data: invite } = await supabase
           .from('board_collaborators')
-          .select('id, board_id, invited_email')
+          .select('id, board_id, email')
           .eq('id', collaboratorId)
           .eq('status', 'pending')
           .single();
@@ -110,14 +137,9 @@ serve(async (req) => {
           throw new Error('Invitation not found');
         }
 
-        // Get user's profile to check email
-        const { data: userProfile } = await supabase
-          .from('profiles')
-          .select('email')
-          .eq('id', user.id)
-          .single();
+        const userEmail = user.email?.toLowerCase();
 
-        if (!userProfile || userProfile.email !== invite.invited_email) {
+        if (!userEmail || userEmail !== invite.email) {
           throw new Error('Invitation not intended for this user');
         }
 
@@ -135,12 +157,17 @@ serve(async (req) => {
 
         result = { success: true, message: 'Invitation accepted' };
         break;
+      }
 
-      case 'decline_invite':
+      case 'decline_invite': {
+        if (!collaboratorId) {
+          throw new Error('Collaborator ID is required');
+        }
+
         // Decline a collaboration invitation
         const { data: declineInvite } = await supabase
           .from('board_collaborators')
-          .select('id, invited_email')
+          .select('id, email')
           .eq('id', collaboratorId)
           .eq('status', 'pending')
           .single();
@@ -149,13 +176,9 @@ serve(async (req) => {
           throw new Error('Invitation not found');
         }
 
-        const { data: declineProfile } = await supabase
-          .from('profiles')
-          .select('email')
-          .eq('id', user.id)
-          .single();
+        const declineEmail = user.email?.toLowerCase();
 
-        if (!declineProfile || declineProfile.email !== declineInvite.invited_email) {
+        if (!declineEmail || declineEmail !== declineInvite.email) {
           throw new Error('Invitation not intended for this user');
         }
 
@@ -170,8 +193,13 @@ serve(async (req) => {
 
         result = { success: true, message: 'Invitation declined' };
         break;
+      }
 
-      case 'remove_collaborator':
+      case 'remove_collaborator': {
+        if (!boardId || !collaboratorId) {
+          throw new Error('Board ID and collaborator ID are required');
+        }
+
         // Remove a collaborator (only board owner can do this)
         const { data: ownerBoard } = await supabase
           .from('boards')
@@ -195,20 +223,31 @@ serve(async (req) => {
 
         result = { success: true, message: 'Collaborator removed' };
         break;
+      }
 
-      case 'get_invites':
+      case 'get_invites': {
         // Get pending invitations for the current user
-        const { data: userInvites, error: invitesError } = await supabase
+        const invitesQuery = supabase
           .from('board_collaborators')
           .select(`
             id,
             role,
+            status,
             created_at,
             boards:board_id (id, title, description),
             inviter:invited_by (username)
           `)
-          .eq('user_id', user.id)
           .eq('status', 'pending');
+
+        const authEmail = user.email?.toLowerCase();
+
+        if (authEmail) {
+          invitesQuery.or(`user_id.eq.${user.id},email.eq.${authEmail}`);
+        } else {
+          invitesQuery.eq('user_id', user.id);
+        }
+
+        const { data: userInvites, error: invitesError } = await invitesQuery;
 
         if (invitesError) {
           throw new Error('Failed to fetch invitations');
@@ -216,6 +255,7 @@ serve(async (req) => {
 
         result = { invites: userInvites };
         break;
+      }
 
       default:
         throw new Error('Invalid action');
