@@ -1,10 +1,20 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+const supabaseUrl = Deno.env.get("SUPABASE_URL");
+const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+if (!supabaseUrl || !supabaseServiceKey) {
+  throw new Error("Supabase environment variables are not configured");
+}
+
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 interface PodcastRequest {
   title: string;
@@ -29,6 +39,21 @@ serve(async (req) => {
     }
 
     const { title, description, script, voiceId, style = 'conversational' }: PodcastRequest = await req.json();
+
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      throw new Error("Missing authorization header");
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser(token);
+
+    if (userError || !user) {
+      throw new Error("Invalid or missing user session");
+    }
 
     if (!title || !script || !voiceId) {
       throw new Error('Title, script, and voice ID are required');
@@ -100,26 +125,65 @@ serve(async (req) => {
 
     // Convert audio to base64
     const audioBuffer = await audioResponse.arrayBuffer();
-    const base64Audio = btoa(String.fromCharCode(...new Uint8Array(audioBuffer)));
+    const audioBytes = new Uint8Array(audioBuffer);
 
-    console.log('Podcast generated successfully');
+    console.log("Uploading audio to storage...");
 
-    const podcastData = {
-      id: `podcast_${Date.now()}`,
-      title,
-      description,
-      script: enhancedScript,
-      audioContent: base64Audio,
-      voiceId,
-      style,
-      duration: Math.ceil(enhancedScript.length / 150), // Rough estimate: 150 chars per minute
-      generatedAt: new Date().toISOString(),
-      size: audioBuffer.byteLength,
-    };
+    const filePath = `${user.id}/${crypto.randomUUID()}.mp3`;
+    const { error: uploadError } = await supabase.storage
+      .from("podcast-audio")
+      .upload(filePath, audioBytes, {
+        contentType: "audio/mpeg",
+      });
 
-    return new Response(JSON.stringify(podcastData), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    if (uploadError) {
+      throw new Error(`Failed to upload audio: ${uploadError.message}`);
+    }
+
+    const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+      .from("podcast-audio")
+      .createSignedUrl(filePath, 60 * 60 * 24); // 24 hours
+
+    if (signedUrlError) {
+      throw new Error(`Failed to create signed URL: ${signedUrlError.message}`);
+    }
+
+    const durationSeconds = Math.ceil((enhancedScript.length / 150) * 60);
+
+    const { data: insertedPodcast, error: insertError } = await supabase
+      .from("podcasts")
+      .insert({
+        user_id: user.id,
+        title,
+        description,
+        script: enhancedScript,
+        audio_url: filePath,
+        voice_id: voiceId,
+        style,
+        duration_seconds: durationSeconds,
+        file_size: audioBytes.byteLength,
+      })
+      .select()
+      .single();
+
+    if (insertError || !insertedPodcast) {
+      throw new Error(`Failed to save podcast metadata: ${insertError?.message}`);
+    }
+
+    console.log("Podcast generated and stored successfully");
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        podcast: {
+          ...insertedPodcast,
+          audio_signed_url: signedUrlData?.signedUrl ?? null,
+        },
+      }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      },
+    );
 
   } catch (error) {
     console.error('Error in podcast-generator function:', error);

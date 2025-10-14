@@ -34,28 +34,18 @@ import { useAuth } from '@/context/AuthContext';
 
 interface Podcast {
   id: string;
+  user_id: string;
   title: string;
-  description: string;
-  audioContent?: string;
-  audioUrl?: string;
-  duration: number;
-  createdAt: string;
-  voiceId?: string;
-  style?: string;
-}
-
-type PodcastRow = Database['public']['Tables']['podcasts']['Row'];
-
-interface PodcastFunctionResponse {
-  id: string;
-  title: string;
-  description: string;
-  script?: string;
-  audioContent: string;
-  voiceId: string;
-  style: string;
-  duration: number;
-  generatedAt: string;
+  description: string | null;
+  script: string;
+  audio_url: string;
+  audio_signed_url?: string | null;
+  voice_id: string | null;
+  style: string | null;
+  duration_seconds: number | null;
+  file_size: number | null;
+  created_at: string;
+  updated_at: string;
 }
 
 interface Voice {
@@ -72,8 +62,8 @@ const GenerativePodcastsInterface = () => {
   const [progress, setProgress] = useState(0);
   const [volume, setVolume] = useState(0.8);
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
-  const [isLoadingPodcasts, setIsLoadingPodcasts] = useState(false);
   const [voices, setVoices] = useState<Voice[]>([]);
+  const [isLoadingPodcasts, setIsLoadingPodcasts] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isLoadingVoices, setIsLoadingVoices] = useState(true);
   
@@ -93,31 +83,42 @@ const GenerativePodcastsInterface = () => {
   const { toast } = useToast();
   const { user, loading: authLoading } = useAuth();
 
-  const mapPodcastRow = useCallback((row: PodcastRow): Podcast => ({
-    id: row.id,
-    title: row.title,
-    description: row.description ?? '',
-    audioContent: row.audio_base64 ?? undefined,
-    audioUrl: row.audio_url ?? undefined,
-    duration: row.duration ?? 0,
-    createdAt: row.created_at,
-    voiceId: row.voice_id ?? undefined,
-    style: row.style ?? 'Custom',
-  }), []);
-
-  const fetchPodcasts = useCallback(async () => {
-    if (!user) {
-      setPodcasts([]);
-      setCurrentPodcast(null);
-      setIsPlaying(false);
-      setProgress(0);
-      setIsLoadingPodcasts(false);
-      return;
+  const getDurationMinutes = (seconds?: number | null) => {
+    if (!seconds || seconds <= 0) {
+      return 0;
     }
 
-    setIsLoadingPodcasts(true);
+    return Math.max(1, Math.round(seconds / 60));
+  };
 
+  const formatDurationLabel = (seconds?: number | null) => {
+    if (!seconds || seconds <= 0) {
+      return "0:00";
+    }
+
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const fetchPodcasts = useCallback(async () => {
     try {
+      setIsLoadingPodcasts(true);
+
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError) {
+        throw userError;
+      }
+
+      if (!user) {
+        setPodcasts([]);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('podcasts')
         .select('*')
@@ -128,20 +129,86 @@ const GenerativePodcastsInterface = () => {
         throw error;
       }
 
-      setPodcasts((data ?? []).map(mapPodcastRow));
+      if (!data || data.length === 0) {
+        setPodcasts([]);
+        return;
+      }
+
+      const audioPaths = data.map((podcast) => podcast.audio_url);
+      let signedUrls: { signedUrl: string }[] | null = null;
+
+      if (audioPaths.length > 0) {
+        const { data: signedUrlData, error: signedError } = await supabase.storage
+          .from('podcast-audio')
+          .createSignedUrls(audioPaths, 60 * 60); // 1 hour
+
+        if (signedError) {
+          throw signedError;
+        }
+
+        signedUrls = signedUrlData ?? null;
+      }
+
+      const podcastsWithUrls = data.map((podcast, index) => ({
+        ...podcast,
+        audio_signed_url: signedUrls?.[index]?.signedUrl ?? null,
+      }));
+
+      setPodcasts(podcastsWithUrls);
     } catch (error) {
       console.error('Error loading podcasts:', error);
       toast({
-        title: 'Error loading podcasts',
-        description: 'We could not load your podcasts. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to load podcasts. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsLoadingPodcasts(false);
     }
-  }, [user, mapPodcastRow, toast]);
+  }, [toast]);
 
-  // Load voices on component mount
+  const ensureSignedUrl = useCallback(async (podcast: Podcast) => {
+    if (podcast.audio_signed_url) {
+      return podcast.audio_signed_url;
+    }
+
+    const { data, error } = await supabase.storage
+      .from('podcast-audio')
+      .createSignedUrl(podcast.audio_url, 60 * 60);
+
+    if (error) {
+      throw error;
+    }
+
+    const signedUrl = data?.signedUrl ?? null;
+
+    if (signedUrl) {
+      setPodcasts((prev) =>
+        prev.map((item) =>
+          item.id === podcast.id ? { ...item, audio_signed_url: signedUrl } : item
+        )
+      );
+
+      setCurrentPodcast((prev) =>
+        prev && prev.id === podcast.id
+          ? { ...prev, audio_signed_url: signedUrl }
+          : prev
+      );
+    }
+
+    return signedUrl;
+  }, []);
+
+  useEffect(() => {
+    fetchPodcasts();
+  }, [fetchPodcasts]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
+
   const loadVoices = useCallback(async () => {
     try {
       setIsLoadingVoices(true);
@@ -173,6 +240,7 @@ const GenerativePodcastsInterface = () => {
     }
   }, [toast]);
 
+  // Load voices on component mount
   useEffect(() => {
     loadVoices();
   }, [loadVoices]);
@@ -242,6 +310,13 @@ const GenerativePodcastsInterface = () => {
       setPodcasts(prev => [savedPodcast, ...prev]);
       setCurrentPodcast(savedPodcast);
       setProgress(0);
+
+      if (!data?.success || !data.podcast) {
+        throw new Error(data?.error || 'Failed to generate podcast');
+      }
+
+      const newPodcast: Podcast = data.podcast;
+      setPodcasts(prev => [newPodcast, ...prev]);
 
       // Clear form
       setTitle('');
@@ -337,61 +412,74 @@ const GenerativePodcastsInterface = () => {
     }
   };
 
-  const playPodcast = (podcast: Podcast) => {
-    if (!podcast.audioUrl && !podcast.audioContent) {
-      toast({
-        title: 'Audio unavailable',
-        description: 'This podcast does not have audio data yet.',
-        variant: 'destructive',
-      });
-      return;
-    }
+  const playPodcast = async (podcast: Podcast) => {
+    try {
+      const isSamePodcast = currentPodcast?.id === podcast.id;
 
-    if (currentPodcast?.id === podcast.id && isPlaying) {
-      setIsPlaying(false);
-      audioRef.current?.pause();
-      return;
-    }
-
-    setCurrentPodcast(podcast);
-    setProgress(0);
-
-    if (audioRef.current) {
-      if (podcast.audioUrl) {
-        audioRef.current.src = podcast.audioUrl;
-      } else if (podcast.audioContent) {
-        audioRef.current.src = `data:audio/mp3;base64,${podcast.audioContent}`;
+      if (isSamePodcast && isPlaying) {
+        setIsPlaying(false);
+        audioRef.current?.pause();
+        return;
       }
 
-      audioRef.current.currentTime = 0;
-      void audioRef.current.play();
+      const signedUrl = await ensureSignedUrl(podcast);
+
+      if (!signedUrl || !audioRef.current) {
+        throw new Error('Audio not available for playback.');
+      }
+
+      if (!isSamePodcast || audioRef.current.src !== signedUrl) {
+        audioRef.current.src = signedUrl;
+        if (!isSamePodcast) {
+          audioRef.current.currentTime = 0;
+          setProgress(0);
+        }
+      }
+
+      audioRef.current.volume = volume;
+      await audioRef.current.play();
       setIsPlaying(true);
+      setCurrentPodcast({ ...podcast, audio_signed_url: signedUrl });
+    } catch (error) {
+      console.error('Error playing podcast:', error);
+      setIsPlaying(false);
+      toast({
+        title: "Playback error",
+        description:
+          error instanceof Error
+            ? error.message
+            : "We couldn't play this podcast. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
-  const downloadPodcast = (podcast: Podcast) => {
-    if (podcast.audioUrl) {
+  const downloadPodcast = async (podcast: Podcast) => {
+    try {
+      const signedUrl = await ensureSignedUrl(podcast);
+
+      if (!signedUrl) {
+        throw new Error('Audio not available for download.');
+      }
+
       const link = document.createElement('a');
-      link.href = podcast.audioUrl;
+      link.href = signedUrl;
       link.download = `${podcast.title}.mp3`;
       link.rel = 'noopener';
+      document.body.appendChild(link);
       link.click();
-      return;
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading podcast:', error);
+      toast({
+        title: "Download failed",
+        description:
+          error instanceof Error
+            ? error.message
+            : "We couldn't download this podcast. Please try again.",
+        variant: "destructive",
+      });
     }
-
-    if (podcast.audioContent) {
-      const link = document.createElement('a');
-      link.href = `data:audio/mp3;base64,${podcast.audioContent}`;
-      link.download = `${podcast.title}.mp3`;
-      link.click();
-      return;
-    }
-
-    toast({
-      title: 'Download unavailable',
-      description: 'No audio data is available to download for this podcast.',
-      variant: 'destructive',
-    });
   };
 
   return (
@@ -594,11 +682,8 @@ const GenerativePodcastsInterface = () => {
         <div className="flex-1 p-6 overflow-y-auto">
           {isLoadingPodcasts ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
-              <Loader2 className="w-12 h-12 text-green-400 animate-spin mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Loading podcasts</h3>
-              <p className="text-gray-400 max-w-md">
-                We&apos;re fetching your saved episodes.
-              </p>
+              <div className="w-12 h-12 border-4 border-gray-700 border-t-green-500 rounded-full animate-spin mb-4" />
+              <p className="text-gray-400">Loading your podcasts...</p>
             </div>
           ) : podcasts.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
@@ -620,14 +705,17 @@ const GenerativePodcastsInterface = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {podcasts.map((podcast) => (
-                <motion.div
-                  key={podcast.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="group"
-                >
-                  <Card className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-all duration-200 overflow-hidden">
+              {podcasts.map((podcast) => {
+                const durationMinutes = getDurationMinutes(podcast.duration_seconds);
+
+                return (
+                  <motion.div
+                    key={podcast.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="group"
+                  >
+                    <Card className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-all duration-200 overflow-hidden">
                     <div className="relative">
                       <div className="aspect-square bg-gradient-to-br from-green-500/20 to-blue-500/20 flex items-center justify-center">
                         <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center">
@@ -637,7 +725,7 @@ const GenerativePodcastsInterface = () => {
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <Button
                           size="lg"
-                          onClick={() => playPodcast(podcast)}
+                          onClick={() => void playPodcast(podcast)}
                           className="rounded-full w-12 h-12 bg-green-600 hover:bg-green-700"
                         >
                           {currentPodcast?.id === podcast.id && isPlaying ? (
@@ -648,27 +736,29 @@ const GenerativePodcastsInterface = () => {
                         </Button>
                       </div>
                     </div>
-                    
+
                     <div className="p-4">
                       <h3 className="font-semibold text-white truncate mb-1">{podcast.title}</h3>
-                      <p className="text-sm text-gray-400 mb-3 line-clamp-2">{podcast.description}</p>
-                      
+                      <p className="text-sm text-gray-400 mb-3 line-clamp-2">
+                        {podcast.description || 'AI-generated podcast episode'}
+                      </p>
+
                       <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
                         <div className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
-                          {podcast.duration} min
+                          {durationMinutes > 0 ? `${durationMinutes} min` : '—'}
                         </div>
                         <Badge variant="outline" className="border-gray-600 text-gray-400">
-                          {podcast.style}
+                          {podcast.style || 'custom'}
                         </Badge>
                       </div>
-                      
+
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => playPodcast(podcast)}
+                            onClick={() => void playPodcast(podcast)}
                             className="hover:bg-gray-700"
                           >
                             {currentPodcast?.id === podcast.id && isPlaying ? (
@@ -680,7 +770,7 @@ const GenerativePodcastsInterface = () => {
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => downloadPodcast(podcast)}
+                            onClick={() => void downloadPodcast(podcast)}
                             className="hover:bg-gray-700"
                           >
                             <Download className="w-4 h-4" />
@@ -691,9 +781,10 @@ const GenerativePodcastsInterface = () => {
                         </Button>
                       </div>
                     </div>
-                  </Card>
-                </motion.div>
-              ))}
+                    </Card>
+                  </motion.div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -754,8 +845,8 @@ const GenerativePodcastsInterface = () => {
             
             <div className="mt-4">
               <div className="flex items-center justify-between text-xs text-gray-400 mb-1">
-                <span>0:00</span>
-                <span>{currentPodcast.duration}:00</span>
+                <span>{formatDurationLabel(audioRef.current?.currentTime ?? 0)}</span>
+                <span>{formatDurationLabel(currentPodcast.duration_seconds)}</span>
               </div>
               <div className="w-full bg-gray-700 rounded-full h-1">
                 <div 
