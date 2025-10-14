@@ -80,47 +80,12 @@ const ResearchInterface = () => {
 
   const refreshSessionHistory = useCallback(async (activeSessionId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('research_sessions')
-        .select(`
-          id,
-          session_identifier,
-          research_messages (
-            id,
-            role,
-            content,
-            sources,
-            tokens_used,
-            model,
-            created_at
-          )
-        `)
-        .eq('session_identifier', activeSessionId)
-        .maybeSingle();
+      // Research sessions and messages are not yet implemented in the database
+      // This is a placeholder that will be implemented when the tables are created
+      console.log('Research session history not yet implemented:', activeSessionId);
+      setMessages([]);
+      return;
 
-      if (error) {
-        console.error('Failed to load research history:', error);
-        toast({
-          title: 'History Error',
-          description: 'Unable to load previous research messages.',
-          variant: 'destructive'
-        });
-        return;
-      }
-
-      const historyMessages: ResearchMessage[] = (data?.research_messages ?? [])
-        .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-        .map((message) => ({
-          id: message.id,
-          content: message.content ?? '',
-          role: (message.role ?? 'assistant') as 'user' | 'assistant',
-          timestamp: new Date(message.created_at),
-          sources: Array.isArray(message.sources) ? message.sources : undefined,
-          tokensUsed: typeof message.tokens_used === 'number' ? message.tokens_used : undefined,
-          model: message.model ?? undefined
-        }));
-
-      setMessages(historyMessages);
     } catch (err) {
       console.error('Unexpected error loading research history:', err);
       toast({

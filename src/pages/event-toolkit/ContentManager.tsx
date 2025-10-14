@@ -269,7 +269,9 @@ const ContentManager = () => {
         <FileUploadModal
           isOpen={uploadModalOpen}
           onClose={() => setUploadModalOpen(false)}
-          onUpload={uploadFile}
+          onUpload={async (file, folderId) => {
+            await uploadFile(file, folderId);
+          }}
           folders={folders}
           uploading={uploading}
         />

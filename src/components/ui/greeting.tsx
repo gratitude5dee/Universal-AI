@@ -20,7 +20,7 @@ const Greeting = () => {
 
       const { data, error } = await supabase
         .from('profiles')
-        .select('display_name')
+        .select('username')
         .eq('id', user.id)
         .maybeSingle();
 
@@ -31,7 +31,7 @@ const Greeting = () => {
         return;
       }
 
-      setProfileName(data?.display_name ?? null);
+      setProfileName(data?.username ?? null);
     };
 
     fetchProfileName();

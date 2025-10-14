@@ -104,9 +104,7 @@ const WzrdInfiniteLibrary = () => {
         fetchBoards: async () => {
           const { data, error } = await supabase
             .from("boards")
-            .select(
-              "id, title, created_at, updated_at, user_id, is_public, slug, description, thumbnail_url, canvas_data"
-            )
+            .select("*")
             .eq("user_id", user.id)
             .order("created_at", { ascending: false });
 

@@ -149,9 +149,20 @@ const GenerativePodcastsInterface = () => {
         signedUrls = signedUrlData ?? null;
       }
 
-      const podcastsWithUrls = data.map((podcast, index) => ({
-        ...podcast,
+      const podcastsWithUrls: Podcast[] = data.map((podcast, index) => ({
+        id: podcast.id,
+        user_id: podcast.user_id,
+        title: podcast.title,
+        description: podcast.description,
+        script: '',  // Not stored in database
+        audio_url: podcast.audio_url,
         audio_signed_url: signedUrls?.[index]?.signedUrl ?? null,
+        voice_id: podcast.voice_id,
+        style: podcast.style,
+        duration_seconds: podcast.duration ?? null,
+        file_size: null,  // Not stored in database
+        created_at: podcast.created_at,
+        updated_at: podcast.created_at,  // Use created_at as fallback
       }));
 
       setPodcasts(podcastsWithUrls);
@@ -267,7 +278,7 @@ const GenerativePodcastsInterface = () => {
     setIsGenerating(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke<PodcastFunctionResponse>('podcast-generator', {
+      const { data, error } = await supabase.functions.invoke('podcast-generator', {
         body: {
           title,
           description,
@@ -306,7 +317,21 @@ const GenerativePodcastsInterface = () => {
         throw insertError || new Error('Failed to save the generated podcast.');
       }
 
-      const savedPodcast = mapPodcastRow(insertedPodcast);
+      const savedPodcast: Podcast = {
+        id: insertedPodcast.id,
+        user_id: insertedPodcast.user_id,
+        title: insertedPodcast.title,
+        description: insertedPodcast.description,
+        script: script,  // Keep the script from the form
+        audio_url: insertedPodcast.audio_url,
+        audio_signed_url: null,
+        voice_id: insertedPodcast.voice_id,
+        style: insertedPodcast.style,
+        duration_seconds: insertedPodcast.duration ?? null,
+        file_size: null,
+        created_at: insertedPodcast.created_at,
+        updated_at: insertedPodcast.created_at,
+      };
       setPodcasts(prev => [savedPodcast, ...prev]);
       setCurrentPodcast(savedPodcast);
       setProgress(0);
