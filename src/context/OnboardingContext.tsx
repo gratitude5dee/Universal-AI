@@ -2,10 +2,20 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
+export type UploadedTrainingFile = {
+  type: 'image' | 'video' | 'voice';
+  name: string;
+  size: number;
+  url: string;
+  storagePath: string;
+  mimeType: string;
+  uploadedAt: string;
+};
+
 interface OnboardingState {
   creatorName: string;
   connectedAccounts: string[];
-  uploadedFiles: { type: 'image' | 'video' | 'voice'; name: string }[];
+  uploadedFiles: UploadedTrainingFile[];
   preferences: {
     llm: string;
     chain: string;
@@ -16,7 +26,7 @@ interface OnboardingState {
 interface OnboardingContextType extends OnboardingState {
   setCreatorName: (name: string) => void;
   toggleConnectedAccount: (account: string) => void;
-  addUploadedFile: (file: { type: 'image' | 'video' | 'voice'; name: string }) => void;
+  addUploadedFile: (file: UploadedTrainingFile) => void;
   setPreferences: (prefs: Partial<OnboardingState['preferences']>) => void;
   saveOnboardingData: () => Promise<void>;
   loading: boolean;
@@ -49,7 +59,7 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const addUploadedFile = (file: { type: 'image' | 'video' | 'voice'; name: string }) => {
+  const addUploadedFile = (file: UploadedTrainingFile) => {
     setState(s => ({ ...s, uploadedFiles: [...s.uploadedFiles, file] }));
   };
   
