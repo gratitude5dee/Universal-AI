@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Users, DollarSign, Calendar, Music, Wifi, Mic2, Wine, Clock, ArrowRight, MoreVertical } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { OfferDialog } from "./OfferDialog";
+import { EmailComposer } from "./EmailComposer";
 
 interface VenueCardProps {
   venue: {
@@ -25,6 +27,9 @@ interface VenueCardProps {
 }
 
 const EnhancedVenueCard: React.FC<VenueCardProps> = ({ venue, status = "new", onAction }) => {
+  const [offerDialogOpen, setOfferDialogOpen] = useState(false);
+  const [emailComposerOpen, setEmailComposerOpen] = useState(false);
+  
   const statusConfig = {
     new: { color: "bg-gray-500/20 text-gray-300 border-gray-500/30", label: "New" },
     negotiating: { color: "bg-orange-500/20 text-orange-400 border-orange-500/30", label: "Negotiating" },
@@ -186,7 +191,13 @@ const EnhancedVenueCard: React.FC<VenueCardProps> = ({ venue, status = "new", on
           {/* Action Buttons */}
           <div className="flex gap-2 mt-4 pt-4 border-t border-border">
             <Button
-              onClick={() => onAction(actionButtons[status].label.toLowerCase().replace(' ', '-'), venue.id)}
+              onClick={() => {
+                if (status === 'new') {
+                  setOfferDialogOpen(true);
+                } else {
+                  onAction(actionButtons[status].label.toLowerCase().replace(' ', '-'), venue.id);
+                }
+              }}
               variant={actionButtons[status].variant}
               className="flex-1"
             >
@@ -196,6 +207,33 @@ const EnhancedVenueCard: React.FC<VenueCardProps> = ({ venue, status = "new", on
           </div>
         </CardContent>
       </Card>
+
+      {/* Offer Dialog */}
+      <OfferDialog
+        open={offerDialogOpen}
+        onOpenChange={setOfferDialogOpen}
+        venue={{
+          id: venue.id,
+          name: venue.name,
+          location: `${venue.city}, ${venue.state}`,
+          capacity: venue.capacity,
+          contactEmail: `contact@${venue.name.toLowerCase().replace(/\s+/g, '')}.com`
+        }}
+        onSuccess={() => {
+          onAction('offer-sent', venue.id);
+        }}
+      />
+
+      {/* Email Composer */}
+      <EmailComposer
+        open={emailComposerOpen}
+        onOpenChange={setEmailComposerOpen}
+        bookingId={venue.id}
+        bookingDetails={{
+          venueName: venue.name,
+          venueContactEmail: `contact@${venue.name.toLowerCase().replace(/\s+/g, '')}.com`
+        }}
+      />
     </motion.div>
   );
 };
