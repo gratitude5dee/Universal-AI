@@ -222,7 +222,7 @@ serve(async (req) => {
 
         const { content, guestName, guestEmail } = payload;
 
-        if (!content) {
+        if (!content || typeof content !== 'string' || content.trim().length === 0) {
           throw new Error('Comment content is required');
         }
 
