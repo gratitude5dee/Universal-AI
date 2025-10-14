@@ -35,7 +35,7 @@ const RightsManagement = () => {
         <div className="border-b border-white/10 bg-background/95 backdrop-blur-sm sticky top-0 z-50">
           <div className="flex items-center justify-between px-6 py-3">
             <div className="flex items-center gap-3">
-              <h1 className="text-xl font-medium text-white">UniversalAI / <span className="text-white/70">IP Portal</span></h1>
+              <h1 className="text-xl font-medium text-[hsl(var(--text-primary))]">UniversalAI / <span className="text-[hsl(var(--text-secondary))]">IP Portal</span></h1>
             </div>
             <div className="flex items-center gap-3">
               <NetworkSwitcher />
@@ -123,8 +123,8 @@ const RightsManagement = () => {
 
             <TabsContent value="analytics">
               <div className="glass-card border border-white/10 rounded-xl p-6">
-                <h2 className="text-xl font-semibold mb-4">Analytics & Insights</h2>
-                <p className="text-white/70">Comprehensive analytics dashboard coming soon...</p>
+                <h2 className="text-xl font-semibold mb-4 text-[hsl(var(--text-primary))]">Analytics & Insights</h2>
+                <p className="text-[hsl(var(--text-secondary))]">Comprehensive analytics dashboard coming soon...</p>
               </div>
             </TabsContent>
 
