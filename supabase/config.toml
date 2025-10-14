@@ -14,3 +14,12 @@ verify_jwt = false
 
 [functions.generate-booking-email]
 verify_jwt = true
+
+[functions.generate-contract]
+verify_jwt = true
+
+[functions.generate-invoice]
+verify_jwt = true
+
+[functions.generate-event-asset]
+verify_jwt = true

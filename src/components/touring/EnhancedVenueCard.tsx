@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { OfferDialog } from "./OfferDialog";
 import { EmailComposer } from "./EmailComposer";
+import { ContractGenerator } from "./ContractGenerator";
+import { InvoiceGenerator } from "./InvoiceGenerator";
+import { EventAssetsGenerator } from "./EventAssetsGenerator";
 
 interface VenueCardProps {
   venue: {
@@ -29,6 +32,9 @@ interface VenueCardProps {
 const EnhancedVenueCard: React.FC<VenueCardProps> = ({ venue, status = "new", onAction }) => {
   const [offerDialogOpen, setOfferDialogOpen] = useState(false);
   const [emailComposerOpen, setEmailComposerOpen] = useState(false);
+  const [contractDialogOpen, setContractDialogOpen] = useState(false);
+  const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
+  const [assetsDialogOpen, setAssetsDialogOpen] = useState(false);
   
   const statusConfig = {
     new: { color: "bg-gray-500/20 text-gray-300 border-gray-500/30", label: "New" },
@@ -46,11 +52,11 @@ const EnhancedVenueCard: React.FC<VenueCardProps> = ({ venue, status = "new", on
   };
 
   const actionButtons = {
-    new: { label: "Send Offer", variant: "default" as const },
-    negotiating: { label: "Continue Negotiation", variant: "default" as const },
-    accepted: { label: "Create Contract", variant: "default" as const },
-    contracted: { label: "Send Invoice", variant: "default" as const },
-    paid: { label: "View Details", variant: "outline" as const },
+    new: { label: "Send Offer", variant: "default" as const, action: () => setOfferDialogOpen(true) },
+    negotiating: { label: "Continue Negotiation", variant: "default" as const, action: () => setEmailComposerOpen(true) },
+    accepted: { label: "Create Contract", variant: "default" as const, action: () => setContractDialogOpen(true) },
+    contracted: { label: "Send Invoice", variant: "default" as const, action: () => setInvoiceDialogOpen(true) },
+    paid: { label: "Generate Assets", variant: "default" as const, action: () => setAssetsDialogOpen(true) },
   };
 
   return (
@@ -191,13 +197,7 @@ const EnhancedVenueCard: React.FC<VenueCardProps> = ({ venue, status = "new", on
           {/* Action Buttons */}
           <div className="flex gap-2 mt-4 pt-4 border-t border-border">
             <Button
-              onClick={() => {
-                if (status === 'new') {
-                  setOfferDialogOpen(true);
-                } else {
-                  onAction(actionButtons[status].label.toLowerCase().replace(' ', '-'), venue.id);
-                }
-              }}
+              onClick={actionButtons[status].action}
               variant={actionButtons[status].variant}
               className="flex-1"
             >
@@ -208,7 +208,7 @@ const EnhancedVenueCard: React.FC<VenueCardProps> = ({ venue, status = "new", on
         </CardContent>
       </Card>
 
-      {/* Offer Dialog */}
+      {/* Dialogs */}
       <OfferDialog
         open={offerDialogOpen}
         onOpenChange={setOfferDialogOpen}
@@ -219,12 +219,9 @@ const EnhancedVenueCard: React.FC<VenueCardProps> = ({ venue, status = "new", on
           capacity: venue.capacity,
           contactEmail: `contact@${venue.name.toLowerCase().replace(/\s+/g, '')}.com`
         }}
-        onSuccess={() => {
-          onAction('offer-sent', venue.id);
-        }}
+        onSuccess={() => onAction('offer-sent', venue.id)}
       />
 
-      {/* Email Composer */}
       <EmailComposer
         open={emailComposerOpen}
         onOpenChange={setEmailComposerOpen}
@@ -232,6 +229,42 @@ const EnhancedVenueCard: React.FC<VenueCardProps> = ({ venue, status = "new", on
         bookingDetails={{
           venueName: venue.name,
           venueContactEmail: `contact@${venue.name.toLowerCase().replace(/\s+/g, '')}.com`
+        }}
+      />
+
+      <ContractGenerator
+        open={contractDialogOpen}
+        onOpenChange={setContractDialogOpen}
+        bookingId={venue.id}
+        bookingDetails={{
+          venueName: venue.name,
+          venueAddress: `${venue.city}, ${venue.state}`,
+          venueContactEmail: `contact@${venue.name.toLowerCase().replace(/\s+/g, '')}.com`,
+          eventDate: new Date().toISOString().split('T')[0],
+          offerAmount: parseFloat(venue.price.replace(/[^0-9.]/g, ''))
+        }}
+      />
+
+      <InvoiceGenerator
+        open={invoiceDialogOpen}
+        onOpenChange={setInvoiceDialogOpen}
+        bookingId={venue.id}
+        bookingDetails={{
+          venueName: venue.name,
+          offerAmount: parseFloat(venue.price.replace(/[^0-9.]/g, ''))
+        }}
+      />
+
+      <EventAssetsGenerator
+        open={assetsDialogOpen}
+        onOpenChange={setAssetsDialogOpen}
+        bookingId={venue.id}
+        eventDetails={{
+          artistName: 'Your Artist Name',
+          venueName: venue.name,
+          eventDate: new Date().toISOString().split('T')[0],
+          eventTime: '20:00',
+          genre: venue.genre
         }}
       />
     </motion.div>
