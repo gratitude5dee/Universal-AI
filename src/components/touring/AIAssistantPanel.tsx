@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Send, Mic, TrendingUp, AlertTriangle, CheckCircle2, Lightbulb } from "lucide-react";
+import { Sparkles, Send, Mic, TrendingUp, AlertTriangle, CheckCircle2, Lightbulb, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/hooks/use-toast";
 
 interface Booking {
   id: string;
@@ -25,25 +26,167 @@ interface Booking {
   ai_reasoning?: string;
 }
 
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
+
 interface AIAssistantPanelProps {
   selectedBooking?: Booking | null;
 }
 
 export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({ selectedBooking }) => {
+  const { toast } = useToast();
   const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const streamChat = async (userMessage: string) => {
+    const newMessages = [...messages, { role: "user" as const, content: userMessage }];
+    setMessages(newMessages);
+    setMessage("");
+    setIsLoading(true);
+
+    let assistantMessage = "";
+    
+    try {
+      const response = await fetch(
+        `https://ixkkrousepsiorwlaycp.supabase.co/functions/v1/booking-ai-assistant`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4a2tyb3VzZXBzaW9yd2xheWNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAzMzI1MjcsImV4cCI6MjA1NTkwODUyN30.eX_P7bJam2IZ20GEghfjfr-pNwMynsdVb3Rrfipgls4`,
+          },
+          body: JSON.stringify({
+            messages: newMessages,
+            bookingContext: selectedBooking || null,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        if (response.status === 429) {
+          toast({
+            title: "Rate Limit Exceeded",
+            description: "Too many requests. Please try again later.",
+            variant: "destructive",
+          });
+          return;
+        }
+        if (response.status === 402) {
+          toast({
+            title: "Payment Required",
+            description: "Please add credits to your Lovable workspace.",
+            variant: "destructive",
+          });
+          return;
+        }
+        throw new Error("Failed to get AI response");
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error("No reader available");
+
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+
+          const data = line.slice(6).trim();
+          if (data === "[DONE]") continue;
+
+          try {
+            const parsed = JSON.parse(data);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              assistantMessage += content;
+              setMessages([...newMessages, { role: "assistant", content: assistantMessage }]);
+            }
+          } catch (e) {
+            // Incomplete JSON, continue
+          }
+        }
+      }
+
+      // Final flush
+      if (buffer.trim()) {
+        for (const line of buffer.split("\n")) {
+          if (!line || line.startsWith(":") || !line.startsWith("data: ")) continue;
+          const data = line.slice(6).trim();
+          if (data === "[DONE]") continue;
+          try {
+            const parsed = JSON.parse(data);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              assistantMessage += content;
+              setMessages([...newMessages, { role: "assistant", content: assistantMessage }]);
+            }
+          } catch (e) {
+            // Ignore
+          }
+        }
+      }
+    } catch (error) {
+      console.error("AI chat error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to get AI response. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSendMessage = () => {
-    if (!message.trim()) return;
-    // TODO: Implement AI chat functionality
-    setMessage("");
+    if (!message.trim() || isLoading) return;
+    streamChat(message);
+  };
+
+  const handleQuickAction = (action: string) => {
+    let prompt = "";
+    switch (action) {
+      case "draft":
+        prompt = "Draft a professional email for this booking venue";
+        break;
+      case "suggest":
+        prompt = "Suggest an optimal offer amount and negotiation strategy";
+        break;
+      case "review":
+        prompt = "Review the current booking status and suggest next steps";
+        break;
+      case "next":
+        prompt = "What are the recommended next steps for this booking?";
+        break;
+    }
+    setMessage(prompt);
+    streamChat(prompt);
   };
 
   const quickActions = [
-    { label: "Draft Email", icon: Send, color: "text-blue-400" },
-    { label: "Suggest Offer", icon: TrendingUp, color: "text-green-400" },
-    { label: "Review Contract", icon: CheckCircle2, color: "text-purple-400" },
-    { label: "Next Steps", icon: Lightbulb, color: "text-yellow-400" },
+    { label: "Draft Email", icon: Send, color: "text-blue-400", action: "draft" },
+    { label: "Suggest Offer", icon: TrendingUp, color: "text-green-400", action: "suggest" },
+    { label: "Review Contract", icon: CheckCircle2, color: "text-purple-400", action: "review" },
+    { label: "Next Steps", icon: Lightbulb, color: "text-yellow-400", action: "next" },
   ];
 
   const insights = selectedBooking ? [
@@ -95,8 +238,48 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({ selectedBook
       </CardHeader>
 
       {/* Content */}
-      <ScrollArea className="flex-1 p-4">
+      <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
         <div className="space-y-4">
+          {/* Chat Messages */}
+          {messages.length > 0 && (
+            <div className="space-y-3 mb-4">
+              <h3 className="text-xs font-semibold text-muted-foreground">CONVERSATION</h3>
+              <AnimatePresence>
+                {messages.map((msg, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className={`p-3 rounded-lg ${
+                      msg.role === "user"
+                        ? "bg-primary/10 border border-primary/20 ml-4"
+                        : "bg-muted/50 border border-border mr-4"
+                    }`}
+                  >
+                    <div className="flex items-start gap-2">
+                      {msg.role === "assistant" && (
+                        <Sparkles className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                      )}
+                      <p className="text-xs text-foreground whitespace-pre-wrap">{msg.content}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+              {isLoading && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex items-center gap-2 text-muted-foreground p-3"
+                >
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span className="text-xs">AI is thinking...</span>
+                </motion.div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+          )}
+
           {/* Quick Actions */}
           <div>
             <h3 className="text-xs font-semibold text-muted-foreground mb-2">QUICK ACTIONS</h3>
@@ -108,6 +291,8 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({ selectedBook
                     key={action.label}
                     variant="outline"
                     size="sm"
+                    onClick={() => handleQuickAction(action.action)}
+                    disabled={isLoading || !selectedBooking}
                     className="h-auto py-3 flex flex-col items-center gap-2 hover:bg-primary/10 hover:border-primary/50"
                   >
                     <ActionIcon className={`h-4 w-4 ${action.color}`} />
@@ -164,13 +349,13 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({ selectedBook
           )}
 
           {/* Placeholder when no booking selected */}
-          {!selectedBooking && (
+          {!selectedBooking && messages.length === 0 && (
             <Card className="bg-background/50 border-border">
               <CardContent className="p-8 text-center">
                 <Sparkles className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
-                <h3 className="text-sm font-medium text-foreground mb-1">Select a Booking</h3>
+                <h3 className="text-sm font-medium text-foreground mb-1">AI Assistant Ready</h3>
                 <p className="text-xs text-muted-foreground">
-                  Choose a booking from the pipeline to see AI-powered insights and recommendations
+                  Select a booking to get AI-powered insights, or ask me anything about your bookings
                 </p>
               </CardContent>
             </Card>
@@ -184,8 +369,9 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({ selectedBook
           <Input
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+            onKeyPress={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
             placeholder="Ask AI anything..."
+            disabled={isLoading}
             className="flex-1 bg-background border-border text-sm"
           />
           <Button
@@ -193,16 +379,21 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({ selectedBook
             variant="ghost"
             onClick={() => setIsListening(!isListening)}
             className={isListening ? "text-red-500 animate-pulse" : ""}
+            disabled={isLoading}
           >
             <Mic className="h-4 w-4" />
           </Button>
           <Button
             size="icon"
             onClick={handleSendMessage}
-            disabled={!message.trim()}
+            disabled={!message.trim() || isLoading}
             className="bg-primary hover:bg-primary/90"
           >
-            <Send className="h-4 w-4" />
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
           </Button>
         </div>
       </div>
