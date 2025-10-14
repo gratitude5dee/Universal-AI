@@ -1496,6 +1496,7 @@ export type Database = {
           avatar_url: string | null
           connected_accounts: Json | null
           created_at: string
+          display_name: string | null
           id: string
           last_wallet_connection: string | null
           onboarding_completed: boolean
@@ -1511,6 +1512,7 @@ export type Database = {
           avatar_url?: string | null
           connected_accounts?: Json | null
           created_at?: string
+          display_name?: string | null
           id: string
           last_wallet_connection?: string | null
           onboarding_completed?: boolean
@@ -1526,6 +1528,7 @@ export type Database = {
           avatar_url?: string | null
           connected_accounts?: Json | null
           created_at?: string
+          display_name?: string | null
           id?: string
           last_wallet_connection?: string | null
           onboarding_completed?: boolean

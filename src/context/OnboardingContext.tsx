@@ -60,16 +60,25 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   const saveOnboardingData = async () => {
     setLoading(true);
     try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError) throw userError;
+      if (!user?.id) throw new Error('User not authenticated');
+
       const { error } = await supabase
         .from('profiles')
         .update({
+          display_name: state.creatorName.trim() || null,
           connected_accounts: state.connectedAccounts,
           uploaded_files: state.uploadedFiles,
           ai_preferences: state.preferences,
           onboarding_completed: true,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', (await supabase.auth.getUser()).data.user?.id);
+        .eq('id', user.id);
 
       if (error) throw error;
 
