@@ -1871,6 +1871,42 @@ export type Database = {
           },
         ]
       }
+      podcasts: {
+        Row: {
+          audio_url: string
+          created_at: string
+          description: string | null
+          duration: number | null
+          id: string
+          style: string | null
+          title: string
+          user_id: string
+          voice_id: string | null
+        }
+        Insert: {
+          audio_url: string
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          id?: string
+          style?: string | null
+          title: string
+          user_id: string
+          voice_id?: string | null
+        }
+        Update: {
+          audio_url?: string
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          id?: string
+          style?: string | null
+          title?: string
+          user_id?: string
+          voice_id?: string | null
+        }
+        Relationships: []
+      }
       press_quotes: {
         Row: {
           created_at: string | null
