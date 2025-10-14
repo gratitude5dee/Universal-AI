@@ -411,6 +411,50 @@ export type Database = {
         }
         Relationships: []
       }
+      booking_communications: {
+        Row: {
+          body: string | null
+          booking_id: string
+          communication_type: string | null
+          direction: string | null
+          id: string
+          sent_at: string | null
+          status: string | null
+          subject: string | null
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          booking_id: string
+          communication_type?: string | null
+          direction?: string | null
+          id?: string
+          sent_at?: string | null
+          status?: string | null
+          subject?: string | null
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          booking_id?: string
+          communication_type?: string | null
+          direction?: string | null
+          id?: string
+          sent_at?: string | null
+          status?: string | null
+          subject?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_communications_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "venue_bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       canvas_state: {
         Row: {
           canvas_settings: Json | null
@@ -951,6 +995,50 @@ export type Database = {
             columns: ["workflow_id"]
             isOneToOne: false
             referencedRelation: "workflows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_assets: {
+        Row: {
+          ai_model_used: string | null
+          asset_type: string
+          booking_id: string
+          created_at: string | null
+          file_url: string | null
+          generation_prompt: string | null
+          id: string
+          metadata: Json | null
+          user_id: string
+        }
+        Insert: {
+          ai_model_used?: string | null
+          asset_type: string
+          booking_id: string
+          created_at?: string | null
+          file_url?: string | null
+          generation_prompt?: string | null
+          id?: string
+          metadata?: Json | null
+          user_id: string
+        }
+        Update: {
+          ai_model_used?: string | null
+          asset_type?: string
+          booking_id?: string
+          created_at?: string | null
+          file_url?: string | null
+          generation_prompt?: string | null
+          id?: string
+          metadata?: Json | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_assets_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "venue_bookings"
             referencedColumns: ["id"]
           },
         ]
@@ -2652,6 +2740,59 @@ export type Database = {
           },
         ]
       }
+      ticket_sales: {
+        Row: {
+          booking_id: string
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          price: number
+          quantity_sold: number
+          quantity_total: number
+          sale_end_date: string | null
+          sale_start_date: string | null
+          ticket_type: string
+          ticket_url: string | null
+          user_id: string
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          price: number
+          quantity_sold?: number
+          quantity_total?: number
+          sale_end_date?: string | null
+          sale_start_date?: string | null
+          ticket_type: string
+          ticket_url?: string | null
+          user_id: string
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          price?: number
+          quantity_sold?: number
+          quantity_total?: number
+          sale_end_date?: string | null
+          sale_start_date?: string | null
+          ticket_type?: string
+          ticket_url?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_sales_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "venue_bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       timelines: {
         Row: {
           composition_data: Json
@@ -2964,6 +3105,123 @@ export type Database = {
           id?: string
           secret_type?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      venue_bookings: {
+        Row: {
+          ai_match_score: number | null
+          ai_reasoning: string | null
+          contract_signed_at: string | null
+          contract_url: string | null
+          created_at: string | null
+          event_date: string | null
+          event_time: string | null
+          gig_id: string | null
+          id: string
+          invoice_id: string | null
+          metadata: Json | null
+          offer_amount: number | null
+          offer_sent_at: string | null
+          payment_received_at: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+          venue_capacity: number | null
+          venue_contact_email: string | null
+          venue_location: string | null
+          venue_name: string
+          workflow_stage: string | null
+        }
+        Insert: {
+          ai_match_score?: number | null
+          ai_reasoning?: string | null
+          contract_signed_at?: string | null
+          contract_url?: string | null
+          created_at?: string | null
+          event_date?: string | null
+          event_time?: string | null
+          gig_id?: string | null
+          id?: string
+          invoice_id?: string | null
+          metadata?: Json | null
+          offer_amount?: number | null
+          offer_sent_at?: string | null
+          payment_received_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+          venue_capacity?: number | null
+          venue_contact_email?: string | null
+          venue_location?: string | null
+          venue_name: string
+          workflow_stage?: string | null
+        }
+        Update: {
+          ai_match_score?: number | null
+          ai_reasoning?: string | null
+          contract_signed_at?: string | null
+          contract_url?: string | null
+          created_at?: string | null
+          event_date?: string | null
+          event_time?: string | null
+          gig_id?: string | null
+          id?: string
+          invoice_id?: string | null
+          metadata?: Json | null
+          offer_amount?: number | null
+          offer_sent_at?: string | null
+          payment_received_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+          venue_capacity?: number | null
+          venue_contact_email?: string | null
+          venue_location?: string | null
+          venue_name?: string
+          workflow_stage?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venue_bookings_gig_id_fkey"
+            columns: ["gig_id"]
+            isOneToOne: false
+            referencedRelation: "gigs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "venue_bookings_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      venue_searches: {
+        Row: {
+          created_at: string | null
+          extracted_filters: Json | null
+          id: string
+          query: string
+          results: Json | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          extracted_filters?: Json | null
+          id?: string
+          query: string
+          results?: Json | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          extracted_filters?: Json | null
+          id?: string
+          query?: string
+          results?: Json | null
           user_id?: string
         }
         Relationships: []
