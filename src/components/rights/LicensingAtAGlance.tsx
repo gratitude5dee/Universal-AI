@@ -15,67 +15,67 @@ export const LicensingAtAGlance = () => {
   return (
     <div className="glass-card border border-white/10 rounded-xl p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-medium text-white flex items-center gap-2">
-          <FileText className="w-5 h-5 text-primary" />
-          Licensing At-a-Glance
+        <h3 className="text-lg font-semibold text-[hsl(var(--text-primary))] flex items-center gap-2">
+          <FileText className="w-5 h-5 text-[hsl(var(--accent-purple))]" />
+          Licensing Summary
         </h3>
+        <a href="#" className="text-xs text-[hsl(var(--accent-purple))] hover:text-[hsl(var(--accent-purple-light))] transition-colors font-medium">
+          View All →
+        </a>
       </div>
 
       <div className="space-y-4">
         {/* Active License Types */}
         <div>
-          <p className="text-xs text-white/50 mb-2">Active License Types</p>
+          <p className="text-xs text-[hsl(var(--text-tertiary))] mb-2 font-medium">Active License Types: {licensingData.activeLicenseTypes.length}</p>
           <div className="flex flex-wrap gap-2">
-            {licensingData.activeLicenseTypes.map((type) => (
+            {licensingData.activeLicenseTypes.map((type, index) => (
               <span
                 key={type}
-                className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-medium"
+                className="px-3 py-1.5 rounded-md bg-[hsl(var(--accent-purple))]/10 border border-[hsl(var(--accent-purple))]/20 text-[hsl(var(--accent-purple))] text-xs font-semibold"
               >
-                {type}
+                • {type} ({index + 2} minted)
               </span>
             ))}
           </div>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white/5 rounded-lg p-3 border border-white/10">
-            <p className="text-xs text-white/50 mb-1">Units Minted</p>
-            <p className="text-2xl font-bold text-white">{licensingData.unitsMintedThisMonth}</p>
-            <p className="text-xs text-white/50 mt-0.5">this month</p>
+        <div className="space-y-3">
+          <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+            <p className="text-xs text-[hsl(var(--text-tertiary))] mb-1">Total Units Minted</p>
+            <p className="text-3xl font-bold text-[hsl(var(--text-primary))]">8</p>
           </div>
 
-          <div className="bg-white/5 rounded-lg p-3 border border-white/10">
-            <p className="text-xs text-white/50 mb-1">Revenue</p>
-            <div className="flex items-baseline gap-1">
-              <p className="text-2xl font-bold text-green-400">${licensingData.revenueToDate}</p>
-              <TrendingUp className="w-4 h-4 text-green-400" />
+          <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+            <p className="text-xs text-[hsl(var(--text-tertiary))] mb-1">Total Revenue</p>
+            <div className="flex items-baseline gap-2">
+              <p className="text-3xl font-bold text-[hsl(var(--success))]">45.8 IP</p>
+              <TrendingUp className="w-5 h-5 text-[hsl(var(--success))]" />
             </div>
-            <p className="text-xs text-white/50 mt-0.5">total</p>
           </div>
         </div>
 
-        {/* Last Transaction */}
+        {/* Latest Activity */}
         <div className="border-t border-white/10 pt-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs text-white/50 mb-1">Last On-chain Transaction</p>
-              <div className="flex items-center gap-2">
-                <Clock className="w-3 h-3 text-white/50" />
-                <span className="text-sm text-white/70">{licensingData.lastTxTime}</span>
+          <p className="text-xs text-[hsl(var(--text-tertiary))] mb-2 font-medium">Latest Activity:</p>
+          <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+            <p className="text-sm text-[hsl(var(--text-primary))] font-medium mb-1">Commercial license minted</p>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs text-[hsl(var(--text-tertiary))]">
+                <Clock className="w-3 h-3" />
+                <span>{licensingData.lastTxTime}</span>
               </div>
+              <a
+                href={`${currentNetwork.ipExplorerUrl}/tx/${licensingData.lastTxHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-[hsl(var(--accent-purple))] hover:text-[hsl(var(--accent-purple-light))] transition-colors group"
+              >
+                <span className="text-xs font-medium">View Tx</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
             </div>
-            <a
-              href={`${currentNetwork.ipExplorerUrl}/tx/${licensingData.lastTxHash}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all group"
-            >
-              <span className="text-xs text-white/70 group-hover:text-white font-mono">
-                {licensingData.lastTxHash.slice(0, 6)}...{licensingData.lastTxHash.slice(-4)}
-              </span>
-              <ExternalLink className="w-3 h-3 text-white/50 group-hover:text-white" />
-            </a>
           </div>
         </div>
       </div>

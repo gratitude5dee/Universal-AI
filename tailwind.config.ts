@@ -19,8 +19,16 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				sans: ['Inter', 'sans-serif'],
-				heading: ['"Neue Machina"', 'Inter', 'sans-serif'],
+				sans: ['Inter', 'system-ui', 'sans-serif'],
+				heading: ['Inter', 'system-ui', 'sans-serif'],
+			},
+			fontSize: {
+				xs: ['12px', '16px'],
+				sm: ['14px', '20px'],
+				base: ['16px', '24px'],
+				lg: ['18px', '28px'],
+				xl: ['24px', '32px'],
+				'2xl': ['32px', '40px'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -105,9 +113,21 @@ export default {
         }
 			},
 			borderRadius: {
-				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: '6px',
+				md: '12px',
+				lg: '16px',
+				full: '9999px'
+			},
+			boxShadow: {
+				sm: '0 1px 2px rgba(0,0,0,0.3)',
+				md: '0 4px 6px rgba(0,0,0,0.4)',
+				lg: '0 10px 15px rgba(0,0,0,0.5)',
+				glow: '0 0 20px rgba(139,92,246,0.4)',
+			},
+			transitionDuration: {
+				'fast': '150ms',
+				'base': '250ms',
+				'slow': '350ms',
 			},
       // Added from glassmorphism config
       backdropBlur: {

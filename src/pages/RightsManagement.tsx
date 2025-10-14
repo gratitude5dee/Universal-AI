@@ -21,6 +21,7 @@ import { IPRegistrationWizard } from "@/components/rights/IPRegistrationWizard";
 import { AgreementsTab } from "@/components/rights/AgreementsTab";
 import { LicensingTab } from "@/components/rights/LicensingTab";
 import { SettingsTab } from "@/components/rights/SettingsTab";
+import { motion } from "framer-motion";
 
 const RightsManagement = () => {
   const [activeTab, setActiveTab] = useState<string>("overview");
@@ -61,23 +62,46 @@ const RightsManagement = () => {
             </TabsList>
 
             <TabsContent value="overview" className="space-y-6">
-              <AssetHeaderStrip />
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <AssetHeaderStrip />
+              </motion.div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <IPLineagePanel />
-                <CollaboratorEcosystem />
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1, duration: 0.4 }}
+                >
+                  <IPLineagePanel />
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2, duration: 0.4 }}
+                >
+                  <CollaboratorEcosystem />
+                </motion.div>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
+                <motion.div
+                  className="lg:col-span-2"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.4 }}
+                >
                   <div className="glass-card border border-white/10 rounded-xl p-6">
-                    <h3 className="text-lg font-medium text-white flex items-center gap-2 mb-4">
-                      <Shield className="w-5 h-5 text-primary" />
+                    <h3 className="text-lg font-semibold text-[hsl(var(--text-primary))] flex items-center gap-2 mb-4">
+                      <Shield className="w-5 h-5 text-[hsl(var(--accent-purple))]" />
                       IP Rights Timeline
                     </h3>
                     <RightsJourney />
                   </div>
-                </div>
+                </motion.div>
                 <NetworkStatusCard />
               </div>
 

@@ -25,9 +25,9 @@ export const AssetHeaderStrip = () => {
 
   const getStatusColor = (status: Asset['status']) => {
     switch (status) {
-      case "registered": return "bg-green-500/20 text-green-300 border-green-500/30";
-      case "draft": return "bg-gray-500/20 text-gray-300 border-gray-500/30";
-      case "in-review": return "bg-yellow-500/20 text-yellow-300 border-yellow-500/30";
+      case "registered": return "bg-[hsl(var(--success))]/20 text-[hsl(var(--success))] border-[hsl(var(--success))]/30";
+      case "draft": return "bg-[hsl(var(--text-tertiary))]/20 text-[hsl(var(--text-tertiary))] border-[hsl(var(--text-tertiary))]/30";
+      case "in-review": return "bg-[hsl(var(--warning))]/20 text-[hsl(var(--warning))] border-[hsl(var(--warning))]/30";
     }
   };
 
@@ -44,17 +44,19 @@ export const AssetHeaderStrip = () => {
       {/* Asset Chips */}
       <div className="flex items-center gap-2 flex-1 min-w-0">
         {!searchOpen && mockAssets.slice(0, 3).map((asset) => (
-          <button
+          <motion.button
             key={asset.id}
             onClick={() => setSelectedAsset(asset)}
-            className={`px-4 py-2 rounded-lg border transition-all text-sm font-medium ${
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className={`px-4 py-2 rounded-full border transition-all text-sm font-semibold ${
               selectedAsset.id === asset.id
-                ? 'bg-primary/20 border-primary/30 text-primary'
-                : 'border-white/10 bg-white/5 text-white/70 hover:bg-white/10'
+                ? 'bg-[hsl(var(--accent-purple))]/20 border-[hsl(var(--accent-purple))]/30 text-[hsl(var(--accent-purple))]'
+                : 'border-white/10 bg-white/5 text-[hsl(var(--text-secondary))] hover:bg-white/10'
             }`}
           >
             {asset.name}
-          </button>
+          </motion.button>
         ))}
       </div>
 
@@ -106,10 +108,14 @@ export const AssetHeaderStrip = () => {
       </div>
 
       {/* New Asset Button */}
-      <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/20 border border-primary/30 text-primary hover:bg-primary/30 transition-all">
+      <motion.button 
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[hsl(var(--accent-purple))]/20 border border-[hsl(var(--accent-purple))]/30 text-[hsl(var(--accent-purple))] hover:bg-[hsl(var(--accent-purple))]/30 transition-all shadow-sm"
+      >
         <Plus className="w-4 h-4" />
-        <span className="text-sm font-medium">New</span>
-      </button>
+        <span className="text-sm font-semibold">New</span>
+      </motion.button>
 
       {/* Status Badge */}
       <div className={`px-3 py-1.5 rounded-lg border text-xs font-medium ${getStatusColor(selectedAsset.status)}`}>

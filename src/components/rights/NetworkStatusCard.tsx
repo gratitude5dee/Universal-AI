@@ -23,103 +23,103 @@ export const NetworkStatusCard = () => {
 
   return (
     <div className="glass-card border border-white/10 rounded-xl p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-medium text-white flex items-center gap-2">
-          <Activity className="w-5 h-5 text-primary" />
+      <div className="flex items-center gap-2 mb-4">
+        <Activity className="w-5 h-5 text-[hsl(var(--accent-purple))]" />
+        <h3 className="text-lg font-semibold text-[hsl(var(--text-primary))]">
           Network Status
         </h3>
-        <div className={`w-2 h-2 rounded-full ${rpcStatus.isHealthy ? 'bg-green-500' : 'bg-red-500'} animate-pulse`} />
       </div>
 
       <div className="space-y-4">
-        {/* Network Info */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-xs text-white/50 mb-1">Network</p>
-            <p className="text-sm font-medium text-white">{currentNetwork.name}</p>
-          </div>
-          <div>
-            <p className="text-xs text-white/50 mb-1">Chain ID</p>
-            <p className="text-sm font-medium text-white">#{currentNetwork.chainId}</p>
-          </div>
+        {/* Network Name */}
+        <div>
+          <p className="text-xs text-[hsl(var(--text-tertiary))] mb-1">Network</p>
+          <p className="text-sm font-medium text-[hsl(var(--text-primary))]">
+            {currentNetwork.name}
+          </p>
+          <p className="text-xs text-[hsl(var(--text-tertiary))]">
+            Chain ID: {currentNetwork.chainId}
+          </p>
         </div>
 
-        {/* RPC Health */}
-        <div>
-          <p className="text-xs text-white/50 mb-2">RPC Health</p>
-          <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
-            <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-white/50" />
-              <span className="text-sm text-white/70">Status</span>
-            </div>
-            <span className={`text-sm font-medium ${healthStatus.color}`}>
-              {healthStatus.text}
+        {/* RPC Status */}
+        <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
+          <div className="flex items-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${
+              rpcStatus.isHealthy ? 'bg-[hsl(var(--success))]' : 'bg-[hsl(var(--error))]'
+            } animate-pulse`} />
+            <span className="text-sm text-[hsl(var(--text-secondary))]">
+              RPC {rpcStatus.isHealthy ? 'Active' : 'Inactive'}
             </span>
           </div>
+          <span className="text-xs text-[hsl(var(--text-tertiary))]">
+            {rpcStatus.latency}ms
+          </span>
         </div>
 
         {/* Latest Block */}
         <div>
-          <p className="text-xs text-white/50 mb-2">Latest Block</p>
-          <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
-            <span className="text-sm text-white/70">Block Height</span>
-            <span className="text-sm font-mono font-medium text-white">
-              {rpcStatus.blockHeight.toLocaleString()}
-            </span>
-          </div>
+          <p className="text-xs text-[hsl(var(--text-tertiary))] mb-1">Latest Block</p>
+          <p className="text-xl font-bold text-[hsl(var(--text-primary))]">
+            {rpcStatus.blockHeight.toLocaleString()}
+          </p>
+          <p className="text-xs text-[hsl(var(--text-tertiary))]">
+            Updated {Math.floor((Date.now() - rpcStatus.lastChecked.getTime()) / 1000)}s ago
+          </p>
         </div>
 
-        {/* Quick Links */}
-        <div className="border-t border-white/10 pt-4 space-y-2">
+        {/* Links */}
+        <div className="space-y-2 pt-4 border-t border-white/10">
           <a
             href={currentNetwork.explorerUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white/5 transition-all group"
+            className="flex items-center justify-between px-3 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all group"
           >
-            <span className="text-sm text-white/70 group-hover:text-white">BlockScout Explorer</span>
-            <ExternalLink className="w-3.5 h-3.5 text-white/50 group-hover:text-white" />
+            <span className="text-sm text-[hsl(var(--text-secondary))] group-hover:text-[hsl(var(--text-primary))]">
+              BlockScout Explorer
+            </span>
+            <ExternalLink className="w-4 h-4 text-[hsl(var(--text-tertiary))] group-hover:text-[hsl(var(--text-primary))]" />
           </a>
 
           <a
             href={currentNetwork.ipExplorerUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white/5 transition-all group"
+            className="flex items-center justify-between px-3 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all group"
           >
-            <span className="text-sm text-white/70 group-hover:text-white">IP Explorer</span>
-            <ExternalLink className="w-3.5 h-3.5 text-white/50 group-hover:text-white" />
+            <span className="text-sm text-[hsl(var(--text-secondary))] group-hover:text-[hsl(var(--text-primary))]">
+              IP Explorer
+            </span>
+            <ExternalLink className="w-4 h-4 text-[hsl(var(--text-tertiary))] group-hover:text-[hsl(var(--text-primary))]" />
           </a>
 
           {currentNetwork.type === 'testnet' && currentNetwork.faucetUrl && (
-            <>
-              <a
-                href={currentNetwork.faucetUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between px-3 py-2 rounded-lg bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-all group"
-              >
-                <div className="flex items-center gap-2">
-                  <Droplet className="w-4 h-4 text-blue-400" />
-                  <span className="text-sm text-blue-300 font-medium">Testnet Faucet</span>
-                </div>
-                <ExternalLink className="w-3.5 h-3.5 text-blue-400" />
-              </a>
-
-              <a
-                href="https://staking.story.foundation"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between px-3 py-2 rounded-lg bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition-all group"
-              >
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-purple-400" />
-                  <span className="text-sm text-purple-300 font-medium">Staking Dashboard</span>
-                </div>
-                <ExternalLink className="w-3.5 h-3.5 text-purple-400" />
-              </a>
-            </>
+            <a
+              href={currentNetwork.faucetUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between px-3 py-2 rounded-lg bg-[hsl(var(--accent-blue))]/10 border border-[hsl(var(--accent-blue))]/20 hover:bg-[hsl(var(--accent-blue))]/20 transition-all group"
+            >
+              <span className="text-sm text-[hsl(var(--accent-blue))] font-medium flex items-center gap-2">
+                <Droplet className="w-4 h-4" />
+                Get 10 IP from Faucet
+              </span>
+              <ExternalLink className="w-4 h-4 text-[hsl(var(--accent-blue))]" />
+            </a>
           )}
+
+          <a
+            href="https://staking.story.foundation"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between px-3 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all group"
+          >
+            <span className="text-sm text-[hsl(var(--text-secondary))] group-hover:text-[hsl(var(--text-primary))]">
+              Staking Dashboard
+            </span>
+            <ExternalLink className="w-4 h-4 text-[hsl(var(--text-tertiary))] group-hover:text-[hsl(var(--text-primary))]" />
+          </a>
         </div>
       </div>
     </div>

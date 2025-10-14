@@ -7,10 +7,31 @@
 
 @layer base {
   :root {
-    /* Linear-inspired Color Palette */
+    /* Production Design Tokens - Story Protocol IP Portal */
+    --bg-primary: 222 47% 7%;      /* #0A0E1A */
+    --bg-secondary: 222 38% 12%;   /* #121827 */
+    --bg-tertiary: 220 30% 16%;    /* #1A2235 */
+    --bg-elevated: 218 22% 20%;    /* #1F2937 */
+    
+    --accent-purple: 258 90% 66%;  /* #8B5CF6 */
+    --accent-blue: 217 91% 60%;    /* #3B82F6 */
+    --accent-cyan: 189 94% 43%;    /* #06B6D4 */
+    --accent-purple-light: 250 86% 76%; /* #A78BFA */
+    
+    --success: 158 64% 52%;        /* #10B981 */
+    --warning: 38 92% 50%;         /* #F59E0B */
+    --error: 0 84% 60%;            /* #EF4444 */
+    --info: 217 91% 60%;           /* #3B82F6 */
+    
+    --text-primary: 210 20% 98%;   /* #F9FAFB */
+    --text-secondary: 214 14% 83%; /* #D1D5DB */
+    --text-tertiary: 220 9% 65%;   /* #9CA3AF */
+    --text-disabled: 215 14% 48%;  /* #6B7280 */
+    
+    /* Legacy - Keep for compatibility */
     --background: #05040a;
-    --text-primary: #f0f0f5;
-    --text-secondary: #a3a3b8;
+    --text-primary-legacy: #f0f0f5;
+    --text-secondary-legacy: #a3a3b8;
     --accent-glow-1: #3a25a3;
     --accent-glow-2: #6d28d9;
 
