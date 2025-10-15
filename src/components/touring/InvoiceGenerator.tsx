@@ -8,11 +8,35 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { Database } from "@/integrations/supabase/types";
 
-interface EditableLineItem {
-  id: string;
+interface LineItem {
   description: string;
   amount: number;
   quantity?: number;
+}
+
+interface EditableLineItem extends LineItem {
+  id: string;
+}
+
+interface GeneratedInvoiceResponse {
+  invoiceNumber: string;
+  dueDate: string;
+  status: string;
+  currency: string;
+  totals: {
+    subtotal: number;
+    tax: number;
+    total: number;
+  };
+  invoiceData: {
+    lineItems: LineItem[];
+    subtotal: number;
+    tax: number;
+    total: number;
+    balanceDue: number;
+    paymentStatus: string;
+    currency: string;
+  };
 }
 
 interface InvoiceGeneratorProps {
@@ -34,7 +58,7 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [invoice, setInvoice] = useState<GeneratedInvoiceResponse | null>(null);
-  const [lineItems, setLineItems] = useState<LineItem[]>([
+  const [lineItems, setLineItems] = useState<EditableLineItem[]>([
     { id: '1', description: 'Performance Fee', amount: bookingDetails.offerAmount || 2500, quantity: 1 },
     { id: '2', description: 'Sound & Lighting', amount: 500, quantity: 1 },
     { id: '3', description: 'Travel Expenses', amount: 300, quantity: 1 }
@@ -59,14 +83,28 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
   };
 
   const updateLineItem = (id: string, field: 'description' | 'amount' | 'quantity', value: string | number) => {
-    setLineItems(lineItems.map(item =>
+    setLineItems(lineItems.map((item: EditableLineItem) =>
       item.id === id ? { ...item, [field]: value } : item
     ));
   };
 
-  const calculateTotal = () => {
+  const calculateSubtotal = () => {
     return lineItems.reduce((sum, item) => sum + Number(item.amount || 0) * (item.quantity || 1), 0);
   };
+
+  const calculateTax = () => {
+    return calculateSubtotal() * taxRate;
+  };
+
+  const calculateTotal = () => {
+    return calculateSubtotal() + calculateTax();
+  };
+
+  const draftTotals = useMemo(() => ({
+    subtotal: calculateSubtotal(),
+    tax: calculateTax(),
+    total: calculateTotal()
+  }), [lineItems, taxRate]);
 
   const handleGenerate = async () => {
     setLoading(true);

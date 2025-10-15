@@ -78,7 +78,7 @@ const parseOutline = (value: PodcastRow['outline']): PodcastOutlineSection[] | n
     return null;
   }
 
-  return (rawValue as unknown[])
+  const sections = (rawValue as unknown[])
     .map((item) => {
       if (!item || typeof item !== 'object') {
         return null;
@@ -93,9 +93,11 @@ const parseOutline = (value: PodcastRow['outline']): PodcastOutlineSection[] | n
         talkingPoints: Array.isArray(talkingPointsRaw)
           ? talkingPointsRaw.filter((point): point is string => typeof point === 'string')
           : undefined,
-      } satisfies PodcastOutlineSection;
+      } as PodcastOutlineSection;
     })
-    .filter((item): item is PodcastOutlineSection => Boolean(item));
+    .filter((section): section is NonNullable<typeof section> => section !== null);
+
+  return sections;
 };
 
 const parseSegments = (value: PodcastRow['segments']): PodcastSegmentMeta[] | null => {

@@ -210,7 +210,6 @@ export const useContentManager = () => {
             upload_date: new Date().toISOString(),
             storage_path: filePath,
           },
-          storage_path: filePath,
           tags: []
         });
 
@@ -224,7 +223,7 @@ export const useContentManager = () => {
       // Refresh content
       await fetchContent();
 
-      return { publicUrl: signedData?.signedUrl ?? '', filePath, fileType };
+      return { signedUrl: signedData?.signedUrl ?? '', filePath, fileType };
     } catch (error) {
       console.error('Error uploading file:', error);
       toast({
@@ -276,16 +275,16 @@ export const useContentManager = () => {
     try {
       const { data: item, error: fetchError } = await supabase
         .from('content_items')
-        .select('file_path')
+        .select('storage_path')
         .eq('id', id)
         .single();
 
       if (fetchError) throw fetchError;
 
-      if (item?.file_path && !item.file_path.startsWith('external/')) {
+      if (item?.storage_path && !item.storage_path.startsWith('external/')) {
         const { error: storageError } = await supabase.storage
           .from('content-library')
-          .remove([item.file_path]);
+          .remove([item.storage_path]);
 
         if (storageError && !storageError.message?.toLowerCase().includes('not found')) {
           throw storageError;
@@ -298,12 +297,6 @@ export const useContentManager = () => {
         .eq('id', id);
 
       if (error) throw error;
-
-      if (itemToDelete?.storage_path) {
-        await supabase.storage
-          .from('content-library')
-          .remove([itemToDelete.storage_path]);
-      }
 
       toast({
         title: "Success",
@@ -386,12 +379,12 @@ export const useContentManager = () => {
           description,
           file_type: fileType,
           file_url: fileUrl,
-          file_path: fallbackPath,
           qr_code_data: qrData,
           metadata: {
             source: 'qr_code',
             scan_date: new Date().toISOString(),
-            external_url: qrData
+            external_url: qrData,
+            storage_path: fallbackPath
           },
           tags: ['qr-imported']
         });
