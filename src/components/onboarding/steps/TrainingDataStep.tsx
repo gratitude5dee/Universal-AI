@@ -165,7 +165,7 @@ const TrainingDataStep = ({ onNext, onBack }) => {
           name: file.name,
           type: normalizedType,
           size: file.size,
-          url: uploadResult.publicUrl,
+          url: uploadResult.signedUrl ?? '',
           storagePath: uploadResult.filePath,
           mimeType: file.type,
           uploadedAt: new Date().toISOString()

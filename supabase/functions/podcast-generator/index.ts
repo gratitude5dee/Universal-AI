@@ -294,11 +294,6 @@ serve(async (req) => {
       .single();
 
     if (insertError || !insertedPodcast) {
-      await adminClient
-        .from("podcast_generation_jobs")
-        .update({ status: "failed", error_message: insertError?.message ?? "insert failed" })
-        .eq("id", jobRecord.id);
-      jobId = null;
       throw new Error(`Failed to save podcast metadata: ${insertError?.message}`);
     }
 

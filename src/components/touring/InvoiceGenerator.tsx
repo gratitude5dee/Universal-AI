@@ -8,8 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { Database } from "@/integrations/supabase/types";
 
-interface EditableLineItem {
-  id: string;
+interface LineItem {
   description: string;
   amount: number;
   quantity?: number;
@@ -103,6 +102,20 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
       )
     );
   };
+
+  const calculateTax = () => {
+    return calculateSubtotal() * taxRate;
+  };
+
+  const calculateTotal = () => {
+    return calculateSubtotal() + calculateTax();
+  };
+
+  const draftTotals = useMemo(() => ({
+    subtotal: calculateSubtotal(),
+    tax: calculateTax(),
+    total: calculateTotal()
+  }), [lineItems, taxRate]);
 
   const handleGenerate = async () => {
     setLoading(true);
