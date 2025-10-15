@@ -253,13 +253,20 @@ export function WalletDisplay() {
 ### Running Tests
 
 ```bash
-# Run all tests
+# Run all tests with Bun (recommended)
+bun test
+
+# Or use the npm script
 npm run test
 
 # Run tests in watch mode
+bun test --watch
+# or
 npm run test:watch
 
-# Run tests with coverage
+# Run tests with coverage reporting
+bun test --coverage
+# or
 npm run test:coverage
 ```
 
