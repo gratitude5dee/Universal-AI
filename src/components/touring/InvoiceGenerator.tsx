@@ -11,6 +11,7 @@ interface LineItem {
   id: string;
   description: string;
   amount: number;
+  quantity?: number;
 }
 
 interface InvoiceGeneratorProps {
@@ -33,9 +34,9 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
   const [loading, setLoading] = useState(false);
   const [invoice, setInvoice] = useState<any>(null);
   const [lineItems, setLineItems] = useState<LineItem[]>([
-    { id: '1', description: 'Performance Fee', amount: bookingDetails.offerAmount || 2500 },
-    { id: '2', description: 'Sound & Lighting', amount: 500 },
-    { id: '3', description: 'Travel Expenses', amount: 300 }
+    { id: '1', description: 'Performance Fee', amount: bookingDetails.offerAmount || 2500, quantity: 1 },
+    { id: '2', description: 'Sound & Lighting', amount: 500, quantity: 1 },
+    { id: '3', description: 'Travel Expenses', amount: 300, quantity: 1 }
   ]);
 
   const addLineItem = () => {
@@ -52,14 +53,14 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
     }
   };
 
-  const updateLineItem = (id: string, field: 'description' | 'amount', value: string | number) => {
-    setLineItems(lineItems.map(item => 
+  const updateLineItem = (id: string, field: 'description' | 'amount' | 'quantity', value: string | number) => {
+    setLineItems(lineItems.map(item =>
       item.id === id ? { ...item, [field]: value } : item
     ));
   };
 
   const calculateTotal = () => {
-    return lineItems.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+    return lineItems.reduce((sum, item) => sum + Number(item.amount || 0) * (item.quantity || 1), 0);
   };
 
   const handleGenerate = async () => {
@@ -70,7 +71,8 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
           bookingId,
           lineItems: lineItems.map(item => ({
             description: item.description,
-            amount: item.amount
+            amount: item.amount,
+            quantity: item.quantity || 1
           }))
         }
       });
@@ -83,15 +85,6 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
         title: "Invoice created!",
         description: `Invoice ${data.invoiceData.invoiceNumber} has been generated.`,
       });
-
-      // Update booking status
-      await supabase
-        .from('venue_bookings')
-        .update({ 
-          status: 'paid',
-          workflow_stage: 'invoice'
-        })
-        .eq('id', bookingId);
 
     } catch (error) {
       console.error('Error generating invoice:', error);
@@ -106,6 +99,7 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
   };
 
   const downloadInvoice = () => {
+    if (!invoice) return;
     const invoiceText = `
 INVOICE
 
@@ -115,10 +109,13 @@ Date: ${new Date().toLocaleDateString()}
 Due Date: ${new Date(invoice.invoiceData.dueDate).toLocaleDateString()}
 
 LINE ITEMS:
-${lineItems.map(item => `${item.description}: $${item.amount.toFixed(2)}`).join('\n')}
+${invoice.invoiceData.lineItems.map((item: LineItem) => `${item.description} x${item.quantity ?? 1}: $${item.amount.toFixed(2)}`).join('\n')}
 
-TOTAL: $${calculateTotal().toFixed(2)}
+Subtotal: $${invoice.invoiceData.subtotal.toFixed(2)}
+Tax: $${invoice.invoiceData.tax.toFixed(2)}
+TOTAL DUE: $${invoice.invoiceData.total.toFixed(2)}
 
+Balance Due: $${invoice.invoiceData.balanceDue.toFixed(2)} (${invoice.invoiceData.paymentStatus})
 Payment Terms: Net 30 days
 `;
 
@@ -176,6 +173,16 @@ Payment Terms: Net 30 days
                         placeholder="Description (e.g., Performance Fee)"
                         value={item.description}
                         onChange={(e) => updateLineItem(item.id, 'description', e.target.value)}
+                        className="bg-background border-border"
+                      />
+                    </div>
+                    <div className="w-24">
+                      <Input
+                        type="number"
+                        min={1}
+                        placeholder="Qty"
+                        value={item.quantity ?? 1}
+                        onChange={(e) => updateLineItem(item.id, 'quantity', parseInt(e.target.value, 10) || 1)}
                         className="bg-background border-border"
                       />
                     </div>
@@ -270,10 +277,15 @@ Payment Terms: Net 30 days
                   <p className="text-sm font-semibold text-muted-foreground">Description</p>
                   <p className="text-sm font-semibold text-muted-foreground text-right">Amount</p>
                 </div>
-                {lineItems.map((item) => (
-                  <div key={item.id} className="grid grid-cols-2 gap-4">
-                    <p className="text-foreground">{item.description}</p>
-                    <p className="font-semibold text-foreground text-right">${item.amount.toFixed(2)}</p>
+                {invoice.invoiceData.lineItems.map((item: LineItem, index: number) => (
+                  <div key={`${item.description}-${index}`} className="grid grid-cols-2 gap-4">
+                    <p className="text-foreground">
+                      {item.description}
+                      <span className="block text-xs text-muted-foreground">Qty: {item.quantity ?? 1}</span>
+                    </p>
+                    <p className="font-semibold text-foreground text-right">
+                      ${item.amount.toFixed(2)}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -281,7 +293,20 @@ Payment Terms: Net 30 days
               {/* Total */}
               <div className="flex justify-between items-center pt-6 border-t-2 border-primary/30">
                 <span className="text-xl font-bold text-foreground">Total Due</span>
-                <span className="text-3xl font-bold text-primary">${calculateTotal().toFixed(2)}</span>
+                <span className="text-3xl font-bold text-primary">${invoice.invoiceData.total.toFixed(2)}</span>
+              </div>
+
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>Subtotal</span>
+                <span>${invoice.invoiceData.subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>Tax</span>
+                <span>${invoice.invoiceData.tax.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm font-semibold text-foreground">
+                <span>Balance Due</span>
+                <span>${invoice.invoiceData.balanceDue.toFixed(2)} ({invoice.invoiceData.paymentStatus})</span>
               </div>
 
               <p className="text-sm text-muted-foreground pt-4">
@@ -296,9 +321,9 @@ Payment Terms: Net 30 days
                 onClick={() => {
                   setInvoice(null);
                   setLineItems([
-                    { id: '1', description: 'Performance Fee', amount: bookingDetails.offerAmount || 2500 },
-                    { id: '2', description: 'Sound & Lighting', amount: 500 },
-                    { id: '3', description: 'Travel Expenses', amount: 300 }
+                    { id: '1', description: 'Performance Fee', amount: bookingDetails.offerAmount || 2500, quantity: 1 },
+                    { id: '2', description: 'Sound & Lighting', amount: 500, quantity: 1 },
+                    { id: '3', description: 'Travel Expenses', amount: 300, quantity: 1 }
                   ]);
                 }}
                 className="flex-1"

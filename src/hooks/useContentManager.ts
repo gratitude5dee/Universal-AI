@@ -11,6 +11,7 @@ export interface ContentItem {
   file_type: 'audio' | 'video' | 'image' | 'document';
   file_size?: number;
   file_url?: string;
+  storage_path?: string;
   thumbnail_url?: string;
   metadata: any;
   tags: string[];
@@ -55,7 +56,33 @@ export const useContentManager = () => {
       if (itemsResponse.error) throw itemsResponse.error;
       if (foldersResponse.error) throw foldersResponse.error;
 
-      setContentItems((itemsResponse.data as ContentItem[]) || []);
+      const rawItems = (itemsResponse.data as ContentItem[]) || [];
+      const itemsWithSignedUrls = await Promise.all(
+        rawItems.map(async (item) => {
+          const storagePath = item.storage_path || item.file_url || '';
+
+          if (!storagePath) {
+            return { ...item, tags: item.tags || [], storage_path: item.storage_path };
+          }
+
+          const { data: signedData, error: signedError } = await supabase.storage
+            .from('content-library')
+            .createSignedUrl(storagePath, 60 * 60);
+
+          if (signedError) {
+            console.error('Error generating signed URL:', signedError);
+          }
+
+          return {
+            ...item,
+            tags: item.tags || [],
+            storage_path: storagePath,
+            file_url: signedData?.signedUrl ?? item.file_url,
+          } as ContentItem;
+        })
+      );
+
+      setContentItems(itemsWithSignedUrls);
       setFolders((foldersResponse.data as ContentFolder[]) || []);
     } catch (error) {
       console.error('Error fetching content:', error);
@@ -96,10 +123,11 @@ export const useContentManager = () => {
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
+      const { data: signedData, error: signedError } = await supabase.storage
         .from('content-library')
-        .getPublicUrl(filePath);
+        .createSignedUrl(filePath, 60 * 60);
+
+      if (signedError) throw signedError;
 
       // Determine file type
       const fileType = getFileType(file.type);
@@ -113,7 +141,8 @@ export const useContentManager = () => {
           title: file.name,
           file_type: fileType,
           file_size: file.size,
-          file_url: publicUrl,
+          file_url: signedData?.signedUrl ?? null,
+          storage_path: filePath,
           metadata: {
             original_name: file.name,
             mime_type: file.type,
@@ -132,7 +161,7 @@ export const useContentManager = () => {
       // Refresh content
       await fetchContent();
 
-      return { publicUrl, filePath, fileType };
+      return { publicUrl: signedData?.signedUrl ?? '', filePath, fileType };
     } catch (error) {
       console.error('Error uploading file:', error);
       toast({
