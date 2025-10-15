@@ -1964,35 +1964,59 @@ export type Database = {
       }
       podcasts: {
         Row: {
+          audio_format: string | null
+          audio_signed_url: string | null
           audio_url: string
           created_at: string
           description: string | null
-          duration: number | null
+          duration_seconds: number | null
+          file_size: number | null
           id: string
+          outline: Json | null
+          script: string | null
+          segments: Json | null
+          show_notes: string | null
           style: string | null
           title: string
+          updated_at: string | null
           user_id: string
           voice_id: string | null
         }
         Insert: {
+          audio_format?: string | null
+          audio_signed_url?: string | null
           audio_url: string
           created_at?: string
           description?: string | null
-          duration?: number | null
+          duration_seconds?: number | null
+          file_size?: number | null
           id?: string
+          outline?: Json | null
+          script?: string | null
+          segments?: Json | null
+          show_notes?: string | null
           style?: string | null
           title: string
+          updated_at?: string | null
           user_id: string
           voice_id?: string | null
         }
         Update: {
+          audio_format?: string | null
+          audio_signed_url?: string | null
           audio_url?: string
           created_at?: string
           description?: string | null
-          duration?: number | null
+          duration_seconds?: number | null
+          file_size?: number | null
           id?: string
+          outline?: Json | null
+          script?: string | null
+          segments?: Json | null
+          show_notes?: string | null
           style?: string | null
           title?: string
+          updated_at?: string | null
           user_id?: string
           voice_id?: string | null
         }

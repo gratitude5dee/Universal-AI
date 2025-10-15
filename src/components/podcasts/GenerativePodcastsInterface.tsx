@@ -133,7 +133,7 @@ const normalizePodcast = (row: PodcastRow): Podcast => ({
   audio_format: row.audio_format ?? null,
   voice_id: row.voice_id,
   style: row.style,
-  duration_seconds: row.duration_seconds ?? row.duration ?? null,
+  duration_seconds: row.duration_seconds ?? null,
   file_size: row.file_size,
   show_notes: row.show_notes ?? null,
   outline: parseOutline(row.outline),
@@ -214,7 +214,7 @@ const GenerativePodcastsInterface = () => {
       }
 
       const { data, error } = await supabase
-        .from('podcasts_client_v1')
+        .from('podcasts')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
