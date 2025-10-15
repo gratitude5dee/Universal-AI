@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface UserSecretMeta {
@@ -48,7 +48,16 @@ export const useUserSecrets = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAccessToken]);
+
+  const getSecret = async (secretType: string): Promise<string | null> => {
+    try {
+      const token = await getAccessToken();
+      const response = await fetch(`${supabase.functions.url}/manage-user-secrets?secretType=${encodeURIComponent(secretType)}&decrypt=true`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
   const getSecret = async (secretType: string): Promise<string | null> => {
     if (secretValues[secretType]) {
@@ -103,7 +112,7 @@ export const useUserSecrets = () => {
 
   useEffect(() => {
     fetchSecrets();
-  }, []);
+  }, [fetchSecrets]);
 
   return {
     secrets,
@@ -112,6 +121,7 @@ export const useUserSecrets = () => {
     getSecret,
     upsertSecret,
     deleteSecret,
-    refetch: fetchSecrets
+    refetch: fetchSecrets,
   };
 };
+

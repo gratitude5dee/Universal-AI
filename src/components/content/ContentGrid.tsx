@@ -34,16 +34,16 @@ export const ContentGrid: React.FC<ContentGridProps> = ({ items, onDelete }) => 
   };
 
   const handleDownload = (item: ContentItem) => {
-    if (item.file_url) {
-      window.open(item.file_url, '_blank');
+    if (item.signed_url) {
+      window.open(item.signed_url, '_blank');
     }
   };
 
   const handleExternalLink = (item: ContentItem) => {
     if (item.qr_code_data) {
       window.open(item.qr_code_data, '_blank');
-    } else if (item.file_url) {
-      window.open(item.file_url, '_blank');
+    } else if (item.signed_url) {
+      window.open(item.signed_url, '_blank');
     }
   };
 
@@ -91,7 +91,7 @@ export const ContentGrid: React.FC<ContentGridProps> = ({ items, onDelete }) => 
                 >
                   <ExternalLink className="h-4 w-4" />
                 </Button>
-                {item.file_url && (
+                {item.signed_url && (
                   <Button
                     variant="ghost"
                     size="sm"
@@ -119,9 +119,9 @@ export const ContentGrid: React.FC<ContentGridProps> = ({ items, onDelete }) => 
                 alt={item.title}
                 className="w-full h-32 object-cover rounded-lg bg-white/5"
               />
-            ) : item.file_type === 'image' && item.file_url ? (
-              <img 
-                src={item.file_url} 
+            ) : item.file_type === 'image' && item.signed_url ? (
+              <img
+                src={item.signed_url}
                 alt={item.title}
                 className="w-full h-32 object-cover rounded-lg bg-white/5"
               />

@@ -62,6 +62,26 @@ serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
+    if (!authHeader) {
+      throw new Error('Missing authorization header');
+    }
+
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      throw new Error('Missing authorization header');
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: { Authorization: authHeader },
+      },
+    });
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    if (userError || !user) {
+      throw new Error('Invalid authorization token');
+    }
 
     const { query, context, sources = [], sessionId }: ResearchRequest = await req.json();
 
@@ -81,6 +101,7 @@ serve(async (req) => {
       .from('research_sessions')
       .select('id, user_id')
       .eq('session_identifier', sessionIdentifier)
+      .eq('user_id', user.id)
       .maybeSingle();
 
     if (existingSessionError) {
@@ -174,6 +195,7 @@ Current research context: ${context || 'General research query'}`;
           role: 'user',
           content: query,
           sources: sources.length ? sources : null,
+          created_by: user.id,
           created_at: sessionTimestamp
         });
 
@@ -191,6 +213,7 @@ Current research context: ${context || 'General research query'}`;
           sources: sources.length ? sources : null,
           tokens_used: data?.usage?.total_tokens || 0,
           model: 'llama3.1-70b',
+          created_by: user.id,
           created_at: responseTimestamp
         });
 
@@ -205,7 +228,8 @@ Current research context: ${context || 'General research query'}`;
           updated_at: responseTimestamp,
           last_message_at: responseTimestamp
         })
-        .eq('id', sessionRecordId);
+        .eq('id', sessionRecordId)
+        .eq('user_id', user.id);
 
       if (updateSessionError) {
         console.error('[cerebras-research] Failed to update session', updateSessionError);

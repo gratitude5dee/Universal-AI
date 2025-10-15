@@ -32,6 +32,16 @@ interface ResearchMessage {
   model?: string;
 }
 
+interface ResearchHistoryMessage {
+  id: string;
+  content: string;
+  role: 'user' | 'assistant' | 'system';
+  sources?: string[] | null;
+  tokens_used?: number | null;
+  model?: string | null;
+  created_at: string;
+}
+
 interface IntegrationStatus {
   id: string;
   name: string;
@@ -47,6 +57,14 @@ const ResearchInterface = () => {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  const getAccessToken = useCallback(async () => {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (error || !session?.access_token) {
+      throw new Error('User session not available');
+    }
+    return session.access_token;
+  }, []);
 
   const [integrations] = useState<IntegrationStatus[]>([
     {
@@ -117,11 +135,11 @@ const ResearchInterface = () => {
       console.error('Unexpected error loading research history:', err);
       toast({
         title: 'History Error',
-        description: 'An unexpected error occurred while loading messages.',
+        description: err instanceof Error ? err.message : 'An unexpected error occurred while loading messages.',
         variant: 'destructive'
       });
     }
-  }, [toast]);
+  }, [getAccessToken, scrollToBottom, toast]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -167,7 +185,12 @@ const ResearchInterface = () => {
     try {
       console.log('Starting research request...');
       
+      const token = await getAccessToken();
+
       const { data, error } = await supabase.functions.invoke('cerebras-research', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
         body: {
           query: inputValue,
           context: 'Deep research session',
@@ -204,6 +227,8 @@ const ResearchInterface = () => {
 
       if (data?.sessionId) {
         await refreshSessionHistory(data.sessionId);
+      } else if (sessionId) {
+        await refreshSessionHistory(sessionId);
       }
 
       toast({

@@ -1,6 +1,20 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.53.0';
+
+type LineItem = {
+  description: string;
+  amount: number;
+  quantity?: number;
+};
+
+type CreateInvoiceRequest = {
+  bookingId: string;
+  lineItems: LineItem[];
+  taxRate?: number;
+  currency?: string;
+  dueDate?: string;
+};
 
 type LineItemInput = {
   description: string;
@@ -112,7 +126,7 @@ serve(async (req) => {
       .from('invoices')
       .insert({
         invoice_number: invoiceNumber,
-        gig_id: booking.gig_id,
+        gig_id: booking.gig_id!,
         amount: total,
         due_date: effectiveDueDate,
         status: 'pending',

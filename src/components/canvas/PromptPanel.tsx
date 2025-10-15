@@ -35,6 +35,7 @@ const PromptPanel = ({ selectedNode, nodes, boardId, onUpdateNode, onAddAIRespon
   const [temperature, setTemperature] = useState([0.8]);
   const [maxTokens, setMaxTokens] = useState([500]);
   const { toast } = useToast();
+  const selectedNodeType = (selectedNode as AINode | null)?.data?.nodeType ?? 'Unknown';
 
   // Update prompt when selected node changes
   useEffect(() => {
@@ -288,7 +289,7 @@ const PromptPanel = ({ selectedNode, nodes, boardId, onUpdateNode, onAddAIRespon
         {selectedNode && (
           <div className="pt-4 border-t border-white/20">
             <Label className="text-white/70 text-sm">
-              Selected Node: {(selectedNode.data as any)?.nodeType || 'Unknown'} 
+              Selected Node: {selectedNodeType}
             </Label>
           </div>
         )}
