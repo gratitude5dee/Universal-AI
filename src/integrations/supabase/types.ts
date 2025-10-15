@@ -3631,6 +3631,10 @@ export type Database = {
         Args: { credit_cost?: number; metadata?: Json; resource_type: string }
         Returns: boolean
       }
+      user_has_board_access: {
+        Args: { board_id_param: string; user_id_param: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
