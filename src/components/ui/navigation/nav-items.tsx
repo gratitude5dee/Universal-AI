@@ -90,7 +90,7 @@ export const navItems = [{
     },
     {
       name: "Sync Licensing",
-      path: "https://amerge.lovable.app",
+      path: "https://sync.universal-ai.xyz/",
       icon: Music
     }
   ]
