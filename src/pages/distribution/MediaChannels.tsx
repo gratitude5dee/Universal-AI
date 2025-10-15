@@ -1,5 +1,6 @@
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DistributionLayout from "@/layouts/distribution-layout";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import {
 } from "lucide-react";
 
 const MediaChannels = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("appearances");
 
   // Mock data for upcoming media appearances
@@ -113,6 +115,39 @@ const MediaChannels = () => {
       title="Media Channels" 
       subtitle="Manage your distribution across traditional media channels"
     >
+      {/* Tab Navigation */}
+      <div className="mb-8">
+        <div className="flex justify-center space-x-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-1">
+          <div 
+            onClick={() => navigate('/distribution/social-media')}
+            className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors"
+          >
+            Social Media WZRD
+          </div>
+          <div 
+            onClick={() => navigate('/distribution/on-chain')}
+            className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors"
+          >
+            On-Chain Distribution
+          </div>
+          <div className="px-6 py-3 bg-orange-500 text-white rounded-xl text-sm font-medium">
+            Media Channels
+          </div>
+          <div 
+            onClick={() => navigate('/distribution/independent')}
+            className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors"
+          >
+            Independent Channels
+          </div>
+          <div 
+            onClick={() => window.location.href = 'https://sync.universal-ai.xyz/'}
+            className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors"
+          >
+            Sync Licensing
+          </div>
+        </div>
+      </div>
+
       {/* Media Channel Types */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <motion.div 
