@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { 
+import { useNavigate } from "react-router-dom";
+import {
   Plus, 
   Calendar as CalendarIcon, 
   ChevronLeft, 
@@ -27,6 +28,7 @@ import { mockSocialPosts } from "./mockSocialData";
 import { SocialPost } from "./types";
 
 export default function SocialMediaWzrd() {
+  const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<'month' | 'week'>('month');
   const [posts, setPosts] = useState<SocialPost[]>(mockSocialPosts);
@@ -233,19 +235,28 @@ export default function SocialMediaWzrd() {
             <div className="px-6 py-3 bg-orange-500 text-white rounded-xl text-sm font-medium">
               Social Media WZRD
             </div>
-            <div className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors">
-              Social Token Launchpad
-            </div>
-            <div className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors">
+            <div 
+              onClick={() => navigate('/distribution/on-chain')}
+              className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors"
+            >
               On-Chain Distribution
             </div>
-            <div className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors">
+            <div 
+              onClick={() => navigate('/distribution/media-channels')}
+              className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors"
+            >
               Media Channels
             </div>
-            <div className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors">
+            <div 
+              onClick={() => navigate('/distribution/independent')}
+              className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors"
+            >
               Independent Channels
             </div>
-            <div className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors">
+            <div 
+              onClick={() => window.location.href = 'https://sync.universal-ai.xyz/'}
+              className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors"
+            >
               Sync Licensing
             </div>
           </div>
