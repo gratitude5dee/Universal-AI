@@ -700,6 +700,7 @@ export type Database = {
           file_size: number | null
           file_type: string
           file_url: string | null
+          storage_path: string | null
           folder_id: string | null
           id: string
           metadata: Json | null
@@ -716,6 +717,7 @@ export type Database = {
           file_size?: number | null
           file_type: string
           file_url?: string | null
+          storage_path?: string | null
           folder_id?: string | null
           id?: string
           metadata?: Json | null
@@ -732,6 +734,7 @@ export type Database = {
           file_size?: number | null
           file_type?: string
           file_url?: string | null
+          storage_path?: string | null
           folder_id?: string | null
           id?: string
           metadata?: Json | null
@@ -1460,8 +1463,12 @@ export type Database = {
           gig_id: string
           id: string
           invoice_number: string | null
+          line_items: Json
+          currency: string
+          tax_amount: number
+          balance_due: number
           notes: string | null
-          paid_date: string | null
+          paid_at: string | null
           payment_method: string | null
           status: string | null
           updated_at: string | null
@@ -1473,8 +1480,12 @@ export type Database = {
           gig_id: string
           id?: string
           invoice_number?: string | null
+          line_items?: Json
+          currency?: string
+          tax_amount?: number
+          balance_due?: number
           notes?: string | null
-          paid_date?: string | null
+          paid_at?: string | null
           payment_method?: string | null
           status?: string | null
           updated_at?: string | null
@@ -1486,8 +1497,12 @@ export type Database = {
           gig_id?: string
           id?: string
           invoice_number?: string | null
+          line_items?: Json
+          currency?: string
+          tax_amount?: number
+          balance_due?: number
           notes?: string | null
-          paid_date?: string | null
+          paid_at?: string | null
           payment_method?: string | null
           status?: string | null
           updated_at?: string | null
@@ -1961,35 +1976,62 @@ export type Database = {
       }
       podcasts: {
         Row: {
+          audio_format: string | null
+          audio_signed_url: string | null
           audio_url: string
           created_at: string
           description: string | null
           duration: number | null
+          duration_seconds: number | null
+          file_size: number | null
           id: string
+          outline: Json | null
+          script: string | null
+          segments: Json | null
+          show_notes: string | null
           style: string | null
           title: string
+          updated_at: string
           user_id: string
           voice_id: string | null
         }
         Insert: {
+          audio_format?: string | null
+          audio_signed_url?: string | null
           audio_url: string
           created_at?: string
           description?: string | null
           duration?: number | null
+          duration_seconds?: number | null
+          file_size?: number | null
           id?: string
+          outline?: Json | null
+          script?: string | null
+          segments?: Json | null
+          show_notes?: string | null
           style?: string | null
           title: string
+          updated_at?: string
           user_id: string
           voice_id?: string | null
         }
         Update: {
+          audio_format?: string | null
+          audio_signed_url?: string | null
           audio_url?: string
           created_at?: string
           description?: string | null
           duration?: number | null
+          duration_seconds?: number | null
+          file_size?: number | null
           id?: string
+          outline?: Json | null
+          script?: string | null
+          segments?: Json | null
+          show_notes?: string | null
           style?: string | null
           title?: string
+          updated_at?: string
           user_id?: string
           voice_id?: string | null
         }
@@ -3086,6 +3128,7 @@ export type Database = {
         Row: {
           created_at: string
           encrypted_value: string
+          encryption_iv: string | null
           id: string
           secret_type: string
           updated_at: string
@@ -3094,6 +3137,7 @@ export type Database = {
         Insert: {
           created_at?: string
           encrypted_value: string
+          encryption_iv?: string | null
           id?: string
           secret_type: string
           updated_at?: string
@@ -3102,6 +3146,7 @@ export type Database = {
         Update: {
           created_at?: string
           encrypted_value?: string
+          encryption_iv?: string | null
           id?: string
           secret_type?: string
           updated_at?: string
@@ -3125,6 +3170,7 @@ export type Database = {
           offer_amount: number | null
           offer_sent_at: string | null
           payment_received_at: string | null
+          payment_status: string | null
           status: string | null
           updated_at: string | null
           user_id: string
@@ -3151,6 +3197,7 @@ export type Database = {
           offer_amount?: number | null
           offer_sent_at?: string | null
           payment_received_at?: string | null
+          payment_status?: string | null
           status?: string | null
           updated_at?: string | null
           user_id: string
@@ -3177,6 +3224,7 @@ export type Database = {
           offer_amount?: number | null
           offer_sent_at?: string | null
           payment_received_at?: string | null
+          payment_status?: string | null
           status?: string | null
           updated_at?: string | null
           user_id?: string

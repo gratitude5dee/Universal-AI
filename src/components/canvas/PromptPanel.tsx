@@ -26,6 +26,21 @@ interface AINode extends Node {
   };
 }
 
+type StreamChunk = {
+  choices?: Array<{
+    delta?: {
+      content?: string;
+    };
+  }>;
+};
+
+const isStreamChunk = (value: unknown): value is StreamChunk => {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+  return Array.isArray((value as StreamChunk).choices);
+};
+
 const PromptPanel = ({ selectedNode, nodes, boardId, onUpdateNode, onAddAIResponse }: PromptPanelProps) => {
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -75,6 +90,10 @@ const PromptPanel = ({ selectedNode, nodes, boardId, onUpdateNode, onAddAIRespon
     return findPath(nodeId);
   };
 
+  const supabaseUrl =
+    import.meta.env.VITE_SUPABASE_URL ??
+    'https://ixkkrousepsiorwlaycp.supabase.co';
+
   const generateResponse = async () => {
     if (!selectedNode || !boardId) {
       toast({
@@ -102,24 +121,39 @@ const PromptPanel = ({ selectedNode, nodes, boardId, onUpdateNode, onAddAIRespon
 
       console.log('Generating with lineage:', updatedLineage);
 
-      // Call the Cerebras Edge Function
-      const { data, error } = await supabase.functions.invoke('cerebras-stream', {
-        body: {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) {
+        throw sessionError;
+      }
+
+      const accessToken = sessionData.session?.access_token;
+      if (!accessToken) {
+        throw new Error('No active session found. Please sign in again.');
+      }
+
+      const response = await fetch(`${supabaseUrl}/functions/v1/cerebras-stream`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
           boardId,
           lineage: updatedLineage,
           model,
           temperature: temperature[0],
           maxTokens: maxTokens[0]
-        }
+        })
       });
 
-      if (error) {
-        throw error;
+      if (!response.ok || !response.body) {
+        const errorText = await response.text().catch(() => 'Unknown error');
+        throw new Error(errorText || 'Failed to connect to AI service');
       }
 
       // Handle streaming response
-      if (data && data.body) {
-        const reader = data.body.getReader();
+      if (response.body) {
+        const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let fullResponse = '';
 
@@ -136,7 +170,7 @@ const PromptPanel = ({ selectedNode, nodes, boardId, onUpdateNode, onAddAIRespon
           const { done, value } = await reader.read();
           if (done) break;
 
-          const chunk = decoder.decode(value);
+          const chunk = decoder.decode(value, { stream: true });
           const lines = chunk.split('\n').filter(line => line.trim() !== '');
 
           for (const line of lines) {
@@ -151,11 +185,11 @@ const PromptPanel = ({ selectedNode, nodes, boardId, onUpdateNode, onAddAIRespon
               }
 
               try {
-                const parsed = JSON.parse(data);
-                if (parsed.choices && parsed.choices[0]?.delta?.content) {
-                  const content = parsed.choices[0].delta.content;
+                const parsed: unknown = JSON.parse(data);
+                if (isStreamChunk(parsed) && parsed.choices?.[0]?.delta?.content) {
+                  const content = parsed.choices[0].delta?.content ?? '';
                   fullResponse += content;
-                  
+
                   // Update the AI response node with streaming content
                   onAddAIResponse(selectedNode.id, fullResponse);
                 }
@@ -282,7 +316,7 @@ const PromptPanel = ({ selectedNode, nodes, boardId, onUpdateNode, onAddAIRespon
         {selectedNode && (
           <div className="pt-4 border-t border-white/20">
             <Label className="text-white/70 text-sm">
-              Selected Node: {(selectedNode.data as any)?.nodeType || 'Unknown'} 
+              Selected Node: {(selectedNode as AINode).data?.nodeType || 'Unknown'}
             </Label>
           </div>
         )}

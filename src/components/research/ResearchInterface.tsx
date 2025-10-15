@@ -30,6 +30,33 @@ interface ResearchMessage {
   model?: string;
 }
 
+interface ResearchMessageRow {
+  id: string;
+  content: string;
+  role: 'user' | 'assistant' | 'system';
+  created_at: string;
+  sources?: string[] | null;
+  tokens_used?: number | null;
+  model?: string | null;
+}
+
+interface ResearchSessionResponse {
+  session?: {
+    id: string;
+    session_identifier: string;
+  };
+  messages?: ResearchMessageRow[];
+}
+
+interface ResearchFunctionResponse {
+  content: string;
+  sources?: string[];
+  sessionId: string;
+  timestamp: string;
+  model?: string;
+  tokensUsed?: number;
+}
+
 interface IntegrationStatus {
   id: string;
   name: string;
@@ -37,6 +64,10 @@ interface IntegrationStatus {
   icon: React.ReactNode;
   description: string;
 }
+
+const SUPABASE_URL =
+  import.meta.env.VITE_SUPABASE_URL ??
+  'https://ixkkrousepsiorwlaycp.supabase.co';
 
 const ResearchInterface = () => {
   const [messages, setMessages] = useState<ResearchMessage[]>([]);
@@ -80,11 +111,43 @@ const ResearchInterface = () => {
 
   const refreshSessionHistory = useCallback(async (activeSessionId: string) => {
     try {
-      // Research sessions and messages are not yet implemented in the database
-      // This is a placeholder that will be implemented when the tables are created
-      console.log('Research session history not yet implemented:', activeSessionId);
-      setMessages([]);
-      return;
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
+
+      const accessToken = sessionData.session?.access_token;
+      if (!accessToken) {
+        throw new Error('No active session found. Please sign in again.');
+      }
+
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/research-sessions?session_identifier=${encodeURIComponent(activeSessionId)}&include_messages=true`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+
+      if (response.status === 404) {
+        setMessages([]);
+        return;
+      }
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to load research history');
+      }
+
+      const payload: ResearchSessionResponse = await response.json();
+      const historyMessages: ResearchMessage[] = (payload.messages || []).map((message) => ({
+        id: message.id,
+        content: message.content,
+        role: message.role === 'assistant' ? 'assistant' : 'user',
+        timestamp: new Date(message.created_at),
+        sources: message.sources ?? undefined,
+        tokensUsed: message.tokens_used ?? undefined,
+        model: message.model ?? undefined
+      }));
+
+      setMessages(historyMessages);
 
     } catch (err) {
       console.error('Unexpected error loading research history:', err);
@@ -140,21 +203,34 @@ const ResearchInterface = () => {
     try {
       console.log('Starting research request...');
       
-      const { data, error } = await supabase.functions.invoke('cerebras-research', {
-        body: {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
+
+      const accessToken = sessionData.session?.access_token;
+      if (!accessToken) {
+        throw new Error('No active session found. Please sign in again.');
+      }
+
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/cerebras-research`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
           query: inputValue,
           context: 'Deep research session',
           sources: ['Cerebras AI', 'Knowledge Base'],
           sessionId
-        }
+        })
       });
 
-      if (error) {
-        console.error('Supabase function error:', error);
-        throw error;
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to run research');
       }
 
-      console.log('Research response received:', data);
+      const data: ResearchFunctionResponse = await response.json();
 
       if (data?.sessionId && data.sessionId !== sessionId) {
         setSessionId(data.sessionId);
@@ -184,12 +260,13 @@ const ResearchInterface = () => {
         description: `Generated ${data.tokensUsed || 0} tokens with ${data.model}`,
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Research error:', error);
-      
+      const message = error instanceof Error ? error.message : 'Unknown error occurred';
+
       const errorMessage: ResearchMessage = {
         id: `msg_${Date.now()}`,
-        content: `Research failed: ${error.message || 'Unknown error occurred'}. Please check your Cerebras API configuration.`,
+        content: `Research failed: ${message}. Please check your Cerebras API configuration.`,
         role: 'assistant',
         timestamp: new Date()
       };
@@ -198,7 +275,7 @@ const ResearchInterface = () => {
 
       toast({
         title: "Research Error",
-        description: error.message || 'Failed to complete research',
+        description: message,
         variant: "destructive",
       });
     } finally {

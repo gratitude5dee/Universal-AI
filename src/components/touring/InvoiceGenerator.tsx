@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,23 @@ interface LineItem {
   id: string;
   description: string;
   amount: number;
+  quantity?: number;
+}
+
+interface InvoiceTotals {
+  subtotal: number;
+  tax: number;
+  total: number;
+  balanceDue: number;
+}
+
+interface InvoiceResponse {
+  invoiceId: string;
+  invoiceNumber: string;
+  dueDate: string;
+  currency: string;
+  totals: InvoiceTotals;
+  lineItems: Array<{ description: string; amount: number; quantity?: number }>;
 }
 
 interface InvoiceGeneratorProps {
@@ -23,6 +40,10 @@ interface InvoiceGeneratorProps {
   };
 }
 
+const SUPABASE_URL =
+  import.meta.env.VITE_SUPABASE_URL ??
+  "https://ixkkrousepsiorwlaycp.supabase.co";
+
 export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
   open,
   onOpenChange,
@@ -31,73 +52,103 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
 }) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [invoice, setInvoice] = useState<any>(null);
+  const [invoice, setInvoice] = useState<InvoiceResponse | null>(null);
   const [lineItems, setLineItems] = useState<LineItem[]>([
-    { id: '1', description: 'Performance Fee', amount: bookingDetails.offerAmount || 2500 },
-    { id: '2', description: 'Sound & Lighting', amount: 500 },
-    { id: '3', description: 'Travel Expenses', amount: 300 }
+    { id: "1", description: "Performance Fee", amount: bookingDetails.offerAmount || 2500, quantity: 1 },
+    { id: "2", description: "Sound & Lighting", amount: 500, quantity: 1 },
+    { id: "3", description: "Travel Expenses", amount: 300, quantity: 1 }
   ]);
+  const [taxRate, setTaxRate] = useState<number>(0);
+
+  const calculatedTotals = useMemo(() => {
+    const subtotal = lineItems.reduce((sum, item) => sum + (Number(item.amount) || 0) * (item.quantity ?? 1), 0);
+    const tax = subtotal * (taxRate / 100);
+    const total = subtotal + tax;
+    return {
+      subtotal,
+      tax,
+      total,
+      balanceDue: total
+    };
+  }, [lineItems, taxRate]);
 
   const addLineItem = () => {
-    setLineItems([...lineItems, { 
-      id: Date.now().toString(), 
-      description: '', 
-      amount: 0 
-    }]);
+    setLineItems((prev) => [
+      ...prev,
+      {
+        id: Date.now().toString(),
+        description: "",
+        amount: 0,
+        quantity: 1
+      }
+    ]);
   };
 
   const removeLineItem = (id: string) => {
     if (lineItems.length > 1) {
-      setLineItems(lineItems.filter(item => item.id !== id));
+      setLineItems((prev) => prev.filter((item) => item.id !== id));
     }
   };
 
-  const updateLineItem = (id: string, field: 'description' | 'amount', value: string | number) => {
-    setLineItems(lineItems.map(item => 
-      item.id === id ? { ...item, [field]: value } : item
-    ));
-  };
-
-  const calculateTotal = () => {
-    return lineItems.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+  const updateLineItem = (id: string, field: keyof LineItem, value: string | number) => {
+    setLineItems((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              [field]: field === "description" ? value : Number(value) || 0
+            }
+          : item
+      )
+    );
   };
 
   const handleGenerate = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('generate-invoice', {
-        body: {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
+
+      const accessToken = sessionData.session?.access_token;
+      if (!accessToken) {
+        throw new Error("No active session found. Please sign in again.");
+      }
+
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/generate-invoice`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
           bookingId,
-          lineItems: lineItems.map(item => ({
-            description: item.description,
-            amount: item.amount
+          taxRate,
+          lineItems: lineItems.map(({ description, amount, quantity }) => ({
+            description,
+            amount,
+            quantity: quantity ?? 1
           }))
-        }
+        })
       });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to create invoice");
+      }
 
-      setInvoice(data);
+      const payload: InvoiceResponse = await response.json();
+      setInvoice(payload);
 
       toast({
         title: "Invoice created!",
-        description: `Invoice ${data.invoiceData.invoiceNumber} has been generated.`,
+        description: `Invoice ${payload.invoiceNumber} has been generated.`,
       });
-
-      // Update booking status
-      await supabase
-        .from('venue_bookings')
-        .update({ 
-          status: 'paid',
-          workflow_stage: 'invoice'
-        })
-        .eq('id', bookingId);
-
-    } catch (error) {
-      console.error('Error generating invoice:', error);
+    } catch (error: unknown) {
+      console.error("Error generating invoice:", error);
+      const message = error instanceof Error ? error.message : 'Failed to create invoice. Please try again.';
       toast({
         title: "Generation failed",
-        description: error.message || "Failed to create invoice. Please try again.",
+        description: message,
         variant: "destructive"
       });
     } finally {
@@ -106,37 +157,45 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
   };
 
   const downloadInvoice = () => {
+    if (!invoice) return;
+
+    const totals = invoice?.totals ?? calculatedTotals;
     const invoiceText = `
 INVOICE
 
-Invoice Number: ${invoice.invoiceData.invoiceNumber}
+Invoice Number: ${invoice.invoiceNumber}
 Venue: ${bookingDetails.venueName}
 Date: ${new Date().toLocaleDateString()}
-Due Date: ${new Date(invoice.invoiceData.dueDate).toLocaleDateString()}
+Due Date: ${new Date(invoice.dueDate).toLocaleDateString()}
 
 LINE ITEMS:
-${lineItems.map(item => `${item.description}: $${item.amount.toFixed(2)}`).join('\n')}
+${invoice.lineItems.map((item) => `${item.description} (${item.quantity ?? 1}x): $${item.amount.toFixed(2)}`).join("\n")}
 
-TOTAL: $${calculateTotal().toFixed(2)}
+Subtotal: $${totals.subtotal.toFixed(2)}
+Tax: $${totals.tax.toFixed(2)}
+TOTAL: $${totals.total.toFixed(2)} ${invoice.currency}
+Balance Due: $${totals.balanceDue.toFixed(2)}
 
 Payment Terms: Net 30 days
 `;
 
-    const blob = new Blob([invoiceText], { type: 'text/plain' });
+    const blob = new Blob([invoiceText], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `invoice-${invoice.invoiceData.invoiceNumber}.txt`;
+    a.download = `invoice-${invoice.invoiceNumber}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
+
     toast({
       title: "Downloaded!",
       description: "Invoice saved to your downloads",
     });
   };
+
+  const invoiceTotals = invoice?.totals ?? calculatedTotals;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -144,7 +203,7 @@ Payment Terms: Net 30 days
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Receipt className="h-6 w-6 text-primary" />
-            {invoice ? 'Invoice Generated' : 'Create Invoice'}
+            {invoice ? "Invoice Generated" : "Create Invoice"}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
             {invoice ? `Invoice for ${bookingDetails.venueName}` : `Generate an invoice for ${bookingDetails.venueName}`}
@@ -153,7 +212,6 @@ Payment Terms: Net 30 days
 
         {!invoice ? (
           <div className="space-y-6 py-4">
-            {/* Line Items */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label className="text-base font-semibold text-foreground">Line Items</Label>
@@ -171,23 +229,31 @@ Payment Terms: Net 30 days
               <div className="space-y-3 max-h-[350px] overflow-y-auto pr-2">
                 {lineItems.map((item) => (
                   <div key={item.id} className="flex gap-3 items-start p-3 bg-background/50 rounded-lg border border-border">
-                    <div className="flex-1">
+                    <div className="flex-1 space-y-2">
                       <Input
                         placeholder="Description (e.g., Performance Fee)"
                         value={item.description}
-                        onChange={(e) => updateLineItem(item.id, 'description', e.target.value)}
+                        onChange={(e) => updateLineItem(item.id, "description", e.target.value)}
                         className="bg-background border-border"
                       />
-                    </div>
-                    <div className="w-32">
-                      <Input
-                        type="number"
-                        placeholder="0.00"
-                        value={item.amount || ''}
-                        onChange={(e) => updateLineItem(item.id, 'amount', parseFloat(e.target.value) || 0)}
-                        className="bg-background border-border"
-                        step="0.01"
-                      />
+                      <div className="flex gap-2">
+                        <Input
+                          type="number"
+                          placeholder="0.00"
+                          value={item.amount || ""}
+                          onChange={(e) => updateLineItem(item.id, "amount", parseFloat(e.target.value) || 0)}
+                          className="bg-background border-border"
+                          step="0.01"
+                        />
+                        <Input
+                          type="number"
+                          placeholder="Qty"
+                          value={item.quantity ?? 1}
+                          onChange={(e) => updateLineItem(item.id, "quantity", parseInt(e.target.value, 10) || 1)}
+                          className="bg-background border-border w-24"
+                          min={1}
+                        />
+                      </div>
                     </div>
                     {lineItems.length > 1 && (
                       <Button
@@ -203,114 +269,107 @@ Payment Terms: Net 30 days
                   </div>
                 ))}
               </div>
+            </div>
 
-              {/* Total */}
-              <div className="flex justify-between items-center pt-4 border-t-2 border-primary/30">
-                <span className="text-lg font-semibold text-foreground">Total Amount</span>
-                <span className="text-3xl font-bold text-primary">
-                  ${calculateTotal().toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-background/40 p-4 rounded-lg border border-border">
+              <div>
+                <p className="text-sm text-muted-foreground">Subtotal</p>
+                <p className="text-lg font-semibold">${invoiceTotals.subtotal.toFixed(2)}</p>
+              </div>
+              <div>
+                <Label className="text-sm text-muted-foreground">Tax %</Label>
+                <Input
+                  type="number"
+                  value={taxRate}
+                  onChange={(e) => setTaxRate(parseFloat(e.target.value) || 0)}
+                  className="mt-1 bg-background border-border"
+                />
+                <p className="text-xs text-muted-foreground mt-1">Tax: ${invoiceTotals.tax.toFixed(2)}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Total</p>
+                <p className="text-lg font-semibold">${invoiceTotals.total.toFixed(2)}</p>
               </div>
             </div>
 
-            {/* Info */}
-            <div className="bg-muted/30 border border-border rounded-lg p-4">
-              <p className="text-sm text-muted-foreground">
-                Invoice will be created with a 30-day payment term and saved to the booking record.
-              </p>
-            </div>
-
-            {/* Generate Button */}
             <Button
+              type="button"
               onClick={handleGenerate}
-              disabled={loading || lineItems.some(item => !item.description || item.amount <= 0)}
+              disabled={loading}
               className="w-full"
-              size="lg"
             >
               {loading ? (
                 <>
-                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                  Creating Invoice...
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating Invoice
                 </>
               ) : (
                 <>
-                  <FileText className="h-5 w-5 mr-2" />
-                  Create Invoice
+                  <FileText className="mr-2 h-4 w-4" />
+                  Generate Invoice
                 </>
               )}
             </Button>
           </div>
         ) : (
           <div className="space-y-6 py-4">
-            {/* Invoice Preview */}
-            <div className="bg-gradient-to-br from-background to-accent/5 rounded-xl border-2 border-primary/20 p-8 space-y-6">
-              {/* Header */}
-              <div className="flex justify-between items-start pb-4 border-b border-border">
-                <div>
-                  <h3 className="text-2xl font-bold text-foreground mb-1">INVOICE</h3>
-                  <p className="text-lg text-primary font-mono">#{invoice.invoiceData.invoiceNumber}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-muted-foreground mb-1">Issue Date</p>
-                  <p className="font-semibold text-foreground">{new Date().toLocaleDateString()}</p>
-                  <p className="text-sm text-muted-foreground mt-2 mb-1">Due Date</p>
-                  <p className="font-semibold text-primary">{new Date(invoice.invoiceData.dueDate).toLocaleDateString()}</p>
-                </div>
-              </div>
+            <div className="bg-background/40 border border-border rounded-lg p-4 space-y-2">
+              <p className="text-sm text-muted-foreground">Invoice Number</p>
+              <p className="text-lg font-semibold">{invoice.invoiceNumber}</p>
+              <p className="text-sm text-muted-foreground">Due Date</p>
+              <p className="text-lg font-semibold">{new Date(invoice.dueDate).toLocaleDateString()}</p>
+            </div>
 
-              {/* Venue Info */}
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Bill To:</p>
-                <p className="text-lg font-semibold text-foreground">{bookingDetails.venueName}</p>
-              </div>
-
-              {/* Line Items */}
-              <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-4 pb-2 border-b border-border">
-                  <p className="text-sm font-semibold text-muted-foreground">Description</p>
-                  <p className="text-sm font-semibold text-muted-foreground text-right">Amount</p>
-                </div>
-                {lineItems.map((item) => (
-                  <div key={item.id} className="grid grid-cols-2 gap-4">
-                    <p className="text-foreground">{item.description}</p>
-                    <p className="font-semibold text-foreground text-right">${item.amount.toFixed(2)}</p>
+            <div className="space-y-3">
+              <h4 className="font-semibold text-foreground">Line Items</h4>
+              <div className="space-y-2">
+                {invoice.lineItems.map((item, index) => (
+                  <div key={`${item.description}-${index}`} className="flex items-center justify-between bg-background/40 border border-border rounded-md px-3 py-2">
+                    <div>
+                      <p className="font-medium text-foreground">{item.description}</p>
+                      <p className="text-xs text-muted-foreground">Qty: {item.quantity ?? 1}</p>
+                    </div>
+                    <p className="font-semibold text-foreground">${item.amount.toFixed(2)}</p>
                   </div>
                 ))}
               </div>
-
-              {/* Total */}
-              <div className="flex justify-between items-center pt-6 border-t-2 border-primary/30">
-                <span className="text-xl font-bold text-foreground">Total Due</span>
-                <span className="text-3xl font-bold text-primary">${calculateTotal().toFixed(2)}</span>
-              </div>
-
-              <p className="text-sm text-muted-foreground pt-4">
-                Payment Terms: Net 30 days from invoice date
-              </p>
             </div>
 
-            {/* Action Buttons */}
+            <div className="bg-background/40 border border-border rounded-lg p-4 space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span className="font-medium">${invoiceTotals.subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Tax</span>
+                <span className="font-medium">${invoiceTotals.tax.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-base font-semibold">
+                <span>Total</span>
+                <span>${invoiceTotals.total.toFixed(2)} {invoice.currency}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Balance Due</span>
+                <span className="font-medium">${invoiceTotals.balanceDue.toFixed(2)}</span>
+              </div>
+            </div>
+
             <div className="flex gap-3">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setInvoice(null);
-                  setLineItems([
-                    { id: '1', description: 'Performance Fee', amount: bookingDetails.offerAmount || 2500 },
-                    { id: '2', description: 'Sound & Lighting', amount: 500 },
-                    { id: '3', description: 'Travel Expenses', amount: 300 }
-                  ]);
-                }}
-                className="flex-1"
-              >
-                Create New Invoice
+              <Button type="button" className="flex-1" onClick={downloadInvoice}>
+                <Download className="mr-2 h-4 w-4" />
+                Download Invoice
               </Button>
               <Button
-                onClick={downloadInvoice}
+                type="button"
+                variant="secondary"
                 className="flex-1"
+                onClick={() => {
+                  setInvoice(null);
+                  setLoading(false);
+                }}
               >
-                <Download className="h-4 w-4 mr-2" />
-                Download Invoice
+                <Plus className="mr-2 h-4 w-4" />
+                Create Another
               </Button>
             </div>
           </div>

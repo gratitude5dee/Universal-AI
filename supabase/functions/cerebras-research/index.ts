@@ -22,28 +22,44 @@ serve(async (req) => {
   try {
     const cerebrasApiKey = Deno.env.get('CEREBRAS_API_KEY');
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
     if (!cerebrasApiKey) {
       throw new Error('CEREBRAS_API_KEY is not configured');
     }
-    if (!supabaseUrl || !supabaseServiceKey) {
+    if (!supabaseUrl || !supabaseAnonKey) {
       throw new Error('Supabase credentials are not configured');
+    }
+
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      throw new Error('Missing authorization header');
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: authHeader,
+        },
+      },
+    });
+
+    const accessToken = authHeader.replace('Bearer ', '').trim();
+    const { data: { user }, error: authError } = await supabase.auth.getUser(accessToken);
+    if (authError || !user) {
+      throw new Error('Invalid authorization token');
     }
 
     const { query, context, sources = [], sessionId }: ResearchRequest = await req.json();
 
-    console.log(`Research request - Session: ${sessionId}, Query: ${query.substring(0, 100)}...`);
-
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-    const sessionIdentifier = sessionId || `research_${crypto.randomUUID()}`;
+    let sessionIdentifier = sessionId || `research_${crypto.randomUUID()}`;
+    console.log(`Research request - Session: ${sessionIdentifier}, Query: ${query.substring(0, 100)}...`);
     let sessionRecordId: string | null = null;
 
     const sessionTimestamp = new Date().toISOString();
 
     const { data: existingSession, error: existingSessionError } = await supabase
       .from('research_sessions')
-      .select('id')
+      .select('id, user_id')
       .eq('session_identifier', sessionIdentifier)
       .maybeSingle();
 
@@ -52,13 +68,17 @@ serve(async (req) => {
       throw new Error('Failed to load research session');
     }
 
-    if (existingSession) {
+    if (existingSession && existingSession.user_id === user.id) {
       sessionRecordId = existingSession.id;
     } else {
+      if (existingSession && existingSession.user_id !== user.id) {
+        sessionIdentifier = `research_${crypto.randomUUID()}`;
+      }
       const { data: createdSession, error: createSessionError } = await supabase
         .from('research_sessions')
         .insert({
           session_identifier: sessionIdentifier,
+          user_id: user.id,
           updated_at: sessionTimestamp,
           last_message_at: sessionTimestamp
         })

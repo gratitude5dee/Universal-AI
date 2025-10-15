@@ -7,11 +7,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const supabase = createClient(
-  Deno.env.get('SUPABASE_URL') ?? '',
-  Deno.env.get('SUPABASE_ANON_KEY') ?? ''
-);
-
 interface Node {
   id: string;
   data: {
@@ -41,9 +36,23 @@ serve(async (req) => {
       throw new Error('Missing authorization header');
     }
 
-    const { data: { user }, error: userError } = await supabase.auth.getUser(
-      authHeader.replace('Bearer ', '')
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase credentials are not configured');
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: authHeader,
+        },
+      },
+    });
+
+    const accessToken = authHeader.replace('Bearer ', '').trim();
+
+    const { data: { user }, error: userError } = await supabase.auth.getUser(accessToken);
 
     if (userError || !user) {
       throw new Error('Invalid authorization token');
@@ -64,14 +73,20 @@ serve(async (req) => {
     }
 
     // Check if user is owner or collaborator
-    const hasAccess = board.user_id === user.id || 
-      (await supabase
-        .from('board_collaborators')
-        .select('id')
-        .eq('board_id', boardId)
-        .eq('user_id', user.id)
-        .eq('status', 'accepted')
-        .single()).data;
+    const { data: collaborator, error: collaboratorError } = await supabase
+      .from('board_collaborators')
+      .select('id')
+      .eq('board_id', boardId)
+      .eq('user_id', user.id)
+      .eq('status', 'accepted')
+      .maybeSingle();
+
+    if (collaboratorError && collaboratorError.code !== 'PGRST116') {
+      console.error('Error checking collaborator access:', collaboratorError);
+      throw new Error('Failed to verify board access');
+    }
+
+    const hasAccess = board.user_id === user.id || Boolean(collaborator);
 
     if (!hasAccess) {
       throw new Error('Access denied to this board');

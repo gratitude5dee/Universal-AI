@@ -1,54 +1,86 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface UserSecret {
-  id: string;
   secret_type: string;
-  encrypted_value: string;
+  value: string;
   created_at: string;
   updated_at: string;
 }
+
+const SUPABASE_URL =
+  import.meta.env.VITE_SUPABASE_URL ??
+  'https://ixkkrousepsiorwlaycp.supabase.co';
 
 export const useUserSecrets = () => {
   const [secrets, setSecrets] = useState<UserSecret[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSecrets = async () => {
+  const withAuthHeaders = useCallback(async () => {
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError) throw sessionError;
+
+    const accessToken = sessionData.session?.access_token;
+    if (!accessToken) {
+      throw new Error('No active session found. Please sign in again.');
+    }
+
+    return {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    } as Record<string, string>;
+  }, []);
+
+  const fetchSecrets = useCallback(async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('user_secrets')
-        .select('*');
-      
-      if (error) throw error;
+      const headers = await withAuthHeaders();
+
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/manage-user-secrets`, {
+        method: 'GET',
+        headers: { Authorization: headers.Authorization }
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to load secrets');
+      }
+
+      const data: UserSecret[] = await response.json();
       setSecrets(data || []);
+      setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoading(false);
     }
-  };
+  }, [withAuthHeaders]);
 
   const getSecret = (secretType: string): string | null => {
     const secret = secrets.find(s => s.secret_type === secretType);
-    return secret?.encrypted_value || null;
+    return secret?.value || null;
   };
 
   const upsertSecret = async (secretType: string, value: string) => {
     try {
-      const { error } = await supabase
-        .from('user_secrets')
-        .upsert({
+      const headers = await withAuthHeaders();
+
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/manage-user-secrets`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
           secret_type: secretType,
-          encrypted_value: value,
-          user_id: (await supabase.auth.getUser()).data.user?.id
-        }, {
-          onConflict: 'user_id,secret_type'
-        });
-      
-      if (error) throw error;
-      await fetchSecrets(); // Refresh the list
+          value
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to save secret');
+      }
+
+      await fetchSecrets();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
       throw err;
@@ -57,13 +89,20 @@ export const useUserSecrets = () => {
 
   const deleteSecret = async (secretType: string) => {
     try {
-      const { error } = await supabase
-        .from('user_secrets')
-        .delete()
-        .eq('secret_type', secretType);
-      
-      if (error) throw error;
-      await fetchSecrets(); // Refresh the list
+      const headers = await withAuthHeaders();
+
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/manage-user-secrets`, {
+        method: 'DELETE',
+        headers,
+        body: JSON.stringify({ secret_type: secretType })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to delete secret');
+      }
+
+      await fetchSecrets();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
       throw err;
@@ -72,7 +111,7 @@ export const useUserSecrets = () => {
 
   useEffect(() => {
     fetchSecrets();
-  }, []);
+  }, [fetchSecrets]);
 
   return {
     secrets,
