@@ -20,6 +20,8 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+
 interface ResearchMessage {
   id: string;
   content: string;
@@ -98,35 +100,27 @@ const ResearchInterface = () => {
 
   const refreshSessionHistory = useCallback(async (activeSessionId: string) => {
     try {
-      const token = await getAccessToken();
-      const response = await fetch(`${supabase.functions.url}/research-sessions?sessionIdentifier=${encodeURIComponent(activeSessionId)}`, {
-        method: 'GET',
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
+
+      if (!accessToken) {
+        throw new Error('User session not found');
+      }
+
+      const response = await fetch(`${supabaseUrl}/functions/v1/research-sessions?sessionId=${encodeURIComponent(activeSessionId)}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
-        },
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        }
       });
 
       if (!response.ok) {
-        const errorPayload = await response.json().catch(() => null);
-        throw new Error(errorPayload?.error || 'Failed to load research history');
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to load research history');
       }
 
       const payload = await response.json();
-
-      const loadedMessages: ResearchMessage[] = (payload.messages ?? []).map((message: ResearchHistoryMessage) => ({
-        id: message.id,
-        content: message.content,
-        role: message.role === 'user' ? 'user' : 'assistant',
-        timestamp: new Date(message.created_at),
-        sources: message.sources ?? undefined,
-        tokensUsed: message.tokens_used ?? undefined,
-        model: message.model ?? undefined,
-      }));
-
-      setMessages(loadedMessages);
-      scrollToBottom();
-
-      const hydrated: ResearchMessage[] = session.research_messages.map((message) => ({
+      const history = (payload.messages || []).map((message: any) => ({
         id: message.id,
         content: message.content,
         role: message.role,
@@ -136,7 +130,7 @@ const ResearchInterface = () => {
         model: message.model ?? undefined,
       }));
 
-      setMessages(hydrated);
+      setMessages(history);
     } catch (err) {
       console.error('Unexpected error loading research history:', err);
       toast({

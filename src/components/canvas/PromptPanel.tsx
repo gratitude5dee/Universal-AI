@@ -10,6 +10,8 @@ import { Node } from '@xyflow/react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+
 interface PromptPanelProps {
   selectedNode: Node | null;
   nodes: Node[];
@@ -103,45 +105,41 @@ const PromptPanel = ({ selectedNode, nodes, boardId, onUpdateNode, onAddAIRespon
 
       console.log('Generating with lineage:', updatedLineage);
 
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
 
-      if (sessionError || !session?.access_token) {
-        throw new Error('Unable to authenticate request');
+      if (!accessToken) {
+        throw new Error('Unable to fetch Supabase session for streaming request');
       }
 
-      const response = await fetch(`${supabase.functions.url}/cerebras-stream`, {
+      const response = await fetch(`${supabaseUrl}/functions/v1/cerebras-stream`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           boardId,
           lineage: updatedLineage,
           model,
           temperature: temperature[0],
-          maxTokens: maxTokens[0],
-        }),
+          maxTokens: maxTokens[0]
+        })
       });
 
       if (!response.ok || !response.body) {
-        const errorPayload = await response.text();
-        throw new Error(errorPayload || 'Unable to start AI stream');
+        const errorText = await response.text();
+        throw new Error(errorText || 'Streaming response unavailable');
       }
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let fullResponse = '';
 
-      // Update current node with user input
       if (prompt !== selectedNode.data?.text) {
         onUpdateNode(selectedNode.id, prompt);
       }
 
-      // Create temporary AI response node
       onAddAIResponse(selectedNode.id, '');
 
       while (true) {
@@ -158,7 +156,7 @@ const PromptPanel = ({ selectedNode, nodes, boardId, onUpdateNode, onAddAIRespon
           if (data === '[DONE]') {
             toast({
               title: "Generation Complete",
-              description: "AI response has been generated successfully",
+              description: "AI response has been generated successfully"
             });
             return;
           }

@@ -11,7 +11,7 @@ export interface ContentItem {
   file_type: 'audio' | 'video' | 'image' | 'document';
   file_size?: number;
   file_url?: string;
-  file_path: string;
+  storage_path?: string;
   thumbnail_url?: string;
   metadata: Record<string, unknown> | null;
   tags: string[];
@@ -116,39 +116,32 @@ export const useContentManager = () => {
       if (foldersResponse.error) throw foldersResponse.error;
 
       const rawItems = (itemsResponse.data as ContentItem[]) || [];
+      const itemsWithSignedUrls = await Promise.all(
+        rawItems.map(async (item) => {
+          const storagePath = item.storage_path || item.file_url || '';
 
-      let itemsWithUrls = rawItems;
-      if (rawItems.length > 0) {
-        const storageItems = rawItems.filter((item) => !item.file_path.startsWith('external/'));
-        const storagePaths = storageItems.map((item) => item.file_path);
+          if (!storagePath) {
+            return { ...item, tags: item.tags || [], storage_path: item.storage_path };
+          }
 
-        let urlMap = new Map<string, string | null>();
-        if (storagePaths.length > 0) {
-          const { data: signedUrls, error: signedError } = await supabase.storage
+          const { data: signedData, error: signedError } = await supabase.storage
             .from('content-library')
-            .createSignedUrls(storagePaths, 60 * 60);
+            .createSignedUrl(storagePath, 60 * 60);
 
-          if (signedError) throw signedError;
-
-          urlMap = new Map<string, string | null>();
-          signedUrls?.forEach((entry, index) => {
-            urlMap.set(storagePaths[index], entry?.signedUrl ?? null);
-          });
-        }
-
-        itemsWithUrls = rawItems.map((item) => {
-          if (item.file_path.startsWith('external/')) {
-            return item;
+          if (signedError) {
+            console.error('Error generating signed URL:', signedError);
           }
 
           return {
             ...item,
-            file_url: urlMap.get(item.file_path) ?? item.file_url ?? undefined,
-          };
-        });
-      }
+            tags: item.tags || [],
+            storage_path: storagePath,
+            file_url: signedData?.signedUrl ?? item.file_url,
+          } as ContentItem;
+        })
+      );
 
-      setContentItems(itemsWithUrls);
+      setContentItems(itemsWithSignedUrls);
       setFolders((foldersResponse.data as ContentFolder[]) || []);
     } catch (error) {
       console.error('Error fetching content:', error);
@@ -191,12 +184,11 @@ export const useContentManager = () => {
 
       if (uploadError) throw uploadError;
 
-      // Create signed URL for immediate usage
-      const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+      const { data: signedData, error: signedError } = await supabase.storage
         .from('content-library')
         .createSignedUrl(filePath, 60 * 60);
 
-      if (signedUrlError) throw signedUrlError;
+      if (signedError) throw signedError;
 
       // Determine file type
       const fileType = getFileType(file.type);
@@ -210,8 +202,8 @@ export const useContentManager = () => {
           title: file.name,
           file_type: fileType,
           file_size: file.size,
-          file_path: filePath,
-          file_url: signedUrlData?.signedUrl,
+          file_url: signedData?.signedUrl ?? null,
+          storage_path: filePath,
           metadata: {
             original_name: file.name,
             mime_type: file.type,
@@ -232,7 +224,7 @@ export const useContentManager = () => {
       // Refresh content
       await fetchContent();
 
-      return { publicUrl: signedUrlData?.signedUrl ?? '', filePath, fileType };
+      return { publicUrl: signedData?.signedUrl ?? '', filePath, fileType };
     } catch (error) {
       console.error('Error uploading file:', error);
       toast({

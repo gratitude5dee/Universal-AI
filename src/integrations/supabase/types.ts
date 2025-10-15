@@ -700,7 +700,7 @@ export type Database = {
           file_size: number | null
           file_type: string
           file_url: string | null
-          file_path: string
+          storage_path: string | null
           folder_id: string | null
           id: string
           metadata: Json | null
@@ -718,7 +718,7 @@ export type Database = {
           file_size?: number | null
           file_type: string
           file_url?: string | null
-          file_path?: string
+          storage_path?: string | null
           folder_id?: string | null
           id?: string
           metadata?: Json | null
@@ -736,7 +736,7 @@ export type Database = {
           file_size?: number | null
           file_type?: string
           file_url?: string | null
-          file_path?: string
+          storage_path?: string | null
           folder_id?: string | null
           id?: string
           metadata?: Json | null
@@ -1463,7 +1463,7 @@ export type Database = {
           amount: number
           balance_due: number
           created_at: string | null
-          currency: string
+          currency: string | null
           due_date: string | null
           gig_id: string
           id: string
@@ -1483,7 +1483,7 @@ export type Database = {
           amount: number
           balance_due?: number
           created_at?: string | null
-          currency?: string
+          currency?: string | null
           due_date?: string | null
           gig_id: string
           id?: string
@@ -1503,7 +1503,7 @@ export type Database = {
           amount?: number
           balance_due?: number
           created_at?: string | null
-          currency?: string
+          currency?: string | null
           due_date?: string | null
           gig_id?: string
           id?: string
@@ -3246,9 +3246,9 @@ export type Database = {
       user_secrets: {
         Row: {
           created_at: string
-          ciphertext: string | null
+          encrypted_value: string
+          encryption_version: number
           id: string
-          key_version: number
           nonce: string | null
           secret_type: string
           updated_at: string
@@ -3256,9 +3256,9 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          ciphertext?: string | null
+          encrypted_value: string
+          encryption_version?: number
           id?: string
-          key_version?: number
           nonce?: string | null
           secret_type: string
           updated_at?: string
@@ -3266,9 +3266,9 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          ciphertext?: string | null
+          encrypted_value?: string
+          encryption_version?: number
           id?: string
-          key_version?: number
           nonce?: string | null
           secret_type?: string
           updated_at?: string
@@ -3292,7 +3292,7 @@ export type Database = {
           offer_amount: number | null
           offer_sent_at: string | null
           payment_received_at: string | null
-          payment_status: string
+          payment_status: string | null
           status: string | null
           updated_at: string | null
           user_id: string
