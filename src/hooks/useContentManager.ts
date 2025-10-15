@@ -227,7 +227,7 @@ export const useContentManager = () => {
 
       if (fetchError) throw fetchError;
 
-      if (item?.file_path) {
+      if (item?.file_path && !item.file_path.startsWith('external/')) {
         const { error: storageError } = await supabase.storage
           .from('content-library')
           .remove([item.file_path]);
