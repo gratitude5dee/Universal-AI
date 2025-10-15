@@ -32,21 +32,113 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 import { useAuth } from '@/context/AuthContext';
 
+interface PodcastOutlineSection {
+  title: string;
+  description?: string;
+  talkingPoints?: string[];
+}
+
+interface PodcastSegmentMeta {
+  title: string;
+  summary: string;
+  script: string;
+}
+
 interface Podcast {
   id: string;
   user_id: string;
   title: string;
   description: string | null;
-  script: string;
+  script: string | null;
   audio_url: string;
   audio_signed_url?: string | null;
+  audio_format: string | null;
   voice_id: string | null;
   style: string | null;
   duration_seconds: number | null;
   file_size: number | null;
+  show_notes: string | null;
+  outline: PodcastOutlineSection[] | null;
+  segments: PodcastSegmentMeta[] | null;
   created_at: string;
   updated_at: string;
 }
+
+type PodcastRow = Database['public']['Tables']['podcasts']['Row'];
+
+interface PodcastFunctionResponse {
+  success: boolean;
+  error?: string;
+  podcast?: PodcastRow;
+}
+
+const parseOutline = (value: PodcastRow['outline']): PodcastOutlineSection[] | null => {
+  const rawValue = value as unknown;
+  if (!rawValue || !Array.isArray(rawValue)) {
+    return null;
+  }
+
+  return (rawValue as unknown[])
+    .map((item) => {
+      if (!item || typeof item !== 'object') {
+        return null;
+      }
+
+      const section = item as Record<string, unknown>;
+      const talkingPointsRaw = section.talkingPoints;
+
+      return {
+        title: typeof section.title === 'string' ? section.title : 'Section',
+        description: typeof section.description === 'string' ? section.description : undefined,
+        talkingPoints: Array.isArray(talkingPointsRaw)
+          ? talkingPointsRaw.filter((point): point is string => typeof point === 'string')
+          : undefined,
+      } satisfies PodcastOutlineSection;
+    })
+    .filter((item): item is PodcastOutlineSection => Boolean(item));
+};
+
+const parseSegments = (value: PodcastRow['segments']): PodcastSegmentMeta[] | null => {
+  const rawValue = value as unknown;
+  if (!rawValue || !Array.isArray(rawValue)) {
+    return null;
+  }
+
+  return (rawValue as unknown[])
+    .map((item) => {
+      if (!item || typeof item !== 'object') {
+        return null;
+      }
+
+      const segment = item as Record<string, unknown>;
+      const title = typeof segment.title === 'string' ? segment.title : 'Segment';
+      const summary = typeof segment.summary === 'string' ? segment.summary : '';
+      const script = typeof segment.script === 'string' ? segment.script : '';
+
+      return { title, summary, script } satisfies PodcastSegmentMeta;
+    })
+    .filter((item): item is PodcastSegmentMeta => Boolean(item));
+};
+
+const normalizePodcast = (row: PodcastRow): Podcast => ({
+  id: row.id,
+  user_id: row.user_id,
+  title: row.title,
+  description: row.description,
+  script: row.script,
+  audio_url: row.audio_url,
+  audio_signed_url: row.audio_signed_url ?? null,
+  audio_format: row.audio_format ?? null,
+  voice_id: row.voice_id,
+  style: row.style,
+  duration_seconds: row.duration_seconds ?? row.duration ?? null,
+  file_size: row.file_size,
+  show_notes: row.show_notes ?? null,
+  outline: parseOutline(row.outline),
+  segments: parseSegments(row.segments),
+  created_at: row.created_at,
+  updated_at: row.updated_at ?? row.created_at,
+});
 
 interface Voice {
   voice_id: string;
@@ -129,12 +221,14 @@ const GenerativePodcastsInterface = () => {
         throw error;
       }
 
-      if (!data || data.length === 0) {
+      const podcastRows = (data as PodcastRow[] | null) ?? [];
+
+      if (podcastRows.length === 0) {
         setPodcasts([]);
         return;
       }
 
-      const audioPaths = data.map((podcast) => podcast.audio_url);
+      const audioPaths = podcastRows.map((podcast) => podcast.audio_url);
       let signedUrls: { signedUrl: string }[] | null = null;
 
       if (audioPaths.length > 0) {
@@ -149,21 +243,13 @@ const GenerativePodcastsInterface = () => {
         signedUrls = signedUrlData ?? null;
       }
 
-      const podcastsWithUrls: Podcast[] = data.map((podcast, index) => ({
-        id: podcast.id,
-        user_id: podcast.user_id,
-        title: podcast.title,
-        description: podcast.description,
-        script: '',  // Not stored in database
-        audio_url: podcast.audio_url,
-        audio_signed_url: signedUrls?.[index]?.signedUrl ?? null,
-        voice_id: podcast.voice_id,
-        style: podcast.style,
-        duration_seconds: podcast.duration ?? null,
-        file_size: null,  // Not stored in database
-        created_at: podcast.created_at,
-        updated_at: podcast.created_at,  // Use created_at as fallback
-      }));
+      const podcastsWithUrls: Podcast[] = podcastRows.map((row, index) => {
+        const normalized = normalizePodcast(row);
+        return {
+          ...normalized,
+          audio_signed_url: normalized.audio_signed_url ?? signedUrls?.[index]?.signedUrl ?? null,
+        };
+      });
 
       setPodcasts(podcastsWithUrls);
     } catch (error) {
@@ -278,7 +364,7 @@ const GenerativePodcastsInterface = () => {
     setIsGenerating(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('podcast-generator', {
+      const { data, error } = await supabase.functions.invoke<PodcastFunctionResponse>('podcast-generator', {
         body: {
           title,
           description,
@@ -289,59 +375,34 @@ const GenerativePodcastsInterface = () => {
       });
 
       if (error) throw error;
-      if (!data) {
-        throw new Error('Podcast generation returned no data.');
+
+      const response = data as PodcastFunctionResponse | null;
+
+      if (!response?.success || !response.podcast) {
+        throw new Error(response?.error || 'Failed to generate podcast');
       }
 
-      const generatedPodcast = data;
+      const normalizedPodcast = normalizePodcast(response.podcast);
 
-      if (!generatedPodcast.audioContent) {
-        throw new Error('Audio content missing from generation response.');
+      let audioSignedUrl = normalizedPodcast.audio_signed_url;
+      if (!audioSignedUrl) {
+        const { data: signed, error: signedError } = await supabase.storage
+          .from('podcast-audio')
+          .createSignedUrl(normalizedPodcast.audio_url, 60 * 60);
+
+        if (!signedError) {
+          audioSignedUrl = signed?.signedUrl ?? null;
+        }
       }
 
-      const { data: insertedPodcast, error: insertError } = await supabase
-        .from('podcasts')
-        .insert([{
-          user_id: user.id,
-          title: generatedPodcast.title,
-          description: generatedPodcast.description ?? description ?? null,
-          audio_url: '', // Placeholder, will be updated after upload
-          voice_id: generatedPodcast.voiceId,
-          style: generatedPodcast.style ?? podcastStyle,
-          duration: generatedPodcast.duration ?? Math.max(Math.ceil(script.length / 150), 1)
-        }])
-        .select()
-        .single();
-
-      if (insertError || !insertedPodcast) {
-        throw insertError || new Error('Failed to save the generated podcast.');
-      }
-
-      const savedPodcast: Podcast = {
-        id: insertedPodcast.id,
-        user_id: insertedPodcast.user_id,
-        title: insertedPodcast.title,
-        description: insertedPodcast.description,
-        script: script,  // Keep the script from the form
-        audio_url: insertedPodcast.audio_url,
-        audio_signed_url: null,
-        voice_id: insertedPodcast.voice_id,
-        style: insertedPodcast.style,
-        duration_seconds: insertedPodcast.duration ?? null,
-        file_size: null,
-        created_at: insertedPodcast.created_at,
-        updated_at: insertedPodcast.created_at,
+      const podcastWithUrl: Podcast = {
+        ...normalizedPodcast,
+        audio_signed_url: audioSignedUrl ?? null,
       };
-      setPodcasts(prev => [savedPodcast, ...prev]);
-      setCurrentPodcast(savedPodcast);
+
+      setPodcasts((prev) => [podcastWithUrl, ...prev]);
+      setCurrentPodcast(podcastWithUrl);
       setProgress(0);
-
-      if (!data?.success || !data.podcast) {
-        throw new Error(data?.error || 'Failed to generate podcast');
-      }
-
-      const newPodcast: Podcast = data.podcast;
-      setPodcasts(prev => [newPodcast, ...prev]);
 
       // Clear form
       setTitle('');
@@ -350,7 +411,7 @@ const GenerativePodcastsInterface = () => {
 
       toast({
         title: "Podcast Generated!",
-        description: `"${savedPodcast.title}" has been created successfully.`,
+        description: `"${podcastWithUrl.title}" has been created successfully.`,
       });
 
     } catch (error) {
