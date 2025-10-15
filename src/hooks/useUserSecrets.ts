@@ -1,53 +1,89 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-interface UserSecret {
-  id: string;
+interface UserSecretMetadata {
   secret_type: string;
-  encrypted_value: string;
   created_at: string;
   updated_at: string;
 }
 
 export const useUserSecrets = () => {
-  const [secrets, setSecrets] = useState<UserSecret[]>([]);
+  const [secrets, setSecrets] = useState<UserSecretMetadata[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSecrets = async () => {
+  const getAccessToken = useCallback(async () => {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session?.access_token) {
+      throw new Error('User not authenticated');
+    }
+    return session.access_token;
+  }, []);
+
+  const fetchSecrets = useCallback(async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('user_secrets')
-        .select('*');
-      
-      if (error) throw error;
-      setSecrets(data || []);
+      const token = await getAccessToken();
+      const response = await fetch(`${supabase.functions.url}/manage-user-secrets`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null);
+        throw new Error(payload?.error || 'Unable to load secrets');
+      }
+
+      const data = await response.json();
+      setSecrets(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAccessToken]);
 
-  const getSecret = (secretType: string): string | null => {
-    const secret = secrets.find(s => s.secret_type === secretType);
-    return secret?.encrypted_value || null;
+  const getSecret = async (secretType: string): Promise<string | null> => {
+    try {
+      const token = await getAccessToken();
+      const response = await fetch(`${supabase.functions.url}/manage-user-secrets?secretType=${encodeURIComponent(secretType)}&decrypt=true`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null);
+        throw new Error(payload?.error || 'Failed to retrieve secret');
+      }
+
+      const data = await response.json();
+      return data?.value ?? null;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
+      throw err;
+    }
   };
 
   const upsertSecret = async (secretType: string, value: string) => {
     try {
-      const { error } = await supabase
-        .from('user_secrets')
-        .upsert({
-          secret_type: secretType,
-          encrypted_value: value,
-          user_id: (await supabase.auth.getUser()).data.user?.id
-        }, {
-          onConflict: 'user_id,secret_type'
-        });
-      
-      if (error) throw error;
+      const token = await getAccessToken();
+      const response = await fetch(`${supabase.functions.url}/manage-user-secrets`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ secret_type: secretType, value }),
+      });
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null);
+        throw new Error(payload?.error || 'Failed to save secret');
+      }
+
       await fetchSecrets(); // Refresh the list
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
@@ -57,12 +93,21 @@ export const useUserSecrets = () => {
 
   const deleteSecret = async (secretType: string) => {
     try {
-      const { error } = await supabase
-        .from('user_secrets')
-        .delete()
-        .eq('secret_type', secretType);
-      
-      if (error) throw error;
+      const token = await getAccessToken();
+      const response = await fetch(`${supabase.functions.url}/manage-user-secrets`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ secret_type: secretType }),
+      });
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null);
+        throw new Error(payload?.error || 'Failed to delete secret');
+      }
+
       await fetchSecrets(); // Refresh the list
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
@@ -72,7 +117,7 @@ export const useUserSecrets = () => {
 
   useEffect(() => {
     fetchSecrets();
-  }, []);
+  }, [fetchSecrets]);
 
   return {
     secrets,

@@ -6,11 +6,35 @@ import { Label } from "@/components/ui/label";
 import { Receipt, Plus, Trash2, Loader2, Download, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import type { Database } from "@/integrations/supabase/types";
 
 interface LineItem {
   id: string;
   description: string;
   amount: number;
+  quantity?: number;
+}
+
+type InvoiceRow = Database['public']['Tables']['invoices']['Row'];
+
+interface InvoiceLineItemSummary {
+  description: string;
+  amount: number;
+  quantity?: number;
+}
+
+interface GeneratedInvoiceResponse {
+  invoice: InvoiceRow;
+  invoiceData: {
+    invoiceNumber: string;
+    lineItems: InvoiceLineItemSummary[];
+    subtotal: number;
+    tax: number;
+    total: number;
+    currency: string;
+    balanceDue: number;
+    dueDate: string;
+  };
 }
 
 interface InvoiceGeneratorProps {
@@ -31,12 +55,14 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
 }) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [invoice, setInvoice] = useState<any>(null);
+  const [invoice, setInvoice] = useState<GeneratedInvoiceResponse | null>(null);
   const [lineItems, setLineItems] = useState<LineItem[]>([
     { id: '1', description: 'Performance Fee', amount: bookingDetails.offerAmount || 2500 },
     { id: '2', description: 'Sound & Lighting', amount: 500 },
     { id: '3', description: 'Travel Expenses', amount: 300 }
   ]);
+  const [taxRate, setTaxRate] = useState(0);
+  const [currency, setCurrency] = useState('USD');
 
   const addLineItem = () => {
     setLineItems([...lineItems, { 
@@ -58,20 +84,23 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
     ));
   };
 
-  const calculateTotal = () => {
-    return lineItems.reduce((sum, item) => sum + Number(item.amount || 0), 0);
-  };
+  const calculateSubtotal = () => lineItems.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+  const calculateTax = () => Number((calculateSubtotal() * taxRate).toFixed(2));
+  const calculateTotal = () => Number((calculateSubtotal() + calculateTax()).toFixed(2));
 
   const handleGenerate = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('generate-invoice', {
+      const { data, error } = await supabase.functions.invoke<GeneratedInvoiceResponse>('generate-invoice', {
         body: {
           bookingId,
           lineItems: lineItems.map(item => ({
             description: item.description,
-            amount: item.amount
-          }))
+            amount: item.amount,
+            quantity: 1
+          })),
+          taxRate,
+          currency,
         }
       });
 
@@ -83,15 +112,6 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
         title: "Invoice created!",
         description: `Invoice ${data.invoiceData.invoiceNumber} has been generated.`,
       });
-
-      // Update booking status
-      await supabase
-        .from('venue_bookings')
-        .update({ 
-          status: 'paid',
-          workflow_stage: 'invoice'
-        })
-        .eq('id', bookingId);
 
     } catch (error) {
       console.error('Error generating invoice:', error);
@@ -106,6 +126,10 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
   };
 
   const downloadInvoice = () => {
+    const invoiceLines = invoice.invoiceData.lineItems
+      .map((item) => `${item.description}${item.quantity && item.quantity > 1 ? ` (${item.quantity}x)` : ''}: $${(Number(item.amount) * (item.quantity ?? 1)).toFixed(2)}`)
+      .join('\n');
+
     const invoiceText = `
 INVOICE
 
@@ -115,9 +139,12 @@ Date: ${new Date().toLocaleDateString()}
 Due Date: ${new Date(invoice.invoiceData.dueDate).toLocaleDateString()}
 
 LINE ITEMS:
-${lineItems.map(item => `${item.description}: $${item.amount.toFixed(2)}`).join('\n')}
+${invoiceLines}
 
-TOTAL: $${calculateTotal().toFixed(2)}
+Subtotal: $${invoice.invoiceData.subtotal.toFixed(2)}
+Tax: $${invoice.invoiceData.tax.toFixed(2)}
+TOTAL (${invoice.invoiceData.currency}): $${invoice.invoiceData.total.toFixed(2)}
+Balance Due: $${invoice.invoiceData.balanceDue.toFixed(2)}
 
 Payment Terms: Net 30 days
 `;
@@ -204,13 +231,48 @@ Payment Terms: Net 30 days
                 ))}
               </div>
 
-              {/* Total */}
-              <div className="flex justify-between items-center pt-4 border-t-2 border-primary/30">
+            {/* Invoice Settings */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label className="text-sm text-muted-foreground">Tax Rate (%)</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  max={100}
+                  step={0.1}
+                  value={(taxRate * 100).toString()}
+                  onChange={(e) => setTaxRate(Number(e.target.value) / 100)}
+                  className="mt-1 bg-background border-border"
+                />
+              </div>
+              <div>
+                <Label className="text-sm text-muted-foreground">Currency</Label>
+                <Input
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value.toUpperCase())}
+                  className="mt-1 bg-background border-border uppercase"
+                  maxLength={3}
+                />
+              </div>
+            </div>
+
+            {/* Totals */}
+            <div className="space-y-2 border-t-2 border-primary/30 pt-4">
+              <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <span>Subtotal</span>
+                <span>${calculateSubtotal().toFixed(2)}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <span>Tax ({(taxRate * 100).toFixed(2)}%)</span>
+                <span>${calculateTax().toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between items-center">
                 <span className="text-lg font-semibold text-foreground">Total Amount</span>
                 <span className="text-3xl font-bold text-primary">
                   ${calculateTotal().toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
+            </div>
             </div>
 
             {/* Info */}
@@ -266,26 +328,41 @@ Payment Terms: Net 30 days
 
               {/* Line Items */}
               <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-4 pb-2 border-b border-border">
-                  <p className="text-sm font-semibold text-muted-foreground">Description</p>
+                <div className="grid grid-cols-3 gap-4 pb-2 border-b border-border">
+                  <p className="text-sm font-semibold text-muted-foreground col-span-2">Description</p>
                   <p className="text-sm font-semibold text-muted-foreground text-right">Amount</p>
                 </div>
-                {lineItems.map((item) => (
-                  <div key={item.id} className="grid grid-cols-2 gap-4">
-                    <p className="text-foreground">{item.description}</p>
-                    <p className="font-semibold text-foreground text-right">${item.amount.toFixed(2)}</p>
+                {invoice.invoiceData.lineItems.map((item, index) => (
+                  <div key={index} className="grid grid-cols-3 gap-4">
+                    <p className="text-foreground col-span-2">
+                      {item.description}
+                      {item.quantity && item.quantity > 1 ? ` (${item.quantity}×)` : ''}
+                    </p>
+                    <p className="font-semibold text-foreground text-right">
+                      ${(Number(item.amount) * (item.quantity ?? 1)).toFixed(2)}
+                    </p>
                   </div>
                 ))}
               </div>
 
               {/* Total */}
-              <div className="flex justify-between items-center pt-6 border-t-2 border-primary/30">
-                <span className="text-xl font-bold text-foreground">Total Due</span>
-                <span className="text-3xl font-bold text-primary">${calculateTotal().toFixed(2)}</span>
+              <div className="space-y-2 pt-6 border-t-2 border-primary/30">
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>Subtotal</span>
+                  <span>${invoice.invoiceData.subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>Tax</span>
+                  <span>${invoice.invoiceData.tax.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xl font-bold text-foreground">Total Due ({invoice.invoiceData.currency})</span>
+                  <span className="text-3xl font-bold text-primary">${invoice.invoiceData.total.toFixed(2)}</span>
+                </div>
               </div>
 
               <p className="text-sm text-muted-foreground pt-4">
-                Payment Terms: Net 30 days from invoice date
+                Payment Terms: Net 30 days from invoice date. Balance due: ${invoice.invoiceData.balanceDue.toFixed(2)} {invoice.invoiceData.currency}.
               </p>
             </div>
 
@@ -300,6 +377,8 @@ Payment Terms: Net 30 days
                     { id: '2', description: 'Sound & Lighting', amount: 500 },
                     { id: '3', description: 'Travel Expenses', amount: 300 }
                   ]);
+                  setTaxRate(0);
+                  setCurrency('USD');
                 }}
                 className="flex-1"
               >

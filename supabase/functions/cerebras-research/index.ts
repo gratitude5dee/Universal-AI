@@ -22,19 +22,38 @@ serve(async (req) => {
   try {
     const cerebrasApiKey = Deno.env.get('CEREBRAS_API_KEY');
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
+    const authHeader = req.headers.get('Authorization');
     if (!cerebrasApiKey) {
       throw new Error('CEREBRAS_API_KEY is not configured');
     }
-    if (!supabaseUrl || !supabaseServiceKey) {
+    if (!supabaseUrl || !supabaseAnonKey) {
       throw new Error('Supabase credentials are not configured');
+    }
+    if (!authHeader) {
+      throw new Error('Missing authorization header');
     }
 
     const { query, context, sources = [], sessionId }: ResearchRequest = await req.json();
 
     console.log(`Research request - Session: ${sessionId}, Query: ${query.substring(0, 100)}...`);
 
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: authHeader,
+        },
+      },
+    });
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error('Unauthorized');
+    }
 
     const sessionIdentifier = sessionId || `research_${crypto.randomUUID()}`;
     let sessionRecordId: string | null = null;
@@ -45,6 +64,7 @@ serve(async (req) => {
       .from('research_sessions')
       .select('id')
       .eq('session_identifier', sessionIdentifier)
+      .eq('user_id', user.id)
       .maybeSingle();
 
     if (existingSessionError) {
@@ -59,6 +79,7 @@ serve(async (req) => {
         .from('research_sessions')
         .insert({
           session_identifier: sessionIdentifier,
+          user_id: user.id,
           updated_at: sessionTimestamp,
           last_message_at: sessionTimestamp
         })
@@ -162,7 +183,8 @@ Current research context: ${context || 'General research query'}`;
           updated_at: responseTimestamp,
           last_message_at: responseTimestamp
         })
-        .eq('id', sessionRecordId);
+        .eq('id', sessionRecordId)
+        .eq('user_id', user.id);
 
       if (updateSessionError) {
         console.error('Error updating research session timestamps:', updateSessionError);

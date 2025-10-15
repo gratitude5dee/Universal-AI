@@ -102,67 +102,75 @@ const PromptPanel = ({ selectedNode, nodes, boardId, onUpdateNode, onAddAIRespon
 
       console.log('Generating with lineage:', updatedLineage);
 
-      // Call the Cerebras Edge Function
-      const { data, error } = await supabase.functions.invoke('cerebras-stream', {
-        body: {
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session?.access_token) {
+        throw new Error('Unable to authenticate request');
+      }
+
+      const response = await fetch(`${supabase.functions.url}/cerebras-stream`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           boardId,
           lineage: updatedLineage,
           model,
           temperature: temperature[0],
-          maxTokens: maxTokens[0]
-        }
+          maxTokens: maxTokens[0],
+        }),
       });
 
-      if (error) {
-        throw error;
+      if (!response.ok || !response.body) {
+        const errorPayload = await response.text();
+        throw new Error(errorPayload || 'Unable to start AI stream');
       }
 
-      // Handle streaming response
-      if (data && data.body) {
-        const reader = data.body.getReader();
-        const decoder = new TextDecoder();
-        let fullResponse = '';
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullResponse = '';
 
-        // Update current node with user input
-        if (prompt !== selectedNode.data?.text) {
-          onUpdateNode(selectedNode.id, prompt);
-        }
+      // Update current node with user input
+      if (prompt !== selectedNode.data?.text) {
+        onUpdateNode(selectedNode.id, prompt);
+      }
 
-        // Create temporary AI response node
-        const tempResponseId = `ai-${Date.now()}`;
-        onAddAIResponse(selectedNode.id, '');
+      // Create temporary AI response node
+      onAddAIResponse(selectedNode.id, '');
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-          const chunk = decoder.decode(value);
-          const lines = chunk.split('\n').filter(line => line.trim() !== '');
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n').filter(line => line.trim() !== '');
 
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const data = line.slice(6);
-              if (data === '[DONE]') {
-                toast({
-                  title: "Generation Complete",
-                  description: "AI response has been generated successfully"
-                });
-                return;
-              }
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
 
-              try {
-                const parsed = JSON.parse(data);
-                if (parsed.choices && parsed.choices[0]?.delta?.content) {
-                  const content = parsed.choices[0].delta.content;
-                  fullResponse += content;
-                  
-                  // Update the AI response node with streaming content
-                  onAddAIResponse(selectedNode.id, fullResponse);
-                }
-              } catch (e) {
-                console.error('Error parsing stream chunk:', e);
-              }
+          const data = line.slice(6);
+          if (data === '[DONE]') {
+            toast({
+              title: "Generation Complete",
+              description: "AI response has been generated successfully",
+            });
+            return;
+          }
+
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.choices && parsed.choices[0]?.delta?.content) {
+              const content = parsed.choices[0].delta.content;
+              fullResponse += content;
+              onAddAIResponse(selectedNode.id, fullResponse);
             }
+          } catch (e) {
+            console.error('Error parsing stream chunk:', e);
           }
         }
       }
