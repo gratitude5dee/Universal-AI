@@ -14,29 +14,20 @@ interface LineItem {
   quantity?: number;
 }
 
-interface EditableLineItem extends LineItem {
-  id: string;
+interface InvoiceTotals {
+  subtotal: number;
+  tax: number;
+  total: number;
+  balanceDue: number;
 }
 
-interface GeneratedInvoiceResponse {
+interface InvoiceResponse {
+  invoiceId: string;
   invoiceNumber: string;
   dueDate: string;
-  status: string;
   currency: string;
-  totals: {
-    subtotal: number;
-    tax: number;
-    total: number;
-  };
-  invoiceData: {
-    lineItems: LineItem[];
-    subtotal: number;
-    tax: number;
-    total: number;
-    balanceDue: number;
-    paymentStatus: string;
-    currency: string;
-  };
+  totals: InvoiceTotals;
+  lineItems: Array<{ description: string; amount: number; quantity?: number }>;
 }
 
 interface InvoiceGeneratorProps {
@@ -49,6 +40,10 @@ interface InvoiceGeneratorProps {
   };
 }
 
+const SUPABASE_URL =
+  import.meta.env.VITE_SUPABASE_URL ??
+  "https://ixkkrousepsiorwlaycp.supabase.co";
+
 export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
   open,
   onOpenChange,
@@ -57,14 +52,25 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
 }) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [invoice, setInvoice] = useState<GeneratedInvoiceResponse | null>(null);
-  const [lineItems, setLineItems] = useState<EditableLineItem[]>([
-    { id: '1', description: 'Performance Fee', amount: bookingDetails.offerAmount || 2500, quantity: 1 },
-    { id: '2', description: 'Sound & Lighting', amount: 500, quantity: 1 },
-    { id: '3', description: 'Travel Expenses', amount: 300, quantity: 1 }
+  const [invoice, setInvoice] = useState<InvoiceResponse | null>(null);
+  const [lineItems, setLineItems] = useState<LineItem[]>([
+    { id: "1", description: "Performance Fee", amount: bookingDetails.offerAmount || 2500, quantity: 1 },
+    { id: "2", description: "Sound & Lighting", amount: 500, quantity: 1 },
+    { id: "3", description: "Travel Expenses", amount: 300, quantity: 1 }
   ]);
-  const [taxRate, setTaxRate] = useState(0);
-  const [currency, setCurrency] = useState('USD');
+  const [taxRate, setTaxRate] = useState<number>(0);
+
+  const calculatedTotals = useMemo(() => {
+    const subtotal = lineItems.reduce((sum, item) => sum + (Number(item.amount) || 0) * (item.quantity ?? 1), 0);
+    const tax = subtotal * (taxRate / 100);
+    const total = subtotal + tax;
+    return {
+      subtotal,
+      tax,
+      total,
+      balanceDue: total
+    };
+  }, [lineItems, taxRate]);
 
   const addLineItem = () => {
     setLineItems((prev) => [
@@ -73,23 +79,28 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
         id: Date.now().toString(),
         description: "",
         amount: 0,
-        quantity: 1,
-      },
+        quantity: 1
+      }
     ]);
   };
 
   const removeLineItem = (id: string) => {
-    setLineItems((prev) => (prev.length > 1 ? prev.filter((item) => item.id !== id) : prev));
+    if (lineItems.length > 1) {
+      setLineItems((prev) => prev.filter((item) => item.id !== id));
+    }
   };
 
-  const updateLineItem = (id: string, field: 'description' | 'amount' | 'quantity', value: string | number) => {
-    setLineItems(lineItems.map((item: EditableLineItem) =>
-      item.id === id ? { ...item, [field]: value } : item
-    ));
-  };
-
-  const calculateSubtotal = () => {
-    return lineItems.reduce((sum, item) => sum + Number(item.amount || 0) * (item.quantity || 1), 0);
+  const updateLineItem = (id: string, field: keyof LineItem, value: string | number) => {
+    setLineItems((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              [field]: field === "description" ? value : Number(value) || 0
+            }
+          : item
+      )
+    );
   };
 
   const calculateTax = () => {
@@ -109,37 +120,50 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
   const handleGenerate = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke<GeneratedInvoiceResponse>('generate-invoice', {
-        body: {
-          bookingId,
-          lineItems: lineItems.map((item) => ({
-            description: item.description,
-            amount: item.amount,
-            quantity: item.quantity || 1
-          }))
-        }
-      });
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
 
-      if (error) throw error;
-
-      if (!data) {
-        throw new Error('Invoice service returned no data');
+      const accessToken = sessionData.session?.access_token;
+      if (!accessToken) {
+        throw new Error("No active session found. Please sign in again.");
       }
 
-      setInvoice(data);
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/generate-invoice`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          bookingId,
+          taxRate,
+          lineItems: lineItems.map(({ description, amount, quantity }) => ({
+            description,
+            amount,
+            quantity: quantity ?? 1
+          }))
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to create invoice");
+      }
+
+      const payload: InvoiceResponse = await response.json();
+      setInvoice(payload);
 
       toast({
         title: "Invoice created!",
-        description: `Invoice ${data.invoiceNumber} has been generated.`,
+        description: `Invoice ${payload.invoiceNumber} has been generated.`,
       });
-
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error generating invoice:", error);
-      const message = error instanceof Error ? error.message : "Failed to create invoice. Please try again.";
+      const message = error instanceof Error ? error.message : 'Failed to create invoice. Please try again.';
       toast({
         title: "Generation failed",
         description: message,
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
@@ -148,6 +172,8 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
 
   const downloadInvoice = () => {
     if (!invoice) return;
+
+    const totals = invoice?.totals ?? calculatedTotals;
     const invoiceText = `
 INVOICE
 
@@ -157,11 +183,12 @@ Date: ${new Date().toLocaleDateString()}
 Due Date: ${new Date(invoice.dueDate).toLocaleDateString()}
 
 LINE ITEMS:
-${invoice.invoiceData.lineItems.map((item: LineItem) => `${item.description} x${item.quantity ?? 1}: $${item.amount.toFixed(2)}`).join('\n')}
+${invoice.lineItems.map((item) => `${item.description} (${item.quantity ?? 1}x): $${item.amount.toFixed(2)}`).join("\n")}
 
-Subtotal: $${invoice.invoiceData.subtotal.toFixed(2)}
-Tax: $${invoice.invoiceData.tax.toFixed(2)}
-TOTAL DUE: $${invoice.invoiceData.total.toFixed(2)}
+Subtotal: $${totals.subtotal.toFixed(2)}
+Tax: $${totals.tax.toFixed(2)}
+TOTAL: $${totals.total.toFixed(2)} ${invoice.currency}
+Balance Due: $${totals.balanceDue.toFixed(2)}
 
 Balance Due: $${invoice.invoiceData.balanceDue.toFixed(2)} (${invoice.invoiceData.paymentStatus})
 Payment Terms: Net 30 days
@@ -182,6 +209,8 @@ Payment Terms: Net 30 days
       description: "Invoice saved to your downloads",
     });
   };
+
+  const invoiceTotals = invoice?.totals ?? calculatedTotals;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -211,10 +240,7 @@ Payment Terms: Net 30 days
 
               <div className="space-y-3 max-h-[350px] overflow-y-auto pr-2">
                 {lineItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex gap-3 items-start p-3 bg-background/50 rounded-lg border border-border"
-                  >
+                  <div key={item.id} className="flex gap-3 items-start p-3 bg-background/50 rounded-lg border border-border">
                     <div className="flex-1 space-y-2">
                       <Input
                         placeholder="Description (e.g., Performance Fee)"
@@ -222,34 +248,24 @@ Payment Terms: Net 30 days
                         onChange={(e) => updateLineItem(item.id, "description", e.target.value)}
                         className="bg-background border-border"
                       />
-                      <Input
-                        type="number"
-                        placeholder="Quantity"
-                        value={item.quantity ?? 1}
-                        onChange={(e) => updateLineItem(item.id, "quantity", parseFloat(e.target.value) || 1)}
-                        min={1}
-                        className="bg-background border-border"
-                      />
-                    </div>
-                    <div className="w-24">
-                      <Input
-                        type="number"
-                        min={1}
-                        placeholder="Qty"
-                        value={item.quantity ?? 1}
-                        onChange={(e) => updateLineItem(item.id, 'quantity', parseInt(e.target.value, 10) || 1)}
-                        className="bg-background border-border"
-                      />
-                    </div>
-                    <div className="w-32">
-                      <Input
-                        type="number"
-                        placeholder="0.00"
-                        value={item.amount || ""}
-                        onChange={(e) => updateLineItem(item.id, "amount", parseFloat(e.target.value) || 0)}
-                        className="bg-background border-border"
-                        step="0.01"
-                      />
+                      <div className="flex gap-2">
+                        <Input
+                          type="number"
+                          placeholder="0.00"
+                          value={item.amount || ""}
+                          onChange={(e) => updateLineItem(item.id, "amount", parseFloat(e.target.value) || 0)}
+                          className="bg-background border-border"
+                          step="0.01"
+                        />
+                        <Input
+                          type="number"
+                          placeholder="Qty"
+                          value={item.quantity ?? 1}
+                          onChange={(e) => updateLineItem(item.id, "quantity", parseInt(e.target.value, 10) || 1)}
+                          className="bg-background border-border w-24"
+                          min={1}
+                        />
+                      </div>
                     </div>
                     {lineItems.length > 1 && (
                       <Button
@@ -265,181 +281,108 @@ Payment Terms: Net 30 days
                   </div>
                 ))}
               </div>
+            </div>
+            </div>
 
-            {/* Invoice Settings */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-background/40 p-4 rounded-lg border border-border">
               <div>
-                <Label className="text-sm text-muted-foreground">Tax Rate (%)</Label>
+                <p className="text-sm text-muted-foreground">Subtotal</p>
+                <p className="text-lg font-semibold">${invoiceTotals.subtotal.toFixed(2)}</p>
+              </div>
+              <div>
+                <Label className="text-sm text-muted-foreground">Tax %</Label>
                 <Input
                   type="number"
-                  min={0}
-                  max={100}
-                  step={0.1}
-                  value={(taxRate * 100).toString()}
-                  onChange={(e) => setTaxRate(Number(e.target.value) / 100)}
+                  value={taxRate}
+                  onChange={(e) => setTaxRate(parseFloat(e.target.value) || 0)}
                   className="mt-1 bg-background border-border"
                 />
+                <p className="text-xs text-muted-foreground mt-1">Tax: ${invoiceTotals.tax.toFixed(2)}</p>
               </div>
               <div>
-                <Label className="text-sm text-muted-foreground">Currency</Label>
-                <Input
-                  value={currency}
-                  onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-                  className="mt-1 bg-background border-border uppercase"
-                  maxLength={3}
-                />
+                <p className="text-sm text-muted-foreground">Total</p>
+                <p className="text-lg font-semibold">${invoiceTotals.total.toFixed(2)}</p>
               </div>
             </div>
 
-            {/* Totals */}
-            <div className="space-y-2 border-t-2 border-primary/30 pt-4">
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span>Subtotal</span>
-                <span>${calculateSubtotal().toFixed(2)}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span>Tax ({(taxRate * 100).toFixed(2)}%)</span>
-                <span>${calculateTax().toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-lg font-semibold text-foreground">Total Amount</span>
-                <span className="text-3xl font-bold text-primary">
-                  ${draftTotals.total.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </span>
-              </div>
-            </div>
-            </div>
-
-            <div className="bg-muted/30 border border-border rounded-lg p-4">
-              <p className="text-sm text-muted-foreground">
-                Invoice will be created with a 30-day payment term and saved to the booking record.
-              </p>
-            </div>
-
-            <Button onClick={handleGenerate} disabled={loading} className="w-full">
+            <Button
+              type="button"
+              onClick={handleGenerate}
+              disabled={loading}
+              className="w-full"
+            >
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating...
+                  Generating Invoice
                 </>
               ) : (
-                "Generate Invoice"
+                <>
+                  <FileText className="mr-2 h-4 w-4" />
+                  Generate Invoice
+                </>
               )}
             </Button>
           </div>
         ) : (
           <div className="space-y-6 py-4">
-            <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
-              <div>
-                <h3 className="text-lg font-semibold text-foreground">Invoice Details</h3>
-                <p className="text-sm text-muted-foreground">Invoice #{invoice.invoiceNumber}</p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Venue</p>
-                  <p className="font-medium text-foreground">{bookingDetails.venueName}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Due Date</p>
-                  <p className="font-medium text-foreground">{new Date(invoice.dueDate).toLocaleDateString()}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Status</p>
-                  <p className="font-medium capitalize text-foreground">{invoice.status}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Currency</p>
-                  <p className="font-medium text-foreground">{invoice.currency.toUpperCase()}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Total Amount</p>
-                  <p className="text-2xl font-bold text-primary">${invoice.totals.total.toFixed(2)}</p>
-                </div>
-              </div>
+            <div className="bg-background/40 border border-border rounded-lg p-4 space-y-2">
+              <p className="text-sm text-muted-foreground">Invoice Number</p>
+              <p className="text-lg font-semibold">{invoice.invoiceNumber}</p>
+              <p className="text-sm text-muted-foreground">Due Date</p>
+              <p className="text-lg font-semibold">{new Date(invoice.dueDate).toLocaleDateString()}</p>
             </div>
 
-            <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
-              <div className="flex items-center justify-between">
-                <h4 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary" />
-                  Line Items
-                </h4>
-                <Button variant="outline" size="sm" onClick={downloadInvoice}>
-                  <Download className="h-4 w-4 mr-2" />
-                  Download Summary
-                </Button>
-              </div>
-
-              <div className="space-y-3">
-                <div className="grid grid-cols-3 gap-4 pb-2 border-b border-border">
-                  <p className="text-sm font-semibold text-muted-foreground col-span-2">Description</p>
-                  <p className="text-sm font-semibold text-muted-foreground text-right">Amount</p>
-                </div>
-                {invoice.invoiceData.lineItems.map((item: LineItem, index: number) => (
-                  <div key={`${item.description}-${index}`} className="grid grid-cols-2 gap-4">
-                    <p className="text-foreground">
-                      {item.description}
-                      <span className="block text-xs text-muted-foreground">Qty: {item.quantity ?? 1}</span>
-                    </p>
-                    <p className="font-semibold text-foreground text-right">
-                      ${item.amount.toFixed(2)}
-                    </p>
+            <div className="space-y-3">
+              <h4 className="font-semibold text-foreground">Line Items</h4>
+              <div className="space-y-2">
+                {invoice.lineItems.map((item, index) => (
+                  <div key={`${item.description}-${index}`} className="flex items-center justify-between bg-background/40 border border-border rounded-md px-3 py-2">
+                    <div>
+                      <p className="font-medium text-foreground">{item.description}</p>
+                      <p className="text-xs text-muted-foreground">Qty: {item.quantity ?? 1}</p>
+                    </div>
+                    <p className="font-semibold text-foreground">${item.amount.toFixed(2)}</p>
                   </div>
                 ))}
               </div>
-
-              {/* Total */}
-              <div className="flex justify-between items-center pt-6 border-t-2 border-primary/30">
-                <span className="text-xl font-bold text-foreground">Total Due</span>
-                <span className="text-3xl font-bold text-primary">${invoice.invoiceData.total.toFixed(2)}</span>
-              </div>
-
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>Subtotal</span>
-                <span>${invoice.invoiceData.subtotal.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>Tax</span>
-                <span>${invoice.invoiceData.tax.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between text-sm font-semibold text-foreground">
-                <span>Balance Due</span>
-                <span>${invoice.invoiceData.balanceDue.toFixed(2)} ({invoice.invoiceData.paymentStatus})</span>
-              </div>
-
-              <p className="text-sm text-muted-foreground pt-4">
-                Payment Terms: Net 30 days from invoice date. Balance due: ${invoice.invoiceData.balanceDue.toFixed(2)} {invoice.invoiceData.currency}.
-              </p>
             </div>
 
-            {/* Action Buttons */}
+            <div className="bg-background/40 border border-border rounded-lg p-4 space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span className="font-medium">${invoiceTotals.subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Tax</span>
+                <span className="font-medium">${invoiceTotals.tax.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-base font-semibold">
+                <span>Total</span>
+                <span>${invoiceTotals.total.toFixed(2)} {invoice.currency}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Balance Due</span>
+                <span className="font-medium">${invoiceTotals.balanceDue.toFixed(2)}</span>
+              </div>
+            </div>
+
             <div className="flex gap-3">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setInvoice(null);
-                  setLineItems([
-                    { id: '1', description: 'Performance Fee', amount: bookingDetails.offerAmount || 2500, quantity: 1 },
-                    { id: '2', description: 'Sound & Lighting', amount: 500, quantity: 1 },
-                    { id: '3', description: 'Travel Expenses', amount: 300, quantity: 1 }
-                  ]);
-                  setTaxRate(0);
-                  setCurrency('USD');
-                }}
-                className="flex-1"
-              >
-                Create New Invoice
+              <Button type="button" className="flex-1" onClick={downloadInvoice}>
+                <Download className="mr-2 h-4 w-4" />
+                Download Invoice
               </Button>
               <Button
-                onClick={downloadInvoice}
+                type="button"
+                variant="secondary"
                 className="flex-1"
+                onClick={() => {
+                  setInvoice(null);
+                  setLoading(false);
+                }}
               >
-                <Download className="h-4 w-4 mr-2" />
-                Download Invoice
+                <Plus className="mr-2 h-4 w-4" />
+                Create Another
               </Button>
             </div>
           </div>

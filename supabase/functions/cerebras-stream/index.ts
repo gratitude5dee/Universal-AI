@@ -8,18 +8,6 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
-const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
-const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Supabase environment variables are not configured for cerebras-stream');
-}
-
-if (!supabaseServiceRoleKey) {
-  console.warn('[cerebras-stream] SUPABASE_SERVICE_ROLE_KEY is not configured; falling back to client-side getUser');
-}
-
 interface Node {
   id: string;
   data: {
@@ -47,19 +35,23 @@ serve(async (req) => {
       throw new Error('Missing authorization header');
     }
 
-    const token = authHeader.replace('Bearer ', '').trim();
-
-    const supabaseAdmin = supabaseServiceRoleKey
-      ? createClient(supabaseUrl, supabaseServiceRoleKey)
-      : null;
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase credentials are not configured');
+    }
 
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } }
+      global: {
+        headers: {
+          Authorization: authHeader,
+        },
+      },
     });
 
-    const { data: { user }, error: userError } = supabaseAdmin
-      ? await supabaseAdmin.auth.getUser(token)
-      : await supabase.auth.getUser();
+    const accessToken = authHeader.replace('Bearer ', '').trim();
+
+    const { data: { user }, error: userError } = await supabase.auth.getUser(accessToken);
 
     if (userError || !user) {
       throw new Error('Invalid authorization token');
@@ -83,13 +75,21 @@ serve(async (req) => {
       throw new Error('Board not found or access denied');
     }
 
-    const { data: collaborator } = await supabase
+    // Check if user is owner or collaborator
+    const { data: collaborator, error: collaboratorError } = await supabase
       .from('board_collaborators')
       .select('id')
       .eq('board_id', boardId)
       .eq('user_id', user.id)
       .eq('status', 'accepted')
       .maybeSingle();
+
+    if (collaboratorError && collaboratorError.code !== 'PGRST116') {
+      console.error('Error checking collaborator access:', collaboratorError);
+      throw new Error('Failed to verify board access');
+    }
+
+    const hasAccess = board.user_id === user.id || Boolean(collaborator);
 
     const hasAccess = board.user_id === user.id || Boolean(collaborator);
     if (!hasAccess) {

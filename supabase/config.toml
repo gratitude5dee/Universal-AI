@@ -12,6 +12,9 @@ verify_jwt = true
 [functions.cerebras-research]
 verify_jwt = true
 
+[functions.cerebras-stream]
+verify_jwt = true
+
 [functions.venue-ai-search]
 verify_jwt = false
 
@@ -28,4 +31,7 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.research-sessions]
+verify_jwt = true
+
+[functions.manage-user-secrets]
 verify_jwt = true

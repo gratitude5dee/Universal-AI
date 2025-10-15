@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -11,10 +11,11 @@ export interface ContentItem {
   file_type: 'audio' | 'video' | 'image' | 'document';
   file_size?: number;
   file_url?: string;
-  storage_path?: string;
+  storage_path?: string | null;
+  signed_url?: string | null;
   thumbnail_url?: string;
   metadata: Record<string, unknown> | null;
-  tags: string[];
+  tags: string[] | null;
   qr_code_data?: string;
   created_at: string;
   updated_at: string;
@@ -39,6 +40,13 @@ export interface ContentFolder {
   updated_at: string;
 }
 
+const getFileType = (mimeType: string): 'audio' | 'video' | 'image' | 'document' => {
+  if (mimeType.startsWith('audio/')) return 'audio';
+  if (mimeType.startsWith('video/')) return 'video';
+  if (mimeType.startsWith('image/')) return 'image';
+  return 'document';
+};
+
 export const useContentManager = () => {
   const [contentItems, setContentItems] = useState<ContentItem[]>([]);
   const [folders, setFolders] = useState<ContentFolder[]>([]);
@@ -46,61 +54,46 @@ export const useContentManager = () => {
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
-  const hydrateItemsWithSignedUrls = async (items: ContentItem[]) => {
-    const storagePaths = items
-      .map((item) => {
-        if (item.storage_path) {
-          return item.storage_path;
-        }
+  const enrichWithSignedUrls = useCallback(async (items: ContentItem[]): Promise<ContentItem[]> => {
+    if (items.length === 0) return [];
 
-        const metadataPath = item.metadata && typeof item.metadata.storage_path === 'string'
-          ? item.metadata.storage_path
-          : undefined;
-
-        return metadataPath;
-      })
+    const paths = items
+      .map(item => item.storage_path || null)
       .filter((path): path is string => Boolean(path));
 
-    if (storagePaths.length === 0) {
-      return items.map((item) => ({ ...item, signed_url: null }));
+    if (paths.length === 0) {
+      return items.map(item => ({
+        ...item,
+        signed_url: item.storage_path ? null : item.file_url ?? null
+      }));
     }
 
-    const uniquePaths = Array.from(new Set(storagePaths));
-
-    const { data: signed, error: signedError } = await supabase.storage
+    const { data: signedData, error: signedError } = await supabase.storage
       .from('content-library')
-      .createSignedUrls(uniquePaths, 60 * 60);
+      .createSignedUrls(paths, 60 * 60);
 
     if (signedError) {
-      throw signedError;
+      console.error('Error creating signed URLs:', signedError);
+      return items.map(item => ({
+        ...item,
+        signed_url: item.storage_path ? null : item.file_url ?? null
+      }));
     }
 
-    const pathToUrl = (signed ?? []).reduce<Record<string, string>>((acc, current, index) => {
-      const path = uniquePaths[index];
-      if (current?.signedUrl) {
-        acc[path] = current.signedUrl;
-      }
-      return acc;
-    }, {});
+    const signedUrlMap = new Map<string, string | null>(
+      (signedData ?? []).map((entry) => [entry.path, entry.signedUrl ?? null])
+    );
 
-    return items.map((item) => {
-      const metadataPath = item.metadata && typeof item.metadata.storage_path === 'string'
-        ? item.metadata.storage_path
-        : undefined;
-      const storagePath = item.storage_path || metadataPath || null;
-      return {
-        ...item,
-        storage_path: storagePath,
-        signed_url: storagePath ? pathToUrl[storagePath] ?? null : null,
-      };
-    });
-  };
+    return items.map(item => ({
+      ...item,
+      signed_url: item.storage_path ? signedUrlMap.get(item.storage_path) ?? null : item.file_url ?? null
+    }));
+  }, []);
 
-  // Fetch content items and folders
-  const fetchContent = async () => {
+  const fetchContent = useCallback(async () => {
     try {
       setLoading(true);
-      
+
       const [itemsResponse, foldersResponse] = await Promise.all([
         supabase
           .from('content_items')
@@ -115,47 +108,21 @@ export const useContentManager = () => {
       if (itemsResponse.error) throw itemsResponse.error;
       if (foldersResponse.error) throw foldersResponse.error;
 
-      const rawItems = (itemsResponse.data as ContentItem[]) || [];
-      const itemsWithSignedUrls = await Promise.all(
-        rawItems.map(async (item) => {
-          const storagePath = item.storage_path || item.file_url || '';
-
-          if (!storagePath) {
-            return { ...item, tags: item.tags || [], storage_path: item.storage_path };
-          }
-
-          const { data: signedData, error: signedError } = await supabase.storage
-            .from('content-library')
-            .createSignedUrl(storagePath, 60 * 60);
-
-          if (signedError) {
-            console.error('Error generating signed URL:', signedError);
-          }
-
-          return {
-            ...item,
-            tags: item.tags || [],
-            storage_path: storagePath,
-            file_url: signedData?.signedUrl ?? item.file_url,
-          } as ContentItem;
-        })
-      );
-
-      setContentItems(itemsWithSignedUrls);
+      const items = (itemsResponse.data as ContentItem[]) || [];
+      setContentItems(await enrichWithSignedUrls(items));
       setFolders((foldersResponse.data as ContentFolder[]) || []);
     } catch (error) {
       console.error('Error fetching content:', error);
       toast({
-        title: "Error",
-        description: "Failed to load content. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to load content. Please try again.',
+        variant: 'destructive'
       });
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast, enrichWithSignedUrls]);
 
-  // Upload file to Supabase Storage
   const uploadFile = async (
     file: File,
     folderId?: string
@@ -170,12 +137,10 @@ export const useContentManager = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
-      // Create file path with user ID
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
       const filePath = `${user.id}/${fileName}`;
 
-      // Upload file to storage
       const { error: uploadError } = await supabase.storage
         .from('content-library')
         .upload(filePath, file, {
@@ -184,16 +149,8 @@ export const useContentManager = () => {
 
       if (uploadError) throw uploadError;
 
-      const { data: signedData, error: signedError } = await supabase.storage
-        .from('content-library')
-        .createSignedUrl(filePath, 60 * 60);
-
-      if (signedError) throw signedError;
-
-      // Determine file type
       const fileType = getFileType(file.type);
 
-      // Create content item record
       const { error: insertError } = await supabase
         .from('content_items')
         .insert({
@@ -202,7 +159,6 @@ export const useContentManager = () => {
           title: file.name,
           file_type: fileType,
           file_size: file.size,
-          file_url: signedData?.signedUrl ?? null,
           storage_path: filePath,
           metadata: {
             original_name: file.name,
@@ -216,20 +172,23 @@ export const useContentManager = () => {
       if (insertError) throw insertError;
 
       toast({
-        title: "Success",
-        description: "File uploaded successfully!"
+        title: 'Success',
+        description: 'File uploaded successfully!'
       });
 
-      // Refresh content
+      const { data: signedData } = await supabase.storage
+        .from('content-library')
+        .createSignedUrl(filePath, 60 * 60);
+
       await fetchContent();
 
       return { signedUrl: signedData?.signedUrl ?? '', filePath, fileType };
     } catch (error) {
       console.error('Error uploading file:', error);
       toast({
-        title: "Upload Error",
-        description: "Failed to upload file. Please try again.",
-        variant: "destructive"
+        title: 'Upload Error',
+        description: 'Failed to upload file. Please try again.',
+        variant: 'destructive'
       });
       return null;
     } finally {
@@ -237,7 +196,6 @@ export const useContentManager = () => {
     }
   };
 
-  // Create new folder
   const createFolder = async (name: string, description?: string, parentFolderId?: string) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -255,22 +213,21 @@ export const useContentManager = () => {
       if (error) throw error;
 
       toast({
-        title: "Success",
-        description: "Folder created successfully!"
+        title: 'Success',
+        description: 'Folder created successfully!'
       });
 
       await fetchContent();
     } catch (error) {
       console.error('Error creating folder:', error);
       toast({
-        title: "Error",
-        description: "Failed to create folder. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to create folder. Please try again.',
+        variant: 'destructive'
       });
     }
   };
 
-  // Delete content item
   const deleteContentItem = async (id: string) => {
     try {
       const { data: item, error: fetchError } = await supabase
@@ -299,22 +256,21 @@ export const useContentManager = () => {
       if (error) throw error;
 
       toast({
-        title: "Success",
-        description: "Content item deleted successfully!"
+        title: 'Success',
+        description: 'Content item deleted successfully!'
       });
 
       await fetchContent();
     } catch (error) {
       console.error('Error deleting content item:', error);
       toast({
-        title: "Error",
-        description: "Failed to delete content item.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to delete content item.',
+        variant: 'destructive'
       });
     }
   };
 
-  // Search content items
   const searchContent = async (query: string, fileType?: string) => {
     try {
       let searchQuery = supabase
@@ -334,29 +290,26 @@ export const useContentManager = () => {
 
       if (error) throw error;
 
-      const hydrated = await hydrateItemsWithSignedUrls((data as ContentItem[]) || []);
-      setContentItems(hydrated);
+      const items = (data as ContentItem[]) || [];
+      setContentItems(await enrichWithSignedUrls(items));
     } catch (error) {
       console.error('Error searching content:', error);
       toast({
-        title: "Search Error",
-        description: "Failed to search content.",
-        variant: "destructive"
+        title: 'Search Error',
+        description: 'Failed to search content.',
+        variant: 'destructive'
       });
     }
   };
 
-  // Add content via QR code
   const addQRContent = async (qrData: string, title: string, description?: string) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
-      // Try to determine if QR data is a URL or contains file info
       let fileType: 'audio' | 'video' | 'image' | 'document' = 'document';
       const fileUrl = qrData;
 
-      // Simple URL validation and type detection
       if (qrData.includes('youtube.com') || qrData.includes('youtu.be')) {
         fileType = 'video';
       } else if (qrData.includes('spotify.com') || qrData.includes('soundcloud.com')) {
@@ -392,32 +345,24 @@ export const useContentManager = () => {
       if (error) throw error;
 
       toast({
-        title: "Success",
-        description: "Content added from QR code!"
+        title: 'Success',
+        description: 'Content added from QR code!'
       });
 
       await fetchContent();
     } catch (error) {
       console.error('Error adding QR content:', error);
       toast({
-        title: "QR Import Error",
-        description: "Failed to add content from QR code.",
-        variant: "destructive"
+        title: 'QR Import Error',
+        description: 'Failed to add content from QR code.',
+        variant: 'destructive'
       });
     }
   };
 
-  // Helper function to determine file type from MIME type
-  const getFileType = (mimeType: string): 'audio' | 'video' | 'image' | 'document' => {
-    if (mimeType.startsWith('audio/')) return 'audio';
-    if (mimeType.startsWith('video/')) return 'video';
-    if (mimeType.startsWith('image/')) return 'image';
-    return 'document';
-  };
-
   useEffect(() => {
     fetchContent();
-  }, []);
+  }, [fetchContent]);
 
   return {
     contentItems,

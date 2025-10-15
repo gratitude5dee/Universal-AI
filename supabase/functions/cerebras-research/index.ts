@@ -34,43 +34,40 @@ serve(async (req) => {
   }
 
   try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+    const cerebrasApiKey = Deno.env.get('CEREBRAS_API_KEY');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
+    if (!cerebrasApiKey) {
+      throw new Error('CEREBRAS_API_KEY is not configured');
+    }
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase credentials are not configured');
     }
 
-    const token = authHeader.replace('Bearer ', '').trim();
-
-    const supabaseAdmin = supabaseServiceRoleKey
-      ? createClient(supabaseUrl, supabaseServiceRoleKey)
-      : null;
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      throw new Error('Missing authorization header');
+    }
 
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } }
+      global: {
+        headers: {
+          Authorization: authHeader,
+        },
+      },
     });
 
-    const { data: { user }, error: authError } = supabaseAdmin
-      ? await supabaseAdmin.auth.getUser(token)
-      : await supabase.auth.getUser();
-
+    const accessToken = authHeader.replace('Bearer ', '').trim();
+    const { data: { user }, error: authError } = await supabase.auth.getUser(accessToken);
     if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      throw new Error('Invalid authorization token');
     }
 
     const { query, context, sources = [], sessionId }: ResearchRequest = await req.json();
 
-    if (!query?.trim()) {
-      return new Response(JSON.stringify({ error: 'Query is required' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
+    let sessionIdentifier = sessionId || `research_${crypto.randomUUID()}`;
+    console.log(`Research request - Session: ${sessionIdentifier}, Query: ${query.substring(0, 100)}...`);
+    let sessionRecordId: string | null = null;
 
     const sessionIdentifier = sessionId || `research_${crypto.randomUUID()}`;
     const sessionTimestamp = new Date().toISOString();
@@ -89,15 +86,12 @@ serve(async (req) => {
       throw new Error('Failed to load research session');
     }
 
-    if (existingSession) {
-      if (existingSession.user_id !== user.id) {
-        return new Response(JSON.stringify({ error: 'Access denied to research session' }), {
-          status: 403,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
-      }
+    if (existingSession && existingSession.user_id === user.id) {
       sessionRecordId = existingSession.id;
     } else {
+      if (existingSession && existingSession.user_id !== user.id) {
+        sessionIdentifier = `research_${crypto.randomUUID()}`;
+      }
       const { data: createdSession, error: createSessionError } = await supabase
         .from('research_sessions')
         .insert({

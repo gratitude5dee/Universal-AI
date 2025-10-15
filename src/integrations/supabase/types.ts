@@ -1463,8 +1463,12 @@ export type Database = {
           gig_id: string
           id: string
           invoice_number: string | null
+          line_items: Json
+          currency: string
+          tax_amount: number
+          balance_due: number
           notes: string | null
-          paid_date: string | null
+          paid_at: string | null
           payment_method: string | null
           status: string | null
           updated_at: string | null
@@ -1476,8 +1480,12 @@ export type Database = {
           gig_id: string
           id?: string
           invoice_number?: string | null
+          line_items?: Json
+          currency?: string
+          tax_amount?: number
+          balance_due?: number
           notes?: string | null
-          paid_date?: string | null
+          paid_at?: string | null
           payment_method?: string | null
           status?: string | null
           updated_at?: string | null
@@ -1489,8 +1497,12 @@ export type Database = {
           gig_id?: string
           id?: string
           invoice_number?: string | null
+          line_items?: Json
+          currency?: string
+          tax_amount?: number
+          balance_due?: number
           notes?: string | null
-          paid_date?: string | null
+          paid_at?: string | null
           payment_method?: string | null
           status?: string | null
           updated_at?: string | null
@@ -3113,6 +3125,7 @@ export type Database = {
         Row: {
           created_at: string
           encrypted_value: string
+          encryption_iv: string | null
           id: string
           secret_type: string
           updated_at: string
@@ -3121,6 +3134,7 @@ export type Database = {
         Insert: {
           created_at?: string
           encrypted_value: string
+          encryption_iv?: string | null
           id?: string
           secret_type: string
           updated_at?: string
@@ -3129,6 +3143,7 @@ export type Database = {
         Update: {
           created_at?: string
           encrypted_value?: string
+          encryption_iv?: string | null
           id?: string
           secret_type?: string
           updated_at?: string

@@ -1,23 +1,22 @@
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.53.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS',
 };
-
-const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
-const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Supabase environment variables are not configured for research-sessions');
-}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  if (req.method !== 'GET') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
   }
 
   try {
@@ -29,80 +28,88 @@ serve(async (req) => {
       });
     }
 
-    const token = authHeader.replace('Bearer ', '').trim();
-
-    const supabaseAdmin = supabaseServiceRoleKey
-      ? createClient(supabaseUrl, supabaseServiceRoleKey)
-      : null;
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase credentials are not configured');
+    }
 
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } }
+      global: {
+        headers: {
+          Authorization: authHeader,
+        },
+      },
     });
 
-    const { data: { user }, error: authError } = supabaseAdmin
-      ? await supabaseAdmin.auth.getUser(token)
-      : await supabase.auth.getUser();
-
+    const accessToken = authHeader.replace('Bearer ', '').trim();
+    const { data: { user }, error: authError } = await supabase.auth.getUser(accessToken);
     if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      return new Response(JSON.stringify({ error: 'Invalid authorization token' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
     const url = new URL(req.url);
-    const sessionIdentifier = url.searchParams.get('sessionId');
+    const sessionIdentifier = url.searchParams.get('session_identifier');
+    const includeMessages = url.searchParams.get('include_messages') === 'true';
 
-    if (!sessionIdentifier) {
-      const { data: sessions, error: sessionsError } = await supabase
+    if (sessionIdentifier) {
+      const { data: session, error: sessionError } = await supabase
         .from('research_sessions')
-        .select('id, session_identifier, updated_at, last_message_at')
-        .order('updated_at', { ascending: false });
+        .select('id, session_identifier, title, created_at, updated_at, last_message_at')
+        .eq('session_identifier', sessionIdentifier)
+        .eq('user_id', user.id)
+        .maybeSingle();
 
-      if (sessionsError) {
-        console.error('[research-sessions] Failed to load sessions', sessionsError);
-        throw new Error('Failed to load research sessions');
+      if (sessionError) {
+        throw sessionError;
       }
 
-      return new Response(JSON.stringify({ sessions }), {
+      if (!session) {
+        return new Response(JSON.stringify({ error: 'Session not found' }), {
+          status: 404,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      let messages: Array<Record<string, unknown>> = [];
+      if (includeMessages) {
+        const { data: messageData, error: messagesError } = await supabase
+          .from('research_messages')
+          .select('id, role, content, sources, tokens_used, model, created_at')
+          .eq('session_id', session.id)
+          .order('created_at', { ascending: true });
+
+        if (messagesError) {
+          throw messagesError;
+        }
+        messages = messageData ?? [];
+      }
+
+      return new Response(JSON.stringify({ session, messages }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
-    const { data: session, error: sessionError } = await supabase
+    const { data: sessions, error: sessionsError } = await supabase
       .from('research_sessions')
-      .select('id, session_identifier, updated_at, last_message_at')
-      .eq('session_identifier', sessionIdentifier)
-      .maybeSingle();
+      .select('id, session_identifier, title, created_at, updated_at, last_message_at')
+      .eq('user_id', user.id)
+      .order('updated_at', { ascending: false })
+      .limit(50);
 
-    if (sessionError) {
-      console.error('[research-sessions] Failed to load session', sessionError);
-      throw new Error('Failed to load research session');
+    if (sessionsError) {
+      throw sessionsError;
     }
 
-    if (!session) {
-      return new Response(JSON.stringify({ session: null, messages: [] }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-
-    const { data: messages, error: messagesError } = await supabase
-      .from('research_messages')
-      .select('id, role, content, sources, tokens_used, model, created_at')
-      .eq('session_id', session.id)
-      .order('created_at', { ascending: true });
-
-    if (messagesError) {
-      console.error('[research-sessions] Failed to load messages', messagesError);
-      throw new Error('Failed to load research messages');
-    }
-
-    return new Response(JSON.stringify({ session, messages }), {
+    return new Response(JSON.stringify({ sessions }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (error) {
-    console.error('[research-sessions] Error', error);
-    const message = error instanceof Error ? error.message : 'An unknown error occurred';
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('[research-sessions] Error:', message);
     return new Response(JSON.stringify({ error: message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }

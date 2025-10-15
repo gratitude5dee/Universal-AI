@@ -1,11 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-interface UserSecretMeta {
+interface UserSecret {
   secret_type: string;
+  value: string;
   created_at: string;
   updated_at: string;
 }
+
+const SUPABASE_URL =
+  import.meta.env.VITE_SUPABASE_URL ??
+  'https://ixkkrousepsiorwlaycp.supabase.co';
 
 export const useUserSecrets = () => {
   const [secrets, setSecrets] = useState<UserSecretMeta[]>([]);
@@ -13,74 +18,70 @@ export const useUserSecrets = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const callSecretsFunction = async <T>(method: 'GET' | 'POST' | 'DELETE', body?: Record<string, unknown>): Promise<T> => {
-    const { data: sessionData } = await supabase.auth.getSession();
+  const withAuthHeaders = useCallback(async () => {
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError) throw sessionError;
+
     const accessToken = sessionData.session?.access_token;
-
     if (!accessToken) {
-      throw new Error('User session not found');
+      throw new Error('No active session found. Please sign in again.');
     }
 
-    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-user-secrets`, {
-      method,
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json'
-      },
-      body: method === 'GET' ? undefined : JSON.stringify(body ?? {}),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || 'Failed to interact with secrets API');
-    }
-
-    return (await response.json()) as T;
-  };
+    return {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    } as Record<string, string>;
+  }, []);
 
   const fetchSecrets = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await callSecretsFunction<UserSecretMeta[]>('GET');
+      const headers = await withAuthHeaders();
+
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/manage-user-secrets`, {
+        method: 'GET',
+        headers: { Authorization: headers.Authorization }
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to load secrets');
+      }
+
+      const data: UserSecret[] = await response.json();
       setSecrets(data || []);
+      setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [withAuthHeaders]);
 
-  const getSecret = async (secretType: string): Promise<string | null> => {
-    if (secretValues[secretType]) {
-      return secretValues[secretType];
-    }
-
-    try {
-      const result = await callSecretsFunction<{ secret: string | null }>('POST', {
-        action: 'retrieve',
-        secret_type: secretType
-      });
-
-      if (result.secret) {
-        setSecretValues(prev => ({ ...prev, [secretType]: result.secret! }));
-      }
-
-      return result.secret;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
-      throw err;
-    }
+  const getSecret = (secretType: string): string | null => {
+    const secret = secrets.find(s => s.secret_type === secretType);
+    return secret?.value || null;
   };
 
   const upsertSecret = async (secretType: string, value: string) => {
     try {
-      await callSecretsFunction('POST', {
-        action: 'store',
-        secret_type: secretType,
-        secret_value: value
+      const headers = await withAuthHeaders();
+
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/manage-user-secrets`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          secret_type: secretType,
+          value
+        })
       });
-      setSecretValues(prev => ({ ...prev, [secretType]: value }));
-      await fetchSecrets(); // Refresh the list
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to save secret');
+      }
+
+      await fetchSecrets();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
       throw err;
@@ -89,12 +90,20 @@ export const useUserSecrets = () => {
 
   const deleteSecret = async (secretType: string) => {
     try {
-      await callSecretsFunction('DELETE', { secret_type: secretType });
-      setSecretValues(prev => {
-        const { [secretType]: _, ...rest } = prev;
-        return rest;
+      const headers = await withAuthHeaders();
+
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/manage-user-secrets`, {
+        method: 'DELETE',
+        headers,
+        body: JSON.stringify({ secret_type: secretType })
       });
-      await fetchSecrets(); // Refresh the list
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to delete secret');
+      }
+
+      await fetchSecrets();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
       throw err;
@@ -115,4 +124,3 @@ export const useUserSecrets = () => {
     refetch: fetchSecrets,
   };
 };
-

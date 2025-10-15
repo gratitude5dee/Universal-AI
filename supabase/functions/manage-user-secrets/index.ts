@@ -1,21 +1,50 @@
 import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import sodium from 'https://esm.sh/libsodium-wrappers@0.7.13';
+
+const encoder = new TextEncoder();
+const decoder = new TextDecoder();
+
+const toUint8Array = (base64: string): Uint8Array => {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+};
+
+const toBase64 = (bytes: Uint8Array): string => {
+  let binary = '';
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+};
+
+const getCryptoKey = async () => {
+  const secret = Deno.env.get('USER_SECRETS_ENCRYPTION_KEY');
+  if (!secret) {
+    throw new Error('USER_SECRETS_ENCRYPTION_KEY is not configured');
+  }
+
+  const rawKey = toUint8Array(secret);
+  if (rawKey.length !== 32) {
+    throw new Error('USER_SECRETS_ENCRYPTION_KEY must be a base64-encoded 32 byte key');
+  }
+
+  return crypto.subtle.importKey(
+    'raw',
+    rawKey,
+    { name: 'AES-GCM' },
+    false,
+    ['encrypt', 'decrypt']
+  );
+};
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
 };
-
-const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
-const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-const encryptionKeyBase64 = Deno.env.get('USER_SECRETS_ENCRYPTION_KEY') ?? '';
-
-if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceRoleKey) {
-  throw new Error('Supabase environment variables are not fully configured for manage-user-secrets');
-}
 
 if (!encryptionKeyBase64) {
   throw new Error('USER_SECRETS_ENCRYPTION_KEY is not configured');
@@ -49,185 +78,210 @@ serve(async (req) => {
   }
 
   try {
+    // Get the authorization header from the request
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'No authorization header' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({ error: 'No authorization header' }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
     }
 
-    const token = authHeader.replace('Bearer ', '').trim();
+    // Create supabase client
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: { Authorization: authHeader },
+        },
+      }
+    );
 
-    const serviceClient = createClient(supabaseUrl, supabaseServiceRoleKey);
-
-    const { data: { user }, error: authError } = await serviceClient.auth.getUser(token);
+    // Verify the user is authenticated
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
 
     if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
     }
 
     const { method } = req;
     const body = method !== 'GET' ? await req.json() : null;
+    const cryptoKey = await getCryptoKey();
 
     switch (method) {
       case 'GET': {
-        const { data, error } = await serviceClient
+        const { data, error } = await supabaseClient
           .from('user_secrets')
-          .select('secret_type, created_at, updated_at')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
+          .select('secret_type, encrypted_value, encryption_iv, created_at, updated_at')
+          .eq('user_id', user.id);
 
         if (error) {
-          return new Response(JSON.stringify({ error: error.message }), {
-            status: 500,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          });
+          return new Response(
+            JSON.stringify({ error: error.message }),
+            {
+              status: 500,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            }
+          );
         }
 
-        return new Response(JSON.stringify(data), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
+        const secrets = await Promise.all((data || []).map(async (entry) => {
+          try {
+            if (!entry.encrypted_value || !entry.encryption_iv) {
+              return {
+                secret_type: entry.secret_type,
+                value: '',
+                created_at: entry.created_at,
+                updated_at: entry.updated_at
+              };
+            }
+            const iv = toUint8Array(entry.encryption_iv);
+            const cipherBytes = toUint8Array(entry.encrypted_value);
+            const decrypted = await crypto.subtle.decrypt(
+              { name: 'AES-GCM', iv },
+              cryptoKey,
+              cipherBytes
+            );
+            const value = decoder.decode(decrypted);
+            return {
+              secret_type: entry.secret_type,
+              value,
+              created_at: entry.created_at,
+              updated_at: entry.updated_at
+            };
+          } catch (decryptError) {
+            console.error('Failed to decrypt secret', decryptError);
+            return {
+              secret_type: entry.secret_type,
+              value: '',
+              created_at: entry.created_at,
+              updated_at: entry.updated_at
+            };
+          }
+        }));
+
+        return new Response(
+          JSON.stringify(secrets),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
       }
 
       case 'POST': {
-        const action = body?.action as 'store' | 'retrieve';
+        const { secret_type, value } = body ?? {};
 
-        if (action === 'store') {
-          const secretType = body?.secret_type;
-          const secretValue = body?.secret_value;
-
-          if (!secretType || typeof secretValue !== 'string') {
-            return new Response(JSON.stringify({ error: 'secret_type and secret_value are required' }), {
+        if (!secret_type || !value) {
+          return new Response(
+            JSON.stringify({ error: 'secret_type and value are required' }),
+            {
               status: 400,
               headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-            });
-          }
-
-          const { ciphertext, nonce } = encryptSecret(secretValue);
-
-          const { error } = await serviceClient
-            .from('user_secrets')
-            .upsert({
-              user_id: user.id,
-              secret_type: secretType,
-              encrypted_value: ciphertext,
-              nonce,
-            }, {
-              onConflict: 'user_id,secret_type'
-            });
-
-          if (error) {
-            return new Response(JSON.stringify({ error: error.message }), {
-              status: 500,
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-            });
-          }
-
-          return new Response(JSON.stringify({ success: true }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          });
+            }
+          );
         }
 
-        if (action === 'retrieve') {
-          const secretType = body?.secret_type;
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const encryptedBuffer = await crypto.subtle.encrypt(
+          { name: 'AES-GCM', iv },
+          cryptoKey,
+          encoder.encode(value)
+        );
+        const encryptedValue = new Uint8Array(encryptedBuffer);
 
-          if (!secretType) {
-            return new Response(JSON.stringify({ error: 'secret_type is required' }), {
-              status: 400,
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-            });
-          }
+        const { error } = await supabaseClient
+          .from('user_secrets')
+          .upsert({
+            user_id: user.id,
+            secret_type,
+            encrypted_value: toBase64(encryptedValue),
+            encryption_iv: toBase64(iv)
+          }, {
+            onConflict: 'user_id,secret_type'
+          });
 
-          const { data: record, error } = await serviceClient
-            .from('user_secrets')
-            .select('encrypted_value, nonce')
-            .eq('user_id', user.id)
-            .eq('secret_type', secretType)
-            .maybeSingle();
-
-          if (error) {
-            return new Response(JSON.stringify({ error: error.message }), {
+        if (error) {
+          return new Response(
+            JSON.stringify({ error: error.message }),
+            {
               status: 500,
               headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-            });
-          }
-
-          if (!record) {
-            return new Response(JSON.stringify({ secret: null }), {
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-            });
-          }
-
-          if (!record.nonce) {
-            // Legacy plaintext entry – treat encrypted_value as plaintext and re-encrypt
-            const { ciphertext, nonce } = encryptSecret(record.encrypted_value);
-            await serviceClient
-              .from('user_secrets')
-              .update({ encrypted_value: ciphertext, nonce })
-              .eq('user_id', user.id)
-              .eq('secret_type', secretType);
-
-            return new Response(JSON.stringify({ secret: record.encrypted_value }), {
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-            });
-          }
-
-          const decrypted = decryptSecret(record.encrypted_value, record.nonce);
-
-          return new Response(JSON.stringify({ secret: decrypted }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          });
+            }
+          );
         }
 
-        return new Response(JSON.stringify({ error: 'Unsupported action' }), {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
+        return new Response(
+          JSON.stringify({ success: true }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
       }
 
       case 'DELETE': {
-        const secretType = body?.secret_type;
+        const { secret_type } = body ?? {};
 
-        if (!secretType) {
-          return new Response(JSON.stringify({ error: 'secret_type is required' }), {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          });
+        if (!secret_type) {
+          return new Response(
+            JSON.stringify({ error: 'secret_type is required' }),
+            {
+              status: 400,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            }
+          );
         }
 
         const { error } = await serviceClient
           .from('user_secrets')
           .delete()
           .eq('user_id', user.id)
-          .eq('secret_type', secretType);
+          .eq('secret_type', secret_type);
 
         if (error) {
-          return new Response(JSON.stringify({ error: error.message }), {
-            status: 500,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          });
+          return new Response(
+            JSON.stringify({ error: error.message }),
+            {
+              status: 500,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            }
+          );
         }
 
-        return new Response(JSON.stringify({ success: true }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
+        return new Response(
+          JSON.stringify({ success: true }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
       }
 
       default:
-        return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-          status: 405,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
+        return new Response(
+          JSON.stringify({ error: 'Method not allowed' }),
+          {
+            status: 405,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        );
     }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({ error: errorMessage }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
+    );
   }
 });
