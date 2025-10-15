@@ -103,22 +103,19 @@ const PromptPanel = ({ selectedNode, nodes, boardId, onUpdateNode, onAddAIRespon
 
       console.log('Generating with lineage:', updatedLineage);
 
-      const { data: sessionData } = await supabase.auth.getSession();
-      const accessToken = sessionData?.session?.access_token;
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
 
-      if (!accessToken) {
-        throw new Error('Authentication required for AI streaming');
+      if (sessionError || !session?.access_token) {
+        throw new Error('Unable to authenticate request');
       }
 
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-      if (!supabaseUrl) {
-        throw new Error('Missing VITE_SUPABASE_URL environment variable');
-      }
-
-      const response = await fetch(`${supabaseUrl}/functions/v1/cerebras-stream`, {
+      const response = await fetch(`${supabase.functions.url}/cerebras-stream`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${session.access_token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -130,55 +127,51 @@ const PromptPanel = ({ selectedNode, nodes, boardId, onUpdateNode, onAddAIRespon
         }),
       });
 
-      if (!response.ok) {
-        const errorBody = await response.text();
-        throw new Error(errorBody || 'Failed to start AI stream');
+      if (!response.ok || !response.body) {
+        const errorPayload = await response.text();
+        throw new Error(errorPayload || 'Unable to start AI stream');
       }
 
-      if (response.body) {
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let fullResponse = '';
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullResponse = '';
 
-        // Update current node with user input
-        if (prompt !== selectedNode.data?.text) {
-          onUpdateNode(selectedNode.id, prompt);
-        }
+      // Update current node with user input
+      if (prompt !== selectedNode.data?.text) {
+        onUpdateNode(selectedNode.id, prompt);
+      }
 
-        // Create temporary AI response node
-        onAddAIResponse(selectedNode.id, '');
+      // Create temporary AI response node
+      onAddAIResponse(selectedNode.id, '');
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-          const chunk = decoder.decode(value);
-          const lines = chunk.split('\n').filter(line => line.trim() !== '');
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n').filter(line => line.trim() !== '');
 
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const data = line.slice(6);
-              if (data === '[DONE]') {
-                toast({
-                  title: "Generation Complete",
-                  description: "AI response has been generated successfully"
-                });
-                return;
-              }
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
 
-              try {
-                const parsed = JSON.parse(data);
-                if (parsed.choices && parsed.choices[0]?.delta?.content) {
-                  const content = parsed.choices[0].delta.content;
-                  fullResponse += content;
-                  
-                  // Update the AI response node with streaming content
-                  onAddAIResponse(selectedNode.id, fullResponse);
-                }
-              } catch (e) {
-                console.error('Error parsing stream chunk:', e);
-              }
+          const data = line.slice(6);
+          if (data === '[DONE]') {
+            toast({
+              title: "Generation Complete",
+              description: "AI response has been generated successfully",
+            });
+            return;
+          }
+
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.choices && parsed.choices[0]?.delta?.content) {
+              const content = parsed.choices[0].delta.content;
+              fullResponse += content;
+              onAddAIResponse(selectedNode.id, fullResponse);
             }
+          } catch (e) {
+            console.error('Error parsing stream chunk:', e);
           }
         }
       }

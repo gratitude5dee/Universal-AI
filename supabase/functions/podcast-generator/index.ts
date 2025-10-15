@@ -64,8 +64,6 @@ const normalizeJson = (input: string): unknown => {
   }
 };
 
-let jobId: string | null = null;
-
 const estimateDurationSeconds = (script: string): number => {
   const words = script.trim().split(/\s+/).filter(Boolean).length;
   const seconds = Math.round((words / WORDS_PER_MINUTE) * 60);
@@ -218,7 +216,6 @@ serve(async (req) => {
   }
 
   try {
-    jobId = null;
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       throw new Error("Missing authorization header");
@@ -238,22 +235,6 @@ serve(async (req) => {
     if (!request?.title || !request?.script || !request?.voiceId) {
       throw new Error("Title, script, and voiceId are required");
     }
-
-    const { data: jobRecord, error: jobError } = await adminClient
-      .from("podcast_generation_jobs")
-      .insert({
-        user_id: user.id,
-        status: "processing",
-        request,
-      })
-      .select()
-      .single();
-
-    if (jobError || !jobRecord) {
-      throw new Error("Unable to create podcast generation job");
-    }
-
-    jobId = jobRecord.id;
 
     const outline = await generateOutline(request);
     const segments = await generateSegments(request, outline);
@@ -321,25 +302,10 @@ serve(async (req) => {
       throw new Error(`Failed to save podcast metadata: ${insertError?.message}`);
     }
 
-    await adminClient
-      .from("podcast_generation_jobs")
-      .update({
-        status: "succeeded",
-        result: {
-          podcast_id: insertedPodcast.id,
-          audio_url: insertedPodcast.audio_url,
-        },
-      })
-      .eq("id", jobRecord.id);
-
-    jobId = null;
-
     return new Response(
       JSON.stringify({
-        jobId: jobRecord.id,
-        status: "succeeded",
+        success: true,
         podcast: insertedPodcast,
-        audioBase64: null,
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -348,18 +314,9 @@ serve(async (req) => {
   } catch (error) {
     console.error("Error in podcast-generator function:", error);
     const message = error instanceof Error ? error.message : "An unknown error occurred";
-    if (jobId) {
-      await adminClient
-        .from("podcast_generation_jobs")
-        .update({ status: "failed", error_message: message })
-        .eq("id", jobId);
-    }
-
-    jobId = null;
-
     return new Response(
       JSON.stringify({
-        status: "failed",
+        success: false,
         error: message,
         timestamp: new Date().toISOString(),
       }),

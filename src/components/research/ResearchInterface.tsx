@@ -30,23 +30,14 @@ interface ResearchMessage {
   model?: string;
 }
 
-interface ResearchMessageRow {
+interface ResearchHistoryMessage {
   id: string;
   content: string;
-  role: 'user' | 'assistant';
-  created_at: string;
+  role: 'user' | 'assistant' | 'system';
   sources?: string[] | null;
   tokens_used?: number | null;
   model?: string | null;
-}
-
-interface ResearchSessionRow {
-  id: string;
-  session_identifier: string;
-  title?: string | null;
-  updated_at?: string | null;
-  last_message_at?: string | null;
-  research_messages?: ResearchMessageRow[];
+  created_at: string;
 }
 
 interface IntegrationStatus {
@@ -64,6 +55,14 @@ const ResearchInterface = () => {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  const getAccessToken = useCallback(async () => {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (error || !session?.access_token) {
+      throw new Error('User session not available');
+    }
+    return session.access_token;
+  }, []);
 
   const [integrations] = useState<IntegrationStatus[]>([
     {
@@ -99,34 +98,33 @@ const ResearchInterface = () => {
 
   const refreshSessionHistory = useCallback(async (activeSessionId: string) => {
     try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) {
-        setMessages([]);
-        return;
-      }
-
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-      if (!supabaseUrl) {
-        throw new Error('Missing VITE_SUPABASE_URL environment variable');
-      }
-
-      const response = await fetch(`${supabaseUrl}/functions/v1/research-sessions?sessionId=${encodeURIComponent(activeSessionId)}`, {
+      const token = await getAccessToken();
+      const response = await fetch(`${supabase.functions.url}/research-sessions?sessionIdentifier=${encodeURIComponent(activeSessionId)}`, {
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
       if (!response.ok) {
-        const body = await response.json().catch(() => ({}));
-        throw new Error(body.error || 'Failed to load research history');
+        const errorPayload = await response.json().catch(() => null);
+        throw new Error(errorPayload?.error || 'Failed to load research history');
       }
 
-      const { session } = (await response.json()) as { session: ResearchSessionRow | null };
-      if (!session || !Array.isArray(session.research_messages)) {
-        setMessages([]);
-        return;
-      }
+      const payload = await response.json();
+
+      const loadedMessages: ResearchMessage[] = (payload.messages ?? []).map((message: ResearchHistoryMessage) => ({
+        id: message.id,
+        content: message.content,
+        role: message.role === 'user' ? 'user' : 'assistant',
+        timestamp: new Date(message.created_at),
+        sources: message.sources ?? undefined,
+        tokensUsed: message.tokens_used ?? undefined,
+        model: message.model ?? undefined,
+      }));
+
+      setMessages(loadedMessages);
+      scrollToBottom();
 
       const hydrated: ResearchMessage[] = session.research_messages.map((message) => ({
         id: message.id,
@@ -147,7 +145,7 @@ const ResearchInterface = () => {
         variant: 'destructive'
       });
     }
-  }, [toast]);
+  }, [getAccessToken, scrollToBottom, toast]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -193,7 +191,12 @@ const ResearchInterface = () => {
     try {
       console.log('Starting research request...');
       
+      const token = await getAccessToken();
+
       const { data, error } = await supabase.functions.invoke('cerebras-research', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
         body: {
           query: inputValue,
           context: 'Deep research session',
@@ -230,6 +233,8 @@ const ResearchInterface = () => {
 
       if (data?.sessionId) {
         await refreshSessionHistory(data.sessionId);
+      } else if (sessionId) {
+        await refreshSessionHistory(sessionId);
       }
 
       toast({

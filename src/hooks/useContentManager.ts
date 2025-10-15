@@ -10,9 +10,10 @@ export interface ContentItem {
   description?: string;
   file_type: 'audio' | 'video' | 'image' | 'document';
   file_size?: number;
-  storage_path?: string | null;
+  file_url?: string;
+  file_path: string;
   thumbnail_url?: string;
-  metadata?: ContentMetadata | null;
+  metadata: Record<string, unknown> | null;
   tags: string[];
   qr_code_data?: string;
   created_at: string;
@@ -115,7 +116,38 @@ export const useContentManager = () => {
       if (foldersResponse.error) throw foldersResponse.error;
 
       const rawItems = (itemsResponse.data as ContentItem[]) || [];
-      const itemsWithUrls = await hydrateItemsWithSignedUrls(rawItems);
+
+      let itemsWithUrls = rawItems;
+      if (rawItems.length > 0) {
+        const storageItems = rawItems.filter((item) => !item.file_path.startsWith('external/'));
+        const storagePaths = storageItems.map((item) => item.file_path);
+
+        let urlMap = new Map<string, string | null>();
+        if (storagePaths.length > 0) {
+          const { data: signedUrls, error: signedError } = await supabase.storage
+            .from('content-library')
+            .createSignedUrls(storagePaths, 60 * 60);
+
+          if (signedError) throw signedError;
+
+          urlMap = new Map<string, string | null>();
+          signedUrls?.forEach((entry, index) => {
+            urlMap.set(storagePaths[index], entry?.signedUrl ?? null);
+          });
+        }
+
+        itemsWithUrls = rawItems.map((item) => {
+          if (item.file_path.startsWith('external/')) {
+            return item;
+          }
+
+          return {
+            ...item,
+            file_url: urlMap.get(item.file_path) ?? item.file_url ?? undefined,
+          };
+        });
+      }
+
       setContentItems(itemsWithUrls);
       setFolders((foldersResponse.data as ContentFolder[]) || []);
     } catch (error) {
@@ -159,9 +191,12 @@ export const useContentManager = () => {
 
       if (uploadError) throw uploadError;
 
-      const { data: signedUrlData } = await supabase.storage
+      // Create signed URL for immediate usage
+      const { data: signedUrlData, error: signedUrlError } = await supabase.storage
         .from('content-library')
         .createSignedUrl(filePath, 60 * 60);
+
+      if (signedUrlError) throw signedUrlError;
 
       // Determine file type
       const fileType = getFileType(file.type);
@@ -175,6 +210,8 @@ export const useContentManager = () => {
           title: file.name,
           file_type: fileType,
           file_size: file.size,
+          file_path: filePath,
+          file_url: signedUrlData?.signedUrl,
           metadata: {
             original_name: file.name,
             mime_type: file.type,
@@ -195,7 +232,7 @@ export const useContentManager = () => {
       // Refresh content
       await fetchContent();
 
-      return { signedUrl: signedUrlData?.signedUrl ?? null, filePath, fileType };
+      return { publicUrl: signedUrlData?.signedUrl ?? '', filePath, fileType };
     } catch (error) {
       console.error('Error uploading file:', error);
       toast({
@@ -245,13 +282,23 @@ export const useContentManager = () => {
   // Delete content item
   const deleteContentItem = async (id: string) => {
     try {
-      const { data: itemToDelete, error: fetchError } = await supabase
+      const { data: item, error: fetchError } = await supabase
         .from('content_items')
-        .select('storage_path')
+        .select('file_path')
         .eq('id', id)
-        .maybeSingle();
+        .single();
 
       if (fetchError) throw fetchError;
+
+      if (item?.file_path && !item.file_path.startsWith('external/')) {
+        const { error: storageError } = await supabase.storage
+          .from('content-library')
+          .remove([item.file_path]);
+
+        if (storageError && !storageError.message?.toLowerCase().includes('not found')) {
+          throw storageError;
+        }
+      }
 
       const { error } = await supabase
         .from('content_items')
@@ -322,6 +369,7 @@ export const useContentManager = () => {
 
       // Try to determine if QR data is a URL or contains file info
       let fileType: 'audio' | 'video' | 'image' | 'document' = 'document';
+      const fileUrl = qrData;
 
       // Simple URL validation and type detection
       if (qrData.includes('youtube.com') || qrData.includes('youtu.be')) {
@@ -336,6 +384,8 @@ export const useContentManager = () => {
         fileType = 'audio';
       }
 
+      const fallbackPath = `external/${crypto.randomUUID()}`;
+
       const { error } = await supabase
         .from('content_items')
         .insert({
@@ -343,6 +393,8 @@ export const useContentManager = () => {
           title,
           description,
           file_type: fileType,
+          file_url: fileUrl,
+          file_path: fallbackPath,
           qr_code_data: qrData,
           metadata: {
             source: 'qr_code',

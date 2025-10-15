@@ -27,22 +27,13 @@ serve(async (req) => {
   }
 
   try {
-    const body = (await req.json()) as CreateInvoiceRequest;
-    const { bookingId, lineItems, taxRate = 0, dueDate, currency = 'usd' } = body;
-
-    if (!bookingId || !Array.isArray(lineItems) || lineItems.length === 0) {
-      throw new Error('bookingId and at least one line item are required');
-    }
-
-    const sanitizedItems = lineItems.map((item) => ({
-      description: item.description?.trim() ?? 'Line item',
-      amount: Number(item.amount ?? 0),
-      quantity: item.quantity ? Number(item.quantity) : 1,
-    })).filter((item) => item.amount > 0);
-
-    if (sanitizedItems.length === 0) {
-      throw new Error('Line items must include a positive amount');
-    }
+    const { bookingId, lineItems, taxRate = 0, currency = 'USD', dueDate }: {
+      bookingId: string;
+      lineItems: Array<{ description: string; amount: number; quantity?: number }>;
+      taxRate?: number;
+      currency?: string;
+      dueDate?: string;
+    } = await req.json();
 
     console.log('[generate-invoice] Creating invoice for booking:', bookingId);
 
@@ -55,53 +46,69 @@ serve(async (req) => {
       global: { headers: { Authorization: authHeader } }
     });
 
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) {
-      throw new Error('Invalid authorization token');
+      throw new Error('Unauthorized');
+    }
+
+    if (!bookingId) {
+      throw new Error('bookingId is required');
+    }
+
+    if (!Array.isArray(lineItems) || lineItems.length === 0) {
+      throw new Error('At least one line item is required');
     }
 
     // Get booking details
     const { data: booking, error: bookingError } = await supabase
       .from('venue_bookings')
-      .select('id, user_id, gig_id, workflow_stage, payment_status')
+      .select('id, user_id, gig_id, workflow_stage')
       .eq('id', bookingId)
       .single();
 
-    if (bookingError) throw bookingError;
-    if (!booking || booking.user_id !== user.id) {
-      throw new Error('Booking not found or access denied');
+    if (bookingError || !booking) throw bookingError || new Error('Booking not found');
+
+    if (booking.user_id !== user.id) {
+      throw new Error('You do not have permission to invoice this booking');
     }
 
-    // Calculate totals from line items
-    const subtotal = sanitizedItems.reduce((sum, item) => {
-      const quantity = Number.isFinite(item.quantity) && item.quantity ? item.quantity : 1;
-      return sum + item.amount * quantity;
-    }, 0);
-    const taxAmountRaw = (subtotal * taxRate) / 100;
-    const taxAmount = Math.max(0, Math.round(taxAmountRaw * 100) / 100);
-    const total = Math.round((subtotal + taxAmount) * 100) / 100;
+    const normalizedCurrency = currency.trim().toUpperCase() || 'USD';
 
-    // Generate invoice number with timestamp
+    const normalizedItems = lineItems.map((item) => ({
+      description: item.description?.trim() ?? 'Line Item',
+      amount: Number(item.amount ?? 0),
+      quantity: item.quantity ? Number(item.quantity) : 1,
+    }));
+
+    const rawSubtotal = normalizedItems.reduce(
+      (sum, item) => sum + (item.amount || 0) * (item.quantity || 1),
+      0,
+    );
+
+    const computedTaxRate = Math.max(taxRate, 0);
+    const taxAmount = Number((rawSubtotal * computedTaxRate).toFixed(2));
+    const subtotal = Number(rawSubtotal.toFixed(2));
+    const total = Number((subtotal + taxAmount).toFixed(2));
+
+    const resolvedDueDate = dueDate
+      ? new Date(dueDate).toISOString().split('T')[0]
+      : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+    // Calculate total from line items
     const invoiceNumber = `INV-${Date.now().toString().slice(-8)}`;
-    
-    // Due date is 30 days from now
-    const computedDueDate = dueDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
     // Create invoice in database
     const { data: invoice, error: invoiceError } = await supabase
       .from('invoices')
       .insert({
         invoice_number: invoiceNumber,
-        gig_id: booking.gig_id,
+        gig_id: booking.gig_id!,
         amount: total,
-        due_date: computedDueDate,
+        currency: normalizedCurrency,
+        due_date: resolvedDueDate,
         status: 'invoiced',
-        notes: JSON.stringify({
-          currency,
-          lineItems: sanitizedItems,
-        }),
-        line_items: sanitizedItems,
+        line_items: normalizedItems,
+        subtotal,
         tax_amount: taxAmount,
         balance_due: total,
       })
@@ -116,7 +123,6 @@ serve(async (req) => {
       .update({
         invoice_id: invoice.id,
         workflow_stage: 'invoice',
-        status: 'invoiced',
         payment_status: 'unpaid'
       })
       .eq('id', bookingId);
@@ -125,21 +131,20 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({
-        invoiceId: invoice.id,
-        invoiceNumber,
-        status: 'invoiced',
-        totals: {
+        invoice,
+        invoiceData: {
+          invoiceNumber,
+          lineItems: normalizedItems,
           subtotal,
           tax: taxAmount,
           total,
+          currency: normalizedCurrency,
+          dueDate: resolvedDueDate,
           balanceDue: total,
         },
-        dueDate: computedDueDate,
-        lineItems: sanitizedItems,
-        currency,
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
     );
 

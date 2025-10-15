@@ -64,16 +64,12 @@ interface Podcast {
   updated_at: string;
 }
 
-type PodcastRow = Database['public']['Views']['podcasts_client_v1']['Row'];
+type PodcastRow = Database['public']['Tables']['podcasts']['Row'];
 
-type PodcastJobStatus = 'queued' | 'processing' | 'succeeded' | 'failed';
-
-interface PodcastJobResponse {
-  jobId: string;
-  status: PodcastJobStatus;
-  podcast?: PodcastRow;
-  audioBase64?: string | null;
+interface PodcastFunctionResponse {
+  success: boolean;
   error?: string;
+  podcast?: PodcastRow;
 }
 
 const parseOutline = (value: PodcastRow['outline']): PodcastOutlineSection[] | null => {
@@ -368,7 +364,7 @@ const GenerativePodcastsInterface = () => {
     setIsGenerating(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke<PodcastJobResponse>('podcast-generator', {
+      const { data, error } = await supabase.functions.invoke<PodcastFunctionResponse>('podcast-generator', {
         body: {
           title,
           description,
@@ -380,10 +376,10 @@ const GenerativePodcastsInterface = () => {
 
       if (error) throw error;
 
-      const response = data as PodcastJobResponse | null;
+      const response = data as PodcastFunctionResponse | null;
 
-      if (!response || response.status !== 'succeeded' || !response.podcast) {
-        throw new Error(response?.error || 'Podcast generation did not complete');
+      if (!response?.success || !response.podcast) {
+        throw new Error(response?.error || 'Failed to generate podcast');
       }
 
       const normalizedPodcast = normalizePodcast(response.podcast);

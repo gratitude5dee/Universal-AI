@@ -7,16 +7,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const supabaseUrl = Deno.env.get('SUPABASE_URL');
-const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Supabase environment variables are not configured');
-}
-
-const supabaseUrlValue = supabaseUrl as string;
-const supabaseAnonKeyValue = supabaseAnonKey as string;
-
 interface Node {
   id: string;
   data: {
@@ -46,14 +36,21 @@ serve(async (req) => {
       throw new Error('Missing authorization header');
     }
 
-    const supabase = createClient(supabaseUrlValue, supabaseAnonKeyValue, {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       global: {
-        headers: { Authorization: authHeader },
+        headers: {
+          Authorization: authHeader,
+        },
       },
     });
 
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
     if (userError || !user) {
       throw new Error('Invalid authorization token');
@@ -73,7 +70,8 @@ serve(async (req) => {
       throw new Error('Board not found or access denied');
     }
 
-    const { data: collaborator, error: collaboratorError } = await supabase
+    // Check if user is owner or collaborator
+    const { data: collaborator } = await supabase
       .from('board_collaborators')
       .select('id')
       .eq('board_id', boardId)
@@ -81,7 +79,7 @@ serve(async (req) => {
       .eq('status', 'accepted')
       .maybeSingle();
 
-    const hasAccess = board.user_id === user.id || (!!collaborator && !collaboratorError);
+    const hasAccess = board.user_id === user.id || Boolean(collaborator);
 
     if (!hasAccess) {
       throw new Error('Access denied to this board');

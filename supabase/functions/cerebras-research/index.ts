@@ -23,11 +23,15 @@ serve(async (req) => {
     const cerebrasApiKey = Deno.env.get('CEREBRAS_API_KEY');
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
+    const authHeader = req.headers.get('Authorization');
     if (!cerebrasApiKey) {
       throw new Error('CEREBRAS_API_KEY is not configured');
     }
     if (!supabaseUrl || !supabaseAnonKey) {
       throw new Error('Supabase credentials are not configured');
+    }
+    if (!authHeader) {
+      throw new Error('Missing authorization header');
     }
 
     const authHeader = req.headers.get('Authorization');
@@ -50,6 +54,23 @@ serve(async (req) => {
     const { query, context, sources = [], sessionId }: ResearchRequest = await req.json();
 
     console.log(`Research request - Session: ${sessionId}, Query: ${query.substring(0, 100)}...`);
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: authHeader,
+        },
+      },
+    });
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error('Unauthorized');
+    }
 
     const sessionIdentifier = sessionId || `research_${crypto.randomUUID()}`;
     let sessionRecordId: string | null = null;
@@ -181,7 +202,8 @@ Current research context: ${context || 'General research query'}`;
           updated_at: responseTimestamp,
           last_message_at: responseTimestamp
         })
-        .eq('id', sessionRecordId);
+        .eq('id', sessionRecordId)
+        .eq('user_id', user.id);
 
       if (updateSessionError) {
         console.error('Error updating research session timestamps:', updateSessionError);
