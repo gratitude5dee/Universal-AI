@@ -158,35 +158,6 @@ const ResearchInterface = () => {
       }));
 
       setMessages(historyMessages);
-
-      if (!accessToken) {
-        throw new Error('User session not found');
-      }
-
-      const response = await fetch(`${supabaseUrl}/functions/v1/research-sessions?sessionId=${encodeURIComponent(activeSessionId)}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Failed to load research history');
-      }
-
-      const payload = await response.json();
-      const history = (payload.messages || []).map((message: any) => ({
-        id: message.id,
-        content: message.content,
-        role: message.role,
-        timestamp: new Date(message.created_at),
-        sources: message.sources ?? undefined,
-        tokensUsed: message.tokens_used ?? undefined,
-        model: message.model ?? undefined,
-      }));
-
-      setMessages(history);
     } catch (err) {
       console.error('Unexpected error loading research history:', err);
       toast({

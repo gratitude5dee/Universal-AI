@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { Database } from "@/integrations/supabase/types";
 
 interface LineItem {
+  id: string;
   description: string;
   amount: number;
   quantity?: number;
@@ -103,19 +104,7 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
     );
   };
 
-  const calculateTax = () => {
-    return calculateSubtotal() * taxRate;
-  };
-
-  const calculateTotal = () => {
-    return calculateSubtotal() + calculateTax();
-  };
-
-  const draftTotals = useMemo(() => ({
-    subtotal: calculateSubtotal(),
-    tax: calculateTax(),
-    total: calculateTotal()
-  }), [lineItems, taxRate]);
+  
 
   const handleGenerate = async () => {
     setLoading(true);
@@ -190,7 +179,6 @@ Tax: $${totals.tax.toFixed(2)}
 TOTAL: $${totals.total.toFixed(2)} ${invoice.currency}
 Balance Due: $${totals.balanceDue.toFixed(2)}
 
-Balance Due: $${invoice.invoiceData.balanceDue.toFixed(2)} (${invoice.invoiceData.paymentStatus})
 Payment Terms: Net 30 days
 `;
 
@@ -281,7 +269,6 @@ Payment Terms: Net 30 days
                   </div>
                 ))}
               </div>
-            </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-background/40 p-4 rounded-lg border border-border">

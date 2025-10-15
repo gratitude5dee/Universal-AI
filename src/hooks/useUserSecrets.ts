@@ -13,7 +13,7 @@ const SUPABASE_URL =
   'https://ixkkrousepsiorwlaycp.supabase.co';
 
 export const useUserSecrets = () => {
-  const [secrets, setSecrets] = useState<UserSecretMeta[]>([]);
+  const [secrets, setSecrets] = useState<UserSecret[]>([]);
   const [secretValues, setSecretValues] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

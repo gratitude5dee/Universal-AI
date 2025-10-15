@@ -183,40 +183,14 @@ const PromptPanel = ({ selectedNode, nodes, boardId, onUpdateNode, onAddAIRespon
             return;
           }
 
-        // Create temporary AI response node
-        const tempResponseId = `ai-${Date.now()}`;
-        onAddAIResponse(selectedNode.id, '');
+          try {
+            const parsed: unknown = JSON.parse(data);
+            if (isStreamChunk(parsed) && parsed.choices?.[0]?.delta?.content) {
+              const content = parsed.choices[0].delta?.content ?? '';
+              fullResponse += content;
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          const chunk = decoder.decode(value, { stream: true });
-          const lines = chunk.split('\n').filter(line => line.trim() !== '');
-
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const data = line.slice(6);
-              if (data === '[DONE]') {
-                toast({
-                  title: "Generation Complete",
-                  description: "AI response has been generated successfully"
-                });
-                return;
-              }
-
-              try {
-                const parsed: unknown = JSON.parse(data);
-                if (isStreamChunk(parsed) && parsed.choices?.[0]?.delta?.content) {
-                  const content = parsed.choices[0].delta?.content ?? '';
-                  fullResponse += content;
-
-                  // Update the AI response node with streaming content
-                  onAddAIResponse(selectedNode.id, fullResponse);
-                }
-              } catch (e) {
-                console.error('Error parsing stream chunk:', e);
-              }
+              // Update the AI response node with streaming content
+              onAddAIResponse(selectedNode.id, fullResponse);
             }
           } catch (e) {
             console.error('Error parsing stream chunk:', e);

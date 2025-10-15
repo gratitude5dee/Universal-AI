@@ -19,7 +19,6 @@ export interface ContentItem {
   qr_code_data?: string;
   created_at: string;
   updated_at: string;
-  signed_url?: string | null;
 }
 
 interface ContentMetadata {

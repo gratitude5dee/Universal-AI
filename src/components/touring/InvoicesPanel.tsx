@@ -15,7 +15,7 @@ interface Invoice {
   amount: number;
   status: 'pending' | 'paid' | 'overdue';
   due_date: string;
-  paid_date?: string;
+  paid_at?: string;
   gig: {
     title: string;
     venue: {
@@ -194,9 +194,9 @@ const InvoicesPanel = () => {
                         </p>
                         <p className="text-white/50 text-xs">
                           Due: {format(new Date(invoice.due_date), 'MMM dd, yyyy')}
-                          {invoice.paid_date && (
+                          {invoice.paid_at && (
                             <span className="ml-2">
-                              • Paid: {format(new Date(invoice.paid_date), 'MMM dd, yyyy')}
+                              • Paid: {format(new Date(invoice.paid_at), 'MMM dd, yyyy')}
                             </span>
                           )}
                         </p>
