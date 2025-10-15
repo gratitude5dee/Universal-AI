@@ -700,7 +700,6 @@ export type Database = {
           file_size: number | null
           file_type: string
           file_url: string | null
-          storage_path: string | null
           folder_id: string | null
           id: string
           metadata: Json | null
@@ -718,7 +717,6 @@ export type Database = {
           file_size?: number | null
           file_type: string
           file_url?: string | null
-          storage_path?: string | null
           folder_id?: string | null
           id?: string
           metadata?: Json | null
@@ -736,7 +734,6 @@ export type Database = {
           file_size?: number | null
           file_type?: string
           file_url?: string | null
-          storage_path?: string | null
           folder_id?: string | null
           id?: string
           metadata?: Json | null
@@ -1461,62 +1458,41 @@ export type Database = {
       invoices: {
         Row: {
           amount: number
-          balance_due: number
           created_at: string | null
-          currency: string | null
           due_date: string | null
           gig_id: string
           id: string
           invoice_number: string | null
-          line_items: Json
           notes: string | null
-          paid_at: string | null
           paid_date: string | null
-          paid_at: string | null
           payment_method: string | null
-          subtotal: number
           status: string | null
-          tax_amount: number
           updated_at: string | null
         }
         Insert: {
           amount: number
-          balance_due?: number
           created_at?: string | null
-          currency?: string | null
           due_date?: string | null
           gig_id: string
           id?: string
           invoice_number?: string | null
-          line_items?: Json
           notes?: string | null
-          paid_at?: string | null
           paid_date?: string | null
-          paid_at?: string | null
           payment_method?: string | null
-          subtotal?: number
           status?: string | null
-          tax_amount?: number
           updated_at?: string | null
         }
         Update: {
           amount?: number
-          balance_due?: number
           created_at?: string | null
-          currency?: string | null
           due_date?: string | null
           gig_id?: string
           id?: string
           invoice_number?: string | null
-          line_items?: Json
           notes?: string | null
-          paid_at?: string | null
           paid_date?: string | null
-          paid_at?: string | null
           payment_method?: string | null
-          subtotal?: number
           status?: string | null
-          tax_amount?: number
           updated_at?: string | null
         }
         Relationships: [
@@ -1988,171 +1964,37 @@ export type Database = {
       }
       podcasts: {
         Row: {
-          audio_format: string | null
-          audio_signed_url: string | null
           audio_url: string
           created_at: string
           description: string | null
           duration: number | null
-          duration_seconds: number | null
-          file_size: number | null
           id: string
-          outline: Json | null
-          script: string | null
-          segments: Json | null
-          show_notes: string | null
           style: string | null
           title: string
-          updated_at: string
           user_id: string
           voice_id: string | null
         }
         Insert: {
-          audio_format?: string | null
-          audio_signed_url?: string | null
           audio_url: string
           created_at?: string
           description?: string | null
           duration?: number | null
-          duration_seconds?: number | null
-          file_size?: number | null
           id?: string
-          outline?: Json | null
-          script?: string | null
-          segments?: Json | null
-          show_notes?: string | null
           style?: string | null
           title: string
-          updated_at?: string
           user_id: string
           voice_id?: string | null
         }
         Update: {
-          audio_format?: string | null
-          audio_signed_url?: string | null
           audio_url?: string
           created_at?: string
           description?: string | null
           duration?: number | null
-          duration_seconds?: number | null
-          file_size?: number | null
           id?: string
-          outline?: Json | null
-          script?: string | null
-          segments?: Json | null
-          show_notes?: string | null
           style?: string | null
           title?: string
-          updated_at?: string
           user_id?: string
           voice_id?: string | null
-        }
-        Relationships: []
-      }
-      podcast_generation_jobs: {
-        Row: {
-          created_at: string
-          error_message: string | null
-          id: string
-          request: Json
-          result: Json | null
-          status: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          error_message?: string | null
-          id?: string
-          request: Json
-          result?: Json | null
-          status?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          error_message?: string | null
-          id?: string
-          request?: Json
-          result?: Json | null
-          status?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      research_messages: {
-        Row: {
-          content: string
-          created_at: string
-          created_by: string
-          id: string
-          model: string | null
-          role: string
-          session_id: string
-          sources: Json | null
-          tokens_used: number | null
-        }
-        Insert: {
-          content: string
-          created_at?: string
-          created_by: string
-          id?: string
-          model?: string | null
-          role: string
-          session_id: string
-          sources?: Json | null
-          tokens_used?: number | null
-        }
-        Update: {
-          content?: string
-          created_at?: string
-          created_by?: string
-          id?: string
-          model?: string | null
-          role?: string
-          session_id?: string
-          sources?: Json | null
-          tokens_used?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "research_messages_session_id_fkey",
-            columns: ["session_id"],
-            isOneToOne: false,
-            referencedRelation: "research_sessions",
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      research_sessions: {
-        Row: {
-          created_at: string
-          id: string
-          last_message_at: string | null
-          session_identifier: string
-          title: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          last_message_at?: string | null
-          session_identifier: string
-          title?: string | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          last_message_at?: string | null
-          session_identifier?: string
-          title?: string | null
-          updated_at?: string
-          user_id?: string
         }
         Relationships: []
       }
@@ -3247,9 +3089,7 @@ export type Database = {
         Row: {
           created_at: string
           encrypted_value: string
-          encryption_version: number
           id: string
-          nonce: string | null
           secret_type: string
           updated_at: string
           user_id: string
@@ -3257,9 +3097,7 @@ export type Database = {
         Insert: {
           created_at?: string
           encrypted_value: string
-          encryption_version?: number
           id?: string
-          nonce?: string | null
           secret_type: string
           updated_at?: string
           user_id: string
@@ -3267,9 +3105,7 @@ export type Database = {
         Update: {
           created_at?: string
           encrypted_value?: string
-          encryption_version?: number
           id?: string
-          nonce?: string | null
           secret_type?: string
           updated_at?: string
           user_id?: string
@@ -3292,7 +3128,6 @@ export type Database = {
           offer_amount: number | null
           offer_sent_at: string | null
           payment_received_at: string | null
-          payment_status: string | null
           status: string | null
           updated_at: string | null
           user_id: string
@@ -3319,7 +3154,6 @@ export type Database = {
           offer_amount?: number | null
           offer_sent_at?: string | null
           payment_received_at?: string | null
-          payment_status?: string | null
           status?: string | null
           updated_at?: string | null
           user_id: string
@@ -3346,7 +3180,6 @@ export type Database = {
           offer_amount?: number | null
           offer_sent_at?: string | null
           payment_received_at?: string | null
-          payment_status?: string | null
           status?: string | null
           updated_at?: string | null
           user_id?: string
@@ -3741,29 +3574,7 @@ export type Database = {
       }
     }
     Views: {
-      podcasts_client_v1: {
-        Row: {
-          audio_format: string | null
-          audio_signed_url: string | null
-          audio_url: string
-          created_at: string
-          description: string | null
-          duration: number | null
-          duration_seconds: number | null
-          file_size: number | null
-          id: string
-          outline: Json | null
-          script: string | null
-          segments: Json | null
-          show_notes: string | null
-          style: string | null
-          title: string
-          updated_at: string
-          user_id: string
-          voice_id: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       add_credits: {
@@ -3815,10 +3626,6 @@ export type Database = {
       log_waitlist_access: {
         Args: { access_type: string; ip_address?: string; user_agent?: string }
         Returns: undefined
-      }
-      record_invoice_payment: {
-        Args: { p_invoice_id: string; p_amount: number; p_paid_at?: string }
-        Returns: Database['public']['Tables']['invoices']['Row']
       }
       use_credits: {
         Args: { credit_cost?: number; metadata?: Json; resource_type: string }
