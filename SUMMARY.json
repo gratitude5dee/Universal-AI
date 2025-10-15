@@ -1,0 +1,116 @@
+{
+  "agents": [
+    {
+      "name": "CreatorOnboardingAgent",
+      "intents": ["collect_profile", "bootstrap_wallet"],
+      "tools": ["supabase_query_sql", "supabase_call_rpc", "wallet_create", "storage_put"]
+    },
+    {
+      "name": "StudioAgent",
+      "intents": ["ideation", "asset_generation"],
+      "tools": ["storage_put", "storage_get", "kb_search", "web_search"]
+    },
+    {
+      "name": "RightsAgent",
+      "intents": ["collection_management", "licensing_updates"],
+      "tools": ["supabase_query_sql", "supabase_call_rpc", "kb_search"]
+    },
+    {
+      "name": "TreasuryAgent",
+      "intents": ["wallet_operations", "payouts", "mint_planning"],
+      "tools": ["wallet_create", "wallet_transfer", "supabase_call_rpc", "supabase_query_sql"]
+    },
+    {
+      "name": "DistributionAgent",
+      "intents": ["campaign_scheduling", "community_updates"],
+      "tools": ["storage_get", "kb_search", "web_search", "supabase_call_rpc"]
+    },
+    {
+      "name": "AnalyticsAgent",
+      "intents": ["insight_generation", "reporting"],
+      "tools": ["supabase_query_sql", "kb_search", "web_search", "answer_with_context", "summarize_and_cite"]
+    }
+  ],
+  "tools": [
+    {
+      "name": "supabase_query_sql",
+      "inputSchema": "supabase_query_sql.input",
+      "outputSchema": "supabase_query_sql.output",
+      "idempotent": true
+    },
+    {
+      "name": "supabase_call_rpc",
+      "inputSchema": "supabase_call_rpc.input",
+      "outputSchema": "supabase_call_rpc.output",
+      "idempotent": false
+    },
+    {
+      "name": "storage_get",
+      "inputSchema": "storage_get.input",
+      "outputSchema": "storage_get.output",
+      "idempotent": true
+    },
+    {
+      "name": "storage_put",
+      "inputSchema": "storage_put.input",
+      "outputSchema": "storage_put.output",
+      "idempotent": false
+    },
+    {
+      "name": "wallet_create",
+      "inputSchema": "wallet_create.input",
+      "outputSchema": "wallet_create.output",
+      "idempotent": false
+    },
+    {
+      "name": "wallet_transfer",
+      "inputSchema": "wallet_transfer.input",
+      "outputSchema": "wallet_transfer.output",
+      "idempotent": false
+    },
+    {
+      "name": "kb_search",
+      "inputSchema": "kb_search.input",
+      "outputSchema": "kb_search.output",
+      "idempotent": true
+    },
+    {
+      "name": "web_search",
+      "inputSchema": "web_search.input",
+      "outputSchema": "web_search.output",
+      "idempotent": true
+    }
+  ],
+  "resources": [
+    {
+      "uri": "kb://universalai/*",
+      "ops": ["list", "get"]
+    }
+  ],
+  "prompts": [
+    {
+      "name": "answer_with_context",
+      "params": {"question": "string", "context": "string"}
+    },
+    {
+      "name": "summarize_and_cite",
+      "params": {"items": "array"}
+    },
+    {
+      "name": "mint_transaction_plan",
+      "params": {"assetName": "string", "chain": "solana"}
+    }
+  ],
+  "metrics": [
+    "latency_p95_ms",
+    "tool_error_rate",
+    "cost_tokens",
+    "mint_success_rate"
+  ],
+  "openQuestions": [
+    "Crossmint multi-chain rollout timeline",
+    "Preferred embedding provider",
+    "Production orchestrator hosting selection",
+    "Additional KYC compliance requirements"
+  ]
+}

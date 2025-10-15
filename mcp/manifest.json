@@ -1,0 +1,23 @@
+{
+  "schema": "mcp-1.0",
+  "name": "universalai-mcp",
+  "version": "0.1.0",
+  "server": { "url": "http://localhost:8974", "auth": "bearer" },
+  "capabilities": ["tools", "resources", "prompts"],
+  "tools": [
+    "supabase_query_sql",
+    "supabase_call_rpc",
+    "storage_get",
+    "storage_put",
+    "wallet_create",
+    "wallet_transfer",
+    "kb_search",
+    "web_search"
+  ],
+  "resources": ["kb://universalai/*"],
+  "prompts": [
+    "answer_with_context",
+    "summarize_and_cite",
+    "mint_transaction_plan"
+  ]
+}
