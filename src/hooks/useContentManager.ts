@@ -18,6 +18,15 @@ export interface ContentItem {
   qr_code_data?: string;
   created_at: string;
   updated_at: string;
+  signed_url?: string | null;
+}
+
+interface ContentMetadata {
+  original_name?: string;
+  mime_type?: string;
+  upload_date?: string;
+  storage_path?: string;
+  [key: string]: unknown;
 }
 
 export interface ContentFolder {
@@ -36,6 +45,56 @@ export const useContentManager = () => {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
+
+  const hydrateItemsWithSignedUrls = async (items: ContentItem[]) => {
+    const storagePaths = items
+      .map((item) => {
+        if (item.storage_path) {
+          return item.storage_path;
+        }
+
+        const metadataPath = item.metadata && typeof item.metadata.storage_path === 'string'
+          ? item.metadata.storage_path
+          : undefined;
+
+        return metadataPath;
+      })
+      .filter((path): path is string => Boolean(path));
+
+    if (storagePaths.length === 0) {
+      return items.map((item) => ({ ...item, signed_url: null }));
+    }
+
+    const uniquePaths = Array.from(new Set(storagePaths));
+
+    const { data: signed, error: signedError } = await supabase.storage
+      .from('content-library')
+      .createSignedUrls(uniquePaths, 60 * 60);
+
+    if (signedError) {
+      throw signedError;
+    }
+
+    const pathToUrl = (signed ?? []).reduce<Record<string, string>>((acc, current, index) => {
+      const path = uniquePaths[index];
+      if (current?.signedUrl) {
+        acc[path] = current.signedUrl;
+      }
+      return acc;
+    }, {});
+
+    return items.map((item) => {
+      const metadataPath = item.metadata && typeof item.metadata.storage_path === 'string'
+        ? item.metadata.storage_path
+        : undefined;
+      const storagePath = item.storage_path || metadataPath || null;
+      return {
+        ...item,
+        storage_path: storagePath,
+        signed_url: storagePath ? pathToUrl[storagePath] ?? null : null,
+      };
+    });
+  };
 
   // Fetch content items and folders
   const fetchContent = async () => {
@@ -108,7 +167,7 @@ export const useContentManager = () => {
     file: File,
     folderId?: string
   ): Promise<{
-    publicUrl: string;
+    signedUrl: string | null;
     filePath: string;
     fileType: 'audio' | 'video' | 'image' | 'document';
   } | null> => {
@@ -126,7 +185,9 @@ export const useContentManager = () => {
       // Upload file to storage
       const { error: uploadError } = await supabase.storage
         .from('content-library')
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          upsert: false,
+        });
 
       if (uploadError) throw uploadError;
 
@@ -154,8 +215,10 @@ export const useContentManager = () => {
           metadata: {
             original_name: file.name,
             mime_type: file.type,
-            upload_date: new Date().toISOString()
+            upload_date: new Date().toISOString(),
+            storage_path: filePath,
           },
+          storage_path: filePath,
           tags: []
         });
 
@@ -244,6 +307,12 @@ export const useContentManager = () => {
 
       if (error) throw error;
 
+      if (itemToDelete?.storage_path) {
+        await supabase.storage
+          .from('content-library')
+          .remove([itemToDelete.storage_path]);
+      }
+
       toast({
         title: "Success",
         description: "Content item deleted successfully!"
@@ -280,7 +349,8 @@ export const useContentManager = () => {
 
       if (error) throw error;
 
-      setContentItems((data as ContentItem[]) || []);
+      const hydrated = await hydrateItemsWithSignedUrls((data as ContentItem[]) || []);
+      setContentItems(hydrated);
     } catch (error) {
       console.error('Error searching content:', error);
       toast({
@@ -328,7 +398,8 @@ export const useContentManager = () => {
           qr_code_data: qrData,
           metadata: {
             source: 'qr_code',
-            scan_date: new Date().toISOString()
+            scan_date: new Date().toISOString(),
+            external_url: qrData
           },
           tags: ['qr-imported']
         });

@@ -212,7 +212,7 @@ const GenerativePodcastsInterface = () => {
       }
 
       const { data, error } = await supabase
-        .from('podcasts')
+        .from('podcasts_client_v1')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });

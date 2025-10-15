@@ -705,6 +705,7 @@ export type Database = {
           id: string
           metadata: Json | null
           qr_code_data: string | null
+          storage_path: string | null
           tags: string[] | null
           thumbnail_url: string | null
           title: string
@@ -722,6 +723,7 @@ export type Database = {
           id?: string
           metadata?: Json | null
           qr_code_data?: string | null
+          storage_path?: string | null
           tags?: string[] | null
           thumbnail_url?: string | null
           title: string
@@ -739,6 +741,7 @@ export type Database = {
           id?: string
           metadata?: Json | null
           qr_code_data?: string | null
+          storage_path?: string | null
           tags?: string[] | null
           thumbnail_url?: string | null
           title?: string
@@ -1469,6 +1472,7 @@ export type Database = {
           notes: string | null
           paid_at: string | null
           paid_date: string | null
+          paid_at: string | null
           payment_method: string | null
           subtotal: number
           status: string | null
@@ -1488,6 +1492,7 @@ export type Database = {
           notes?: string | null
           paid_at?: string | null
           paid_date?: string | null
+          paid_at?: string | null
           payment_method?: string | null
           subtotal?: number
           status?: string | null
@@ -1507,6 +1512,7 @@ export type Database = {
           notes?: string | null
           paid_at?: string | null
           paid_date?: string | null
+          paid_at?: string | null
           payment_method?: string | null
           subtotal?: number
           status?: string | null
@@ -2040,6 +2046,113 @@ export type Database = {
           updated_at?: string
           user_id?: string
           voice_id?: string | null
+        }
+        Relationships: []
+      }
+      podcast_generation_jobs: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          request: Json
+          result: Json | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          request: Json
+          result?: Json | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          request?: Json
+          result?: Json | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      research_messages: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string
+          id: string
+          model: string | null
+          role: string
+          session_id: string
+          sources: Json | null
+          tokens_used: number | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by: string
+          id?: string
+          model?: string | null
+          role: string
+          session_id: string
+          sources?: Json | null
+          tokens_used?: number | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          model?: string | null
+          role?: string
+          session_id?: string
+          sources?: Json | null
+          tokens_used?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "research_messages_session_id_fkey",
+            columns: ["session_id"],
+            isOneToOne: false,
+            referencedRelation: "research_sessions",
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      research_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          last_message_at: string | null
+          session_identifier: string
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          session_identifier: string
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          session_identifier?: string
+          title?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -3133,24 +3246,30 @@ export type Database = {
       user_secrets: {
         Row: {
           created_at: string
-          encrypted_value: string
+          ciphertext: string | null
           id: string
+          key_version: number
+          nonce: string | null
           secret_type: string
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
-          encrypted_value: string
+          ciphertext?: string | null
           id?: string
+          key_version?: number
+          nonce?: string | null
           secret_type: string
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
-          encrypted_value?: string
+          ciphertext?: string | null
           id?: string
+          key_version?: number
+          nonce?: string | null
           secret_type?: string
           updated_at?: string
           user_id?: string
@@ -3622,7 +3741,29 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      podcasts_client_v1: {
+        Row: {
+          audio_format: string | null
+          audio_signed_url: string | null
+          audio_url: string
+          created_at: string
+          description: string | null
+          duration: number | null
+          duration_seconds: number | null
+          file_size: number | null
+          id: string
+          outline: Json | null
+          script: string | null
+          segments: Json | null
+          show_notes: string | null
+          style: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          voice_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       add_credits: {

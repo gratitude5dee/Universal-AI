@@ -126,11 +126,22 @@ const ResearchInterface = () => {
       setMessages(loadedMessages);
       scrollToBottom();
 
+      const hydrated: ResearchMessage[] = session.research_messages.map((message) => ({
+        id: message.id,
+        content: message.content,
+        role: message.role,
+        timestamp: new Date(message.created_at),
+        sources: message.sources ?? undefined,
+        tokensUsed: message.tokens_used ?? undefined,
+        model: message.model ?? undefined,
+      }));
+
+      setMessages(hydrated);
     } catch (err) {
       console.error('Unexpected error loading research history:', err);
       toast({
         title: 'History Error',
-        description: 'An unexpected error occurred while loading messages.',
+        description: err instanceof Error ? err.message : 'An unexpected error occurred while loading messages.',
         variant: 'destructive'
       });
     }

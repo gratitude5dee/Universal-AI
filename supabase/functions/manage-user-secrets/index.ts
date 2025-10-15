@@ -182,6 +182,16 @@ serve(async (req) => {
           );
         }
 
+        const secrets = await Promise.all(
+          (data ?? []).map(async (item) => ({
+            secret_type: item.secret_type,
+            created_at: item.created_at,
+            updated_at: item.updated_at,
+            value: await decryptValue(item.ciphertext, item.nonce),
+            hasValue: Boolean(item.ciphertext && item.nonce),
+          }))
+        )
+
         return new Response(
           JSON.stringify(data),
           {
@@ -211,7 +221,8 @@ serve(async (req) => {
           .upsert({
             user_id: user.id,
             secret_type,
-            encrypted_value
+            ciphertext,
+            nonce
           }, {
             onConflict: 'user_id,secret_type'
           });

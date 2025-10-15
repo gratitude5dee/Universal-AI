@@ -126,6 +126,7 @@ export const useUserSecrets = () => {
     getSecret,
     upsertSecret,
     deleteSecret,
-    refetch: fetchSecrets
+    refetch: fetchSecrets,
   };
 };
+

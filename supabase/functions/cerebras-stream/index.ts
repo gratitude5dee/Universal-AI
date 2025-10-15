@@ -62,9 +62,9 @@ serve(async (req) => {
     // Verify user has access to the board
     const { data: board, error: boardError } = await supabase
       .from('boards')
-      .select('*')
+      .select('id, user_id')
       .eq('id', boardId)
-      .single();
+      .maybeSingle();
 
     if (boardError || !board) {
       throw new Error('Board not found or access denied');
