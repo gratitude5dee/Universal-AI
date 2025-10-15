@@ -97,13 +97,13 @@ Before you begin, ensure you have the following installed:
    ```
 
 3. **Set up environment variables**
-   ```bash
-   # Copy the example environment file
-   cp .env.example .env.local
-   
-   # Edit the file with your configuration
-   nano .env.local
+   Create a `.env.local` file in the project root and define the required Vite variables:
+   ```env
+   VITE_CROSSMINT_CLIENT_KEY=your_crossmint_client_key_here
+   VITE_SUPABASE_URL=your_supabase_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
    ```
+   *Note: You can reference the Crossmint Developer Console for client keys and the Supabase dashboard (Project Settings → API) for your Supabase URL and anon key when filling in these values.*
 
 4. **Start the development server**
    ```bash
