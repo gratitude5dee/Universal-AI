@@ -25,7 +25,7 @@ export const FileUploadModal: React.FC<FileUploadModalProps> = ({
   uploading
 }) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [selectedFolderId, setSelectedFolderId] = useState<string>("");
+  const [selectedFolderId, setSelectedFolderId] = useState<string>("none");
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => {
@@ -50,10 +50,10 @@ export const FileUploadModal: React.FC<FileUploadModalProps> = ({
 
     try {
       for (const file of selectedFiles) {
-        await onUpload(file, selectedFolderId || undefined);
+        await onUpload(file, selectedFolderId === "none" ? undefined : selectedFolderId);
       }
       setSelectedFiles([]);
-      setSelectedFolderId("");
+      setSelectedFolderId("none");
       onClose();
     } catch (error) {
       console.error('Upload error:', error);
@@ -87,7 +87,7 @@ export const FileUploadModal: React.FC<FileUploadModalProps> = ({
                 <SelectValue placeholder="Select a folder" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No folder</SelectItem>
+                <SelectItem value="none">No folder</SelectItem>
                 {folders.map((folder) => (
                   <SelectItem key={folder.id} value={folder.id}>
                     {folder.name}
