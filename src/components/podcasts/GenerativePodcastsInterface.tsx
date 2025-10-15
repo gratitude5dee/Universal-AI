@@ -64,12 +64,16 @@ interface Podcast {
   updated_at: string;
 }
 
-type PodcastRow = Database['public']['Tables']['podcasts']['Row'];
+type PodcastRow = Database['public']['Views']['podcasts_client_v1']['Row'];
 
-interface PodcastFunctionResponse {
-  success: boolean;
-  error?: string;
+type PodcastJobStatus = 'queued' | 'processing' | 'succeeded' | 'failed';
+
+interface PodcastJobResponse {
+  jobId: string;
+  status: PodcastJobStatus;
   podcast?: PodcastRow;
+  audioBase64?: string | null;
+  error?: string;
 }
 
 const parseOutline = (value: PodcastRow['outline']): PodcastOutlineSection[] | null => {
@@ -212,7 +216,7 @@ const GenerativePodcastsInterface = () => {
       }
 
       const { data, error } = await supabase
-        .from('podcasts')
+        .from('podcasts_client_v1')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
@@ -364,7 +368,7 @@ const GenerativePodcastsInterface = () => {
     setIsGenerating(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke<PodcastFunctionResponse>('podcast-generator', {
+      const { data, error } = await supabase.functions.invoke<PodcastJobResponse>('podcast-generator', {
         body: {
           title,
           description,
@@ -376,10 +380,10 @@ const GenerativePodcastsInterface = () => {
 
       if (error) throw error;
 
-      const response = data as PodcastFunctionResponse | null;
+      const response = data as PodcastJobResponse | null;
 
-      if (!response?.success || !response.podcast) {
-        throw new Error(response?.error || 'Failed to generate podcast');
+      if (!response || response.status !== 'succeeded' || !response.podcast) {
+        throw new Error(response?.error || 'Podcast generation did not complete');
       }
 
       const normalizedPodcast = normalizePodcast(response.podcast);

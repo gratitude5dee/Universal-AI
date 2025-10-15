@@ -10,13 +10,22 @@ export interface ContentItem {
   description?: string;
   file_type: 'audio' | 'video' | 'image' | 'document';
   file_size?: number;
-  file_url?: string;
+  storage_path?: string | null;
   thumbnail_url?: string;
-  metadata: any;
+  metadata?: ContentMetadata | null;
   tags: string[];
   qr_code_data?: string;
   created_at: string;
   updated_at: string;
+  signed_url?: string | null;
+}
+
+interface ContentMetadata {
+  original_name?: string;
+  mime_type?: string;
+  upload_date?: string;
+  storage_path?: string;
+  [key: string]: unknown;
 }
 
 export interface ContentFolder {
@@ -35,6 +44,56 @@ export const useContentManager = () => {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
+
+  const hydrateItemsWithSignedUrls = async (items: ContentItem[]) => {
+    const storagePaths = items
+      .map((item) => {
+        if (item.storage_path) {
+          return item.storage_path;
+        }
+
+        const metadataPath = item.metadata && typeof item.metadata.storage_path === 'string'
+          ? item.metadata.storage_path
+          : undefined;
+
+        return metadataPath;
+      })
+      .filter((path): path is string => Boolean(path));
+
+    if (storagePaths.length === 0) {
+      return items.map((item) => ({ ...item, signed_url: null }));
+    }
+
+    const uniquePaths = Array.from(new Set(storagePaths));
+
+    const { data: signed, error: signedError } = await supabase.storage
+      .from('content-library')
+      .createSignedUrls(uniquePaths, 60 * 60);
+
+    if (signedError) {
+      throw signedError;
+    }
+
+    const pathToUrl = (signed ?? []).reduce<Record<string, string>>((acc, current, index) => {
+      const path = uniquePaths[index];
+      if (current?.signedUrl) {
+        acc[path] = current.signedUrl;
+      }
+      return acc;
+    }, {});
+
+    return items.map((item) => {
+      const metadataPath = item.metadata && typeof item.metadata.storage_path === 'string'
+        ? item.metadata.storage_path
+        : undefined;
+      const storagePath = item.storage_path || metadataPath || null;
+      return {
+        ...item,
+        storage_path: storagePath,
+        signed_url: storagePath ? pathToUrl[storagePath] ?? null : null,
+      };
+    });
+  };
 
   // Fetch content items and folders
   const fetchContent = async () => {
@@ -55,7 +114,9 @@ export const useContentManager = () => {
       if (itemsResponse.error) throw itemsResponse.error;
       if (foldersResponse.error) throw foldersResponse.error;
 
-      setContentItems((itemsResponse.data as ContentItem[]) || []);
+      const rawItems = (itemsResponse.data as ContentItem[]) || [];
+      const itemsWithUrls = await hydrateItemsWithSignedUrls(rawItems);
+      setContentItems(itemsWithUrls);
       setFolders((foldersResponse.data as ContentFolder[]) || []);
     } catch (error) {
       console.error('Error fetching content:', error);
@@ -74,7 +135,7 @@ export const useContentManager = () => {
     file: File,
     folderId?: string
   ): Promise<{
-    publicUrl: string;
+    signedUrl: string | null;
     filePath: string;
     fileType: 'audio' | 'video' | 'image' | 'document';
   } | null> => {
@@ -92,14 +153,15 @@ export const useContentManager = () => {
       // Upload file to storage
       const { error: uploadError } = await supabase.storage
         .from('content-library')
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          upsert: false,
+        });
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
+      const { data: signedUrlData } = await supabase.storage
         .from('content-library')
-        .getPublicUrl(filePath);
+        .createSignedUrl(filePath, 60 * 60);
 
       // Determine file type
       const fileType = getFileType(file.type);
@@ -113,12 +175,13 @@ export const useContentManager = () => {
           title: file.name,
           file_type: fileType,
           file_size: file.size,
-          file_url: publicUrl,
           metadata: {
             original_name: file.name,
             mime_type: file.type,
-            upload_date: new Date().toISOString()
+            upload_date: new Date().toISOString(),
+            storage_path: filePath,
           },
+          storage_path: filePath,
           tags: []
         });
 
@@ -132,7 +195,7 @@ export const useContentManager = () => {
       // Refresh content
       await fetchContent();
 
-      return { publicUrl, filePath, fileType };
+      return { signedUrl: signedUrlData?.signedUrl ?? null, filePath, fileType };
     } catch (error) {
       console.error('Error uploading file:', error);
       toast({
@@ -182,12 +245,26 @@ export const useContentManager = () => {
   // Delete content item
   const deleteContentItem = async (id: string) => {
     try {
+      const { data: itemToDelete, error: fetchError } = await supabase
+        .from('content_items')
+        .select('storage_path')
+        .eq('id', id)
+        .maybeSingle();
+
+      if (fetchError) throw fetchError;
+
       const { error } = await supabase
         .from('content_items')
         .delete()
         .eq('id', id);
 
       if (error) throw error;
+
+      if (itemToDelete?.storage_path) {
+        await supabase.storage
+          .from('content-library')
+          .remove([itemToDelete.storage_path]);
+      }
 
       toast({
         title: "Success",
@@ -225,7 +302,8 @@ export const useContentManager = () => {
 
       if (error) throw error;
 
-      setContentItems((data as ContentItem[]) || []);
+      const hydrated = await hydrateItemsWithSignedUrls((data as ContentItem[]) || []);
+      setContentItems(hydrated);
     } catch (error) {
       console.error('Error searching content:', error);
       toast({
@@ -244,7 +322,6 @@ export const useContentManager = () => {
 
       // Try to determine if QR data is a URL or contains file info
       let fileType: 'audio' | 'video' | 'image' | 'document' = 'document';
-      let fileUrl = qrData;
 
       // Simple URL validation and type detection
       if (qrData.includes('youtube.com') || qrData.includes('youtu.be')) {
@@ -266,11 +343,11 @@ export const useContentManager = () => {
           title,
           description,
           file_type: fileType,
-          file_url: fileUrl,
           qr_code_data: qrData,
           metadata: {
             source: 'qr_code',
-            scan_date: new Date().toISOString()
+            scan_date: new Date().toISOString(),
+            external_url: qrData
           },
           tags: ['qr-imported']
         });
