@@ -3343,6 +3343,33 @@ export type Database = {
         }
         Relationships: []
       }
+      voice_clones: {
+        Row: {
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          updated_at: string | null
+          user_id: string
+          voice_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          updated_at?: string | null
+          user_id: string
+          voice_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          updated_at?: string | null
+          user_id?: string
+          voice_id?: string
+        }
+        Relationships: []
+      }
       waitlist_signups: {
         Row: {
           badges: Json | null

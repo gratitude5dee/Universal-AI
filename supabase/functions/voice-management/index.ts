@@ -95,8 +95,20 @@ serve(async (req) => {
         const ownedVoices = (storedVoices ?? []) as StoredVoiceClone[];
 
         if (ownedVoices.length === 0) {
+          // Return default ElevenLabs voices when user has no custom clones
+          const defaultVoices = [
+            { voice_id: '9BWtsMINqrJLrRacOk9x', name: 'Aria', category: 'premade', labels: { accent: 'american' } },
+            { voice_id: 'CwhRBWXzGAHq8TQ4Fs17', name: 'Roger', category: 'premade', labels: { accent: 'american' } },
+            { voice_id: 'EXAVITQu4vr4xnSDxMaL', name: 'Sarah', category: 'premade', labels: { accent: 'american' } },
+            { voice_id: 'FGY2WhTYpPnrIDTdsKH5', name: 'Laura', category: 'premade', labels: { accent: 'american' } },
+            { voice_id: 'IKne3meq5aSn9XLyUdCD', name: 'Charlie', category: 'premade', labels: { accent: 'british' } },
+            { voice_id: 'JBFqnCBsd6RMkjVDRZzb', name: 'George', category: 'premade', labels: { accent: 'british' } },
+            { voice_id: 'TX3LPaxmHKxFdv7VOQHJ', name: 'Liam', category: 'premade', labels: { accent: 'american' } },
+            { voice_id: 'XB0fDUnXU5powFXDhCwa', name: 'Charlotte', category: 'premade', labels: { accent: 'british' } },
+          ];
+          
           return new Response(JSON.stringify({
-            voices: [],
+            voices: defaultVoices,
             success: true,
           }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
