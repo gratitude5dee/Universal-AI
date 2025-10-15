@@ -38,7 +38,7 @@ export const useUserSecrets = () => {
     return (await response.json()) as T;
   };
 
-  const fetchSecrets = async () => {
+  const fetchSecrets = useCallback(async () => {
     try {
       setLoading(true);
       const data = await callSecretsFunction<UserSecretMeta[]>('GET');
@@ -48,16 +48,7 @@ export const useUserSecrets = () => {
     } finally {
       setLoading(false);
     }
-  }, [getAccessToken]);
-
-  const getSecret = async (secretType: string): Promise<string | null> => {
-    try {
-      const token = await getAccessToken();
-      const response = await fetch(`${supabase.functions.url}/manage-user-secrets?secretType=${encodeURIComponent(secretType)}&decrypt=true`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  }, []);
 
   const getSecret = async (secretType: string): Promise<string | null> => {
     if (secretValues[secretType]) {

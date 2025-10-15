@@ -138,7 +138,7 @@ Generate 3-5 venue matches maximum. Make reasoning detailed and specific.`;
   } catch (error) {
     console.error('[venue-ai-search] Error:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : String(error) }),
       { 
         status: 500, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
