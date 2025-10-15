@@ -11,6 +11,8 @@
 
 UniversalAI is a comprehensive creator ecosystem that bridges the gap between creativity and technology. Our platform provides creators with cutting-edge AI agents, blockchain-powered asset protection, monetization tools, and a complete suite of creator-focused features.
 
+> Want the full breakdown of how our agents collaborate? Explore the detailed architecture diagrams and policies in [Agents.md](Agents.md).
+
 ---
 
 ## ✨ Key Features
@@ -165,6 +167,25 @@ For full blockchain functionality:
    supabase functions deploy transfer-sol
    ```
 3. Add your Supabase credentials to `.env.local`
+
+### MCP Server Setup Overview
+
+The `/mcp` package contains the Model Context Protocol server that powers UniversalAI's agent tooling surface—bridging orchestrators, Supabase workflows, Crossmint wallets, and retrieval resources.
+
+**Critical MCP environment variables**
+
+- `MCP_BEARER_TOKEN` – shared secret required to authenticate orchestrator requests.
+- `MCP_PORT` – HTTP port for the MCP server (defaults to `8974`).
+- `MCP_MODE` – `mock` for local development or `live` for production calls.
+- `MCP_SUPABASE_URL` – base URL of your Supabase instance.
+- `MCP_SUPABASE_SERVICE_ROLE_KEY` – service-role key for privileged database and RPC access.
+- `MCP_SUPABASE_FUNCTION_JWT` – JWT used when invoking Supabase Edge Functions.
+- `MCP_CROSSMINT_API_KEY` & `MCP_CROSSMINT_PROJECT_ID` – credentials for Crossmint wallet operations.
+- `MCP_WALLET_CONFIRMATION_SECRET` – HMAC secret protecting high-trust wallet flows.
+- `MCP_WEB_SEARCH_API_KEY` – key for outbound web search providers.
+- `MCP_EMBEDDING_API_KEY` – key for embedding generation used by knowledge search.
+
+For setup scripts, tool allowlists, and run commands, read the dedicated [MCP server guide](mcp/README.md). You can also revisit [Agents.md](Agents.md) for diagrams showing how the orchestrator and MCP server interact across the full agent architecture.
 
 ---
 
