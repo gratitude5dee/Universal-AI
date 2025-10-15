@@ -4,7 +4,10 @@ project_id = "ixkkrousepsiorwlaycp"
 verify_jwt = false
 
 [functions.podcast-generator]
-verify_jwt = false
+verify_jwt = true
+
+[functions.cerebras-stream]
+verify_jwt = true
 
 [functions.cerebras-research]
 verify_jwt = true

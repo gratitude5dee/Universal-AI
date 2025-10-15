@@ -10,6 +10,8 @@ import { Node } from '@xyflow/react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+
 interface PromptPanelProps {
   selectedNode: Node | null;
   nodes: Node[];
@@ -48,6 +50,7 @@ const PromptPanel = ({ selectedNode, nodes, boardId, onUpdateNode, onAddAIRespon
   const [temperature, setTemperature] = useState([0.8]);
   const [maxTokens, setMaxTokens] = useState([500]);
   const { toast } = useToast();
+  const selectedNodeType = (selectedNode as AINode | null)?.data?.nodeType ?? 'Unknown';
 
   // Update prompt when selected node changes
   useEffect(() => {
@@ -147,20 +150,38 @@ const PromptPanel = ({ selectedNode, nodes, boardId, onUpdateNode, onAddAIRespon
       });
 
       if (!response.ok || !response.body) {
-        const errorText = await response.text().catch(() => 'Unknown error');
-        throw new Error(errorText || 'Failed to connect to AI service');
+        const errorText = await response.text();
+        throw new Error(errorText || 'Streaming response unavailable');
       }
 
-      // Handle streaming response
-      if (response.body) {
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let fullResponse = '';
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullResponse = '';
 
-        // Update current node with user input
-        if (prompt !== selectedNode.data?.text) {
-          onUpdateNode(selectedNode.id, prompt);
-        }
+      if (prompt !== selectedNode.data?.text) {
+        onUpdateNode(selectedNode.id, prompt);
+      }
+
+      onAddAIResponse(selectedNode.id, '');
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n').filter(line => line.trim() !== '');
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+
+          const data = line.slice(6);
+          if (data === '[DONE]') {
+            toast({
+              title: "Generation Complete",
+              description: "AI response has been generated successfully"
+            });
+            return;
+          }
 
         // Create temporary AI response node
         const tempResponseId = `ai-${Date.now()}`;
@@ -197,6 +218,8 @@ const PromptPanel = ({ selectedNode, nodes, boardId, onUpdateNode, onAddAIRespon
                 console.error('Error parsing stream chunk:', e);
               }
             }
+          } catch (e) {
+            console.error('Error parsing stream chunk:', e);
           }
         }
       }

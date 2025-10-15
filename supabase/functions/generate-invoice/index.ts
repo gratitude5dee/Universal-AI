@@ -5,6 +5,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.53.0';
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
 interface LineItem {
@@ -78,7 +79,7 @@ serve(async (req) => {
       .from('venue_bookings')
       .select('id, gig_id, user_id, workflow_stage, payment_status')
       .eq('id', bookingId)
-      .single();
+      .maybeSingle();
 
     if (bookingError || !booking) {
       throw new Error('Booking not found');
@@ -95,7 +96,7 @@ serve(async (req) => {
       .from('invoices')
       .insert({
         invoice_number: invoiceNumber,
-        gig_id: booking.gig_id,
+        gig_id: booking.gig_id!,
         amount: total,
         due_date: computedDueDate,
         status: 'pending',
@@ -146,8 +147,11 @@ serve(async (req) => {
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
-    );
+    };
 
+    return new Response(JSON.stringify(responseBody), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     console.error('[generate-invoice] Error:', message);

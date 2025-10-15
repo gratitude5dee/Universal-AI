@@ -19,6 +19,15 @@ export interface ContentItem {
   qr_code_data?: string;
   created_at: string;
   updated_at: string;
+  signed_url?: string | null;
+}
+
+interface ContentMetadata {
+  original_name?: string;
+  mime_type?: string;
+  upload_date?: string;
+  storage_path?: string;
+  [key: string]: unknown;
 }
 
 export interface ContentFolder {
@@ -118,7 +127,7 @@ export const useContentManager = () => {
     file: File,
     folderId?: string
   ): Promise<{
-    publicUrl: string;
+    signedUrl: string | null;
     filePath: string;
     fileType: 'audio' | 'video' | 'image' | 'document';
   } | null> => {
@@ -134,7 +143,9 @@ export const useContentManager = () => {
 
       const { error: uploadError } = await supabase.storage
         .from('content-library')
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          upsert: false,
+        });
 
       if (uploadError) throw uploadError;
 
@@ -152,8 +163,10 @@ export const useContentManager = () => {
           metadata: {
             original_name: file.name,
             mime_type: file.type,
-            upload_date: new Date().toISOString()
+            upload_date: new Date().toISOString(),
+            storage_path: filePath,
           },
+          storage_path: filePath,
           tags: []
         });
 
@@ -218,12 +231,36 @@ export const useContentManager = () => {
 
   const deleteContentItem = async (id: string) => {
     try {
+      const { data: item, error: fetchError } = await supabase
+        .from('content_items')
+        .select('file_path')
+        .eq('id', id)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      if (item?.file_path && !item.file_path.startsWith('external/')) {
+        const { error: storageError } = await supabase.storage
+          .from('content-library')
+          .remove([item.file_path]);
+
+        if (storageError && !storageError.message?.toLowerCase().includes('not found')) {
+          throw storageError;
+        }
+      }
+
       const { error } = await supabase
         .from('content_items')
         .delete()
         .eq('id', id);
 
       if (error) throw error;
+
+      if (itemToDelete?.storage_path) {
+        await supabase.storage
+          .from('content-library')
+          .remove([itemToDelete.storage_path]);
+      }
 
       toast({
         title: 'Success',
@@ -292,6 +329,8 @@ export const useContentManager = () => {
         fileType = 'audio';
       }
 
+      const fallbackPath = `external/${crypto.randomUUID()}`;
+
       const { error } = await supabase
         .from('content_items')
         .insert({
@@ -300,10 +339,12 @@ export const useContentManager = () => {
           description,
           file_type: fileType,
           file_url: fileUrl,
+          file_path: fallbackPath,
           qr_code_data: qrData,
           metadata: {
             source: 'qr_code',
-            scan_date: new Date().toISOString()
+            scan_date: new Date().toISOString(),
+            external_url: qrData
           },
           tags: ['qr-imported']
         });

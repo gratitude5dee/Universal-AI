@@ -46,8 +46,33 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+if (!encryptionKeyBase64) {
+  throw new Error('USER_SECRETS_ENCRYPTION_KEY is not configured');
+}
+
+await sodium.ready;
+const encryptionKey = sodium.from_base64(encryptionKeyBase64, sodium.base64_variants.ORIGINAL);
+if (encryptionKey.length !== sodium.crypto_secretbox_KEYBYTES) {
+  throw new Error('USER_SECRETS_ENCRYPTION_KEY must be a 32-byte key encoded in base64');
+}
+
+const encryptSecret = (value: string) => {
+  const nonce = sodium.randombytes_buf(sodium.crypto_secretbox_NONCEBYTES);
+  const ciphertext = sodium.crypto_secretbox_easy(value, nonce, encryptionKey);
+  return {
+    ciphertext: sodium.to_base64(ciphertext, sodium.base64_variants.ORIGINAL),
+    nonce: sodium.to_base64(nonce, sodium.base64_variants.ORIGINAL),
+  };
+};
+
+const decryptSecret = (ciphertextBase64: string, nonceBase64: string) => {
+  const ciphertext = sodium.from_base64(ciphertextBase64, sodium.base64_variants.ORIGINAL);
+  const nonce = sodium.from_base64(nonceBase64, sodium.base64_variants.ORIGINAL);
+  const decrypted = sodium.crypto_secretbox_open_easy(ciphertext, nonce, encryptionKey);
+  return sodium.to_string(decrypted);
+};
+
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
@@ -216,7 +241,7 @@ serve(async (req) => {
           );
         }
 
-        const { error } = await supabaseClient
+        const { error } = await serviceClient
           .from('user_secrets')
           .delete()
           .eq('user_id', user.id)
@@ -249,7 +274,6 @@ serve(async (req) => {
           }
         );
     }
-
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     return new Response(

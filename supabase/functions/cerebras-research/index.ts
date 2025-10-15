@@ -5,6 +5,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.53.0';
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
 interface ResearchRequest {
@@ -12,6 +13,19 @@ interface ResearchRequest {
   context?: string;
   sources?: string[];
   sessionId?: string;
+}
+
+const supabaseUrl = Deno.env.get('SUPABASE_URL');
+const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
+const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+const cerebrasApiKey = Deno.env.get('CEREBRAS_API_KEY');
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Supabase credentials are not configured for cerebras-research');
+}
+
+if (!cerebrasApiKey) {
+  throw new Error('CEREBRAS_API_KEY is not configured');
 }
 
 serve(async (req) => {
@@ -55,16 +69,20 @@ serve(async (req) => {
     console.log(`Research request - Session: ${sessionIdentifier}, Query: ${query.substring(0, 100)}...`);
     let sessionRecordId: string | null = null;
 
+    const sessionIdentifier = sessionId || `research_${crypto.randomUUID()}`;
     const sessionTimestamp = new Date().toISOString();
+
+    let sessionRecordId: string | null = null;
 
     const { data: existingSession, error: existingSessionError } = await supabase
       .from('research_sessions')
       .select('id, user_id')
       .eq('session_identifier', sessionIdentifier)
+      .eq('user_id', user.id)
       .maybeSingle();
 
     if (existingSessionError) {
-      console.error('Error loading research session:', existingSessionError);
+      console.error('[cerebras-research] Failed to load session', existingSessionError);
       throw new Error('Failed to load research session');
     }
 
@@ -80,20 +98,19 @@ serve(async (req) => {
           session_identifier: sessionIdentifier,
           user_id: user.id,
           updated_at: sessionTimestamp,
-          last_message_at: sessionTimestamp
+          last_message_at: sessionTimestamp,
         })
         .select('id')
         .single();
 
       if (createSessionError || !createdSession) {
-        console.error('Error creating research session:', createSessionError);
+        console.error('[cerebras-research] Failed to create session', createSessionError);
         throw new Error('Failed to create research session');
       }
 
       sessionRecordId = createdSession.id;
     }
 
-    // Build system prompt for research
     const systemPrompt = `You are an advanced AI research assistant with access to deep knowledge across multiple domains. You excel at:
 
 1. **Comprehensive Analysis**: Providing thorough, well-structured research responses
@@ -115,12 +132,10 @@ Current research context: ${context || 'General research query'}`;
       { role: 'user', content: query }
     ];
 
-    console.log('Sending request to Cerebras API...');
-
     const response = await fetch('https://api.cerebras.ai/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${cerebrasApiKey}`,
+        Authorization: `Bearer ${cerebrasApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -134,14 +149,17 @@ Current research context: ${context || 'General research query'}`;
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Cerebras API error:', response.status, errorText);
+      console.error('[cerebras-research] Cerebras API error', response.status, errorText);
       throw new Error(`Cerebras API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    console.log('Cerebras API response received successfully');
-
     const responseTimestamp = new Date().toISOString();
+    const assistantContent = data?.choices?.[0]?.message?.content ?? '';
+
+    if (!assistantContent) {
+      throw new Error('Cerebras did not return a response');
+    }
 
     if (sessionRecordId) {
       const { error: userMessageError } = await supabase
@@ -151,11 +169,12 @@ Current research context: ${context || 'General research query'}`;
           role: 'user',
           content: query,
           sources: sources.length ? sources : null,
+          created_by: user.id,
           created_at: sessionTimestamp
         });
 
       if (userMessageError) {
-        console.error('Error storing user research message:', userMessageError);
+        console.error('[cerebras-research] Failed to store user message', userMessageError);
         throw new Error('Failed to store research message');
       }
 
@@ -164,15 +183,16 @@ Current research context: ${context || 'General research query'}`;
         .insert({
           session_id: sessionRecordId,
           role: 'assistant',
-          content: data.choices[0].message.content,
+          content: assistantContent,
           sources: sources.length ? sources : null,
-          tokens_used: data.usage?.total_tokens || 0,
+          tokens_used: data?.usage?.total_tokens || 0,
           model: 'llama3.1-70b',
+          created_by: user.id,
           created_at: responseTimestamp
         });
 
       if (assistantMessageError) {
-        console.error('Error storing assistant research message:', assistantMessageError);
+        console.error('[cerebras-research] Failed to store assistant message', assistantMessageError);
         throw new Error('Failed to store research response');
       }
 
@@ -182,31 +202,31 @@ Current research context: ${context || 'General research query'}`;
           updated_at: responseTimestamp,
           last_message_at: responseTimestamp
         })
-        .eq('id', sessionRecordId);
+        .eq('id', sessionRecordId)
+        .eq('user_id', user.id);
 
       if (updateSessionError) {
-        console.error('Error updating research session timestamps:', updateSessionError);
+        console.error('[cerebras-research] Failed to update session', updateSessionError);
         throw new Error('Failed to update research session');
       }
     }
 
     const researchResult = {
-      content: data.choices[0].message.content,
-      sources: sources,
+      content: assistantContent,
+      sources,
       sessionId: sessionIdentifier,
       timestamp: responseTimestamp,
       model: 'llama3.1-70b',
-      tokensUsed: data.usage?.total_tokens || 0
+      tokensUsed: data?.usage?.total_tokens || 0
     };
 
     return new Response(JSON.stringify(researchResult), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
-
   } catch (error) {
-    console.error('Error in cerebras-research function:', error);
+    console.error('[cerebras-research] Error', error);
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-    return new Response(JSON.stringify({ 
+    return new Response(JSON.stringify({
       error: errorMessage,
       timestamp: new Date().toISOString()
     }), {

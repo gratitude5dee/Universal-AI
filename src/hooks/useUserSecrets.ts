@@ -13,7 +13,8 @@ const SUPABASE_URL =
   'https://ixkkrousepsiorwlaycp.supabase.co';
 
 export const useUserSecrets = () => {
-  const [secrets, setSecrets] = useState<UserSecret[]>([]);
+  const [secrets, setSecrets] = useState<UserSecretMeta[]>([]);
+  const [secretValues, setSecretValues] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -120,6 +121,6 @@ export const useUserSecrets = () => {
     getSecret,
     upsertSecret,
     deleteSecret,
-    refetch: fetchSecrets
+    refetch: fetchSecrets,
   };
 };

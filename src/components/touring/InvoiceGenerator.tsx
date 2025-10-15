@@ -6,8 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Receipt, Plus, Trash2, Loader2, Download, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import type { Database } from "@/integrations/supabase/types";
 
-interface LineItem {
+interface EditableLineItem {
   id: string;
   description: string;
   amount: number;
@@ -48,7 +49,7 @@ export const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
   open,
   onOpenChange,
   bookingId,
-  bookingDetails
+  bookingDetails,
 }) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -176,6 +177,7 @@ Tax: $${totals.tax.toFixed(2)}
 TOTAL: $${totals.total.toFixed(2)} ${invoice.currency}
 Balance Due: $${totals.balanceDue.toFixed(2)}
 
+Balance Due: $${invoice.invoiceData.balanceDue.toFixed(2)} (${invoice.invoiceData.paymentStatus})
 Payment Terms: Net 30 days
 `;
 
@@ -206,7 +208,9 @@ Payment Terms: Net 30 days
             {invoice ? "Invoice Generated" : "Create Invoice"}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            {invoice ? `Invoice for ${bookingDetails.venueName}` : `Generate an invoice for ${bookingDetails.venueName}`}
+            {invoice
+              ? `Invoice for ${bookingDetails.venueName}`
+              : `Generate an invoice for ${bookingDetails.venueName}`}
           </DialogDescription>
         </DialogHeader>
 
@@ -215,12 +219,7 @@ Payment Terms: Net 30 days
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label className="text-base font-semibold text-foreground">Line Items</Label>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={addLineItem}
-                >
+                <Button type="button" variant="outline" size="sm" onClick={addLineItem}>
                   <Plus className="h-4 w-4 mr-2" />
                   Add Item
                 </Button>
@@ -269,6 +268,7 @@ Payment Terms: Net 30 days
                   </div>
                 ))}
               </div>
+            </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-background/40 p-4 rounded-lg border border-border">
@@ -378,3 +378,4 @@ Payment Terms: Net 30 days
     </Dialog>
   );
 };
+
