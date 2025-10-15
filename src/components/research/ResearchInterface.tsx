@@ -30,6 +30,25 @@ interface ResearchMessage {
   model?: string;
 }
 
+interface ResearchMessageRow {
+  id: string;
+  content: string;
+  role: 'user' | 'assistant';
+  created_at: string;
+  sources?: string[] | null;
+  tokens_used?: number | null;
+  model?: string | null;
+}
+
+interface ResearchSessionRow {
+  id: string;
+  session_identifier: string;
+  title?: string | null;
+  updated_at?: string | null;
+  last_message_at?: string | null;
+  research_messages?: ResearchMessageRow[];
+}
+
 interface IntegrationStatus {
   id: string;
   name: string;
@@ -80,17 +99,51 @@ const ResearchInterface = () => {
 
   const refreshSessionHistory = useCallback(async (activeSessionId: string) => {
     try {
-      // Research sessions and messages are not yet implemented in the database
-      // This is a placeholder that will be implemented when the tables are created
-      console.log('Research session history not yet implemented:', activeSessionId);
-      setMessages([]);
-      return;
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) {
+        setMessages([]);
+        return;
+      }
 
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+      if (!supabaseUrl) {
+        throw new Error('Missing VITE_SUPABASE_URL environment variable');
+      }
+
+      const response = await fetch(`${supabaseUrl}/functions/v1/research-sessions?sessionId=${encodeURIComponent(activeSessionId)}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.error || 'Failed to load research history');
+      }
+
+      const { session } = (await response.json()) as { session: ResearchSessionRow | null };
+      if (!session || !Array.isArray(session.research_messages)) {
+        setMessages([]);
+        return;
+      }
+
+      const hydrated: ResearchMessage[] = session.research_messages.map((message) => ({
+        id: message.id,
+        content: message.content,
+        role: message.role,
+        timestamp: new Date(message.created_at),
+        sources: message.sources ?? undefined,
+        tokensUsed: message.tokens_used ?? undefined,
+        model: message.model ?? undefined,
+      }));
+
+      setMessages(hydrated);
     } catch (err) {
       console.error('Unexpected error loading research history:', err);
       toast({
         title: 'History Error',
-        description: 'An unexpected error occurred while loading messages.',
+        description: err instanceof Error ? err.message : 'An unexpected error occurred while loading messages.',
         variant: 'destructive'
       });
     }

@@ -37,7 +37,8 @@ serve(async (req) => {
     )
 
     // Verify the user is authenticated
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser()
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token)
     
     if (authError || !user) {
       return new Response(
@@ -54,50 +55,62 @@ serve(async (req) => {
 
     switch (method) {
       case 'GET': {
-        // Retrieve user secrets (encrypted values are returned as-is)
         const { data, error } = await supabaseClient
           .from('user_secrets')
-          .select('secret_type, created_at, updated_at')
+          .select('secret_type, created_at, updated_at, ciphertext, nonce')
           .eq('user_id', user.id)
 
         if (error) {
           return new Response(
             JSON.stringify({ error: error.message }),
-            { 
-              status: 500, 
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+            {
+              status: 500,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
             }
           )
         }
 
+        const secrets = await Promise.all(
+          (data ?? []).map(async (item) => ({
+            secret_type: item.secret_type,
+            created_at: item.created_at,
+            updated_at: item.updated_at,
+            value: await decryptValue(item.ciphertext, item.nonce),
+            hasValue: Boolean(item.ciphertext && item.nonce),
+          }))
+        )
+
         return new Response(
-          JSON.stringify(data),
-          { 
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          JSON.stringify(secrets),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
           }
         )
       }
 
       case 'POST': {
         // Create or update a secret
-        const { secret_type, encrypted_value } = body
+        const { secret_type, value } = body
 
-        if (!secret_type || !encrypted_value) {
+        if (!secret_type || typeof value !== 'string' || value.length === 0) {
           return new Response(
-            JSON.stringify({ error: 'secret_type and encrypted_value are required' }),
-            { 
-              status: 400, 
-              headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+            JSON.stringify({ error: 'secret_type and value are required' }),
+            {
+              status: 400,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
             }
           )
         }
+
+        const { ciphertext, nonce } = await encryptValue(value)
 
         const { error } = await supabaseClient
           .from('user_secrets')
           .upsert({
             user_id: user.id,
             secret_type,
-            encrypted_value
+            ciphertext,
+            nonce
           }, {
             onConflict: 'user_id,secret_type'
           })
@@ -179,3 +192,45 @@ serve(async (req) => {
     )
   }
 })
+const base64ToBytes = (input: string) => Uint8Array.from(atob(input), (c) => c.charCodeAt(0));
+const bytesToBase64 = (bytes: Uint8Array) => btoa(String.fromCharCode(...bytes));
+
+const encryptionKeyBase64 = Deno.env.get('USER_SECRETS_ENCRYPTION_KEY');
+if (!encryptionKeyBase64) {
+  throw new Error('USER_SECRETS_ENCRYPTION_KEY is not configured');
+}
+
+const encryptionKeyPromise = crypto.subtle.importKey(
+  'raw',
+  base64ToBytes(encryptionKeyBase64),
+  { name: 'AES-GCM' },
+  false,
+  ['encrypt', 'decrypt'],
+);
+
+const encryptValue = async (plaintext: string) => {
+  const key = await encryptionKeyPromise;
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const encoded = new TextEncoder().encode(plaintext);
+  const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, encoded);
+  return {
+    ciphertext: bytesToBase64(new Uint8Array(encrypted)),
+    nonce: bytesToBase64(iv),
+  };
+};
+
+const decryptValue = async (ciphertext: string | null, nonce: string | null) => {
+  if (!ciphertext || !nonce) return null;
+  try {
+    const key = await encryptionKeyPromise;
+    const decrypted = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: base64ToBytes(nonce) },
+      key,
+      base64ToBytes(ciphertext),
+    );
+    return new TextDecoder().decode(decrypted);
+  } catch (error) {
+    console.error('Failed to decrypt secret', error);
+    return null;
+  }
+};
