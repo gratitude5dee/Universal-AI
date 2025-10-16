@@ -11,6 +11,9 @@ import { BrandKitManager } from "@/components/merchandise/BrandKitManager";
 import { DesignCanvas } from "@/components/merchandise/DesignCanvas";
 import { MockupViewer3D } from "@/components/merchandise/MockupViewer3D";
 import { TechPackGenerator } from "@/components/merchandise/TechPackGenerator";
+import { ProductionCalculator } from "@/components/merchandise/ProductionCalculator";
+import { StorefrontPublisher } from "@/components/merchandise/StorefrontPublisher";
+import { AnalyticsDashboard } from "@/components/merchandise/AnalyticsDashboard";
 import { ProductTemplate } from "@/hooks/useProductTemplates";
 import { useDesigns } from "@/hooks/useDesigns";
 import { useToast } from "@/hooks/use-toast";
@@ -247,51 +250,24 @@ const ThreadOfLife = () => {
           </TabsContent>
 
           <TabsContent value="production" className="pt-6">
-            <Card className="backdrop-blur-md bg-white/10 border-white/20">
-              <CardHeader>
-                <CardTitle className="text-white">Production Pipeline</CardTitle>
-                <CardDescription className="text-white/70">
-                  Manage manufacturing and orders
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-center h-96 bg-white/5 rounded-lg border border-dashed border-white/20">
-                  <p className="text-white/70">Production pipeline coming soon...</p>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ProductionCalculator productType={selectedProductTemplate?.subcategory} />
+              <StorefrontPublisher
+                designImageUrl={generatedDesignUrl}
+                productName={selectedProductTemplate?.name}
+              />
+            </div>
           </TabsContent>
 
           <TabsContent value="storefront" className="pt-6">
-            <Card className="backdrop-blur-md bg-white/10 border-white/20">
-              <CardHeader>
-                <CardTitle className="text-white">Storefront Publisher</CardTitle>
-                <CardDescription className="text-white/70">
-                  Launch products to your online stores
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-center h-96 bg-white/5 rounded-lg border border-dashed border-white/20">
-                  <p className="text-white/70">Storefront publisher coming soon...</p>
-                </div>
-              </CardContent>
-            </Card>
+            <StorefrontPublisher
+              designImageUrl={generatedDesignUrl}
+              productName={selectedProductTemplate?.name}
+            />
           </TabsContent>
 
           <TabsContent value="analytics" className="pt-6">
-            <Card className="backdrop-blur-md bg-white/10 border-white/20">
-              <CardHeader>
-                <CardTitle className="text-white">Analytics Dashboard</CardTitle>
-                <CardDescription className="text-white/70">
-                  Track performance across your merchandise catalog
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-center h-96 bg-white/5 rounded-lg border border-dashed border-white/20">
-                  <p className="text-white/70">Analytics dashboard coming soon...</p>
-                </div>
-              </CardContent>
-            </Card>
+            <AnalyticsDashboard />
           </TabsContent>
         </Tabs>
       </div>

@@ -88,7 +88,7 @@ Make it visually striking and commercially viable for merchandise sales.`;
             content: aiPrompt
           }
         ],
-        modalities: ['image']
+        modalities: ['image', 'text']
       }),
     });
 
