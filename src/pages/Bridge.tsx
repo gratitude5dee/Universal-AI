@@ -1,66 +1,56 @@
-import React from "react";
 import DashboardLayout from "@/layouts/dashboard-layout";
-import { MagicPortal } from "@/components/bridge/MagicPortal";
-import { AssetJourney } from "@/components/bridge/AssetJourney";
-import { GuardianSpirits } from "@/components/bridge/GuardianSpirits";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Wand2, ArrowRightLeft, Shield } from "lucide-react";
+import { Rocket, Sparkles, Link2, BarChart3, Settings as SettingsIcon, Bot } from "lucide-react";
+import { StatCard } from "@/components/bridge/shared/StatCard";
+import { NFTMinter } from "@/components/bridge/nft-minter/NFTMinter";
+import { SocialTokens } from "@/components/bridge/social-tokens/SocialTokens";
+import { DistributionAnalytics } from "@/components/bridge/analytics/DistributionAnalytics";
+import { Settings } from "@/components/bridge/settings/Settings";
+import { AIAssistant } from "@/components/bridge/ai-assistant/AIAssistant";
+import { MagicPortal } from "@/components/bridge/MagicPortal";
 
 const Bridge = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold mb-2 text-white text-shadow-sm">Magical Bridge</h1>
-          <p className="text-white/80 text-shadow-sm">Connect your digital assets to the physical world with powerful bridging tools</p>
+          <h1 className="text-3xl font-bold mb-2 text-white text-shadow-sm">Bridge: On-Chain Distribution Hub</h1>
+          <p className="text-white/80 text-shadow-sm">Deploy NFTs, tokenize content, and distribute across 15+ platforms and chains</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-5 shadow-card-glow hover:bg-white/15 transition-all duration-200">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-full bg-[#9b87f5]/20 flex items-center justify-center">
-                <Wand2 className="w-5 h-5 text-[#9b87f5]" />
-              </div>
-              <h3 className="font-medium text-white text-shadow-sm">Physical Product Linking</h3>
-            </div>
-            <p className="text-sm text-white/80 text-shadow-sm">Connect NFTs to physical products with secure verification methods</p>
-          </div>
-          
-          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-5 shadow-card-glow hover:bg-white/15 transition-all duration-200">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-full bg-[#F97316]/20 flex items-center justify-center">
-                <ArrowRightLeft className="w-5 h-5 text-[#F97316]" />
-              </div>
-              <h3 className="font-medium text-white text-shadow-sm">Digital-Physical Twin</h3>
-            </div>
-            <p className="text-sm text-white/80 text-shadow-sm">Create digital twins of physical items or manifest digital assets physically</p>
-          </div>
-          
-          <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-xl p-5 shadow-card-glow hover:bg-white/15 transition-all duration-200">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-full bg-[#0EA5E9]/20 flex items-center justify-center">
-                <Shield className="w-5 h-5 text-[#0EA5E9]" />
-              </div>
-              <h3 className="font-medium text-white text-shadow-sm">Secure Verification</h3>
-            </div>
-            <p className="text-sm text-white/80 text-shadow-sm">Protect your bridged assets with robust security measures</p>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <StatCard icon={Rocket} label="Total Deployments" value="1,247" trend={12} trendLabel="vs last month" />
+          <StatCard icon={Sparkles} label="Revenue Generated" value="$45.2K" trend={23} trendLabel="vs last month" iconColor="bg-[#F97316]/20" />
+          <StatCard icon={Link2} label="Active Platforms" value="9" trendLabel="connected" iconColor="bg-[#0EA5E9]/20" />
+          <StatCard icon={BarChart3} label="Success Rate" value="98.5%" trend={2} trendLabel="vs last month" iconColor="bg-[#10B981]/20" />
         </div>
 
-        <Tabs defaultValue="portal" className="w-full">
-          <TabsList className="grid grid-cols-3 w-full max-w-md backdrop-blur-md bg-white/10 border border-white/20 shadow-card-glow">
-            <TabsTrigger value="portal" className="text-white data-[state=active]:bg-studio-accent data-[state=active]:text-white">Magic Portal</TabsTrigger>
-            <TabsTrigger value="journey" className="text-white data-[state=active]:bg-studio-accent data-[state=active]:text-white">Asset Journey</TabsTrigger>
-            <TabsTrigger value="guardians" className="text-white data-[state=active]:bg-studio-accent data-[state=active]:text-white">Guardians</TabsTrigger>
+        <Tabs defaultValue="nft-minter" className="w-full">
+          <TabsList className="grid grid-cols-6 w-full backdrop-blur-md bg-white/10 border border-white/20 shadow-card-glow">
+            <TabsTrigger value="nft-minter" className="text-white data-[state=active]:bg-[#9b87f5] data-[state=active]:text-white">🎨 NFT Minter</TabsTrigger>
+            <TabsTrigger value="social" className="text-white data-[state=active]:bg-[#9b87f5] data-[state=active]:text-white">🌐 Social Tokens</TabsTrigger>
+            <TabsTrigger value="bridges" className="text-white data-[state=active]:bg-[#9b87f5] data-[state=active]:text-white">⛓️ Bridges</TabsTrigger>
+            <TabsTrigger value="analytics" className="text-white data-[state=active]:bg-[#9b87f5] data-[state=active]:text-white">📊 Analytics</TabsTrigger>
+            <TabsTrigger value="settings" className="text-white data-[state=active]:bg-[#9b87f5] data-[state=active]:text-white">⚙️ Settings</TabsTrigger>
+            <TabsTrigger value="ai" className="text-white data-[state=active]:bg-[#9b87f5] data-[state=active]:text-white">🤖 AI Assistant</TabsTrigger>
           </TabsList>
-          <TabsContent value="portal" className="pt-4">
+          <TabsContent value="nft-minter" className="pt-6">
+            <NFTMinter />
+          </TabsContent>
+          <TabsContent value="social" className="pt-6">
+            <SocialTokens />
+          </TabsContent>
+          <TabsContent value="bridges" className="pt-6">
             <MagicPortal />
           </TabsContent>
-          <TabsContent value="journey" className="pt-4">
-            <AssetJourney />
+          <TabsContent value="analytics" className="pt-6">
+            <DistributionAnalytics />
           </TabsContent>
-          <TabsContent value="guardians" className="pt-4">
-            <GuardianSpirits />
+          <TabsContent value="settings" className="pt-6">
+            <Settings />
+          </TabsContent>
+          <TabsContent value="ai" className="pt-6">
+            <AIAssistant />
           </TabsContent>
         </Tabs>
       </div>
