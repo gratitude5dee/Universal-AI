@@ -24,6 +24,8 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { SocialCalendar } from "@/components/distribution/social/SocialCalendar";
 import { CreatePostModal } from "@/components/distribution/social/CreatePostModal";
 import { HashtagManager } from "@/components/distribution/social/HashtagManager";
+import { NotificationCenter } from "@/components/on-chain/shared/NotificationCenter";
+import { Toaster } from "sonner";
 import { mockSocialPosts } from "./mockSocialData";
 import { SocialPost } from "./types";
 
@@ -218,9 +220,16 @@ export default function SocialMediaWzrd() {
   );
 
   return (
-    <DashboardLayout>
-      <div className="p-6">
-        {/* Welcome Header */}
+    <>
+      <Toaster position="top-right" richColors />
+      <DashboardLayout>
+        <div className="p-6 relative">
+          {/* Notification Center - Top Right */}
+          <div className="absolute top-4 right-4 z-50">
+            <NotificationCenter />
+          </div>
+          
+          {/* Welcome Header */}
         <div className="mb-8">
           <div className="flex items-center mb-2">
             <Star className="h-6 w-6 text-white mr-3" />
@@ -364,5 +373,6 @@ export default function SocialMediaWzrd() {
         />
       </div>
     </DashboardLayout>
+    </>
   );
 }
