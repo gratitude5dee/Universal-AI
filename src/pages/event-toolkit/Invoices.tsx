@@ -20,9 +20,11 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/layouts/dashboard-layout";
+import { useDashboardStats } from "@/hooks/useDashboardStats";
 
 const Invoices = () => {
   const navigate = useNavigate();
+  const { data: stats, isLoading } = useDashboardStats();
 
   const QuickActions = () => (
     <div className="mb-8">
@@ -113,9 +115,15 @@ const Invoices = () => {
               <FileText className="h-5 w-5 text-green-400" />
             </div>
             <div className="space-y-2">
-              <div className="text-3xl font-bold text-white">$0</div>
-              <div className="text-sm text-green-400">All clear</div>
-              <div className="text-xs text-blue-lightest/70">0 overdue</div>
+              <div className="text-3xl font-bold text-white">
+                ${isLoading ? '...' : (stats?.unpaid_invoices_amount || 0).toFixed(2)}
+              </div>
+              <div className={`text-sm ${(stats?.unpaid_invoices_amount || 0) === 0 ? 'text-green-400' : 'text-yellow-400'}`}>
+                {(stats?.unpaid_invoices_amount || 0) === 0 ? 'All clear' : `${stats?.unpaid_invoices_count || 0} unpaid`}
+              </div>
+              <div className="text-xs text-blue-lightest/70">
+                {stats?.overdue_invoices_count || 0} overdue
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -127,9 +135,11 @@ const Invoices = () => {
               <DollarSign className="h-5 w-5 text-blue-400" />
             </div>
             <div className="space-y-2">
-              <div className="text-3xl font-bold text-white">$0</div>
-              <div className="text-sm text-green-400">This month</div>
-              <div className="text-xs text-blue-lightest/70">Paid invoices</div>
+              <div className="text-3xl font-bold text-white">
+                ${isLoading ? '...' : (stats?.total_revenue || 0).toFixed(2)}
+              </div>
+              <div className="text-sm text-green-400">Total revenue</div>
+              <div className="text-xs text-blue-lightest/70">All paid invoices</div>
             </div>
           </CardContent>
         </Card>
@@ -141,7 +151,9 @@ const Invoices = () => {
               <Clock className="h-5 w-5 text-purple-400" />
             </div>
             <div className="space-y-2">
-              <div className="text-3xl font-bold text-white">0</div>
+              <div className="text-3xl font-bold text-white">
+                {isLoading ? '...' : (stats?.avg_payment_days || 0)}
+              </div>
               <div className="text-sm text-green-400">Days</div>
               <div className="text-xs text-blue-lightest/70">Average turnaround</div>
             </div>
@@ -155,9 +167,13 @@ const Invoices = () => {
               <CheckCircle className="h-5 w-5 text-orange-400" />
             </div>
             <div className="space-y-2">
-              <div className="text-3xl font-bold text-white">0%</div>
-              <div className="text-sm text-green-400">Success rate</div>
-              <div className="text-xs text-blue-lightest/70">Payment collection</div>
+              <div className="text-3xl font-bold text-white">
+                {isLoading ? '...' : stats?.total_revenue && stats?.unpaid_invoices_amount 
+                  ? Math.round((stats.total_revenue / (stats.total_revenue + stats.unpaid_invoices_amount)) * 100)
+                  : 0}%
+              </div>
+              <div className="text-sm text-green-400">Collection rate</div>
+              <div className="text-xs text-blue-lightest/70">Payment success</div>
             </div>
           </CardContent>
         </Card>

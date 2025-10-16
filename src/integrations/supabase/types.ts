@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_logs: {
+        Row: {
+          action: string
+          created_at: string | null
+          entity_id: string
+          entity_type: string
+          id: string
+          metadata: Json | null
+          new_values: Json | null
+          old_values: Json | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          metadata?: Json | null
+          new_values?: Json | null
+          old_values?: Json | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          metadata?: Json | null
+          new_values?: Json | null
+          old_values?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_runs: {
         Row: {
           board_id: string
@@ -560,6 +596,48 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      contact_venues: {
+        Row: {
+          contact_id: string
+          created_at: string | null
+          id: string
+          notes: string | null
+          relationship_type: string | null
+          venue_id: string
+        }
+        Insert: {
+          contact_id: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          relationship_type?: string | null
+          venue_id: string
+        }
+        Update: {
+          contact_id?: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          relationship_type?: string | null
+          venue_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_venues_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "tour_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_venues_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       content_assets: {
         Row: {
@@ -1458,54 +1536,60 @@ export type Database = {
       invoices: {
         Row: {
           amount: number
+          balance_due: number | null
           created_at: string | null
+          currency: string | null
           due_date: string | null
           gig_id: string
           id: string
           invoice_number: string | null
-          line_items: Json
-          currency: string
-          tax_amount: number
-          balance_due: number
+          line_items: Json | null
           notes: string | null
           paid_at: string | null
+          paid_date: string | null
           payment_method: string | null
           status: string | null
+          tax_amount: number | null
           updated_at: string | null
+          user_id: string
         }
         Insert: {
           amount: number
+          balance_due?: number | null
           created_at?: string | null
+          currency?: string | null
           due_date?: string | null
           gig_id: string
           id?: string
           invoice_number?: string | null
-          line_items?: Json
-          currency?: string
-          tax_amount?: number
-          balance_due?: number
+          line_items?: Json | null
           notes?: string | null
           paid_at?: string | null
+          paid_date?: string | null
           payment_method?: string | null
           status?: string | null
+          tax_amount?: number | null
           updated_at?: string | null
+          user_id: string
         }
         Update: {
           amount?: number
+          balance_due?: number | null
           created_at?: string | null
+          currency?: string | null
           due_date?: string | null
           gig_id?: string
           id?: string
           invoice_number?: string | null
-          line_items?: Json
-          currency?: string
-          tax_amount?: number
-          balance_due?: number
+          line_items?: Json | null
           notes?: string | null
           paid_at?: string | null
+          paid_date?: string | null
           payment_method?: string | null
           status?: string | null
+          tax_amount?: number | null
           updated_at?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -3125,7 +3209,6 @@ export type Database = {
         Row: {
           created_at: string
           encrypted_value: string
-          encryption_iv: string | null
           id: string
           secret_type: string
           updated_at: string
@@ -3134,7 +3217,6 @@ export type Database = {
         Insert: {
           created_at?: string
           encrypted_value: string
-          encryption_iv?: string | null
           id?: string
           secret_type: string
           updated_at?: string
@@ -3143,7 +3225,6 @@ export type Database = {
         Update: {
           created_at?: string
           encrypted_value?: string
-          encryption_iv?: string | null
           id?: string
           secret_type?: string
           updated_at?: string
@@ -3651,6 +3732,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      calculate_gig_revenue: {
+        Args: { gig_id_param: string }
+        Returns: {
+          door_split_estimate: number
+          guaranteed: number
+          ticket_revenue: number
+          total_potential: number
+        }[]
+      }
       check_rate_limit: {
         Args: { func_name: string; max_calls?: number; window_minutes?: number }
         Returns: boolean
@@ -3659,9 +3749,28 @@ export type Database = {
         Args: { board_title: string }
         Returns: string
       }
+      generate_invoice_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_available_credits: {
         Args: Record<PropertyKey, never>
         Returns: number
+      }
+      get_dashboard_stats: {
+        Args: { user_id_param: string }
+        Returns: {
+          avg_payment_days: number
+          overdue_invoices_count: number
+          pending_gigs: number
+          total_contacts: number
+          total_gigs: number
+          total_revenue: number
+          total_venues: number
+          unpaid_invoices_amount: number
+          unpaid_invoices_count: number
+          upcoming_gigs: number
+        }[]
       }
       get_public_waitlist_count: {
         Args: Record<PropertyKey, never>
