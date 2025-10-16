@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Canvas as FabricCanvas, Circle, Rect, Textbox } from 'fabric';
-import { Card } from '@/components/ui/card';
+import { Canvas as FabricCanvas, Circle, Rect, Textbox, FabricImage } from 'fabric';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
@@ -56,7 +56,7 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
 
     // Load initial image if provided
     if (initialImage) {
-      FabricCanvas.Image.fromURL(initialImage, {
+      FabricImage.fromURL(initialImage, {
         crossOrigin: 'anonymous'
       }).then((img) => {
         img.scaleToWidth(400);
@@ -194,7 +194,7 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
     const reader = new FileReader();
     reader.onload = (event) => {
       const imgUrl = event.target?.result as string;
-      FabricCanvas.Image.fromURL(imgUrl, {
+      FabricImage.fromURL(imgUrl, {
         crossOrigin: 'anonymous'
       }).then((img) => {
         img.scaleToWidth(300);
