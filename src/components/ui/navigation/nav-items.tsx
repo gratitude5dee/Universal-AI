@@ -93,18 +93,6 @@ export const navItems = [{
     },
   ]
 }, {
-  name: "Touring",
-  path: "/touring",
-  icon: Calendar,
-  hasSubmenu: true,
-  submenuItems: [
-    { name: "Dashboard", path: "/event-toolkit/dashboard", icon: LayoutDashboard },
-    { name: "Gigs", path: "/event-toolkit/gigs", icon: Calendar },
-    { name: "Invoices", path: "/event-toolkit/invoices", icon: FileText },
-    { name: "Contacts", path: "/event-toolkit/contacts", icon: Users },
-    { name: "QR Upload", path: "/event-toolkit/qr-upload", icon: QrCode },
-  ]
-}, {
   name: "Marketing & Distribution",
   path: "/marketing-distribution",
   icon: Share2,
@@ -135,6 +123,18 @@ export const navItems = [{
       path: "https://sync.universal-ai.xyz/",
       icon: Music
     }
+  ]
+}, {
+  name: "Touring",
+  path: "/touring",
+  icon: Calendar,
+  hasSubmenu: true,
+  submenuItems: [
+    { name: "Dashboard", path: "/event-toolkit/dashboard", icon: LayoutDashboard },
+    { name: "Gigs", path: "/event-toolkit/gigs", icon: Calendar },
+    { name: "Invoices", path: "/event-toolkit/invoices", icon: FileText },
+    { name: "Contacts", path: "/event-toolkit/contacts", icon: Users },
+    { name: "QR Upload", path: "/event-toolkit/qr-upload", icon: QrCode },
   ]
 }, {
   name: "Agents + Integrations",
