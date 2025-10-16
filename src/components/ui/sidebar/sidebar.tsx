@@ -18,20 +18,20 @@ interface SidebarProps {
       icon: React.ComponentType<{ className?: string }>;
     }[];
   }[];
+  isCollapsed: boolean;
+  setIsCollapsed: (collapsed: boolean) => void;
+  isHovered: boolean;
+  setIsHovered: (hovered: boolean) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ navItems }) => {
-  const [isCollapsed, setIsCollapsed] = useState(true); // Default to collapsed
-  const [isHovered, setIsHovered] = useState(false);
+const Sidebar: React.FC<SidebarProps> = ({ 
+  navItems, 
+  isCollapsed, 
+  setIsCollapsed,
+  isHovered,
+  setIsHovered 
+}) => {
   const [hoverIntent, setHoverIntent] = useState(false);
-
-  // Load user preference from localStorage
-  useEffect(() => {
-    const savedState = localStorage.getItem('sidebarCollapsed');
-    if (savedState !== null) {
-      setIsCollapsed(savedState === 'true');
-    }
-  }, []);
 
   // Hover intent with delay
   useEffect(() => {
@@ -46,7 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({ navItems }) => {
       }, 300); // Slightly longer delay before collapsing for better UX
     }
     return () => clearTimeout(timer);
-  }, [hoverIntent]);
+  }, [hoverIntent, setIsHovered]);
 
   // Toggle sidebar collapsed state
   const toggleSidebar = () => {

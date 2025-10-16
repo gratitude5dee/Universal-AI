@@ -5,11 +5,15 @@ import CloudShader from "@/components/ui/shaders/CloudShader";
 
 interface MainContentProps {
   children: ReactNode;
+  sidebarWidth: string;
 }
 
-const MainContent = ({ children }: MainContentProps) => {
+const MainContent = ({ children, sidebarWidth }: MainContentProps) => {
   return (
-    <div className="flex-1 min-h-screen flex flex-col w-full overflow-hidden relative bg-transparent">
+    <div 
+      className="flex-1 min-h-screen flex flex-col w-full overflow-hidden relative bg-transparent transition-all duration-300"
+      style={{ marginLeft: sidebarWidth }}
+    >
       {/* Cloud GLSL Shader Background */}
       <CloudShader />
       
