@@ -126,14 +126,14 @@ export const navItems = [{
       icon: ArrowRightLeft
     },
     {
-      name: "Analytics",
-      path: "/analytics",
-      icon: NavAnalyticsIcon
-    },
-    {
       name: "Marketplace Launch",
       path: "/marketplace-launch",
       icon: NavMarketplaceIcon
+    },
+    {
+      name: "Analytics",
+      path: "/analytics",
+      icon: NavAnalyticsIcon
     },
   ]
 }, {
