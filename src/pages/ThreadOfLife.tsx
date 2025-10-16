@@ -9,6 +9,8 @@ import { ProductTemplateSelector } from "@/components/merchandise/ProductTemplat
 import { TemplateMarketplace } from "@/components/merchandise/TemplateMarketplace";
 import { BrandKitManager } from "@/components/merchandise/BrandKitManager";
 import { DesignCanvas } from "@/components/merchandise/DesignCanvas";
+import { MockupViewer3D } from "@/components/merchandise/MockupViewer3D";
+import { TechPackGenerator } from "@/components/merchandise/TechPackGenerator";
 import { ProductTemplate } from "@/hooks/useProductTemplates";
 import { useDesigns } from "@/hooks/useDesigns";
 import { useToast } from "@/hooks/use-toast";
@@ -231,35 +233,17 @@ const ThreadOfLife = () => {
           </TabsContent>
 
           <TabsContent value="mockup-lab" className="pt-6">
-            <Card className="backdrop-blur-md bg-white/10 border-white/20">
-              <CardHeader>
-                <CardTitle className="text-white">3D Mockup Lab</CardTitle>
-                <CardDescription className="text-white/70">
-                  Visualize your designs on photorealistic product mockups
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-center h-96 bg-white/5 rounded-lg border border-dashed border-white/20">
-                  <p className="text-white/70">3D mockup viewer coming soon...</p>
-                </div>
-              </CardContent>
-            </Card>
+            <MockupViewer3D
+              designImageUrl={generatedDesignUrl}
+              productType={selectedProductTemplate?.subcategory as any}
+            />
           </TabsContent>
 
           <TabsContent value="tech-pack" className="pt-6">
-            <Card className="backdrop-blur-md bg-white/10 border-white/20">
-              <CardHeader>
-                <CardTitle className="text-white">Tech Pack Generator</CardTitle>
-                <CardDescription className="text-white/70">
-                  Automated manufacturing documentation
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-center h-96 bg-white/5 rounded-lg border border-dashed border-white/20">
-                  <p className="text-white/70">Tech pack generator coming soon...</p>
-                </div>
-              </CardContent>
-            </Card>
+            <TechPackGenerator
+              designImageUrl={generatedDesignUrl}
+              productType={selectedProductTemplate?.subcategory}
+            />
           </TabsContent>
 
           <TabsContent value="production" className="pt-6">
