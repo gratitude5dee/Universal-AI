@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -119,7 +119,7 @@ export const EvalsFramework = () => {
 
       {/* Eval Suites */}
       <div className="space-y-4">
-        {evalSuites.map((suite, idx) => (
+        {mockEvalSuites.map((suite, idx) => (
           <Card key={idx} className="glassmorphism p-6 hover:shadow-card-glow transition-all">
             <div className="space-y-4">
               {/* Header */}
@@ -165,7 +165,7 @@ export const EvalsFramework = () => {
                   {suite.recentRuns.map((run, ridx) => (
                     <div key={ridx} className="text-sm text-muted-foreground flex items-center gap-2">
                       <CheckCircle2 className="w-3 h-3 text-success" />
-                      <span>Run #{run.run}: {run.passed} passed</span>
+                      <span>Run #{run.runNumber}: {run.passed} passed</span>
                     </div>
                   ))}
                 </div>
