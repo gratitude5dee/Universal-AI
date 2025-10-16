@@ -27,14 +27,14 @@ export const AdvancedAnalytics = () => {
       className="space-y-6"
     >
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h2 className="text-2xl font-bold">Portfolio Analytics</h2>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
+        <div className="flex gap-2 flex-wrap">
+          <Button variant="outline" size="sm" className="hover-scale gap-2">
             <Share className="h-4 w-4 mr-2" />
             Share
           </Button>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" className="hover-scale gap-2">
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
@@ -55,10 +55,11 @@ export const AdvancedAnalytics = () => {
       </div>
 
       {/* Performance Chart */}
-      <Card className="glass-card p-6">
+      <Card className="glass-card p-6 group hover:border-primary/30 transition-all duration-300">
         <h3 className="text-lg font-semibold mb-4">Performance Overview</h3>
-        <div className="h-80 flex items-center justify-center bg-background/20 rounded-lg border border-border/50">
-          <p className="text-muted-foreground">Chart: Portfolio value over time (stacked area)</p>
+        <div className="h-80 flex items-center justify-center bg-gradient-to-br from-primary/5 to-purple-500/10 rounded-lg border border-border/50 relative overflow-hidden group-hover:border-primary/20 transition-colors">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent animate-pulse" />
+          <p className="text-muted-foreground relative z-10">Chart: Portfolio value over time (stacked area)</p>
         </div>
       </Card>
 

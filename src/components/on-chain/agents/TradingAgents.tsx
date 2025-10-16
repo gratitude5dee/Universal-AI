@@ -44,9 +44,9 @@ export const TradingAgents = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: idx * 0.1 }}
           >
-            <Card className="glass-card p-4">
+            <Card className="glass-card p-4 hover:bg-accent/10 transition-all duration-300 hover:scale-105 cursor-pointer border-t-4 border-t-transparent hover:border-t-primary">
               <p className="text-sm text-muted-foreground mb-1">{stat.label}</p>
-              <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
+              <p className={`text-2xl font-bold ${stat.color} group-hover:scale-110 transition-transform`}>{stat.value}</p>
             </Card>
           </motion.div>
         ))}
@@ -55,7 +55,7 @@ export const TradingAgents = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Your Trading Agents ({mockTradingAgents.length})</h3>
-        <Button>
+        <Button className="hover-scale gap-2">
           <Bot className="h-4 w-4 mr-2" />
           Deploy New Agent
         </Button>
@@ -74,7 +74,7 @@ export const TradingAgents = () => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: idx * 0.1 }}
             >
-              <Card className="glass-card p-5 hover:bg-accent/5 transition-colors">
+              <Card className="glass-card p-5 hover:bg-accent/10 transition-all duration-300 hover:scale-[1.02] border-l-4 border-l-transparent hover:border-l-blue-500 animate-fade-in group">
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">

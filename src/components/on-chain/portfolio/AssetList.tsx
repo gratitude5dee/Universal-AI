@@ -35,7 +35,7 @@ export const AssetList = ({ assets, searchQuery = '' }: AssetListProps) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4 flex-1">
                 {/* Icon & Name */}
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-2xl">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300">
                   {asset.icon}
                 </div>
                 <div className="flex-1">
@@ -68,7 +68,7 @@ export const AssetList = ({ assets, searchQuery = '' }: AssetListProps) => {
               </div>
 
               {/* Actions */}
-              <Button size="sm" variant="outline">
+              <Button size="sm" variant="outline" className="hover-scale">
                 <ArrowUpRight className="h-4 w-4 mr-1" />
                 Details
               </Button>

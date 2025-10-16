@@ -34,9 +34,9 @@ export const LiquidityHub = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: idx * 0.1 }}
           >
-            <Card className="glass-card p-4">
+            <Card className="glass-card p-4 hover:bg-accent/10 transition-all duration-300 hover:scale-105 cursor-pointer border-t-4 border-t-transparent hover:border-t-primary">
               <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                <stat.icon className={`h-4 w-4 ${stat.color}`} />
+                <stat.icon className={`h-4 w-4 ${stat.color} animate-pulse`} />
                 <p className="text-sm">{stat.label}</p>
               </div>
               <p className="text-2xl font-bold">{stat.value}</p>
@@ -45,14 +45,18 @@ export const LiquidityHub = () => {
         ))}
       </div>
 
-      {/* Earnings Chart Placeholder */}
-      <Card className="glass-card p-6">
+      {/* Earnings Chart */}
+      <Card className="glass-card p-6 group hover:border-primary/30 transition-all duration-300">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold">Daily Earnings (30 Days)</h3>
-          <Button variant="outline" size="sm">Claim All Rewards</Button>
+          <Button variant="outline" size="sm" className="hover-scale gap-2">
+            <Gift className="h-4 w-4" />
+            Claim All Rewards
+          </Button>
         </div>
-        <div className="h-48 flex items-center justify-center bg-background/20 rounded-lg border border-border/50">
-          <p className="text-muted-foreground">Chart: Daily earnings area chart</p>
+        <div className="h-48 flex items-center justify-center bg-gradient-to-br from-green-500/5 to-emerald-500/10 rounded-lg border border-border/50 relative overflow-hidden group-hover:border-green-500/20 transition-colors">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-green-500/5 to-transparent animate-pulse" />
+          <p className="text-muted-foreground relative z-10">Chart: Daily earnings area chart</p>
         </div>
       </Card>
 
@@ -60,7 +64,10 @@ export const LiquidityHub = () => {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold">Active Positions ({mockLiquidityPositions.length})</h3>
-          <Button>+ Add Liquidity</Button>
+          <Button className="hover-scale gap-2">
+            <Droplet className="h-4 w-4" />
+            + Add Liquidity
+          </Button>
         </div>
 
         <div className="space-y-3">

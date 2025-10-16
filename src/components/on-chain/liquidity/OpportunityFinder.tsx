@@ -135,7 +135,7 @@ export const OpportunityFinder = () => {
                   </div>
 
                   {/* Action */}
-                  <Button className="ml-4">
+                  <Button className="ml-4 hover-scale group-hover:shadow-lg group-hover:shadow-primary/20 transition-all">
                     <Droplet className="h-4 w-4 mr-2" />
                     Add Liquidity
                   </Button>
