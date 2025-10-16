@@ -4,59 +4,91 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Upload, Play, Search, Filter, Settings, BarChart3, FileText, CheckCircle2, XCircle } from "lucide-react";
 
+interface EvalSuite {
+  id: string;
+  title: string;
+  agent: string;
+  tests: number;
+  passRate: number;
+  lastRun: string;
+  status: 'passing' | 'failing' | 'warning';
+  criteria: string[];
+  recentRuns: Array<{
+    runNumber: number;
+    passed: number;
+    total: number;
+    timestamp: string;
+  }>;
+  latency: number;
+  cost: number;
+}
+
+const mockEvalSuites: EvalSuite[] = [
+  {
+    id: "1",
+    title: "IT Ticket Categorization",
+    agent: "Support Classifier",
+    tests: 156,
+    passRate: 98.5,
+    lastRun: "2h ago",
+    status: "passing",
+    criteria: ['String match: "{{ output }}" == "{{ label }}"', 'Confidence threshold: > 0.85'],
+    recentRuns: [
+      { runNumber: 145, passed: 154, total: 156, timestamp: "2h ago" },
+      { runNumber: 144, passed: 153, total: 156, timestamp: "6h ago" },
+      { runNumber: 143, passed: 156, total: 156, timestamp: "1d ago" },
+    ],
+    latency: 245,
+    cost: 0.12
+  },
+  {
+    id: "2",
+    title: "Creative Asset Quality",
+    agent: "Design Studio",
+    tests: 89,
+    passRate: 95.2,
+    lastRun: "4h ago",
+    status: "passing",
+    criteria: ['Model grader: "Is design aesthetically pleasing?"', 'Resolution check: >= 300 DPI'],
+    recentRuns: [
+      { runNumber: 78, passed: 85, total: 89, timestamp: "4h ago" },
+      { runNumber: 77, passed: 84, total: 89, timestamp: "8h ago" },
+    ],
+    latency: 350,
+    cost: 0.18
+  },
+];
+
 export const EvalsFramework = () => {
-  const evalSuites = [
-    {
-      title: "IT Ticket Categorization",
-      tests: 156,
-      passRate: 98.5,
-      lastRun: "2h ago",
-      agent: "Support Classifier",
-      criteria: [
-        'String match: "{{ output }}" == "{{ label }}"',
-        "Confidence threshold: > 0.85"
-      ],
-      recentRuns: [
-        { run: 145, passed: "154/156" },
-        { run: 144, passed: "153/156" },
-        { run: 143, passed: "156/156" }
-      ]
-    },
-    {
-      title: "Creative Asset Quality",
-      tests: 89,
-      passRate: 95.2,
-      lastRun: "4h ago",
-      agent: "Design Studio",
-      criteria: [
-        'Model grader: "Is design aesthetically pleasing?"',
-        "Resolution check: >= 300 DPI",
-        "Color space: CMYK valid"
-      ],
-      recentRuns: [
-        { run: 78, passed: "85/89" },
-        { run: 77, passed: "84/89" },
-        { run: 76, passed: "87/89" }
-      ]
-    },
-    {
-      title: "Invoice Accuracy Check",
-      tests: 234,
-      passRate: 100,
-      lastRun: "1d ago",
-      agent: "Invoice Generator",
-      criteria: [
-        "Math validation: Total = Sum(line_items)",
-        "Tax calculation: Correct for jurisdiction",
-        "Date format: ISO 8601 compliant"
-      ],
-      recentRuns: [
-        { run: 92, passed: "234/234" },
-        { run: 91, passed: "234/234" },
-        { run: 90, passed: "233/234" }
-      ]
+  const [selectedEval, setSelectedEval] = useState<EvalSuite | null>(null);
+  const [isRunning, setIsRunning] = useState(false);
+  const [runProgress, setRunProgress] = useState(0);
+
+  const handleRunEval = (evalSuite: EvalSuite) => {
+    setSelectedEval(evalSuite);
+    setIsRunning(true);
+    setRunProgress(0);
+    
+    const interval = setInterval(() => {
+      setRunProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setIsRunning(false);
+          return 100;
+        }
+        return prev + 5;
+      });
+    }, 200);
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'passing': return 'hsl(var(--success))';
+      case 'failing': return 'hsl(var(--error))';
+      case 'warning': return 'hsl(var(--warning))';
+      default: return 'hsl(var(--text-tertiary))';
     }
-  ];
+  };
 
   return (
     <div className="space-y-6">

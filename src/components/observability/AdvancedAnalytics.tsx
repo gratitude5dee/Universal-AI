@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { TrendingUp, TrendingDown, DollarSign, Clock, AlertTriangle, CheckCircle2, ChevronDown, Sparkles } from "lucide-react";
+import { LineChart, Line, BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown } from "lucide-react";
 
 export const AdvancedAnalytics = () => {
