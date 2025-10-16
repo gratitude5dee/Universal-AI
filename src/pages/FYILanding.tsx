@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import Header from '@/components/landing/Header';
 import PhoneMockup from '@/components/landing/PhoneMockup';
+import { MatrixIntroAnimation } from '@/components/MatrixIntroAnimation';
 
 // Import feature images
 import featureAiChat from '@/assets/feature-ai-chat.jpg';
@@ -69,10 +70,15 @@ const Section: React.FC<{
 };
 
 const FYILanding = () => {
+  const [showIntro, setShowIntro] = useState(true);
   const [heroRef, heroInView] = useInView({
     threshold: 0.1,
     triggerOnce: true,
   });
+
+  if (showIntro) {
+    return <MatrixIntroAnimation onComplete={() => setShowIntro(false)} />;
+  }
 
   return (
     <div className="min-h-screen text-white overflow-hidden">
