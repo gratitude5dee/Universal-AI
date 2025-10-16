@@ -1,244 +1,349 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Users, 
   Plus, 
   UserPlus, 
-  Calendar, 
-  Mail,
-  Phone,
   Star,
-  Zap,
-  BarChart3,
-  TrendingUp,
-  MapPin,
-  Building
+  Mail,
+  Tag,
+  Trash2,
+  Download
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/layouts/dashboard-layout";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+
+// Enhanced Components
+import { SmartContactCard } from "@/components/event-toolkit/contacts/SmartContactCard";
+import { ContactsFilter } from "@/components/event-toolkit/contacts/ContactsFilter";
+import { NetworkAnalytics } from "@/components/event-toolkit/contacts/NetworkAnalytics";
+import { BulkActionsBar } from "@/components/event-toolkit/contacts/BulkActionsBar";
 
 const Contacts = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  const [selectedContacts, setSelectedContacts] = useState<Set<string>>(new Set());
+  const [filters, setFilters] = useState({
+    search: '',
+    role: 'all',
+    tags: [] as string[],
+    location: 'all'
+  });
 
-  const QuickActions = () => (
-    <div className="mb-8">
-      <div className="flex items-center mb-6">
-        <Zap className="h-5 w-5 text-white mr-2" />
-        <h2 className="text-lg font-semibold text-white">Quick Actions</h2>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          onClick={() => navigate("/event-toolkit/contacts/create")}
-        >
-          <Card className="bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
-            <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 rounded-lg bg-orange-500/20 flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-500/30 transition-colors">
-                <UserPlus className="h-6 w-6 text-orange-400" />
-              </div>
-              <h3 className="text-white font-medium mb-1">Add Contact</h3>
-              <p className="text-blue-lightest/70 text-sm">Network expansion</p>
-            </CardContent>
-          </Card>
-        </motion.div>
+  // Mock data - in production, this would come from database
+  const mockContacts = [
+    {
+      id: '1',
+      name: 'Blue Note Jazz Club',
+      email: 'booking@bluenote.com',
+      phone: '+1 (555) 123-4567',
+      role: 'venue',
+      organization: 'Blue Note Entertainment',
+      location: 'New York, NY',
+      tags: ['Responsive', 'High-value', 'Jazz'],
+      lastContact: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+      nextFollowup: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      totalBookings: 5,
+      avgPaymentTime: 15,
+      notes: 'Excellent venue with great acoustics. Always professional and pays on time.'
+    },
+    {
+      id: '2',
+      name: 'Sarah Martinez',
+      email: 'sarah@cityevents.com',
+      phone: '+1 (555) 234-5678',
+      role: 'promoter',
+      organization: 'City Events',
+      location: 'Los Angeles, CA',
+      tags: ['New Contact', 'Festival'],
+      lastContact: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+      totalBookings: 2,
+      avgPaymentTime: 30,
+      notes: 'Connected at SXSW. Interested in summer festival lineup.'
+    },
+    {
+      id: '3',
+      name: 'The Velvet Room',
+      email: 'info@velvetroom.com',
+      phone: '+1 (555) 345-6789',
+      role: 'venue',
+      organization: 'Velvet Room LLC',
+      location: 'Chicago, IL',
+      tags: ['Needs follow-up', 'Electronic'],
+      lastContact: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString(),
+      nextFollowup: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      totalBookings: 3,
+      avgPaymentTime: 20,
+      notes: 'Great for electronic/house shows. Contact about spring dates.'
+    }
+  ];
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <Card className="bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
-            <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 rounded-lg bg-blue-500/20 flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-500/30 transition-colors">
-                <Mail className="h-6 w-6 text-blue-400" />
-              </div>
-              <h3 className="text-white font-medium mb-1">Send Email</h3>
-              <p className="text-blue-lightest/70 text-sm">Bulk outreach</p>
-            </CardContent>
-          </Card>
-        </motion.div>
+  // Filter contacts
+  const filteredContacts = mockContacts.filter(contact => {
+    // Search filter
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      const matchesSearch = 
+        contact.name.toLowerCase().includes(searchLower) ||
+        contact.email?.toLowerCase().includes(searchLower) ||
+        contact.organization?.toLowerCase().includes(searchLower);
+      if (!matchesSearch) return false;
+    }
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <Card className="bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
-            <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 rounded-lg bg-green-500/20 flex items-center justify-center mx-auto mb-4 group-hover:bg-green-500/30 transition-colors">
-                <Building className="h-6 w-6 text-green-400" />
-              </div>
-              <h3 className="text-white font-medium mb-1">Find Venues</h3>
-              <p className="text-blue-lightest/70 text-sm">Discover locations</p>
-            </CardContent>
-          </Card>
-        </motion.div>
+    // Role filter
+    if (filters.role !== 'all' && contact.role !== filters.role) {
+      return false;
+    }
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <Card className="bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-all duration-300 cursor-pointer group">
-            <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-500/30 transition-colors">
-                <BarChart3 className="h-6 w-6 text-purple-400" />
-              </div>
-              <h3 className="text-white font-medium mb-1">Analytics</h3>
-              <p className="text-blue-lightest/70 text-sm">Network insights</p>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
-    </div>
+    // Tags filter
+    if (filters.tags.length > 0) {
+      const hasTag = filters.tags.some(tag => contact.tags?.includes(tag));
+      if (!hasTag) return false;
+    }
+
+    return true;
+  });
+
+  // Calculate network stats
+  const networkStats = {
+    totalContacts: mockContacts.length,
+    venues: mockContacts.filter(c => c.role === 'venue').length,
+    promoters: mockContacts.filter(c => c.role === 'promoter').length,
+    newThisMonth: 1,
+    emailsSent: 12,
+    phoneCallsMade: 8
+  };
+
+  // Get available tags
+  const availableTags = Array.from(
+    new Set(mockContacts.flatMap(c => c.tags || []))
   );
 
-  const PerformanceMetrics = () => (
-    <div className="mb-8">
-      <div className="flex items-center mb-6">
-        <TrendingUp className="h-5 w-5 text-white mr-2" />
-        <h2 className="text-lg font-semibold text-white">Network Metrics</h2>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-white/5 backdrop-blur-md border border-white/10">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-medium">Total Contacts</h3>
-              <Users className="h-5 w-5 text-blue-400" />
-            </div>
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-white">0</div>
-              <div className="text-sm text-green-400">Network size</div>
-              <div className="text-xs text-blue-lightest/70">All contacts</div>
-            </div>
-          </CardContent>
-        </Card>
+  // Handle bulk selection
+  const toggleContactSelection = (contactId: string) => {
+    const newSelection = new Set(selectedContacts);
+    if (newSelection.has(contactId)) {
+      newSelection.delete(contactId);
+    } else {
+      newSelection.add(contactId);
+    }
+    setSelectedContacts(newSelection);
+  };
 
-        <Card className="bg-white/5 backdrop-blur-md border border-white/10">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-medium">Venues</h3>
-              <Building className="h-5 w-5 text-green-400" />
-            </div>
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-white">0</div>
-              <div className="text-sm text-green-400">Locations</div>
-              <div className="text-xs text-blue-lightest/70">Performance venues</div>
-            </div>
-          </CardContent>
-        </Card>
+  const selectAllContacts = () => {
+    if (selectedContacts.size === filteredContacts.length) {
+      setSelectedContacts(new Set());
+    } else {
+      setSelectedContacts(new Set(filteredContacts.map(c => c.id)));
+    }
+  };
 
-        <Card className="bg-white/5 backdrop-blur-md border border-white/10">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-medium">Promoters</h3>
-              <UserPlus className="h-5 w-5 text-purple-400" />
-            </div>
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-white">0</div>
-              <div className="text-sm text-green-400">Event organizers</div>
-              <div className="text-xs text-blue-lightest/70">Active promoters</div>
-            </div>
-          </CardContent>
-        </Card>
+  const clearSelection = () => {
+    setSelectedContacts(new Set());
+  };
 
-        <Card className="bg-white/5 backdrop-blur-md border border-white/10">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-medium">New This Month</h3>
-              <TrendingUp className="h-5 w-5 text-orange-400" />
-            </div>
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-white">0</div>
-              <div className="text-sm text-green-400">Growth</div>
-              <div className="text-xs text-blue-lightest/70">Network expansion</div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
+  // Handle contact actions
+  const handleEmail = (contactId: string) => {
+    const contact = mockContacts.find(c => c.id === contactId);
+    toast({
+      title: "Email Composer",
+      description: `Opening email to ${contact?.name}...`,
+    });
+  };
+
+  const handleCall = (contactId: string) => {
+    const contact = mockContacts.find(c => c.id === contactId);
+    window.location.href = `tel:${contact?.phone}`;
+  };
+
+  const handleSchedule = (contactId: string) => {
+    toast({
+      title: "Schedule Meeting",
+      description: "Calendar integration coming soon...",
+    });
+  };
+
+  const handleEdit = (contactId: string) => {
+    navigate(`/event-toolkit/contacts/${contactId}/edit`);
+  };
+
+  const handleDelete = (contactId: string) => {
+    if (confirm("Are you sure you want to delete this contact?")) {
+      toast({
+        title: "Contact Deleted",
+        description: "The contact has been removed from your network.",
+      });
+    }
+  };
+
+  const handleBulkEmail = () => {
+    toast({
+      title: "Bulk Email",
+      description: `Composing email to ${selectedContacts.size} contacts...`,
+    });
+  };
+
+  const handleBulkDelete = () => {
+    if (confirm(`Are you sure you want to delete ${selectedContacts.size} contacts?`)) {
+      toast({
+        title: "Contacts Deleted",
+        description: `${selectedContacts.size} contacts have been removed.`,
+      });
+      clearSelection();
+    }
+  };
+
+  const handleExport = () => {
+    toast({
+      title: "Exporting Contacts",
+      description: `Exporting ${selectedContacts.size} contacts to CSV...`,
+    });
+  };
 
   return (
     <DashboardLayout>
       <div className="p-6">
-        {/* Welcome Header */}
+        {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center mb-2">
-            <Star className="h-6 w-6 text-white mr-3" />
-            <h1 className="text-2xl font-bold text-white">Contacts</h1>
-          </div>
-          <p className="text-blue-lightest/70">Build and manage your professional network</p>
-        </div>
-
-        <QuickActions />
-        <PerformanceMetrics />
-
-        {/* Filters & Content */}
-        <motion.div 
-          className="space-y-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          {/* Filters */}
-          <Card className="bg-white/5 backdrop-blur-md border border-white/10">
-            <CardContent className="p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">Filters</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Input placeholder="Search contacts..." className="bg-white/10 border-white/20 text-white placeholder:text-white/50" />
-                <Select>
-                  <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                    <SelectValue placeholder="Contact Type" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-blue-darker border-white/20">
-                    <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="venue">Venues</SelectItem>
-                    <SelectItem value="promoter">Promoters</SelectItem>
-                    <SelectItem value="artist">Artists</SelectItem>
-                    <SelectItem value="manager">Managers</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select>
-                  <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                    <SelectValue placeholder="Location" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-blue-darker border-white/20">
-                    <SelectItem value="all">All Locations</SelectItem>
-                    <SelectItem value="local">Local</SelectItem>
-                    <SelectItem value="regional">Regional</SelectItem>
-                    <SelectItem value="national">National</SelectItem>
-                    <SelectItem value="international">International</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Empty State */}
-          <Card className="bg-white/5 backdrop-blur-md border border-white/10">
-            <CardContent className="p-12 text-center">
-              <div className="w-16 h-16 rounded-lg bg-orange-500/20 flex items-center justify-center mx-auto mb-6">
-                <Users className="h-8 w-8 text-orange-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-white mb-2">No contacts added yet</h3>
-              <p className="text-blue-lightest/70 mb-6">Start building your professional network by adding your first contact</p>
-              <Button 
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-2">
+            <div className="flex items-center">
+              <Star className="h-6 w-6 text-white mr-3" />
+              <h1 className="text-2xl font-bold text-white">Professional Network</h1>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap">
+              {selectedContacts.size > 0 && (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleBulkEmail}
+                    className="border-white/20 text-white hover:bg-white/10"
+                  >
+                    <Mail className="h-4 w-4 mr-2" />
+                    Email Selected
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleExport}
+                    className="border-white/20 text-white hover:bg-white/10"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Export
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={selectAllContacts}
+                    className="border-white/20 text-white hover:bg-white/10"
+                  >
+                    {selectedContacts.size === filteredContacts.length ? 'Deselect All' : 'Select All'}
+                  </Button>
+                </>
+              )}
+              <Button
                 onClick={() => navigate("/event-toolkit/contacts/create")}
-                className="bg-blue-primary hover:bg-blue-primary/80 text-white"
+                className="bg-[hsl(var(--accent-purple))] hover:bg-[hsl(var(--accent-purple-light))] text-white"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Add Your First Contact
+                Add Contact
               </Button>
+            </div>
+          </div>
+          <p className="text-blue-lightest/70">Manage your venues, promoters, and industry connections</p>
+        </div>
+
+        {/* Network Analytics */}
+        <div className="mb-8">
+          <NetworkAnalytics stats={networkStats} />
+        </div>
+
+        {/* Filters */}
+        <div className="mb-6">
+          <Card className="bg-white/5 backdrop-blur-md border border-white/10">
+            <CardContent className="p-6">
+              <ContactsFilter
+                filters={filters}
+                onFilterChange={setFilters}
+                availableTags={availableTags}
+              />
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
+
+        {/* Contacts Grid */}
+        <AnimatePresence>
+          {filteredContacts.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {filteredContacts.map((contact, index) => (
+                <motion.div
+                  key={contact.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="flex gap-2"
+                >
+                  <Checkbox
+                    checked={selectedContacts.has(contact.id)}
+                    onCheckedChange={() => toggleContactSelection(contact.id)}
+                    className="mt-3 border-white/30 data-[state=checked]:bg-[hsl(var(--accent-blue))] data-[state=checked]:border-[hsl(var(--accent-blue))]"
+                  />
+                  <div className="flex-1">
+                    <SmartContactCard
+                      contact={contact}
+                      onEmail={handleEmail}
+                      onCall={handleCall}
+                      onSchedule={handleSchedule}
+                      onEdit={handleEdit}
+                      onDelete={handleDelete}
+                      isSelected={selectedContacts.has(contact.id)}
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <Card className="bg-white/5 backdrop-blur-md border border-white/10">
+              <CardContent className="p-12 text-center">
+                <div className="w-16 h-16 rounded-lg bg-[hsl(var(--accent-purple))]/20 flex items-center justify-center mx-auto mb-6">
+                  <Users className="h-8 w-8 text-[hsl(var(--accent-purple))]" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  {mockContacts.length === 0 ? 'No contacts yet' : 'No matching contacts'}
+                </h3>
+                <p className="text-blue-lightest/70 mb-6">
+                  {mockContacts.length === 0
+                    ? 'Start building your professional network by adding your first contact'
+                    : 'Try adjusting your filters or add a new contact'}
+                </p>
+                <Button 
+                  onClick={() => navigate("/event-toolkit/contacts/create")}
+                  className="bg-blue-primary hover:bg-blue-primary/80 text-white"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  {mockContacts.length === 0 ? 'Add Your First Contact' : 'Add New Contact'}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </AnimatePresence>
+
+        {/* Bulk Actions Bar */}
+        <BulkActionsBar
+          selectedCount={selectedContacts.size}
+          onEmailAll={handleBulkEmail}
+          onDeleteAll={handleBulkDelete}
+          onExport={handleExport}
+          onClearSelection={clearSelection}
+        />
       </div>
     </DashboardLayout>
   );
