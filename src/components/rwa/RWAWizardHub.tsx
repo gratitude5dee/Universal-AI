@@ -1,6 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Building2, Coins, TrendingUp, PieChart, Shield, Settings } from "lucide-react";
 import { StablecoinSwap } from "./stablecoin/StablecoinSwap";
+import { RWAMarketplace } from "./marketplace/RWAMarketplace";
 
 export const RWAWizardHub = () => {
   return (
@@ -83,19 +84,9 @@ export const RWAWizardHub = () => {
           <StablecoinSwap />
         </TabsContent>
 
-        <TabsContent value="marketplace" className="mt-6">
-          <div className="glass-card p-8 rounded-xl text-center">
-            <Building2 className="h-16 w-16 text-[#D4AF37] mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-2">RWA Marketplace</h2>
-            <p className="text-white/70 mb-4">
-              Discover and invest in tokenized real-world assets: real estate, treasuries, art, 
-              commodities, business equity, IP rights, and revenue streams.
-            </p>
-            <div className="text-sm text-white/50">
-              Coming in Phase 3: Week 4
-            </div>
-          </div>
-        </TabsContent>
+      <TabsContent value="marketplace" className="mt-6">
+        <RWAMarketplace />
+      </TabsContent>
 
         <TabsContent value="portfolio" className="mt-6">
           <div className="glass-card p-8 rounded-xl text-center">
