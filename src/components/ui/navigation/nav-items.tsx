@@ -51,6 +51,48 @@ export const navItems = [{
     }
   ]
 }, {
+  name: "Content Library",
+  path: "#",
+  icon: Users,
+  hasSubmenu: true,
+  submenuItems: [
+    {
+      name: "Asset Library",
+      path: "/gallery",
+      icon: NavGalleryIcon
+    },
+    {
+      name: "Content Manager",
+      path: "/event-toolkit/content",
+      icon: Music
+    },
+    {
+      name: "IP Portal",
+      path: "/rights",
+      icon: Shield
+    },
+    {
+      name: "Thread of Life",
+      path: "/thread-of-life",
+      icon: Trees
+    },
+    {
+      name: "Bridge",
+      path: "/bridge",
+      icon: ArrowRightLeft
+    },
+    {
+      name: "Marketplace Launch",
+      path: "/marketplace-launch",
+      icon: NavMarketplaceIcon
+    },
+    {
+      name: "Analytics",
+      path: "/analytics",
+      icon: NavAnalyticsIcon
+    },
+  ]
+}, {
   name: "Touring",
   path: "/touring",
   icon: Calendar,
@@ -93,48 +135,6 @@ export const navItems = [{
       path: "https://sync.universal-ai.xyz/",
       icon: Music
     }
-  ]
-}, {
-  name: "Content Library",
-  path: "#",
-  icon: Users,
-  hasSubmenu: true,
-  submenuItems: [
-    {
-      name: "Asset Library",
-      path: "/gallery",
-      icon: NavGalleryIcon
-    },
-    {
-      name: "Content Manager",
-      path: "/event-toolkit/content",
-      icon: Music
-    },
-    {
-      name: "IP Portal",
-      path: "/rights",
-      icon: Shield
-    },
-    {
-      name: "Thread of Life",
-      path: "/thread-of-life",
-      icon: Trees
-    },
-    {
-      name: "Bridge",
-      path: "/bridge",
-      icon: ArrowRightLeft
-    },
-    {
-      name: "Marketplace Launch",
-      path: "/marketplace-launch",
-      icon: NavMarketplaceIcon
-    },
-    {
-      name: "Analytics",
-      path: "/analytics",
-      icon: NavAnalyticsIcon
-    },
   ]
 }, {
   name: "Agents + Integrations",
