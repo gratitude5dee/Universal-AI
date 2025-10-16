@@ -16,6 +16,7 @@ import { StorefrontPublisher } from "@/components/merchandise/StorefrontPublishe
 import { AnalyticsDashboard } from "@/components/merchandise/AnalyticsDashboard";
 import { OrderTracker } from "@/components/merchandise/OrderTracker";
 import { MerchandiseStudioSummary } from "@/components/merchandise/MerchandiseStudioSummary";
+import { PrintPartnerSettings } from "@/components/merchandise/PrintPartnerSettings";
 import { ProductTemplate } from "@/hooks/useProductTemplates";
 import { useDesigns } from "@/hooks/useDesigns";
 import { useToast } from "@/hooks/use-toast";
@@ -261,8 +262,9 @@ const ThreadOfLife = () => {
                   designImageUrl={generatedDesignUrl}
                   productTemplateId={selectedProductTemplate?.id}
                 />
-                <OrderTracker />
+                <PrintPartnerSettings />
               </div>
+              <OrderTracker />
             </div>
           </TabsContent>
 
