@@ -10,8 +10,9 @@ const Header = () => {
       WebkitBackdropFilter: 'blur(var(--glass-blur))',
       border: '1px solid var(--glass-border)'
     }}>
-        <a href="/" className="flex items-center">
+        <a href="/" className="flex items-center gap-3">
           <img src={universalAILogo} alt="Universal.AI" className="h-12 w-auto" />
+          <span className="text-white text-2xl font-bold">UniversalAI</span>
         </a>
         <div className="flex items-center gap-6">
           <button className="bg-none border-none text-white/70 cursor-pointer hidden md:block">

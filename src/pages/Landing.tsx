@@ -246,8 +246,9 @@ const Landing = () => {
               className="flex justify-between items-center py-4 sm:py-6 max-w-7xl mx-auto"
               // Removed individual animation from header as parent motion.div handles it
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <img src={universalAILogo} alt="Universal.AI" className="h-10 sm:h-12 w-auto" />
+                <h1 className="text-lg sm:text-xl font-bold">UniversalAI</h1>
               </div>
 
               <motion.div
