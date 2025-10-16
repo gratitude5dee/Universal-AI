@@ -108,6 +108,10 @@ const OnChainDistribution = () => {
         title="Universal RWA Tokenization & Trading Platform"
         subtitle="Tokenize anything, trade everywhere, optimize everything - powered by AI across 5+ chains"
       >
+      {/* Notification Center - Top Right */}
+      <div className="absolute top-4 right-4 z-50">
+        <NotificationCenter />
+      </div>
 
       {/* Enhanced Hero Stats Section */}
       <motion.div 
@@ -687,7 +691,6 @@ const OnChainDistribution = () => {
           </TabsContent>
         </motion.div>
       </Tabs>
-      <NotificationCenter />
     </DistributionLayout>
     </>
   );
