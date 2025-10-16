@@ -24,17 +24,15 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const sidebarWidth = isCollapsed ? (isHovered ? '16rem' : '5rem') : '16rem';
 
   return (
-    <div className="min-h-screen flex flex-col bg-transparent overflow-hidden">
-      <div className="flex flex-1 z-10 relative w-full">
-        <Sidebar 
-          navItems={navItems} 
-          isCollapsed={isCollapsed}
-          setIsCollapsed={setIsCollapsed}
-          isHovered={isHovered}
-          setIsHovered={setIsHovered}
-        />
-        <MainContent sidebarWidth={sidebarWidth}>{children}</MainContent>
-      </div>
+    <div className="min-h-screen bg-transparent overflow-hidden">
+      <Sidebar 
+        navItems={navItems} 
+        isCollapsed={isCollapsed}
+        setIsCollapsed={setIsCollapsed}
+        isHovered={isHovered}
+        setIsHovered={setIsHovered}
+      />
+      <MainContent sidebarWidth={sidebarWidth}>{children}</MainContent>
       <FuturisticCursor />
     </div>
   );
