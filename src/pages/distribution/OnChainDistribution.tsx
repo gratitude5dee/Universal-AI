@@ -108,38 +108,6 @@ const OnChainDistribution = () => {
         title="Universal RWA Tokenization & Trading Platform"
         subtitle="Tokenize anything, trade everywhere, optimize everything - powered by AI across 5+ chains"
       >
-      {/* Tab Navigation */}
-      <div className="mb-8">
-        <div className="flex justify-center space-x-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-1">
-          <div 
-            onClick={() => navigate('/distribution/social-media')}
-            className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors"
-          >
-            Social Media WZRD
-          </div>
-          <div className="px-6 py-3 bg-orange-500 text-white rounded-xl text-sm font-medium">
-            On-Chain Distribution
-          </div>
-          <div 
-            onClick={() => navigate('/distribution/media-channels')}
-            className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors"
-          >
-            Media Channels
-          </div>
-          <div 
-            onClick={() => navigate('/distribution/independent')}
-            className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors"
-          >
-            Independent Channels
-          </div>
-          <div 
-            onClick={() => window.location.href = 'https://sync.universal-ai.xyz/'}
-            className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors"
-          >
-            Sync Licensing
-          </div>
-        </div>
-      </div>
 
       {/* Enhanced Hero Stats Section */}
       <motion.div 
