@@ -160,7 +160,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
 
           {!isCollapsed && <motion.div className="flex flex-col ml-3" variants={textVariants}>
               <span className="text-blue-lightest font-medium leading-tight text-xl text-shadow-sm text-glow-blue">UniversalAI</span>
-              <span className="text-xs text-blue-lighter/80">Next-Gen Platform</span>
+              <span className="text-xs text-blue-lighter/80">Creator OS</span>
             </motion.div>}
         </motion.div>
       </div>
