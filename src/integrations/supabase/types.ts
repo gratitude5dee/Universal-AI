@@ -2588,6 +2588,39 @@ export type Database = {
         }
         Relationships: []
       }
+      print_partner_connections: {
+        Row: {
+          api_key_hash: string
+          created_at: string
+          id: string
+          is_enabled: boolean
+          provider: string
+          provider_data: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          api_key_hash: string
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          provider: string
+          provider_data?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          api_key_hash?: string
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          provider?: string
+          provider_data?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       product_templates: {
         Row: {
           available: boolean | null
