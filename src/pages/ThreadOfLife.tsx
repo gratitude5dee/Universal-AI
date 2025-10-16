@@ -17,6 +17,7 @@ import { AnalyticsDashboard } from "@/components/merchandise/AnalyticsDashboard"
 import { OrderTracker } from "@/components/merchandise/OrderTracker";
 import { MerchandiseStudioSummary } from "@/components/merchandise/MerchandiseStudioSummary";
 import { PrintPartnerSettings } from "@/components/merchandise/PrintPartnerSettings";
+import { DesignVersionHistory } from "@/components/merchandise/DesignVersionHistory";
 import { ProductTemplate } from "@/hooks/useProductTemplates";
 import { useDesigns } from "@/hooks/useDesigns";
 import { useToast } from "@/hooks/use-toast";
@@ -28,6 +29,7 @@ const ThreadOfLife = () => {
   const [selectedDesignTemplate, setSelectedDesignTemplate] = useState<DesignTemplate | undefined>();
   const [generatedDesignUrl, setGeneratedDesignUrl] = useState<string | undefined>();
   const [showCanvas, setShowCanvas] = useState(false);
+  const [currentDesignId, setCurrentDesignId] = useState<string | undefined>();
   const { createDesign } = useDesigns();
   const { toast } = useToast();
 
@@ -37,7 +39,7 @@ const ThreadOfLife = () => {
     // Auto-save the generated design
     if (selectedProductTemplate) {
       try {
-        await createDesign.mutateAsync({
+        const design = await createDesign.mutateAsync({
           name: `AI Design - ${new Date().toLocaleDateString()}`,
           description: prompt,
           design_type: selectedProductTemplate.category === 'apparel' ? 'apparel' : 
@@ -46,6 +48,7 @@ const ThreadOfLife = () => {
           ai_prompt: prompt,
           status: 'draft',
         });
+        setCurrentDesignId(design.id);
       } catch (error) {
         console.error('Failed to save design:', error);
       }
@@ -213,7 +216,19 @@ const ThreadOfLife = () => {
 
                   <TemplateMarketplace onSelectTemplate={handleTemplateSelected} />
 
-                  <BrandKitManager />
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <BrandKitManager />
+                    <DesignVersionHistory 
+                      designId={currentDesignId}
+                      onRestoreVersion={(versionData) => {
+                        setGeneratedDesignUrl(versionData.design_image_url);
+                        toast({
+                          title: "Version Restored",
+                          description: "Design has been restored to the selected version",
+                        });
+                      }}
+                    />
+                  </div>
                 </div>
               </>
             ) : (
