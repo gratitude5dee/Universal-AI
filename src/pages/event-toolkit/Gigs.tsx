@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Calendar, 
   Plus, 
@@ -12,7 +13,10 @@ import {
   DollarSign,
   BarChart3,
   Music,
-  TrendingUp
+  TrendingUp,
+  Mail,
+  FileText,
+  Trash2
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/layouts/dashboard-layout";
@@ -26,6 +30,8 @@ import { GigStatusTabs } from "@/components/event-toolkit/workflow/GigStatusTabs
 import { SmartGigCard } from "@/components/event-toolkit/cards/SmartGigCard";
 import { GigWorkflowTracker } from "@/components/event-toolkit/workflow/GigWorkflowTracker";
 import { VenueMapView } from "@/components/event-toolkit/map/VenueMapView";
+import { BulkOperationsModal } from "@/components/event-toolkit/bulk/BulkOperationsModal";
+import { BulkActionsBar } from "@/components/event-toolkit/contacts/BulkActionsBar";
 
 const Gigs = () => {
   const navigate = useNavigate();
@@ -34,6 +40,8 @@ const Gigs = () => {
   const [showMap, setShowMap] = useState(false);
   const [selectedGig, setSelectedGig] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedGigs, setSelectedGigs] = useState<Set<string>>(new Set());
+  const [bulkOperation, setBulkOperation] = useState<'email' | 'status' | 'contract' | 'invoice' | 'delete' | null>(null);
 
   // Fetch gigs from database
   const { data: gigs = [], isLoading, refetch } = useQuery({
@@ -71,6 +79,29 @@ const Gigs = () => {
     }
     return gig.status === activeTab;
   });
+
+  // Handle bulk selection
+  const toggleGigSelection = (gigId: string) => {
+    const newSelection = new Set(selectedGigs);
+    if (newSelection.has(gigId)) {
+      newSelection.delete(gigId);
+    } else {
+      newSelection.add(gigId);
+    }
+    setSelectedGigs(newSelection);
+  };
+
+  const selectAllGigs = () => {
+    if (selectedGigs.size === filteredGigs.length) {
+      setSelectedGigs(new Set());
+    } else {
+      setSelectedGigs(new Set(filteredGigs.map(g => g.id)));
+    }
+  };
+
+  const clearSelection = () => {
+    setSelectedGigs(new Set());
+  };
 
   // Handle gig actions
   const handleGigAction = async (action: string, gigId: string) => {
@@ -308,18 +339,50 @@ const Gigs = () => {
       <div className="p-6">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-2">
             <div className="flex items-center">
               <Star className="h-6 w-6 text-white mr-3" />
               <h1 className="text-2xl font-bold text-white">Gig Manager</h1>
             </div>
-            <Button
-              onClick={() => navigate("/event-toolkit/gigs/create")}
-              className="bg-blue-primary hover:bg-blue-primary/80 text-white"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              New Gig
-            </Button>
+            <div className="flex items-center gap-2 flex-wrap">
+              {selectedGigs.size > 0 && (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setBulkOperation('status')}
+                    className="border-white/20 text-white hover:bg-white/10"
+                  >
+                    <Calendar className="h-4 w-4 mr-2" />
+                    Update Status
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setBulkOperation('invoice')}
+                    className="border-white/20 text-white hover:bg-white/10"
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    Generate Invoices
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={selectAllGigs}
+                    className="border-white/20 text-white hover:bg-white/10"
+                  >
+                    {selectedGigs.size === filteredGigs.length ? 'Deselect All' : 'Select All'}
+                  </Button>
+                </>
+              )}
+              <Button
+                onClick={() => navigate("/event-toolkit/gigs/create")}
+                className="bg-blue-primary hover:bg-blue-primary/80 text-white"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                New Gig
+              </Button>
+            </div>
           </div>
           <p className="text-blue-lightest/70">Intelligent workflow management for your performances</p>
         </div>
@@ -397,8 +460,15 @@ const Gigs = () => {
           ) : filteredGigs.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredGigs.map((gig, index) => (
-                <div key={gig.id} onClick={() => setSelectedGig(gig.id)}>
-                  <SmartGigCard gig={gig} onAction={handleGigAction} />
+                <div key={gig.id} className="flex gap-2">
+                  <Checkbox
+                    checked={selectedGigs.has(gig.id)}
+                    onCheckedChange={() => toggleGigSelection(gig.id)}
+                    className="mt-3 border-white/30 data-[state=checked]:bg-[hsl(var(--accent-blue))] data-[state=checked]:border-[hsl(var(--accent-blue))]"
+                  />
+                  <div className="flex-1" onClick={() => setSelectedGig(gig.id)}>
+                    <SmartGigCard gig={gig} onAction={handleGigAction} />
+                  </div>
                 </div>
               ))}
             </div>
@@ -427,6 +497,26 @@ const Gigs = () => {
             </Card>
           )}
         </GigStatusTabs>
+
+        {/* Bulk Operations Modal */}
+        <BulkOperationsModal
+          open={bulkOperation !== null}
+          onClose={() => setBulkOperation(null)}
+          operation={bulkOperation}
+          selectedItems={Array.from(selectedGigs).map(id => filteredGigs.find(g => g.id === id)).filter(Boolean)}
+          onSuccess={() => {
+            clearSelection();
+            refetch();
+          }}
+        />
+
+        {/* Bulk Actions Bar */}
+        <BulkActionsBar
+          selectedCount={selectedGigs.size}
+          onEmailAll={() => setBulkOperation('email')}
+          onDeleteAll={() => setBulkOperation('delete')}
+          onClearSelection={clearSelection}
+        />
       </div>
     </DashboardLayout>
   );
