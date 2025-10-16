@@ -7,7 +7,7 @@ import { SocialTokens } from "@/components/bridge/social-tokens/SocialTokens";
 import { DistributionAnalytics } from "@/components/bridge/analytics/DistributionAnalytics";
 import { Settings } from "@/components/bridge/settings/Settings";
 import { AIAssistant } from "@/components/bridge/ai-assistant/AIAssistant";
-import { MagicPortal } from "@/components/bridge/MagicPortal";
+import { EnhancedBridges } from "@/components/bridge/bridges/EnhancedBridges";
 
 const Bridge = () => {
   return (
@@ -41,7 +41,7 @@ const Bridge = () => {
             <SocialTokens />
           </TabsContent>
           <TabsContent value="bridges" className="pt-6">
-            <MagicPortal />
+            <EnhancedBridges />
           </TabsContent>
           <TabsContent value="analytics" className="pt-6">
             <DistributionAnalytics />
