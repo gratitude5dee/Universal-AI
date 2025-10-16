@@ -13,6 +13,7 @@ import Forecasting from "@/components/treasury/financials/Forecasting";
 import FinancialReports from "@/components/treasury/financials/FinancialReports";
 import MultiChainDashboard from "@/components/treasury/revenue/MultiChainDashboard";
 import AgentBanking from "@/components/treasury/AgentBanking";
+import { RWAWizardHub } from "@/components/rwa/RWAWizardHub";
 
 const TreasureVault = () => {
   const location = useLocation();
@@ -22,7 +23,7 @@ const TreasureVault = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const tab = params.get("tab");
-    const validTabs = ["statements", "forecasting", "splits", "reports", "multichain", "banking"];
+    const validTabs = ["statements", "forecasting", "splits", "reports", "multichain", "banking", "rwa-wzrd"];
     if (tab && validTabs.includes(tab)) {
       setCurrentTab(tab);
     } else {
@@ -58,6 +59,7 @@ const TreasureVault = () => {
             <TabsTrigger value="reports" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary">Reports</TabsTrigger>
             <TabsTrigger value="multichain" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary">Multi-Chain Revenue</TabsTrigger>
             <TabsTrigger value="banking" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary">Agent Banking</TabsTrigger>
+            <TabsTrigger value="rwa-wzrd" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary">🏛️ RWA WZRD</TabsTrigger>
           </TabsList>
           
           <motion.div
@@ -73,6 +75,7 @@ const TreasureVault = () => {
             <TabsContent value="reports"><FinancialReports /></TabsContent>
             <TabsContent value="multichain"><MultiChainDashboard /></TabsContent>
             <TabsContent value="banking"><AgentBanking /></TabsContent>
+            <TabsContent value="rwa-wzrd"><RWAWizardHub /></TabsContent>
           </motion.div>
         </Tabs>
       </Content>
