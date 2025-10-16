@@ -15,6 +15,8 @@ import {
   CheckCircle,
   Edit,
   Trash2,
+  Receipt,
+  ImageIcon,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -23,6 +25,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { GigEmailComposer } from "../generators/GigEmailComposer";
+import { GigContractGenerator } from "../generators/GigContractGenerator";
+import { GigInvoiceGenerator } from "../generators/GigInvoiceGenerator";
 
 interface SmartGigCardProps {
   gig: {
@@ -40,6 +45,9 @@ interface SmartGigCardProps {
 
 export const SmartGigCard: React.FC<SmartGigCardProps> = ({ gig, onAction }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [emailComposerOpen, setEmailComposerOpen] = useState(false);
+  const [contractGeneratorOpen, setContractGeneratorOpen] = useState(false);
+  const [invoiceGeneratorOpen, setInvoiceGeneratorOpen] = useState(false);
 
   const statusConfig = {
     pending: { color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30", label: "Pending", icon: Clock },
@@ -50,6 +58,22 @@ export const SmartGigCard: React.FC<SmartGigCardProps> = ({ gig, onAction }) => 
 
   const config = statusConfig[gig.status as keyof typeof statusConfig] || statusConfig.pending;
   const StatusIcon = config.icon;
+
+  const handleLocalAction = (action: string) => {
+    switch (action) {
+      case "email":
+        setEmailComposerOpen(true);
+        break;
+      case "contract":
+        setContractGeneratorOpen(true);
+        break;
+      case "invoice":
+        setInvoiceGeneratorOpen(true);
+        break;
+      default:
+        onAction(action, gig.id);
+    }
+  };
 
   const getQuickActions = () => {
     switch (gig.status) {
@@ -65,8 +89,8 @@ export const SmartGigCard: React.FC<SmartGigCardProps> = ({ gig, onAction }) => 
         ];
       case "contracted":
         return [
-          { label: "Create Invoice", icon: DollarSign, action: "invoice" },
-          { label: "View Contract", icon: FileText, action: "viewContract" },
+          { label: "Create Invoice", icon: Receipt, action: "invoice" },
+          { label: "Send Email", icon: Mail, action: "email" },
         ];
       case "completed":
         return [
@@ -167,7 +191,7 @@ export const SmartGigCard: React.FC<SmartGigCardProps> = ({ gig, onAction }) => 
                     key={action.action}
                     variant="outline"
                     size="sm"
-                    onClick={() => onAction(action.action, gig.id)}
+                    onClick={() => handleLocalAction(action.action)}
                     className="flex-1 border-white/20 text-white/80 hover:bg-blue-primary/20 hover:text-white hover:border-blue-primary/50"
                   >
                     <ActionIcon className="h-3 w-3 mr-2" />
@@ -179,6 +203,28 @@ export const SmartGigCard: React.FC<SmartGigCardProps> = ({ gig, onAction }) => 
           )}
         </CardContent>
       </Card>
+
+      {/* Document Generation Modals */}
+      <GigEmailComposer
+        open={emailComposerOpen}
+        onOpenChange={setEmailComposerOpen}
+        gigId={gig.id}
+        gigDetails={gig}
+      />
+
+      <GigContractGenerator
+        open={contractGeneratorOpen}
+        onOpenChange={setContractGeneratorOpen}
+        gigId={gig.id}
+        gigDetails={gig}
+      />
+
+      <GigInvoiceGenerator
+        open={invoiceGeneratorOpen}
+        onOpenChange={setInvoiceGeneratorOpen}
+        gigId={gig.id}
+        gigDetails={gig}
+      />
     </motion.div>
   );
 };
