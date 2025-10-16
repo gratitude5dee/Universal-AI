@@ -1,16 +1,44 @@
+import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Droplet, TrendingUp, DollarSign, Gift } from 'lucide-react';
 import { mockLiquidityPositions, getTotalLiquidityValue, getAverageAPY, getTotalDailyEarnings, getTotalUnclaimedRewards } from '@/data/on-chain/mockLiquidity';
 import { getChainById } from '@/data/on-chain/chains';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
+import { ConfirmDialog } from '../shared/ConfirmDialog';
 
 export const LiquidityHub = () => {
+  const [confirmDialog, setConfirmDialog] = useState<{ open: boolean; positionId: string; action: 'claim' | 'remove' } | null>(null);
+  
   const totalValue = getTotalLiquidityValue();
   const avgAPY = getAverageAPY();
   const dailyEarnings = getTotalDailyEarnings();
   const unclaimedRewards = getTotalUnclaimedRewards();
+
+  const handleClaimAll = () => {
+    toast.success(`Claimed $${unclaimedRewards.toFixed(2)} in rewards!`, {
+      description: 'Rewards have been transferred to your wallet',
+    });
+  };
+
+  const handlePositionAction = (positionId: string, action: 'claim' | 'remove') => {
+    setConfirmDialog({ open: true, positionId, action });
+  };
+
+  const confirmPositionAction = () => {
+    if (!confirmDialog) return;
+    
+    const position = mockLiquidityPositions.find(p => p.id === confirmDialog.positionId);
+    if (confirmDialog.action === 'claim') {
+      toast.success(`Claimed $${position?.unclaimedRewards.toFixed(2)}!`);
+    } else {
+      toast.info(`Removed liquidity from ${position?.pool}`);
+    }
+    setConfirmDialog(null);
+  };
 
   const stats = [
     { label: 'Total Liquidity', value: `$${totalValue.toLocaleString()}`, icon: Droplet, color: 'text-blue-400' },
@@ -20,11 +48,12 @@ export const LiquidityHub = () => {
   ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
-    >
+    <TooltipProvider>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-6"
+      >
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, idx) => (
@@ -49,7 +78,12 @@ export const LiquidityHub = () => {
       <Card className="glass-card p-6 group hover:border-primary/30 transition-all duration-300">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold">Daily Earnings (30 Days)</h3>
-          <Button variant="outline" size="sm" className="hover-scale gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="hover-scale gap-2"
+            onClick={handleClaimAll}
+          >
             <Gift className="h-4 w-4" />
             Claim All Rewards
           </Button>
@@ -130,8 +164,29 @@ export const LiquidityHub = () => {
 
                   {/* Actions */}
                   <div className="flex gap-2 ml-4">
-                    <Button size="sm" variant="outline">Manage</Button>
-                    <Button size="sm">Claim</Button>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handlePositionAction(position.id, 'remove')}
+                        >
+                          Manage
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Manage position</TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          size="sm"
+                          onClick={() => handlePositionAction(position.id, 'claim')}
+                        >
+                          Claim
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Claim ${position.unclaimedRewards.toFixed(2)}</TooltipContent>
+                    </Tooltip>
                   </div>
                 </div>
               </Card>
@@ -139,6 +194,21 @@ export const LiquidityHub = () => {
           })}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmDialog?.open || false}
+        onOpenChange={(open) => !open && setConfirmDialog(null)}
+        title={confirmDialog?.action === 'claim' ? 'Claim Rewards?' : 'Remove Liquidity?'}
+        description={
+          confirmDialog?.action === 'claim'
+            ? 'Rewards will be transferred to your wallet.'
+            : 'Removing liquidity will withdraw your tokens from the pool. You can add them back later.'
+        }
+        confirmText={confirmDialog?.action === 'claim' ? 'Claim' : 'Remove'}
+        onConfirm={confirmPositionAction}
+        variant={confirmDialog?.action === 'remove' ? 'destructive' : 'default'}
+      />
     </motion.div>
+    </TooltipProvider>
   );
 };

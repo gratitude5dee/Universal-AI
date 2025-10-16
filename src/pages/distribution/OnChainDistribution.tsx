@@ -9,6 +9,8 @@ import DistributionLayout from "@/layouts/distribution-layout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { NotificationCenter } from "@/components/on-chain/shared/NotificationCenter";
+import { Toaster } from "sonner";
 import PlatformSelector from "@/components/launchpad/PlatformSelector";
 import UnifiedLaunchForm from "@/components/launchpad/UnifiedLaunchForm";
 import { AudioPlayer } from "@/components/distribution/music/AudioPlayer";
@@ -100,10 +102,12 @@ const OnChainDistribution = () => {
   };
 
   return (
-    <DistributionLayout
-      title="Universal RWA Tokenization & Trading Platform"
-      subtitle="Tokenize anything, trade everywhere, optimize everything - powered by AI across 5+ chains"
-    >
+    <>
+      <Toaster position="top-right" richColors />
+      <DistributionLayout
+        title="Universal RWA Tokenization & Trading Platform"
+        subtitle="Tokenize anything, trade everywhere, optimize everything - powered by AI across 5+ chains"
+      >
       {/* Tab Navigation */}
       <div className="mb-8">
         <div className="flex justify-center space-x-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-1">
@@ -715,7 +719,9 @@ const OnChainDistribution = () => {
           </TabsContent>
         </motion.div>
       </Tabs>
+      <NotificationCenter />
     </DistributionLayout>
+    </>
   );
 };
 
