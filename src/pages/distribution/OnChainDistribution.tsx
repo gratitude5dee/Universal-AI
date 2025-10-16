@@ -18,6 +18,12 @@ import { TokenGatedContent } from "@/components/distribution/music/TokenGatedCon
 import { Web3TicketingInterface } from "@/components/distribution/music/Web3TicketingInterface";
 import { AssetTypeSelector } from "@/components/on-chain/tokenize/AssetTypeSelector";
 import { MemeTokenWizard } from "@/components/on-chain/tokenize/wizards/MemeTokenWizard";
+import { PortfolioManager } from "@/components/on-chain/portfolio/PortfolioManager";
+import { LiquidityHub } from "@/components/on-chain/liquidity/LiquidityHub";
+import { OpportunityFinder } from "@/components/on-chain/liquidity/OpportunityFinder";
+import { TradingAgents } from "@/components/on-chain/agents/TradingAgents";
+import { AgentDeployWizard } from "@/components/on-chain/agents/AgentDeployWizard";
+import { AdvancedAnalytics } from "@/components/on-chain/analytics/AdvancedAnalytics";
 import { AssetType } from "@/types/on-chain";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
@@ -30,6 +36,8 @@ const OnChainDistribution = () => {
   const [launchpadTab, setLaunchpadTab] = useState("platforms");
   const [selectedAssetType, setSelectedAssetType] = useState<AssetType | null>(null);
   const [wizardActive, setWizardActive] = useState(false);
+  const [showAgentWizard, setShowAgentWizard] = useState(false);
+  const [showLiquidityOpportunities, setShowLiquidityOpportunities] = useState(false);
 
   // Enhanced mock data
   const tokenBalances = [
@@ -252,72 +260,56 @@ const OnChainDistribution = () => {
           {/* NEW TAB: Portfolio */}
           <TabsContent value="portfolio">
             <div className="glass-card p-8 rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10">
-              <div className="text-center py-12">
-                <PieChart className="w-16 h-16 text-purple-400 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-white mb-2">Multi-Chain Portfolio Manager</h3>
-                <p className="text-white/60 max-w-2xl mx-auto">
-                  View and manage all your assets across Solana, Ethereum, Base, Polygon, and Arbitrum in one unified dashboard.
-                </p>
-                <div className="mt-6">
-                  <Badge variant="secondary" className="bg-purple-500/20 text-purple-300">
-                    Coming Soon - Phase 2
-                  </Badge>
-                </div>
-              </div>
+              <PortfolioManager />
             </div>
           </TabsContent>
 
           {/* NEW TAB: Liquidity Hub */}
           <TabsContent value="liquidity">
             <div className="glass-card p-8 rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10">
-              <div className="text-center py-12">
-                <Droplets className="w-16 h-16 text-green-400 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-white mb-2">DeFi Liquidity Hub</h3>
-                <p className="text-white/60 max-w-2xl mx-auto">
-                  Discover yield opportunities across 50+ protocols. Add liquidity, farm yields, and optimize returns with AI-powered recommendations.
-                </p>
-                <div className="mt-6">
-                  <Badge variant="secondary" className="bg-green-500/20 text-green-300">
-                    Coming Soon - Phase 3
-                  </Badge>
-                </div>
+              <div className="flex justify-end mb-4">
+                <Button 
+                  onClick={() => setShowLiquidityOpportunities(!showLiquidityOpportunities)}
+                  variant={showLiquidityOpportunities ? "outline" : "default"}
+                >
+                  {showLiquidityOpportunities ? 'View Positions' : 'Find Opportunities'}
+                </Button>
               </div>
+              {showLiquidityOpportunities ? <OpportunityFinder /> : <LiquidityHub />}
             </div>
           </TabsContent>
 
           {/* NEW TAB: AI Agents */}
           <TabsContent value="agents">
             <div className="glass-card p-8 rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10">
-              <div className="text-center py-12">
-                <Bot className="w-16 h-16 text-blue-400 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-white mb-2">AI Trading Agents</h3>
-                <p className="text-white/60 max-w-2xl mx-auto">
-                  Deploy autonomous trading strategies with backtesting, risk management, and institutional-grade controls.
-                </p>
-                <div className="mt-6">
-                  <Badge variant="secondary" className="bg-blue-500/20 text-blue-300">
-                    Coming Soon - Phase 4
-                  </Badge>
-                </div>
-              </div>
+              {showAgentWizard ? (
+                <AgentDeployWizard 
+                  onComplete={() => {
+                    setShowAgentWizard(false);
+                    toast({
+                      title: "Agent Deployed!",
+                      description: "Your trading agent is now active and monitoring markets.",
+                    });
+                  }} 
+                />
+              ) : (
+                <>
+                  <div className="flex justify-end mb-4">
+                    <Button onClick={() => setShowAgentWizard(true)}>
+                      <Bot className="h-4 w-4 mr-2" />
+                      Deploy New Agent
+                    </Button>
+                  </div>
+                  <TradingAgents />
+                </>
+              )}
             </div>
           </TabsContent>
 
           {/* NEW TAB: Analytics */}
           <TabsContent value="analytics">
             <div className="glass-card p-8 rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10">
-              <div className="text-center py-12">
-                <BarChart className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-white mb-2">Advanced Analytics</h3>
-                <p className="text-white/60 max-w-2xl mx-auto">
-                  Comprehensive portfolio analytics, performance tracking, and tax reporting with institutional-grade insights.
-                </p>
-                <div className="mt-6">
-                  <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-300">
-                    Coming Soon - Phase 5
-                  </Badge>
-                </div>
-              </div>
+              <AdvancedAnalytics />
             </div>
           </TabsContent>
 
