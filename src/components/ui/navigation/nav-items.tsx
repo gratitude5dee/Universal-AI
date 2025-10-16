@@ -7,7 +7,7 @@ import {
 // For the remaining icons we'll continue using lucide-react for now, but gradually replace them
 import { 
   Palette, BookOpen, Headphones, Infinity, UserRound, Users, Shield, Globe, 
-  Database, ShoppingCart, Eye, Building, Trees, ArrowRightLeft, Share2, Link, Tv, 
+  Database, ShoppingCart, Eye, Building, Building2, Trees, ArrowRightLeft, Share2, Link, Tv, 
   User, Music, Landmark, TrendingUp, Droplets, CreditCard, Calendar, UserCircle,
   Briefcase, LayoutDashboard, FileText, QrCode, UserPlus, Upload, FilePlus, FilePieChart, 
   Home, Banknote, Zap
@@ -221,6 +221,11 @@ export const navItems = [{
       name: "Agent Banking",
       path: "/treasury?tab=banking",
       icon: Landmark
+    },
+    {
+      name: "RWA WZRD",
+      path: "/treasury?tab=rwa-wzrd",
+      icon: Building2
     }
   ]
 }, {
