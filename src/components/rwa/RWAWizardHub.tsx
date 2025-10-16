@@ -2,6 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Building2, Coins, TrendingUp, PieChart, Shield, Settings } from "lucide-react";
 import { StablecoinSwap } from "./stablecoin/StablecoinSwap";
 import { RWAMarketplace } from "./marketplace/RWAMarketplace";
+import { RWAPortfolio } from "./portfolio/RWAPortfolio";
 
 export const RWAWizardHub = () => {
   return (
@@ -88,19 +89,9 @@ export const RWAWizardHub = () => {
         <RWAMarketplace />
       </TabsContent>
 
-        <TabsContent value="portfolio" className="mt-6">
-          <div className="glass-card p-8 rounded-xl text-center">
-            <PieChart className="h-16 w-16 text-[#D4AF37] mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-2">My RWA Portfolio</h2>
-            <p className="text-white/70 mb-4">
-              Track your RWA holdings, view distributions, monitor performance, and manage governance rights.
-              Real-time valuation and yield tracking across all your tokenized assets.
-            </p>
-            <div className="text-sm text-white/50">
-              Coming in Phase 4: Week 5
-            </div>
-          </div>
-        </TabsContent>
+      <TabsContent value="portfolio" className="mt-6">
+        <RWAPortfolio />
+      </TabsContent>
 
         <TabsContent value="yield-optimizer" className="mt-6">
           <div className="glass-card p-8 rounded-xl text-center">

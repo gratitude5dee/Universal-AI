@@ -306,6 +306,7 @@ export const mockPortfolioStats = {
   combinedValue: 296_840,
   monthlyChange: 8_420,
   monthlyChangePercent: 2.9,
+  monthlyPerformance: 2.9,
 };
 
 // Asset Class Breakdown
