@@ -1,5 +1,8 @@
 project_id = "ixkkrousepsiorwlaycp"
 
+[functions.generate-merch-design]
+verify_jwt = true
+
 [functions.voice-management]
 verify_jwt = false
 

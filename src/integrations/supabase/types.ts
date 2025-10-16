@@ -1028,6 +1028,83 @@ export type Database = {
         }
         Relationships: []
       }
+      design_analytics: {
+        Row: {
+          created_at: string | null
+          design_id: string
+          event_data: Json | null
+          event_type: string
+          id: string
+        }
+        Insert: {
+          created_at?: string | null
+          design_id: string
+          event_data?: Json | null
+          event_type: string
+          id?: string
+        }
+        Update: {
+          created_at?: string | null
+          design_id?: string
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "design_analytics_design_id_fkey"
+            columns: ["design_id"]
+            isOneToOne: false
+            referencedRelation: "designs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      designs: {
+        Row: {
+          ai_json_prompt: Json | null
+          ai_prompt: string | null
+          canvas_data: Json | null
+          created_at: string | null
+          description: string | null
+          design_image_url: string | null
+          design_type: string | null
+          id: string
+          name: string
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          ai_json_prompt?: Json | null
+          ai_prompt?: string | null
+          canvas_data?: Json | null
+          created_at?: string | null
+          description?: string | null
+          design_image_url?: string | null
+          design_type?: string | null
+          id?: string
+          name: string
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          ai_json_prompt?: Json | null
+          ai_prompt?: string | null
+          canvas_data?: Json | null
+          created_at?: string | null
+          description?: string | null
+          design_image_url?: string | null
+          design_type?: string | null
+          id?: string
+          name?: string
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       edges: {
         Row: {
           created_at: string | null
@@ -1915,6 +1992,51 @@ export type Database = {
           },
         ]
       }
+      mockups: {
+        Row: {
+          created_at: string | null
+          design_id: string
+          id: string
+          image_url: string
+          product_template_id: string
+          render_settings: Json | null
+          scene_type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          design_id: string
+          id?: string
+          image_url: string
+          product_template_id: string
+          render_settings?: Json | null
+          scene_type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          design_id?: string
+          id?: string
+          image_url?: string
+          product_template_id?: string
+          render_settings?: Json | null
+          scene_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mockups_design_id_fkey"
+            columns: ["design_id"]
+            isOneToOne: false
+            referencedRelation: "designs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mockups_product_template_id_fkey"
+            columns: ["product_template_id"]
+            isOneToOne: false
+            referencedRelation: "product_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       music_items: {
         Row: {
           album: string | null
@@ -2145,6 +2267,48 @@ export type Database = {
           source?: string
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      product_templates: {
+        Row: {
+          available: boolean | null
+          base_cost: number
+          category: string
+          created_at: string | null
+          id: string
+          image_url: string | null
+          mockup_settings: Json | null
+          name: string
+          print_areas: Json | null
+          specifications: Json | null
+          subcategory: string
+        }
+        Insert: {
+          available?: boolean | null
+          base_cost: number
+          category: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          mockup_settings?: Json | null
+          name: string
+          print_areas?: Json | null
+          specifications?: Json | null
+          subcategory: string
+        }
+        Update: {
+          available?: boolean | null
+          base_cost?: number
+          category?: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          mockup_settings?: Json | null
+          name?: string
+          print_areas?: Json | null
+          specifications?: Json | null
+          subcategory?: string
         }
         Relationships: []
       }
@@ -2859,6 +3023,63 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tech_packs: {
+        Row: {
+          created_at: string | null
+          design_id: string
+          id: string
+          materials: Json | null
+          measurements: Json | null
+          pdf_url: string | null
+          print_specs: Json | null
+          product_template_id: string
+          specifications: Json | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          design_id: string
+          id?: string
+          materials?: Json | null
+          measurements?: Json | null
+          pdf_url?: string | null
+          print_specs?: Json | null
+          product_template_id: string
+          specifications?: Json | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          design_id?: string
+          id?: string
+          materials?: Json | null
+          measurements?: Json | null
+          pdf_url?: string | null
+          print_specs?: Json | null
+          product_template_id?: string
+          specifications?: Json | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tech_packs_design_id_fkey"
+            columns: ["design_id"]
+            isOneToOne: false
+            referencedRelation: "designs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tech_packs_product_template_id_fkey"
+            columns: ["product_template_id"]
+            isOneToOne: false
+            referencedRelation: "product_templates"
             referencedColumns: ["id"]
           },
         ]
