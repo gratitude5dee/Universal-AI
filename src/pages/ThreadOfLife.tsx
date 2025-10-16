@@ -8,6 +8,7 @@ import { AIDesignAssistant } from "@/components/merchandise/AIDesignAssistant";
 import { ProductTemplateSelector } from "@/components/merchandise/ProductTemplateSelector";
 import { TemplateMarketplace } from "@/components/merchandise/TemplateMarketplace";
 import { BrandKitManager } from "@/components/merchandise/BrandKitManager";
+import { DesignCanvas } from "@/components/merchandise/DesignCanvas";
 import { ProductTemplate } from "@/hooks/useProductTemplates";
 import { useDesigns } from "@/hooks/useDesigns";
 import { useToast } from "@/hooks/use-toast";
@@ -18,6 +19,7 @@ const ThreadOfLife = () => {
   const [selectedProductTemplate, setSelectedProductTemplate] = useState<ProductTemplate | undefined>();
   const [selectedDesignTemplate, setSelectedDesignTemplate] = useState<DesignTemplate | undefined>();
   const [generatedDesignUrl, setGeneratedDesignUrl] = useState<string | undefined>();
+  const [showCanvas, setShowCanvas] = useState(false);
   const { createDesign } = useDesigns();
   const { toast } = useToast();
 
@@ -44,11 +46,27 @@ const ThreadOfLife = () => {
 
   const handleTemplateSelected = (template: DesignTemplate) => {
     setSelectedDesignTemplate(template);
-    // Load the template's canvas data for editing
+    setShowCanvas(true);
     toast({
       title: 'Template loaded',
       description: `"${template.name}" is ready to customize.`,
     });
+  };
+
+  const handleSaveDesign = async (canvasData: any, imageUrl: string) => {
+    try {
+      await createDesign.mutateAsync({
+        name: selectedDesignTemplate?.name || `Design - ${new Date().toLocaleDateString()}`,
+        description: selectedDesignTemplate?.description,
+        design_type: selectedProductTemplate?.category === 'apparel' ? 'apparel' : 
+                     selectedProductTemplate?.category === 'print' ? 'print' : 'accessory',
+        canvas_data: canvasData,
+        design_image_url: imageUrl,
+        status: 'draft',
+      });
+    } catch (error) {
+      console.error('Failed to save design:', error);
+    }
   };
 
   return (
@@ -92,88 +110,124 @@ const ThreadOfLife = () => {
           </TabsList>
 
           <TabsContent value="design-studio" className="pt-6 space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <Card className="backdrop-blur-md bg-white/10 border-white/20">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
-                    <Sparkles className="h-5 w-5 text-[#22c55e]" />
-                    AI-Powered Design
-                  </CardTitle>
-                  <CardDescription className="text-white/70">
-                    Generate unique designs in seconds with AI
-                  </CardDescription>
-                </CardHeader>
-              </Card>
+            {!showCanvas ? (
+              <>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <Card className="backdrop-blur-md bg-white/10 border-white/20">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-white">
+                        <Sparkles className="h-5 w-5 text-[#22c55e]" />
+                        AI-Powered Design
+                      </CardTitle>
+                      <CardDescription className="text-white/70">
+                        Generate unique designs in seconds with AI
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
 
-              <Card className="backdrop-blur-md bg-white/10 border-white/20">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
-                    <Palette className="h-5 w-5 text-[#6366f1]" />
-                    Professional Templates
-                  </CardTitle>
-                  <CardDescription className="text-white/70">
-                    Choose from curated product templates
-                  </CardDescription>
-                </CardHeader>
-              </Card>
+                  <Card className="backdrop-blur-md bg-white/10 border-white/20">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-white">
+                        <Palette className="h-5 w-5 text-[#6366f1]" />
+                        Professional Templates
+                      </CardTitle>
+                      <CardDescription className="text-white/70">
+                        Choose from curated product templates
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
 
-              <Card className="backdrop-blur-md bg-white/10 border-white/20">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
-                    <Box className="h-5 w-5 text-[#f59e0b]" />
-                    3D Mockups
-                  </CardTitle>
-                  <CardDescription className="text-white/70">
-                    Visualize your designs on products
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </div>
+                  <Card className="backdrop-blur-md bg-white/10 border-white/20">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-white">
+                        <Box className="h-5 w-5 text-[#f59e0b]" />
+                        3D Mockups
+                      </CardTitle>
+                      <CardDescription className="text-white/70">
+                        Visualize your designs on products
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
+                </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <AIDesignAssistant onDesignGenerated={handleDesignGenerated} />
-              
-              <Card className="backdrop-blur-md bg-white/10 border-white/20">
-                <CardHeader>
-                  <CardTitle className="text-white">Design Preview</CardTitle>
-                  <CardDescription className="text-white/70">
-                    Your generated design will appear here
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {generatedDesignUrl ? (
-                    <div className="space-y-4">
-                      <img
-                        src={generatedDesignUrl}
-                        alt="Generated design"
-                        className="w-full rounded-lg"
-                      />
-                      <Button 
-                        className="w-full bg-studio-accent hover:bg-studio-accent/90 text-white"
-                        onClick={() => setActiveModule('mockup-lab')}
-                      >
-                        Continue to Mockups
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center h-64 bg-white/5 rounded-lg border border-dashed border-white/20">
-                      <p className="text-white/70">Generate a design to see preview</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <AIDesignAssistant onDesignGenerated={handleDesignGenerated} />
+                  
+                  <Card className="backdrop-blur-md bg-white/10 border-white/20">
+                    <CardHeader>
+                      <CardTitle className="text-white">Design Preview</CardTitle>
+                      <CardDescription className="text-white/70">
+                        Your generated design will appear here
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {generatedDesignUrl ? (
+                        <div className="space-y-4">
+                          <img
+                            src={generatedDesignUrl}
+                            alt="Generated design"
+                            className="w-full rounded-lg"
+                          />
+                          <div className="grid grid-cols-2 gap-2">
+                            <Button 
+                              className="bg-studio-accent hover:bg-studio-accent/90 text-white"
+                              onClick={() => {
+                                setShowCanvas(true);
+                              }}
+                            >
+                              Edit in Canvas
+                            </Button>
+                            <Button 
+                              variant="outline"
+                              className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                              onClick={() => setActiveModule('mockup-lab')}
+                            >
+                              View Mockup
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center h-64 bg-white/5 rounded-lg border border-dashed border-white/20">
+                          <p className="text-white/70">Generate a design to see preview</p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
 
-            <div className="space-y-6">
-              <ProductTemplateSelector
-                onSelectTemplate={setSelectedProductTemplate}
-                selectedTemplate={selectedProductTemplate}
-              />
+                <div className="space-y-6">
+                  <ProductTemplateSelector
+                    onSelectTemplate={setSelectedProductTemplate}
+                    selectedTemplate={selectedProductTemplate}
+                  />
 
-              <TemplateMarketplace onSelectTemplate={handleTemplateSelected} />
+                  <TemplateMarketplace onSelectTemplate={handleTemplateSelected} />
 
-              <BrandKitManager />
-            </div>
+                  <BrandKitManager />
+                </div>
+              </>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Design Canvas</h2>
+                    <p className="text-white/70">Create and edit your design</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowCanvas(false)}
+                    className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  >
+                    Back to Templates
+                  </Button>
+                </div>
+                <DesignCanvas
+                  initialImage={generatedDesignUrl || selectedDesignTemplate?.thumbnail_url}
+                  onSave={handleSaveDesign}
+                  productTemplate={selectedProductTemplate}
+                />
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="mockup-lab" className="pt-6">
