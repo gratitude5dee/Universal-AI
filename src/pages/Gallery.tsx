@@ -234,7 +234,7 @@ const Gallery = () => {
 
         {/* Featured Assets Section */}
         <div className="space-y-6">
-          <div className="relative overflow-hidden p-8 rounded-3xl bg-gradient-to-br from-studio-accent/5 via-white to-studio-sand/10 border border-studio-sand/30 shadow-xl shadow-studio-accent/5">
+          <div className="relative overflow-hidden p-8 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
             <VinylBookshelf 
               title="Featured Collection"
               assets={assets.filter(asset => asset.featured)} 
@@ -246,7 +246,7 @@ const Gallery = () => {
 
         {/* All Assets Section */}
         <div className="space-y-6">
-          <div className="relative overflow-hidden p-8 rounded-3xl bg-gradient-to-br from-studio-sand/10 via-white to-studio-accent/5 border border-studio-sand/30 shadow-xl shadow-studio-sand/10">
+          <div className="relative overflow-hidden p-8 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl">
             <VinylBookshelf 
               title="Complete Collection"
               assets={assets} 
