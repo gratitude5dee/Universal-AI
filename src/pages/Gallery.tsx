@@ -235,31 +235,24 @@ const Gallery = () => {
         {/* Featured Assets Section */}
         <div className="space-y-6">
           <div className="relative overflow-hidden p-8 rounded-3xl bg-gradient-to-br from-studio-accent/5 via-white to-studio-sand/10 border border-studio-sand/30 shadow-xl shadow-studio-accent/5">
-            <div className="absolute inset-0 glass-card border border-white/10 backdrop-blur-md opacity-50"></div>
-            <div className="relative z-10">
-              <VinylBookshelf 
-                title="Featured Collection"
-                assets={assets.filter(asset => asset.featured)} 
-                onSelectAsset={handleSelectAsset}
-                onAddAsset={handleAddAsset}
-              />
-            </div>
+            <VinylBookshelf 
+              title="Featured Collection"
+              assets={assets.filter(asset => asset.featured)} 
+              onSelectAsset={handleSelectAsset}
+              onAddAsset={handleAddAsset}
+            />
           </div>
         </div>
 
         {/* All Assets Section */}
         <div className="space-y-6">
           <div className="relative overflow-hidden p-8 rounded-3xl bg-gradient-to-br from-studio-sand/10 via-white to-studio-accent/5 border border-studio-sand/30 shadow-xl shadow-studio-sand/10">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_80%,rgba(120,119,198,0.1),transparent_50%)]"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(255,255,255,0.8),transparent_50%)]"></div>
-            <div className="relative z-10">
-              <VinylBookshelf 
-                title="Complete Collection"
-                assets={assets} 
-                onSelectAsset={handleSelectAsset}
-                onAddAsset={handleAddAsset}
-              />
-            </div>
+            <VinylBookshelf 
+              title="Complete Collection"
+              assets={assets} 
+              onSelectAsset={handleSelectAsset}
+              onAddAsset={handleAddAsset}
+            />
           </div>
         </div>
       </div>
