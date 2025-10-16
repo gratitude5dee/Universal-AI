@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Building2, Coins, TrendingUp, PieChart, Shield, Settings } from "lucide-react";
+import { StablecoinSwap } from "./stablecoin/StablecoinSwap";
 
 export const RWAWizardHub = () => {
   return (
@@ -79,17 +80,7 @@ export const RWAWizardHub = () => {
         </TabsList>
 
         <TabsContent value="stablecoin-swap" className="mt-6">
-          <div className="glass-card p-8 rounded-xl text-center">
-            <Coins className="h-16 w-16 text-[#D4AF37] mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-2">Unified Stablecoin Swap</h2>
-            <p className="text-white/70 mb-4">
-              Swap between 18+ stablecoins with best price routing across multiple DEXes.
-              Support for USDC, USDT, DAI, USD1 (8.2% APY), $5DEE (12.5% APY), and more.
-            </p>
-            <div className="text-sm text-white/50">
-              Coming in Phase 2: Week 3
-            </div>
-          </div>
+          <StablecoinSwap />
         </TabsContent>
 
         <TabsContent value="marketplace" className="mt-6">
