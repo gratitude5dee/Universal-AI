@@ -11,7 +11,7 @@ interface MainContentProps {
 const MainContent = ({ children, sidebarWidth }: MainContentProps) => {
   return (
     <div 
-      className="flex-1 min-h-screen flex flex-col w-full overflow-hidden relative bg-transparent transition-all duration-300"
+      className="flex-1 min-h-screen flex flex-col overflow-hidden relative bg-transparent transition-all duration-300"
       style={{ marginLeft: sidebarWidth }}
     >
       {/* Cloud GLSL Shader Background */}
