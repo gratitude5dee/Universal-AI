@@ -491,6 +491,63 @@ export type Database = {
           },
         ]
       }
+      brand_kits: {
+        Row: {
+          auto_apply_to_designs: boolean | null
+          color_palette: Json | null
+          created_at: string | null
+          guidelines_pdf_url: string | null
+          id: string
+          is_default: boolean | null
+          logo_clear_space: number | null
+          logo_icon_url: string | null
+          logo_min_size: number | null
+          logo_primary_url: string | null
+          logo_secondary_url: string | null
+          name: string
+          typography: Json | null
+          updated_at: string | null
+          usage_rules: string[] | null
+          user_id: string
+        }
+        Insert: {
+          auto_apply_to_designs?: boolean | null
+          color_palette?: Json | null
+          created_at?: string | null
+          guidelines_pdf_url?: string | null
+          id?: string
+          is_default?: boolean | null
+          logo_clear_space?: number | null
+          logo_icon_url?: string | null
+          logo_min_size?: number | null
+          logo_primary_url?: string | null
+          logo_secondary_url?: string | null
+          name: string
+          typography?: Json | null
+          updated_at?: string | null
+          usage_rules?: string[] | null
+          user_id: string
+        }
+        Update: {
+          auto_apply_to_designs?: boolean | null
+          color_palette?: Json | null
+          created_at?: string | null
+          guidelines_pdf_url?: string | null
+          id?: string
+          is_default?: boolean | null
+          logo_clear_space?: number | null
+          logo_icon_url?: string | null
+          logo_min_size?: number | null
+          logo_primary_url?: string | null
+          logo_secondary_url?: string | null
+          name?: string
+          typography?: Json | null
+          updated_at?: string | null
+          usage_rules?: string[] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       canvas_state: {
         Row: {
           canvas_settings: Json | null
@@ -1059,6 +1116,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      design_templates: {
+        Row: {
+          canvas_data: Json
+          category: string
+          created_at: string | null
+          creator_id: string | null
+          description: string | null
+          downloads: number | null
+          id: string
+          is_active: boolean | null
+          is_featured: boolean | null
+          name: string
+          preview_images: string[] | null
+          price: number
+          rating: number | null
+          review_count: number | null
+          style: string
+          tags: string[] | null
+          thumbnail_url: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          canvas_data: Json
+          category: string
+          created_at?: string | null
+          creator_id?: string | null
+          description?: string | null
+          downloads?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          name: string
+          preview_images?: string[] | null
+          price?: number
+          rating?: number | null
+          review_count?: number | null
+          style: string
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          canvas_data?: Json
+          category?: string
+          created_at?: string | null
+          creator_id?: string | null
+          description?: string | null
+          downloads?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          name?: string
+          preview_images?: string[] | null
+          price?: number
+          rating?: number | null
+          review_count?: number | null
+          style?: string
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       designs: {
         Row: {
@@ -3080,6 +3200,73 @@ export type Database = {
             columns: ["product_template_id"]
             isOneToOne: false
             referencedRelation: "product_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      template_downloads: {
+        Row: {
+          downloaded_at: string | null
+          id: string
+          price_paid: number
+          template_id: string
+          user_id: string
+        }
+        Insert: {
+          downloaded_at?: string | null
+          id?: string
+          price_paid: number
+          template_id: string
+          user_id: string
+        }
+        Update: {
+          downloaded_at?: string | null
+          id?: string
+          price_paid?: number
+          template_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_downloads_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "design_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      template_reviews: {
+        Row: {
+          created_at: string | null
+          id: string
+          rating: number
+          review_text: string | null
+          template_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          rating: number
+          review_text?: string | null
+          template_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          rating?: number
+          review_text?: string | null
+          template_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "template_reviews_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "design_templates"
             referencedColumns: ["id"]
           },
         ]

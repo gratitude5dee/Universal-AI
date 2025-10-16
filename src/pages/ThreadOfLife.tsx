@@ -6,13 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AIDesignAssistant } from "@/components/merchandise/AIDesignAssistant";
 import { ProductTemplateSelector } from "@/components/merchandise/ProductTemplateSelector";
+import { TemplateMarketplace } from "@/components/merchandise/TemplateMarketplace";
+import { BrandKitManager } from "@/components/merchandise/BrandKitManager";
 import { ProductTemplate } from "@/hooks/useProductTemplates";
 import { useDesigns } from "@/hooks/useDesigns";
 import { useToast } from "@/hooks/use-toast";
+import { DesignTemplate } from "@/hooks/useTemplates";
 
 const ThreadOfLife = () => {
   const [activeModule, setActiveModule] = useState('design-studio');
-  const [selectedTemplate, setSelectedTemplate] = useState<ProductTemplate | undefined>();
+  const [selectedProductTemplate, setSelectedProductTemplate] = useState<ProductTemplate | undefined>();
+  const [selectedDesignTemplate, setSelectedDesignTemplate] = useState<DesignTemplate | undefined>();
   const [generatedDesignUrl, setGeneratedDesignUrl] = useState<string | undefined>();
   const { createDesign } = useDesigns();
   const { toast } = useToast();
@@ -21,13 +25,13 @@ const ThreadOfLife = () => {
     setGeneratedDesignUrl(imageUrl);
     
     // Auto-save the generated design
-    if (selectedTemplate) {
+    if (selectedProductTemplate) {
       try {
         await createDesign.mutateAsync({
           name: `AI Design - ${new Date().toLocaleDateString()}`,
           description: prompt,
-          design_type: selectedTemplate.category === 'apparel' ? 'apparel' : 
-                       selectedTemplate.category === 'print' ? 'print' : 'accessory',
+          design_type: selectedProductTemplate.category === 'apparel' ? 'apparel' : 
+                       selectedProductTemplate.category === 'print' ? 'print' : 'accessory',
           design_image_url: imageUrl,
           ai_prompt: prompt,
           status: 'draft',
@@ -36,6 +40,15 @@ const ThreadOfLife = () => {
         console.error('Failed to save design:', error);
       }
     }
+  };
+
+  const handleTemplateSelected = (template: DesignTemplate) => {
+    setSelectedDesignTemplate(template);
+    // Load the template's canvas data for editing
+    toast({
+      title: 'Template loaded',
+      description: `"${template.name}" is ready to customize.`,
+    });
   };
 
   return (
@@ -151,10 +164,16 @@ const ThreadOfLife = () => {
               </Card>
             </div>
 
-            <ProductTemplateSelector
-              onSelectTemplate={setSelectedTemplate}
-              selectedTemplate={selectedTemplate}
-            />
+            <div className="space-y-6">
+              <ProductTemplateSelector
+                onSelectTemplate={setSelectedProductTemplate}
+                selectedTemplate={selectedProductTemplate}
+              />
+
+              <TemplateMarketplace onSelectTemplate={handleTemplateSelected} />
+
+              <BrandKitManager />
+            </div>
           </TabsContent>
 
           <TabsContent value="mockup-lab" className="pt-6">
