@@ -1,10 +1,10 @@
-
 import React from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@crossmint/client-sdk-react-ui";
 import { WalletInfo } from "./WalletInfo";
 import { Settings } from "./Settings";
+import logo from "@/assets/universal-ai-logo.png";
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -50,9 +50,11 @@ const Header: React.FC = () => {
             navigate("/home");
           }}
         >
-          <div className="text-lg font-semibold tracking-tight">
-            UniversalAI<span className="text-studio-accent"></span>
-          </div>
+          <img 
+            src={logo} 
+            alt="UniversalAI Logo" 
+            className="h-10 w-auto object-contain"
+          />
         </Link>
         
         <div className="text-lg font-medium">{getPageTitle()}</div>
