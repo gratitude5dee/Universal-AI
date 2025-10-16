@@ -2112,6 +2112,105 @@ export type Database = {
           },
         ]
       }
+      merchandise_orders: {
+        Row: {
+          cancelled_at: string | null
+          created_at: string | null
+          delivered_at: string | null
+          design_id: string | null
+          estimated_delivery: string | null
+          external_order_id: string | null
+          fulfillment_provider: string | null
+          id: string
+          mockup_urls: string[] | null
+          notes: string | null
+          order_type: string
+          product_details: Json
+          product_template_id: string | null
+          quantity: number
+          shipped_at: string | null
+          shipping_address: Json
+          shipping_cost: number | null
+          status: string
+          tax_amount: number | null
+          total_cost: number
+          tracking_number: string | null
+          tracking_url: string | null
+          unit_price: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          cancelled_at?: string | null
+          created_at?: string | null
+          delivered_at?: string | null
+          design_id?: string | null
+          estimated_delivery?: string | null
+          external_order_id?: string | null
+          fulfillment_provider?: string | null
+          id?: string
+          mockup_urls?: string[] | null
+          notes?: string | null
+          order_type: string
+          product_details: Json
+          product_template_id?: string | null
+          quantity?: number
+          shipped_at?: string | null
+          shipping_address: Json
+          shipping_cost?: number | null
+          status?: string
+          tax_amount?: number | null
+          total_cost: number
+          tracking_number?: string | null
+          tracking_url?: string | null
+          unit_price: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          cancelled_at?: string | null
+          created_at?: string | null
+          delivered_at?: string | null
+          design_id?: string | null
+          estimated_delivery?: string | null
+          external_order_id?: string | null
+          fulfillment_provider?: string | null
+          id?: string
+          mockup_urls?: string[] | null
+          notes?: string | null
+          order_type?: string
+          product_details?: Json
+          product_template_id?: string | null
+          quantity?: number
+          shipped_at?: string | null
+          shipping_address?: Json
+          shipping_cost?: number | null
+          status?: string
+          tax_amount?: number | null
+          total_cost?: number
+          tracking_number?: string | null
+          tracking_url?: string | null
+          unit_price?: number
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "merchandise_orders_design_id_fkey"
+            columns: ["design_id"]
+            isOneToOne: false
+            referencedRelation: "designs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "merchandise_orders_product_template_id_fkey"
+            columns: ["product_template_id"]
+            isOneToOne: false
+            referencedRelation: "product_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mockups: {
         Row: {
           created_at: string | null
@@ -2296,6 +2395,105 @@ export type Database = {
             columns: ["workflow_id"]
             isOneToOne: false
             referencedRelation: "workflows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_items: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          customizations: Json | null
+          design_id: string | null
+          id: string
+          order_id: string
+          product_template_id: string | null
+          quantity: number
+          size: string | null
+          subtotal: number
+          unit_price: number
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          customizations?: Json | null
+          design_id?: string | null
+          id?: string
+          order_id: string
+          product_template_id?: string | null
+          quantity?: number
+          size?: string | null
+          subtotal: number
+          unit_price: number
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          customizations?: Json | null
+          design_id?: string | null
+          id?: string
+          order_id?: string
+          product_template_id?: string | null
+          quantity?: number
+          size?: string | null
+          subtotal?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_design_id_fkey"
+            columns: ["design_id"]
+            isOneToOne: false
+            referencedRelation: "designs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "merchandise_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_template_id_fkey"
+            columns: ["product_template_id"]
+            isOneToOne: false
+            referencedRelation: "product_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_status_history: {
+        Row: {
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          notes: string | null
+          order_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          order_id: string
+          status: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          order_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_status_history_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "merchandise_orders"
             referencedColumns: ["id"]
           },
         ]

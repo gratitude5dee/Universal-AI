@@ -5,13 +5,20 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Calculator, TrendingUp, Package } from 'lucide-react';
+import { SampleOrderDialog } from './SampleOrderDialog';
 
 interface ProductionCalculatorProps {
   productType?: string;
+  designId?: string;
+  designImageUrl?: string;
+  productTemplateId?: string;
 }
 
 export const ProductionCalculator: React.FC<ProductionCalculatorProps> = ({
   productType = 'hoodie',
+  designId,
+  designImageUrl,
+  productTemplateId,
 }) => {
   const [quantity, setQuantity] = useState(100);
   const [printMethod, setPrintMethod] = useState('screen-print');
@@ -202,11 +209,12 @@ export const ProductionCalculator: React.FC<ProductionCalculatorProps> = ({
           >
             Save Quote
           </Button>
-          <Button
-            className="bg-studio-accent hover:bg-studio-accent/90 text-white"
-          >
-            Order Sample
-          </Button>
+          <SampleOrderDialog
+            designId={designId}
+            designImageUrl={designImageUrl}
+            productTemplateId={productTemplateId}
+            productType={productType}
+          />
         </div>
 
         {/* Tips */}

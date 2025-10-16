@@ -14,6 +14,8 @@ import { TechPackGenerator } from "@/components/merchandise/TechPackGenerator";
 import { ProductionCalculator } from "@/components/merchandise/ProductionCalculator";
 import { StorefrontPublisher } from "@/components/merchandise/StorefrontPublisher";
 import { AnalyticsDashboard } from "@/components/merchandise/AnalyticsDashboard";
+import { OrderTracker } from "@/components/merchandise/OrderTracker";
+import { MerchandiseStudioSummary } from "@/components/merchandise/MerchandiseStudioSummary";
 import { ProductTemplate } from "@/hooks/useProductTemplates";
 import { useDesigns } from "@/hooks/useDesigns";
 import { useToast } from "@/hooks/use-toast";
@@ -85,6 +87,8 @@ const ThreadOfLife = () => {
             From Sketch to Shipping in Minutes
           </p>
         </div>
+
+        <MerchandiseStudioSummary />
 
         <Tabs value={activeModule} onValueChange={setActiveModule} className="w-full">
           <TabsList className="grid grid-cols-6 w-full backdrop-blur-md bg-white/10 border border-white/20 shadow-card-glow">
@@ -250,12 +254,15 @@ const ThreadOfLife = () => {
           </TabsContent>
 
           <TabsContent value="production" className="pt-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ProductionCalculator productType={selectedProductTemplate?.subcategory} />
-              <StorefrontPublisher
-                designImageUrl={generatedDesignUrl}
-                productName={selectedProductTemplate?.name}
-              />
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <ProductionCalculator
+                  productType={selectedProductTemplate?.subcategory}
+                  designImageUrl={generatedDesignUrl}
+                  productTemplateId={selectedProductTemplate?.id}
+                />
+                <OrderTracker />
+              </div>
             </div>
           </TabsContent>
 
