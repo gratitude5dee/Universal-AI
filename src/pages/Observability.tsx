@@ -1,106 +1,122 @@
 import React, { useState } from "react";
 import DashboardLayout from "@/layouts/dashboard-layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { WeatherKingdom } from "@/components/observability/WeatherKingdom";
-import { GuardianAlerts } from "@/components/observability/GuardianAlerts";
-import { ResourceCycles } from "@/components/observability/ResourceCycles";
-import { LivingEcosystem } from "@/components/observability/LivingEcosystem";
-import { MagicalDashboard } from "@/components/observability/MagicalDashboard";
-import { SecurityGarden } from "@/components/observability/SecurityGarden";
-import { ResourceCapacity } from "@/components/observability/ResourceCapacity";
-import { BackupSanctuary } from "@/components/observability/BackupSanctuary";
-import { AuditScroll } from "@/components/observability/AuditScroll";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Eye, BarChart3, Shield, Droplets, Leaf, Layout, LockKeyhole, HardDrive, Save, ClipboardList } from "lucide-react";
-import { Content } from "@/components/ui/content";
-import { toast } from "sonner";
+import { Activity, FlaskConical, Target, TrendingUp, Terminal, Heart, ScrollText, Bell } from "lucide-react";
+import { ObservabilityDashboard } from "@/components/observability/ObservabilityDashboard";
+import { EvalsFramework } from "@/components/observability/EvalsFramework";
+import { ClusterAnalysis } from "@/components/observability/ClusterAnalysis";
+import { AdvancedAnalytics } from "@/components/observability/AdvancedAnalytics";
+import CommandCenter from "@/components/observability/CommandCenter";
+import AgentHealthMonitor from "@/components/observability/AgentHealthMonitor";
 
 const Observability = () => {
-  const [activeView, setActiveView] = useState<"dashboard" | "observatory">("dashboard");
-
-  const handleQuickAction = (action: string) => {
-    toast.success(`${action} completed successfully`, {
-      description: "Your system is now more secure and stable.",
-    });
-  };
+  const [activeTab, setActiveTab] = useState("dashboard");
 
   return (
     <DashboardLayout>
-      <Content title="Magical Observatory" subtitle="Monitor your digital realm with mindful guardianship">
-        <div className="space-y-6">
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex space-x-4">
-              <Button 
-                variant={activeView === "dashboard" ? "default" : "outline"} 
-                onClick={() => setActiveView("dashboard")}
-                className="gap-2"
-              >
-                <Layout size={18} />
-                Command Center
-              </Button>
-              <Button 
-                variant={activeView === "observatory" ? "default" : "outline"} 
-                onClick={() => setActiveView("observatory")}
-                className="gap-2"
-              >
-                <Eye size={18} />
-                Observatory View
-              </Button>
+      <div className="space-y-6 p-6">
+        {/* Hero Header */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-studio-accent via-creative-primary to-business-primary bg-clip-text text-transparent">
+                Observability Command Center
+              </h1>
+              <p className="text-muted-foreground mt-2 text-lg">
+                Test Everything. Monitor Everything. Improve Everything.
+              </p>
             </div>
-            
-            <div className="flex gap-2">
-              <Button size="sm" variant="outline" onClick={() => handleQuickAction("Health check")}>
-                Run Health Check
-              </Button>
-              <Button size="sm" variant="outline" onClick={() => handleQuickAction("Security scan")}>
-                Security Scan
-              </Button>
-              <Button size="sm" variant="outline" onClick={() => handleQuickAction("Backup")}>
-                Create Backup
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-success/10 border border-success/20">
+                <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+                <span className="text-sm font-medium text-success">SYSTEM STATUS: OPTIMAL</span>
+              </div>
+              <Button size="sm" variant="outline" className="gap-2">
+                <Activity className="w-4 h-4" />
+                Auto-refresh: ON
               </Button>
             </div>
           </div>
-
-          {activeView === "dashboard" ? (
-            <MagicalDashboard />
-          ) : (
-            <Tabs defaultValue="weather" className="w-full">
-              <TabsList className="grid grid-cols-2 md:grid-cols-5 w-full max-w-4xl">
-                <TabsTrigger value="weather" className="flex items-center gap-2">
-                  <BarChart3 size={16} /> System Health
-                </TabsTrigger>
-                <TabsTrigger value="guardians" className="flex items-center gap-2">
-                  <Shield size={16} /> Security
-                </TabsTrigger>
-                <TabsTrigger value="resources" className="flex items-center gap-2">
-                  <HardDrive size={16} /> Resources
-                </TabsTrigger>
-                <TabsTrigger value="backup" className="flex items-center gap-2">
-                  <Save size={16} /> Backups
-                </TabsTrigger>
-                <TabsTrigger value="audit" className="flex items-center gap-2">
-                  <ClipboardList size={16} /> Audit Logs
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="weather" className="pt-4">
-                <WeatherKingdom />
-              </TabsContent>
-              <TabsContent value="guardians" className="pt-4">
-                <SecurityGarden />
-              </TabsContent>
-              <TabsContent value="resources" className="pt-4">
-                <ResourceCapacity />
-              </TabsContent>
-              <TabsContent value="backup" className="pt-4">
-                <BackupSanctuary />
-              </TabsContent>
-              <TabsContent value="audit" className="pt-4">
-                <AuditScroll />
-              </TabsContent>
-            </Tabs>
-          )}
         </div>
-      </Content>
+
+        {/* Navigation Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid grid-cols-4 lg:grid-cols-8 w-full bg-card/50 backdrop-blur-md border border-border/50 p-1">
+            <TabsTrigger value="dashboard" className="gap-2">
+              <Activity className="w-4 h-4" />
+              <span className="hidden sm:inline">Dashboard</span>
+            </TabsTrigger>
+            <TabsTrigger value="evals" className="gap-2">
+              <FlaskConical className="w-4 h-4" />
+              <span className="hidden sm:inline">Evals</span>
+            </TabsTrigger>
+            <TabsTrigger value="clusters" className="gap-2">
+              <Target className="w-4 h-4" />
+              <span className="hidden sm:inline">Clusters</span>
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="gap-2">
+              <TrendingUp className="w-4 h-4" />
+              <span className="hidden sm:inline">Analytics</span>
+            </TabsTrigger>
+            <TabsTrigger value="command" className="gap-2">
+              <Terminal className="w-4 h-4" />
+              <span className="hidden sm:inline">Command</span>
+            </TabsTrigger>
+            <TabsTrigger value="health" className="gap-2">
+              <Heart className="w-4 h-4" />
+              <span className="hidden sm:inline">Health</span>
+            </TabsTrigger>
+            <TabsTrigger value="logs" className="gap-2">
+              <ScrollText className="w-4 h-4" />
+              <span className="hidden sm:inline">Logs</span>
+            </TabsTrigger>
+            <TabsTrigger value="alerts" className="gap-2">
+              <Bell className="w-4 h-4" />
+              <span className="hidden sm:inline">Alerts</span>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="dashboard" className="space-y-6">
+            <ObservabilityDashboard />
+          </TabsContent>
+
+          <TabsContent value="evals" className="space-y-6">
+            <EvalsFramework />
+          </TabsContent>
+
+          <TabsContent value="clusters" className="space-y-6">
+            <ClusterAnalysis />
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-6">
+            <AdvancedAnalytics />
+          </TabsContent>
+
+          <TabsContent value="command" className="space-y-6">
+            <CommandCenter />
+          </TabsContent>
+
+          <TabsContent value="health" className="space-y-6">
+            <AgentHealthMonitor />
+          </TabsContent>
+
+          <TabsContent value="logs" className="space-y-6">
+            <Card className="glassmorphism p-6">
+              <h3 className="text-lg font-semibold mb-4">System Logs</h3>
+              <p className="text-muted-foreground">Log viewer coming soon...</p>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="alerts" className="space-y-6">
+            <Card className="glassmorphism p-6">
+              <h3 className="text-lg font-semibold mb-4">Alert Management</h3>
+              <p className="text-muted-foreground">Alert configuration coming soon...</p>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
     </DashboardLayout>
   );
 };
