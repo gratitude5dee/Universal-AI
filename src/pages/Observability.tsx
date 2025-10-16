@@ -8,6 +8,8 @@ import { ObservabilityDashboard } from "@/components/observability/Observability
 import { EvalsFramework } from "@/components/observability/EvalsFramework";
 import { ClusterAnalysis } from "@/components/observability/ClusterAnalysis";
 import { AdvancedAnalytics } from "@/components/observability/AdvancedAnalytics";
+import { AlertsManagement } from "@/components/observability/AlertsManagement";
+import { LogsViewer } from "@/components/observability/LogsViewer";
 import CommandCenter from "@/components/observability/CommandCenter";
 import AgentHealthMonitor from "@/components/observability/AgentHealthMonitor";
 
@@ -103,17 +105,11 @@ const Observability = () => {
           </TabsContent>
 
           <TabsContent value="logs" className="space-y-6">
-            <Card className="glassmorphism p-6">
-              <h3 className="text-lg font-semibold mb-4">System Logs</h3>
-              <p className="text-muted-foreground">Log viewer coming soon...</p>
-            </Card>
+            <LogsViewer />
           </TabsContent>
 
           <TabsContent value="alerts" className="space-y-6">
-            <Card className="glassmorphism p-6">
-              <h3 className="text-lg font-semibold mb-4">Alert Management</h3>
-              <p className="text-muted-foreground">Alert configuration coming soon...</p>
-            </Card>
+            <AlertsManagement />
           </TabsContent>
         </Tabs>
       </div>
