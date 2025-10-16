@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { 
   Link, ArrowUpDown, Coins, ArrowRight, Settings, 
   BarChart, Calendar, Plus, Users, Rocket, Music, Headphones, 
-  Ticket, TrendingUp, Zap, Star, Award, Globe
+  Ticket, TrendingUp, Zap, Star, Award, Globe, Palette, Bot, Droplets, PieChart
 } from "lucide-react";
 import DistributionLayout from "@/layouts/distribution-layout";
 import { Button } from "@/components/ui/button";
@@ -16,13 +16,20 @@ import { MusicNFTMinter } from "@/components/distribution/music/MusicNFTMinter";
 import { ArtistDashboard } from "@/components/distribution/music/ArtistDashboard";
 import { TokenGatedContent } from "@/components/distribution/music/TokenGatedContent";
 import { Web3TicketingInterface } from "@/components/distribution/music/Web3TicketingInterface";
+import { AssetTypeSelector } from "@/components/on-chain/tokenize/AssetTypeSelector";
+import { MemeTokenWizard } from "@/components/on-chain/tokenize/wizards/MemeTokenWizard";
+import { AssetType } from "@/types/on-chain";
 import { motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
 const OnChainDistribution = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("music-distribution");
+  const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState("tokenize");
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [launchpadTab, setLaunchpadTab] = useState("platforms");
+  const [selectedAssetType, setSelectedAssetType] = useState<AssetType | null>(null);
+  const [wizardActive, setWizardActive] = useState(false);
 
   // Enhanced mock data
   const tokenBalances = [
@@ -64,10 +71,30 @@ const OnChainDistribution = () => {
     },
   ];
 
+  const handleAssetSelect = (assetType: AssetType) => {
+    setSelectedAssetType(assetType);
+    setWizardActive(true);
+  };
+
+  const handleWizardBack = () => {
+    setWizardActive(false);
+    setSelectedAssetType(null);
+  };
+
+  const handleWizardComplete = async (config: any) => {
+    console.log('Deployment config:', config);
+    toast({
+      title: "Deployment Initiated",
+      description: `${config.name} is being deployed to ${config.selectedChains.length} chain(s) and ${config.selectedPlatforms.length} platform(s).`,
+    });
+    setWizardActive(false);
+    setSelectedAssetType(null);
+  };
+
   return (
     <DistributionLayout
-      title="On-Chain Distribution Hub"
-      subtitle="Comprehensive music distribution, NFT minting, and token management on Web3"
+      title="Universal RWA Tokenization & Trading Platform"
+      subtitle="Tokenize anything, trade everywhere, optimize everything - powered by AI across 5+ chains"
     >
       {/* Tab Navigation */}
       <div className="mb-8">
@@ -102,7 +129,7 @@ const OnChainDistribution = () => {
         </div>
       </div>
 
-      {/* Hero Stats Section */}
+      {/* Enhanced Hero Stats Section */}
       <motion.div 
         className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
         initial={{ opacity: 0, y: 20 }}
@@ -111,64 +138,71 @@ const OnChainDistribution = () => {
       >
         <div className="glass-card p-4 rounded-xl border border-white/10 bg-gradient-to-br from-green-500/10 to-emerald-500/10">
           <div className="flex items-center justify-between mb-2">
-            <TrendingUp className="w-5 h-5 text-green-400" />
-            <Badge className="bg-green-500/20 text-green-300">+15%</Badge>
+            <Coins className="w-5 h-5 text-green-400" />
+            <Badge className="bg-green-500/20 text-green-300">+24%</Badge>
           </div>
-          <p className="text-sm text-white/70">Total Revenue</p>
-          <p className="text-xl font-bold text-white">$24,580</p>
+          <p className="text-sm text-white/70">Total Deployments</p>
+          <p className="text-xl font-bold text-white">247</p>
         </div>
         
         <div className="glass-card p-4 rounded-xl border border-white/10 bg-gradient-to-br from-blue-500/10 to-cyan-500/10">
           <div className="flex items-center justify-between mb-2">
-            <Music className="w-5 h-5 text-blue-400" />
-            <Badge className="bg-blue-500/20 text-blue-300">Active</Badge>
+            <TrendingUp className="w-5 h-5 text-blue-400" />
+            <Badge className="bg-blue-500/20 text-blue-300">Live</Badge>
           </div>
-          <p className="text-sm text-white/70">Live Tracks</p>
-          <p className="text-xl font-bold text-white">47</p>
+          <p className="text-sm text-white/70">Revenue</p>
+          <p className="text-xl font-bold text-white">$127.4k</p>
         </div>
         
         <div className="glass-card p-4 rounded-xl border border-white/10 bg-gradient-to-br from-purple-500/10 to-pink-500/10">
           <div className="flex items-center justify-between mb-2">
-            <Users className="w-5 h-5 text-purple-400" />
-            <Badge className="bg-purple-500/20 text-purple-300">Growing</Badge>
+            <Globe className="w-5 h-5 text-purple-400" />
+            <Badge className="bg-purple-500/20 text-purple-300">5 Active</Badge>
           </div>
-          <p className="text-sm text-white/70">Community</p>
-          <p className="text-xl font-bold text-white">12.4k</p>
+          <p className="text-sm text-white/70">Platforms</p>
+          <p className="text-xl font-bold text-white">15+</p>
         </div>
         
         <div className="glass-card p-4 rounded-xl border border-white/10 bg-gradient-to-br from-orange-500/10 to-red-500/10">
           <div className="flex items-center justify-between mb-2">
             <Zap className="w-5 h-5 text-orange-400" />
-            <Badge className="bg-orange-500/20 text-orange-300">Hot</Badge>
+            <Badge className="bg-orange-500/20 text-orange-300">98.5%</Badge>
           </div>
-          <p className="text-sm text-white/70">NFT Sales</p>
-          <p className="text-xl font-bold text-white">156</p>
+          <p className="text-sm text-white/70">Success Rate</p>
+          <p className="text-xl font-bold text-white">99.2%</p>
         </div>
       </motion.div>
 
-      {/* Main Distribution Tabs */}
+      {/* Enhanced Main Tabs - Universal Platform */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full max-w-5xl mb-8 bg-white/5 border border-white/10 backdrop-blur-md">
+        <TabsList className="w-full max-w-6xl mb-8 bg-white/5 border border-white/10 backdrop-blur-md flex-wrap h-auto">
           <TabsTrigger 
-            value="music-distribution" 
+            value="tokenize" 
             className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-studio-accent data-[state=active]:to-blue-500"
           >
-            <Music className="h-4 w-4" />
-            Music Hub
+            <Palette className="h-4 w-4" />
+            Tokenize Assets
           </TabsTrigger>
           <TabsTrigger 
-            value="nft-minting" 
+            value="portfolio" 
             className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-500"
           >
-            <Coins className="h-4 w-4" />
-            NFT Studio
+            <PieChart className="h-4 w-4" />
+            Portfolio
           </TabsTrigger>
           <TabsTrigger 
-            value="token-distribution"
+            value="liquidity"
             className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-emerald-500"
           >
-            <ArrowUpDown className="h-4 w-4" />
-            Token Flow
+            <Droplets className="h-4 w-4" />
+            Liquidity Hub
+          </TabsTrigger>
+          <TabsTrigger 
+            value="agents" 
+            className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-cyan-500"
+          >
+            <Bot className="h-4 w-4" />
+            AI Agents
           </TabsTrigger>
           <TabsTrigger 
             value="launchpad" 
@@ -176,6 +210,13 @@ const OnChainDistribution = () => {
           >
             <Rocket className="h-4 w-4" />
             Launchpad
+          </TabsTrigger>
+          <TabsTrigger 
+            value="analytics"
+            className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-500 data-[state=active]:to-orange-500"
+          >
+            <BarChart className="h-4 w-4" />
+            Analytics
           </TabsTrigger>
         </TabsList>
 
@@ -185,6 +226,101 @@ const OnChainDistribution = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
+          {/* NEW TAB: Tokenize Assets */}
+          <TabsContent value="tokenize">
+            <div className="glass-card p-8 rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10">
+              {!wizardActive ? (
+                <AssetTypeSelector onSelect={handleAssetSelect} />
+              ) : selectedAssetType === 'meme-token' ? (
+                <MemeTokenWizard onComplete={handleWizardComplete} onBack={handleWizardBack} />
+              ) : (
+                <div className="text-center py-12">
+                  <h3 className="text-2xl font-bold text-white mb-4">
+                    {selectedAssetType} Wizard Coming Soon
+                  </h3>
+                  <p className="text-white/60 mb-6">
+                    This tokenization wizard is currently under development.
+                  </p>
+                  <Button onClick={handleWizardBack} variant="outline" className="border-white/20 text-white/70">
+                    Back to Asset Types
+                  </Button>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          {/* NEW TAB: Portfolio */}
+          <TabsContent value="portfolio">
+            <div className="glass-card p-8 rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10">
+              <div className="text-center py-12">
+                <PieChart className="w-16 h-16 text-purple-400 mx-auto mb-4" />
+                <h3 className="text-2xl font-bold text-white mb-2">Multi-Chain Portfolio Manager</h3>
+                <p className="text-white/60 max-w-2xl mx-auto">
+                  View and manage all your assets across Solana, Ethereum, Base, Polygon, and Arbitrum in one unified dashboard.
+                </p>
+                <div className="mt-6">
+                  <Badge variant="secondary" className="bg-purple-500/20 text-purple-300">
+                    Coming Soon - Phase 2
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* NEW TAB: Liquidity Hub */}
+          <TabsContent value="liquidity">
+            <div className="glass-card p-8 rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10">
+              <div className="text-center py-12">
+                <Droplets className="w-16 h-16 text-green-400 mx-auto mb-4" />
+                <h3 className="text-2xl font-bold text-white mb-2">DeFi Liquidity Hub</h3>
+                <p className="text-white/60 max-w-2xl mx-auto">
+                  Discover yield opportunities across 50+ protocols. Add liquidity, farm yields, and optimize returns with AI-powered recommendations.
+                </p>
+                <div className="mt-6">
+                  <Badge variant="secondary" className="bg-green-500/20 text-green-300">
+                    Coming Soon - Phase 3
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* NEW TAB: AI Agents */}
+          <TabsContent value="agents">
+            <div className="glass-card p-8 rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10">
+              <div className="text-center py-12">
+                <Bot className="w-16 h-16 text-blue-400 mx-auto mb-4" />
+                <h3 className="text-2xl font-bold text-white mb-2">AI Trading Agents</h3>
+                <p className="text-white/60 max-w-2xl mx-auto">
+                  Deploy autonomous trading strategies with backtesting, risk management, and institutional-grade controls.
+                </p>
+                <div className="mt-6">
+                  <Badge variant="secondary" className="bg-blue-500/20 text-blue-300">
+                    Coming Soon - Phase 4
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* NEW TAB: Analytics */}
+          <TabsContent value="analytics">
+            <div className="glass-card p-8 rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/10">
+              <div className="text-center py-12">
+                <BarChart className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
+                <h3 className="text-2xl font-bold text-white mb-2">Advanced Analytics</h3>
+                <p className="text-white/60 max-w-2xl mx-auto">
+                  Comprehensive portfolio analytics, performance tracking, and tax reporting with institutional-grade insights.
+                </p>
+                <div className="mt-6">
+                  <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-300">
+                    Coming Soon - Phase 5
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
           <TabsContent value="music-distribution">
             <div className="space-y-8">
               {/* Enhanced Artist Dashboard */}

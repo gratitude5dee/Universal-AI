@@ -1,0 +1,188 @@
+import { Platform } from '@/types/on-chain';
+
+export const platforms: Platform[] = [
+  // Meme Launchpads (12)
+  {
+    id: 'pumpfun',
+    name: 'Pump.fun',
+    category: 'meme-launchpads',
+    chains: ['solana'],
+    icon: '🚀',
+    description: 'Meme/Social Tokens',
+    features: ['Bonding curves', 'Fair launch', 'Auto-migration to Raydium'],
+    fees: { deployment: '0.02 SOL', transaction: '1%' },
+    volume: '$450M/mo',
+    stats: { users: '750K+', volume: '$450M', launches: '15K+' },
+    assetTypes: ['meme-token', 'social-content'],
+  },
+  {
+    id: 'believe',
+    name: 'Believe.app',
+    category: 'meme-launchpads',
+    chains: ['solana'],
+    icon: '✨',
+    description: 'Tweet-to-Token',
+    features: ['Attention-based', 'Instant launch', 'Social integration'],
+    fees: { deployment: 'Free' },
+    stats: { users: '500K+' },
+    assetTypes: ['social-content', 'meme-token'],
+  },
+  {
+    id: 'daosfun',
+    name: 'Daos.fun',
+    category: 'dao-community',
+    chains: ['solana'],
+    icon: '🏛️',
+    description: 'DAO/Community Tokens',
+    features: ['1-click DAO', 'Governance', 'Treasury management'],
+    fees: { deployment: 'Free' },
+    stats: { users: '79K+', launches: '1000+' },
+    assetTypes: ['memberships', 'social-content'],
+  },
+  {
+    id: 'moonshot',
+    name: 'Moonshot',
+    category: 'meme-launchpads',
+    chains: ['solana'],
+    icon: '🌙',
+    description: 'Meme launches with fiat onramp',
+    features: ['Fiat payments', 'Mobile-first', 'Fast launch'],
+    fees: { transaction: '1%' },
+    assetTypes: ['meme-token'],
+  },
+  {
+    id: 'letsbonk',
+    name: 'LetsBonk',
+    category: 'meme-launchpads',
+    chains: ['solana'],
+    icon: '💥',
+    description: 'Community-driven meme platform',
+    features: ['Community voting', 'Fair distribution'],
+    fees: { transaction: '1.25%' },
+    volume: '$204M/mo',
+    assetTypes: ['meme-token'],
+  },
+  
+  // IP & RWA Tokenization (5)
+  {
+    id: 'allart',
+    name: 'ALL.ART',
+    category: 'ip-rwa',
+    chains: ['solana'],
+    icon: '🎨',
+    description: 'IP licenses as NFTs',
+    features: ['IP protection', 'Royalty automation', 'Legal compliance'],
+    fees: { listing: '2.5%' },
+    assetTypes: ['ip-licenses', 'visual-art'],
+  },
+  {
+    id: 'ipflow',
+    name: 'IPFLOW',
+    category: 'ip-rwa',
+    chains: ['solana'],
+    icon: '📜',
+    description: 'Creative IP tokenization',
+    features: ['Fast deployment', 'Rights management', 'Revenue sharing'],
+    assetTypes: ['ip-licenses', 'music'],
+  },
+  {
+    id: 'livingip',
+    name: 'LivingIP',
+    category: 'ip-rwa',
+    chains: ['solana'],
+    icon: '🌟',
+    description: 'Collaborative IP platform',
+    features: ['Co-creation', 'Reward distribution', 'Community governance'],
+    assetTypes: ['ip-licenses', 'social-content'],
+  },
+  {
+    id: 'securitize',
+    name: 'Securitize',
+    category: 'ip-rwa',
+    chains: ['ethereum', 'polygon'],
+    icon: '🏦',
+    description: 'Institutional RWA platform',
+    features: ['BlackRock partnership', 'Full compliance', 'Accredited investors'],
+    assetTypes: ['securities', 'physical-assets'],
+  },
+  {
+    id: 'solsea',
+    name: 'SolSea',
+    category: 'ip-rwa',
+    chains: ['solana'],
+    icon: '🌊',
+    description: 'NFT + IP licenses',
+    features: ['Embedded licenses', 'Royalty enforcement', 'Multi-format'],
+    fees: { listing: '3%' },
+    assetTypes: ['visual-art', 'ip-licenses', 'collectibles'],
+  },
+
+  // General Token/IDO (5)
+  {
+    id: 'launchlab',
+    name: 'LaunchLab',
+    category: 'general-ido',
+    chains: ['solana'],
+    icon: '🔬',
+    description: 'Raydium-powered launches',
+    features: ['Free deployment', 'Liquidity pools', 'Analytics'],
+    fees: { deployment: 'Free' },
+    assetTypes: ['meme-token', 'social-content'],
+  },
+  {
+    id: 'magiceden',
+    name: 'Magic Eden',
+    category: 'nft-marketplaces',
+    chains: ['solana', 'ethereum', 'polygon', 'base'],
+    icon: '✨',
+    description: 'Multi-chain NFT platform',
+    features: ['Curated launches', 'High volume', 'Cross-chain'],
+    volume: '$23M/mo',
+    stats: { users: '2M+' },
+    assetTypes: ['visual-art', 'collectibles', 'gaming-items'],
+  },
+  {
+    id: 'solanium',
+    name: 'Solanium',
+    category: 'general-ido',
+    chains: ['solana'],
+    icon: '☀️',
+    description: 'IDO launchpad',
+    features: ['Vetting process', 'Staking rewards', 'Fundraising'],
+    stats: { launches: '50+', volume: '$19M' },
+    assetTypes: ['meme-token', 'social-content'],
+  },
+  {
+    id: 'trustswap',
+    name: 'TrustSwap',
+    category: 'general-ido',
+    chains: ['ethereum', 'polygon', 'base', 'arbitrum'],
+    icon: '🔐',
+    description: 'Multi-chain launchpad',
+    features: ['Token locks', 'Vesting', 'Multi-chain'],
+    stats: { volume: '$100M+' },
+    assetTypes: ['meme-token', 'securities'],
+  },
+  {
+    id: 'fourmeme',
+    name: 'FourMeme',
+    category: 'meme-launchpads',
+    chains: ['solana', 'base'],
+    icon: '4️⃣',
+    description: 'Meme token factory',
+    features: ['Quick launch', 'Community tools', 'Marketing'],
+    assetTypes: ['meme-token'],
+  },
+];
+
+export const getPlatformsByCategory = (category: string) => {
+  return platforms.filter(p => p.category === category);
+};
+
+export const getPlatformsByChain = (chainId: string) => {
+  return platforms.filter(p => p.chains.includes(chainId as any));
+};
+
+export const getPlatformById = (id: string) => {
+  return platforms.find(p => p.id === id);
+};
