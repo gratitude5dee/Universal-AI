@@ -1,5 +1,5 @@
 
-import React, { ReactNode, useState, useEffect } from "react";
+import React, { ReactNode } from "react";
 import Sidebar from "@/components/ui/sidebar/sidebar";
 import MainContent from "@/components/ui/layout/main-content";
 import { navItems } from "@/components/ui/navigation/nav-items";
@@ -10,29 +10,12 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
-  const [isCollapsed, setIsCollapsed] = useState(true);
-  const [isHovered, setIsHovered] = useState(false);
-
-  // Load sidebar state from localStorage
-  useEffect(() => {
-    const savedState = localStorage.getItem('sidebarCollapsed');
-    if (savedState !== null) {
-      setIsCollapsed(savedState === 'true');
-    }
-  }, []);
-
-  const sidebarWidth = isCollapsed ? (isHovered ? '16rem' : '5rem') : '16rem';
-
   return (
-    <div className="min-h-screen bg-transparent overflow-hidden">
-      <Sidebar 
-        navItems={navItems} 
-        isCollapsed={isCollapsed}
-        setIsCollapsed={setIsCollapsed}
-        isHovered={isHovered}
-        setIsHovered={setIsHovered}
-      />
-      <MainContent sidebarWidth={sidebarWidth}>{children}</MainContent>
+    <div className="min-h-screen flex flex-col bg-transparent overflow-hidden">
+      <div className="flex flex-1 z-10 relative">
+        <Sidebar navItems={navItems} />
+        <MainContent>{children}</MainContent>
+      </div>
       <FuturisticCursor />
     </div>
   );
