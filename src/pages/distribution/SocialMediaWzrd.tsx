@@ -238,6 +238,38 @@ export default function SocialMediaWzrd() {
           <p className="text-blue-lightest/70">AI-powered social media content creation and management</p>
         </div>
 
+        {/* Tab Navigation */}
+        <div className="mb-8">
+          <div className="flex justify-center space-x-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-1">
+            <div className="px-6 py-3 bg-orange-500 text-white rounded-xl text-sm font-medium">
+              Social Media WZRD
+            </div>
+            <div 
+              onClick={() => navigate('/distribution/on-chain')}
+              className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors"
+            >
+              On-Chain Distribution
+            </div>
+            <div 
+              onClick={() => navigate('/distribution/media-channels')}
+              className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors"
+            >
+              Media Channels
+            </div>
+            <div 
+              onClick={() => navigate('/distribution/independent')}
+              className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors"
+            >
+              Independent Channels
+            </div>
+            <div 
+              onClick={() => window.location.href = 'https://sync.universal-ai.xyz/'}
+              className="px-6 py-3 text-white/70 hover:text-white hover:bg-white/10 rounded-xl text-sm font-medium cursor-pointer transition-colors"
+            >
+              Sync Licensing
+            </div>
+          </div>
+        </div>
 
         <QuickActions />
         <PerformanceMetrics />
