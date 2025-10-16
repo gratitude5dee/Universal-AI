@@ -30,6 +30,7 @@ import Ambient from "@/components/ui/ambient";
 import FuturisticLoader from "@/components/ui/animations/FuturisticLoader"; // Added
 import { LucideProps } from "lucide-react";
 import { AnimatePresence } from 'framer-motion'; // Added for page content animation
+import universalAILogo from '@/assets/universal-ai-logo.png';
 
 // Type definition for the FeatureCard component props
 type FeatureCardProps = {
@@ -246,13 +247,7 @@ const Landing = () => {
               // Removed individual animation from header as parent motion.div handles it
             >
               <div className="flex items-center gap-2">
-                <motion.div
-                  animate={{rotate: [0, 10, 0]}}
-                  transition={{duration: 2, repeat: Infinity, ease: "easeInOut"}}
-                >
-                  <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-[#f97316]" />
-                </motion.div>
-                <h1 className="text-lg sm:text-xl font-bold">UniversalAI</h1>
+                <img src={universalAILogo} alt="Universal.AI" className="h-10 sm:h-12 w-auto" />
               </div>
 
               <motion.div
