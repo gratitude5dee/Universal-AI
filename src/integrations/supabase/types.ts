@@ -1180,6 +1180,47 @@ export type Database = {
         }
         Relationships: []
       }
+      design_versions: {
+        Row: {
+          canvas_data: Json | null
+          changes_description: string | null
+          created_at: string
+          created_by: string | null
+          design_id: string
+          design_image_url: string | null
+          id: string
+          version_number: number
+        }
+        Insert: {
+          canvas_data?: Json | null
+          changes_description?: string | null
+          created_at?: string
+          created_by?: string | null
+          design_id: string
+          design_image_url?: string | null
+          id?: string
+          version_number: number
+        }
+        Update: {
+          canvas_data?: Json | null
+          changes_description?: string | null
+          created_at?: string
+          created_by?: string | null
+          design_id?: string
+          design_image_url?: string | null
+          id?: string
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "design_versions_design_id_fkey"
+            columns: ["design_id"]
+            isOneToOne: false
+            referencedRelation: "designs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       designs: {
         Row: {
           ai_json_prompt: Json | null

@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Calculator, TrendingUp, Package } from 'lucide-react';
 import { SampleOrderDialog } from './SampleOrderDialog';
+import { BulkOrderDialog } from './BulkOrderDialog';
 
 interface ProductionCalculatorProps {
   productType?: string;
@@ -202,18 +203,16 @@ export const ProductionCalculator: React.FC<ProductionCalculatorProps> = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-2">
-          <Button
-            variant="outline"
-            className="bg-white/10 border-white/20 text-white hover:bg-white/20"
-          >
-            Save Quote
-          </Button>
+        <div className="flex gap-2">
           <SampleOrderDialog
             designId={designId}
             designImageUrl={designImageUrl}
             productTemplateId={productTemplateId}
             productType={productType}
+          />
+          <BulkOrderDialog
+            designImageUrl={designImageUrl}
+            productTemplateId={productTemplateId}
           />
         </div>
 
