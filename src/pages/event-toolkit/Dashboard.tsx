@@ -5,22 +5,21 @@ import { Button } from "@/components/ui/button";
 import { 
   Calendar, 
   Plus, 
-  FilePlus, 
   QrCode, 
   UserPlus, 
   FileText, 
-  Upload, 
-  TrendingUp, 
   Users, 
-  Clock, 
   CheckCircle, 
   Star,
   Zap,
-  BarChart3,
   DollarSign
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/layouts/dashboard-layout";
+import { RevenueChart } from "@/components/event-toolkit/analytics/RevenueChart";
+import { PipelineHealth } from "@/components/event-toolkit/analytics/PipelineHealth";
+import { InsightsPanel } from "@/components/event-toolkit/analytics/InsightsPanel";
+import { UpcomingGigsTimeline } from "@/components/event-toolkit/analytics/UpcomingGigsTimeline";
 
 const EventToolkitDashboard = () => {
   const navigate = useNavigate();
@@ -103,118 +102,30 @@ const EventToolkitDashboard = () => {
     </div>
   );
 
-  const PerformanceMetrics = () => (
+  const EnhancedAnalytics = () => (
     <div className="mb-8">
       <div className="flex items-center mb-6">
-        <Clock className="h-5 w-5 text-white mr-2" />
-        <h2 className="text-lg font-semibold text-white">Performance Metrics</h2>
+        <Zap className="h-5 w-5 text-white mr-2" />
+        <h2 className="text-lg font-semibold text-white">Intelligence Dashboard</h2>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-white/5 backdrop-blur-md border border-white/10">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-medium">Upcoming Gigs</h3>
-              <Calendar className="h-5 w-5 text-blue-400" />
-            </div>
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-white">0</div>
-              <div className="text-sm text-green-400">Ready to book</div>
-              <div className="text-xs text-blue-lightest/70">Next: No upcoming gigs</div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white/5 backdrop-blur-md border border-white/10">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-medium">Unpaid Invoices</h3>
-              <FileText className="h-5 w-5 text-green-400" />
-            </div>
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-white">$0</div>
-              <div className="text-sm text-green-400">All clear</div>
-              <div className="text-xs text-blue-lightest/70">0 overdue</div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white/5 backdrop-blur-md border border-white/10">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-medium">Fan Uploads</h3>
-              <Upload className="h-5 w-5 text-purple-400" />
-            </div>
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-white">0</div>
-              <div className="text-sm text-green-400">This week</div>
-              <div className="text-xs text-blue-lightest/70">Last 7 days</div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white/5 backdrop-blur-md border border-white/10">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-medium">Network Growth</h3>
-              <Users className="h-5 w-5 text-orange-400" />
-            </div>
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-white">0</div>
-              <div className="text-sm text-green-400">New contacts</div>
-              <div className="text-xs text-blue-lightest/70">This month</div>
-            </div>
-          </CardContent>
-        </Card>
+        <RevenueChart />
+        <PipelineHealth />
+        <UpcomingGigsTimeline />
+        <InsightsPanel />
       </div>
     </div>
   );
 
-  const RecentActivity = () => (
+  const GettingStarted = () => (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div className="lg:col-span-2">
-        <div className="flex items-center mb-6">
-          <Clock className="h-5 w-5 text-white mr-2" />
-          <h2 className="text-lg font-semibold text-white">Recent Activity</h2>
-        </div>
-        <div className="space-y-4">
-          <Card className="bg-white/5 backdrop-blur-md border border-white/10">
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                  <Calendar className="h-5 w-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-white font-medium">Club Paradise Booking</h3>
-                  <p className="text-blue-lightest/70 text-sm">Performance scheduled for next Friday</p>
-                  <p className="text-xs text-blue-lightest/50 mt-1">2 hours ago</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="lg:col-span-3">
 
-          <Card className="bg-white/5 backdrop-blur-md border border-white/10">
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-                  <FileText className="h-5 w-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-white font-medium">Invoice #INV-2024-001</h3>
-                  <p className="text-blue-lightest/70 text-sm">Payment received from Luna Lounge</p>
-                  <p className="text-xs text-blue-lightest/50 mt-1">1 day ago</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      <div>
         <div className="flex items-center mb-6">
           <CheckCircle className="h-5 w-5 text-white mr-2" />
           <h2 className="text-lg font-semibold text-white">Getting Started</h2>
         </div>
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="bg-white/5 backdrop-blur-md border border-white/10">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
@@ -282,8 +193,8 @@ const EventToolkitDashboard = () => {
         </div>
 
         <QuickActions />
-        <PerformanceMetrics />
-        <RecentActivity />
+        <EnhancedAnalytics />
+        <GettingStarted />
       </div>
     </DashboardLayout>
   );
