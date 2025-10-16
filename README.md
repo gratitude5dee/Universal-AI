@@ -1,4 +1,4 @@
-# UniversalAI ✨
+# UniversalAI ✨ : Every Being is A Billion
 ### *Cultivate your Creator - Make Magic Real Again*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
