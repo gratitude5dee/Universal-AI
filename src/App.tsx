@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { ThirdwebProvider } from "thirdweb/react";
 import { AuthProvider } from "@/context/AuthContext";
 import { WalletProvider } from "@/context/WalletContext";
 import { OnboardingProvider } from "@/context/OnboardingContext";
@@ -78,12 +79,13 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <WalletProvider>
-          <OnboardingProvider>
-            <TooltipProvider>
-              <Toaster />
-              <BrowserRouter>
+      <ThirdwebProvider>
+        <AuthProvider>
+          <WalletProvider>
+            <OnboardingProvider>
+              <TooltipProvider>
+                <Toaster />
+                <BrowserRouter>
                 <Routes>
                   {/* Public routes */}
                   <Route path="/" element={<FYILanding />} />
@@ -155,11 +157,12 @@ function App() {
 
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-              </BrowserRouter>
-            </TooltipProvider>
-          </OnboardingProvider>
-        </WalletProvider>
-      </AuthProvider>
+                </BrowserRouter>
+              </TooltipProvider>
+            </OnboardingProvider>
+          </WalletProvider>
+        </AuthProvider>
+      </ThirdwebProvider>
     </QueryClientProvider>
   );
 }

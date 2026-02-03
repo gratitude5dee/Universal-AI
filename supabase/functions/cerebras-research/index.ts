@@ -15,19 +15,6 @@ interface ResearchRequest {
   sessionId?: string;
 }
 
-const supabaseUrl = Deno.env.get('SUPABASE_URL');
-const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
-const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-const cerebrasApiKey = Deno.env.get('CEREBRAS_API_KEY');
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Supabase credentials are not configured for cerebras-research');
-}
-
-if (!cerebrasApiKey) {
-  throw new Error('CEREBRAS_API_KEY is not configured');
-}
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -37,6 +24,7 @@ serve(async (req) => {
     const cerebrasApiKey = Deno.env.get('CEREBRAS_API_KEY');
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
+    
     if (!cerebrasApiKey) {
       throw new Error('CEREBRAS_API_KEY is not configured');
     }
@@ -66,13 +54,10 @@ serve(async (req) => {
     const { query, context, sources = [], sessionId }: ResearchRequest = await req.json();
 
     let sessionIdentifier = sessionId || `research_${crypto.randomUUID()}`;
-    console.log(`Research request - Session: ${sessionIdentifier}, Query: ${query.substring(0, 100)}...`);
-    let sessionRecordId: string | null = null;
-
-    const sessionIdentifier = sessionId || `research_${crypto.randomUUID()}`;
     const sessionTimestamp = new Date().toISOString();
-
     let sessionRecordId: string | null = null;
+
+    console.log(`Research request - Session: ${sessionIdentifier}, Query: ${query.substring(0, 100)}...`);
 
     const { data: existingSession, error: existingSessionError } = await supabase
       .from('research_sessions')
