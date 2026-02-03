@@ -1,46 +1,103 @@
-// Placeholder for the transfer-sol function
-// This is a serverless function that would need to be deployed to Supabase
-// It would handle SOL transfers via Crossmint's API
-// For now, this is a placeholder to show the expected structure
-
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+function jsonResponse(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
+function requireEnv(name: string) {
+  const value = Deno.env.get(name);
+  if (!value) {
+    throw new Error(`${name} is not configured`);
+  }
+  return value;
+}
+
+function isAuthorized(req: Request): boolean {
+  const authHeader = req.headers.get("Authorization") ?? "";
+  const apiKeyHeader = req.headers.get("apikey") ?? req.headers.get("x-supabase-apikey") ?? "";
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  const functionJwt = Deno.env.get("SUPABASE_FUNCTION_JWT");
+
+  if (serviceRoleKey) {
+    if (apiKeyHeader === serviceRoleKey) return true;
+    if (authHeader === `Bearer ${serviceRoleKey}`) return true;
+  }
+  if (functionJwt && authHeader === `Bearer ${functionJwt}`) {
+    return true;
+  }
+  return false;
+}
+
 serve(async (req) => {
-  // Handle CORS preflight
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
-  try {
-    // In a real implementation, you would:
-    // 1. Verify the user's authentication
-    // 2. Get the transaction details from the request
-    // 3. Create and sign a transaction via Crossmint's API
-    // 4. Return the transaction details
+  if (!isAuthorized(req)) {
+    return jsonResponse({ error: "Unauthorized" }, 401);
+  }
 
-    // Mock response for testing
-    return new Response(
-      JSON.stringify({ 
-        transaction: 'mock_transaction_hash',
-        status: 'success' 
+  try {
+    const apiKey = requireEnv("CROSSMINT_API_KEY");
+    const projectId = requireEnv("CROSSMINT_PROJECT_ID");
+    const transferEndpoint = requireEnv("CROSSMINT_TRANSFER_ENDPOINT");
+
+    const body = await req.json();
+    const fromWallet = body?.fromWallet;
+    const toWallet = body?.toWallet;
+    const amount = body?.amount;
+    const memo = body?.memo;
+
+    if (!fromWallet || !toWallet || amount === undefined) {
+      return jsonResponse({ error: "fromWallet, toWallet, and amount are required" }, 400);
+    }
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      "x-client-secret": apiKey,
+      "x-project-id": projectId,
+      "X-Correlation-Id": req.headers.get("X-Correlation-Id") ?? "",
+    };
+    const idempotencyKey = req.headers.get("Idempotency-Key");
+    if (idempotencyKey) {
+      headers["Idempotency-Key"] = idempotencyKey;
+    }
+
+    const response = await fetch(transferEndpoint, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        fromWallet,
+        toWallet,
+        amount,
+        memo,
       }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      }
-    );
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      return jsonResponse(
+        { error: "Crossmint transfer failed", detail: errorText },
+        response.status,
+      );
+    }
+
+    const data = await response.json();
+
+    return jsonResponse({
+      signature: data.signature ?? data.txSignature ?? data.transaction ?? null,
+      status: data.status ?? "submitted",
+    });
   } catch (error) {
-    console.error('Error in transfer-sol function:', error);
-    return new Response(
-      JSON.stringify({ error: 'Internal Server Error' }),
-      { 
-        status: 500, 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      }
-    );
+    console.error("Error in transfer-sol function:", error);
+    return jsonResponse({ error: "Internal Server Error" }, 500);
   }
 });

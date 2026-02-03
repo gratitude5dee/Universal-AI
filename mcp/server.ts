@@ -20,6 +20,18 @@ import { createWalletCreateTool } from "./tools/wallet_create";
 import { createWalletTransferTool } from "./tools/wallet_transfer";
 import { createKbSearchTool } from "./tools/kb_search";
 import { createWebSearchTool } from "./tools/web_search";
+import { createEvmWalletCreateTool } from "./tools/evm_wallet_create";
+import { createEvmWalletBalanceTool } from "./tools/evm_wallet_balance";
+import { createEvmWalletSimulateTool } from "./tools/evm_wallet_simulate";
+import { createEvmWalletSendTool } from "./tools/evm_wallet_send";
+import { createEvmTxStatusTool } from "./tools/evm_tx_status";
+import { createDefiTokenBalanceTool } from "./tools/defi_token_balance";
+import { createDefiAllowanceTool } from "./tools/defi_allowance";
+import { createDefiApproveTool } from "./tools/defi_approve";
+import { createDefiSwapSimulateTool } from "./tools/defi_swap_simulate";
+import { createRwaComplianceCheckTool } from "./tools/rwa_compliance_check";
+import { createRwaAuditAppendTool } from "./tools/rwa_audit_append";
+import { createX402InferenceTool } from "./tools/x402_inference";
 import { createKnowledgeResource } from "./resources/kb";
 import { answerWithContextPrompt } from "./prompts/answer_with_context";
 import { summarizeAndCitePrompt } from "./prompts/summarize_and_cite";
@@ -80,7 +92,19 @@ const tools: ToolDefinition[] = [
   createWalletCreateTool(config),
   createWalletTransferTool(config),
   createKbSearchTool(config),
-  createWebSearchTool(config)
+  createWebSearchTool(config),
+  createEvmWalletCreateTool(config),
+  createEvmWalletBalanceTool(config),
+  createEvmWalletSimulateTool(config),
+  createEvmWalletSendTool(config),
+  createEvmTxStatusTool(config),
+  createDefiTokenBalanceTool(config),
+  createDefiAllowanceTool(config),
+  createDefiApproveTool(config),
+  createDefiSwapSimulateTool(config),
+  createRwaComplianceCheckTool(config),
+  createRwaAuditAppendTool(config),
+  createX402InferenceTool(config)
 ];
 
 const toolMap = new Map(tools.map((tool) => [tool.name, tool]));

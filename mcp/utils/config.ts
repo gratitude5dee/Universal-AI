@@ -18,6 +18,32 @@ function parseNumberEnv(name: string, fallback: number): number {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
+function parseBooleanEnv(name: string, fallback: boolean): boolean {
+  const value = process.env[name];
+  if (!value) return fallback;
+  const normalized = value.trim().toLowerCase();
+  if (["true", "1", "yes", "y", "on"].includes(normalized)) return true;
+  if (["false", "0", "no", "n", "off"].includes(normalized)) return false;
+  return fallback;
+}
+
+function parseStringListEnv(name: string, fallback: string[]): string[] {
+  const value = process.env[name];
+  if (!value) return fallback;
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) {
+      return parsed.map((entry) => String(entry).trim()).filter(Boolean);
+    }
+  } catch {
+    // fall through to csv parsing
+  }
+  return value
+    .split(",")
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+}
+
 export function loadConfig(): Config {
   const mode = (process.env.MCP_MODE ?? "mock").toLowerCase() === "live" ? "live" : "mock";
 
@@ -85,6 +111,27 @@ export function loadConfig(): Config {
       apiKey: process.env.MCP_WEB_SEARCH_API_KEY,
       safe: process.env.MCP_WEB_SEARCH_SAFE !== "false",
       maxResultsDefault: parseNumberEnv("MCP_WEB_SEARCH_MAX_RESULTS", 5)
+    },
+    features: {
+      web3: parseBooleanEnv("MCP_FEATURE_WEB3", false),
+      defi: parseBooleanEnv("MCP_FEATURE_DEFI", false),
+      rwa: parseBooleanEnv("MCP_FEATURE_RWA", false),
+      x402: parseBooleanEnv("MCP_FEATURE_X402", false)
+    },
+    engine: {
+      baseUrl: process.env.MCP_ENGINE_BASE_URL,
+      apiKey: process.env.MCP_ENGINE_API_KEY,
+      timeoutMs: parseNumberEnv("MCP_ENGINE_TIMEOUT_MS", 12_000),
+      chainAllowlist: parseStringListEnv("MCP_ENGINE_CHAIN_ALLOWLIST", [])
+    },
+    rwa: {
+      requireCompliance: parseBooleanEnv("MCP_RWA_REQUIRE_COMPLIANCE", false),
+      complianceRpc: process.env.MCP_RWA_COMPLIANCE_RPC ?? "rwa_get_compliance_status",
+      auditRpc: process.env.MCP_RWA_AUDIT_RPC ?? "rwa_audit_append"
+    },
+    x402: {
+      endpoint: process.env.MCP_X402_ENDPOINT,
+      timeoutMs: parseNumberEnv("MCP_X402_TIMEOUT_MS", 20_000)
     },
     idempotency: {
       rpcName: process.env.MCP_IDEMPOTENCY_RPC ?? "ensure_idempotency_key",

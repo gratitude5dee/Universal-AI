@@ -56,6 +56,27 @@ export function createMockConfig(): Config {
       safe: true,
       maxResultsDefault: 5
     },
+    features: {
+      web3: true,
+      defi: true,
+      rwa: true,
+      x402: true
+    },
+    engine: {
+      baseUrl: "https://engine.example.com",
+      apiKey: "engine-key",
+      timeoutMs: 5000,
+      chainAllowlist: ["sepolia"]
+    },
+    rwa: {
+      requireCompliance: false,
+      complianceRpc: "rwa_get_compliance_status",
+      auditRpc: "rwa_audit_append"
+    },
+    x402: {
+      endpoint: "https://x402.example.com/api/chat",
+      timeoutMs: 5000
+    },
     idempotency: {
       rpcName: "ensure_idempotency_key",
       ttlSeconds: 86_400
@@ -108,6 +129,35 @@ export function createMockSupabase(): SupabaseClientLike {
             content_type: "text/markdown",
             summary: "Mock summary",
             metadata: {}
+          },
+          error: null
+        };
+      }
+      if (fn === "rwa_get_compliance_status") {
+        return {
+          data: {
+            status: "approved",
+            reason: null,
+            expires_at: null
+          },
+          error: null
+        };
+      }
+      if (fn === "rwa_create_compliance_check") {
+        return {
+          data: {
+            id: "rwa-check-1",
+            status: "approved",
+            created_at: new Date().toISOString()
+          },
+          error: null
+        };
+      }
+      if (fn === "rwa_audit_append") {
+        return {
+          data: {
+            id: "rwa-audit-1",
+            created_at: new Date().toISOString()
           },
           error: null
         };

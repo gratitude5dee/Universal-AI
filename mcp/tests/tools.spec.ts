@@ -3,6 +3,10 @@ import { createSupabaseQuerySqlTool } from "../tools/supabase_query_sql";
 import { createSupabaseCallRpcTool } from "../tools/supabase_call_rpc";
 import { createStorageGetTool } from "../tools/storage_get";
 import { createKbSearchTool } from "../tools/kb_search";
+import { createEvmWalletCreateTool } from "../tools/evm_wallet_create";
+import { createDefiTokenBalanceTool } from "../tools/defi_token_balance";
+import { createRwaComplianceCheckTool } from "../tools/rwa_compliance_check";
+import { createX402InferenceTool } from "../tools/x402_inference";
 import { createMockContext, createMockConfig } from "./helpers";
 
 describe("supabase_query_sql", () => {
@@ -69,5 +73,53 @@ describe("kb_search", () => {
     const context = createMockContext();
     const result = await tool.handler(context, { query: "test query" });
     expect(result.matches.length).toBeGreaterThan(0);
+  });
+});
+
+describe("evm_wallet_create", () => {
+  it("returns mocked wallet in mock mode", async () => {
+    const tool = createEvmWalletCreateTool(createMockConfig());
+    const context = createMockContext();
+    const result = await tool.handler(context, {});
+    expect(result.walletAddress).toContain("0xMock");
+  });
+});
+
+describe("defi_token_balance", () => {
+  it("returns mocked balance in mock mode", async () => {
+    const tool = createDefiTokenBalanceTool(createMockConfig());
+    const context = createMockContext();
+    const result = await tool.handler(context, {
+      chain: "sepolia",
+      tokenAddress: "0xToken",
+      ownerAddress: "0xOwner"
+    });
+    expect(result.balance).toBe("0");
+  });
+});
+
+describe("rwa_compliance_check", () => {
+  it("returns mocked compliance result in mock mode", async () => {
+    const tool = createRwaComplianceCheckTool(createMockConfig());
+    const context = createMockContext();
+    const result = await tool.handler(context, {
+      subjectType: "wallet",
+      subjectId: "wallet-1",
+      status: "approved"
+    });
+    expect(result.checkId).toContain("mock");
+  });
+});
+
+describe("x402_inference", () => {
+  it("returns mocked response in mock mode", async () => {
+    const tool = createX402InferenceTool(createMockConfig());
+    const context = createMockContext();
+    const result = await tool.handler(context, {
+      payment: "mock",
+      selectedModelId: "mock-model",
+      messages: []
+    });
+    expect(result.status).toBe(200);
   });
 });

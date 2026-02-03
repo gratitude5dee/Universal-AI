@@ -13,7 +13,8 @@ const inputSchema = {
     amountSol: { type: "number", exclusiveMinimum: 0 },
     memo: { type: "string", maxLength: 120 },
     confirmationToken: { type: "string", minLength: 32 },
-    idempotencyKey: { type: "string", minLength: 24 }
+    idempotencyKey: { type: "string", minLength: 24 },
+    complianceCheckId: { type: "string" }
   },
   additionalProperties: false
 } as const;
@@ -40,6 +41,7 @@ type Input = {
   memo?: string;
   confirmationToken: string;
   idempotencyKey: string;
+  complianceCheckId?: string;
 };
 
 type Output = {
@@ -144,6 +146,67 @@ async function ensureIdempotency(
   return data?.was_processed ?? false;
 }
 
+async function ensureComplianceGate(
+  context: ToolContext,
+  complianceCheckId: string,
+  now: Date
+) {
+  const { data, error } = await context.supabase.rpc<{
+    status: string;
+    reason?: string | null;
+    expires_at?: string | null;
+  }>(context.config.rwa.complianceRpc, {
+    check_id: complianceCheckId
+  });
+
+  if (error || !data) {
+    throw new Error(`Compliance check failed: ${error?.message ?? "not found"}`);
+  }
+
+  if (data.status !== "approved") {
+    throw new Error(`Compliance status is ${data.status}`);
+  }
+
+  if (data.expires_at) {
+    const expiresAt = new Date(data.expires_at);
+    if (Number.isFinite(expiresAt.getTime()) && expiresAt <= now) {
+      throw new Error("Compliance check has expired");
+    }
+  }
+}
+
+async function appendAudit(
+  context: ToolContext,
+  params: {
+    eventType: string;
+    subjectType: string;
+    subjectId: string;
+    metadata: Record<string, unknown>;
+  }
+) {
+  if (context.config.mode === "mock") {
+    return;
+  }
+  if (!context.config.features.rwa && !context.config.rwa.requireCompliance) {
+    return;
+  }
+  if (!context.config.rwa.auditRpc) {
+    return;
+  }
+
+  const { error } = await context.supabase.rpc(context.config.rwa.auditRpc, {
+    event_type: params.eventType,
+    subject_type: params.subjectType,
+    subject_id: params.subjectId,
+    correlation_id: context.correlationId,
+    metadata: params.metadata
+  });
+
+  if (error) {
+    throw new Error(`Audit RPC failed: ${error.message}`);
+  }
+}
+
 export function createWalletTransferTool(
   config: Config
 ): ToolDefinition<Input, Output> {
@@ -173,9 +236,28 @@ export function createWalletTransferTool(
       const wasDuplicate = await ensureIdempotency(context, rawInput.idempotencyKey, payloadHash);
       const submittedAt = context.now().toISOString();
 
+      if (config.rwa.requireCompliance) {
+        if (!rawInput.complianceCheckId) {
+          throw new Error("Compliance check id is required");
+        }
+        await ensureComplianceGate(context, rawInput.complianceCheckId, context.now());
+      }
+
       if (wasDuplicate) {
         context.logger.warn("Duplicate wallet transfer detected", {
           idempotencyKey: rawInput.idempotencyKey
+        });
+        await appendAudit(context, {
+          eventType: "wallet_transfer_duplicate",
+          subjectType: "wallet_transfer",
+          subjectId: rawInput.idempotencyKey,
+          metadata: {
+            fromWallet: rawInput.fromWallet,
+            toWallet: rawInput.toWallet,
+            amountSol: rawInput.amountSol,
+            memo: rawInput.memo ?? null,
+            complianceCheckId: rawInput.complianceCheckId ?? null
+          }
         });
         return {
           status: "duplicate",
@@ -187,6 +269,18 @@ export function createWalletTransferTool(
       }
 
       if (config.mode === "mock" || config.crossmint.dryRun) {
+        await appendAudit(context, {
+          eventType: "wallet_transfer_mocked",
+          subjectType: "wallet_transfer",
+          subjectId: rawInput.idempotencyKey,
+          metadata: {
+            fromWallet: rawInput.fromWallet,
+            toWallet: rawInput.toWallet,
+            amountSol: rawInput.amountSol,
+            memo: rawInput.memo ?? null,
+            complianceCheckId: rawInput.complianceCheckId ?? null
+          }
+        });
         return {
           status: "mocked",
           idempotencyKey: rawInput.idempotencyKey,
@@ -224,6 +318,20 @@ export function createWalletTransferTool(
       if (error) {
         throw new Error(`transfer function failed: ${error.message}`);
       }
+
+      await appendAudit(context, {
+        eventType: "wallet_transfer_submitted",
+        subjectType: "wallet_transfer",
+        subjectId: rawInput.idempotencyKey,
+        metadata: {
+          fromWallet: rawInput.fromWallet,
+          toWallet: rawInput.toWallet,
+          amountSol: rawInput.amountSol,
+          memo: rawInput.memo ?? null,
+          signature: data?.signature ?? null,
+          complianceCheckId: rawInput.complianceCheckId ?? null
+        }
+      });
 
       return {
         status: "submitted",
