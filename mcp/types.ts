@@ -122,6 +122,27 @@ export interface Config {
     safe: boolean;
     maxResultsDefault: number;
   };
+  features: {
+    web3: boolean;
+    defi: boolean;
+    rwa: boolean;
+    x402: boolean;
+  };
+  engine: {
+    baseUrl?: string;
+    apiKey?: string;
+    timeoutMs: number;
+    chainAllowlist: string[];
+  };
+  rwa: {
+    requireCompliance: boolean;
+    complianceRpc: string;
+    auditRpc: string;
+  };
+  x402: {
+    endpoint?: string;
+    timeoutMs: number;
+  };
   idempotency: {
     rpcName?: string;
     ttlSeconds: number;
