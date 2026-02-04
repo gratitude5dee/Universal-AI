@@ -1,107 +1,132 @@
 
-# Plan: Add Thirdweb Auth + Fix Build Errors
+# Plan: Thirdweb Auth with Supabase Secrets + Home Navigation
 
 ## Overview
-This plan adds Thirdweb wallet authentication to the Auth page and fixes the existing edge function build errors.
+This plan updates the Thirdweb authentication to use the client ID from Supabase secrets and ensures users are properly redirected to the home page after wallet connection.
 
 ---
 
-## Part 1: Add Thirdweb Authentication
+## The Challenge
 
-### Step 1: Install Thirdweb SDK
-Add the thirdweb package to the project:
+Currently, there are two issues:
+1. The Thirdweb client ID is hardcoded or uses `VITE_` env variables
+2. After wallet connection, users can't access `/home` because `ProtectedRoute` only checks for Supabase auth - not wallet connections
+
+---
+
+## Solution Architecture
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│                      Auth Page                               │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────────┐     ┌─────────────────┐                │
+│  │  Supabase Auth  │ OR  │  Wallet Connect │                │
+│  └────────┬────────┘     └────────┬────────┘                │
+│           │                       │                          │
+│           ▼                       ▼                          │
+│  ┌─────────────────────────────────────────┐                │
+│  │         AuthContext (Updated)           │                │
+│  │  - Tracks Supabase user                 │                │
+│  │  - Tracks wallet address (NEW)          │                │
+│  │  - isAuthenticated = user OR wallet     │                │
+│  └─────────────────┬───────────────────────┘                │
+│                    │                                         │
+│                    ▼                                         │
+│           Navigate to /home                                  │
+└─────────────────────────────────────────────────────────────┘
 ```
-thirdweb@^5
-```
 
-### Step 2: Create Thirdweb Client Configuration
-Create `src/lib/thirdweb.ts` with client initialization:
-- Use the thirdweb client ID (will need to be added as a secret or env variable)
-- Configure supported wallets (MetaMask, Coinbase, WalletConnect, in-app wallet)
+---
 
-### Step 3: Add ThirdwebProvider to App
-Update `src/App.tsx`:
-- Import `ThirdwebProvider` from thirdweb/react
-- Wrap the app with `ThirdwebProvider` (inside AuthProvider)
+## Implementation Steps
 
-### Step 4: Update Auth Page
+### Step 1: Create Edge Function for Client ID
+Create `supabase/functions/get-thirdweb-config/index.ts`:
+- Reads `THIRDWEB_CLIENT_ID` from Supabase secrets
+- Returns it as JSON (this is a public key, safe to expose)
+- No authentication required
+
+### Step 2: Update Thirdweb Client Library
+Update `src/lib/thirdweb.ts`:
+- Export a function to create the client dynamically
+- Fetch client ID from edge function on first use
+- Cache the result
+
+### Step 3: Update AuthContext
+Modify `src/context/AuthContext.tsx`:
+- Add `walletAddress` state to track connected wallet
+- Add `isAuthenticated` computed property (true if user OR wallet connected)
+- Export a `setWalletAddress` function for wallet connections
+
+### Step 4: Update ProtectedRoute
+Modify `src/components/ui/ProtectedRoute.tsx`:
+- Check for `isAuthenticated` instead of just `user`
+- Allow access if user has Supabase auth OR wallet connection
+
+### Step 5: Update Auth Page
 Modify `src/pages/Auth.tsx`:
-- Add Thirdweb `ConnectButton` component below the "or continue with" divider
-- Configure wallet options (MetaMask, Coinbase Wallet, WalletConnect)
-- Style the button to match the existing dark theme
-- Handle wallet connection success to navigate to /home
-
-### Step 5: Update AuthContext (Optional Enhancement)
-Optionally update `src/context/AuthContext.tsx` to:
-- Track both Supabase auth and wallet connection state
-- Allow users to link their wallet address to their Supabase profile
-
----
-
-## Part 2: Fix Edge Function Build Errors
-
-### Fix 1: cerebras-research/index.ts (Lines 68-75)
-**Problem**: Duplicate declarations of `sessionIdentifier` and `sessionRecordId`
-**Solution**: Remove the duplicate `let` declarations on lines 68-70, keeping only the `const` version on line 72
-
-### Fix 2: cerebras-stream/index.ts (Line 92-94)
-**Problem**: Duplicate `hasAccess` variable declaration
-**Solution**: Remove the duplicate declaration, keep only one
-
-### Fix 3: manage-user-secrets/index.ts
-**Problem**: 
-- Missing `sodium` import
-- `encryptionKeyBase64` used before declaration
-- Type issues with Uint8Array
-- Missing `serviceClient` variable
-
-**Solution**:
-- Add sodium import: `import sodium from "https://deno.land/x/sodium@0.2.0/sumo.ts"`
-- Move `encryptionKeyBase64` declaration before usage
-- Fix type assertions for crypto operations
-- Fix or remove the `serviceClient` reference
-
-### Fix 4: Multiple functions (connect-print-partner, create-print-order, etc.)
-**Problem**: `error` is of type `unknown`
-**Solution**: Add proper type guard: `error instanceof Error ? error.message : 'Unknown error'`
+- Import `useActiveAccount` from thirdweb/react to detect wallet connection
+- On wallet connect, update AuthContext with wallet address
+- Navigate to `/home` after successful connection
 
 ---
 
 ## Technical Details
 
-### Thirdweb Configuration
+### Edge Function: get-thirdweb-config
 ```typescript
-// src/lib/thirdweb.ts
-import { createThirdwebClient } from "thirdweb";
-
-export const thirdwebClient = createThirdwebClient({
-  clientId: import.meta.env.VITE_THIRDWEB_CLIENT_ID || "your-client-id"
+// Returns { clientId: "..." }
+// Public endpoint - no auth needed
+Deno.serve(async () => {
+  const clientId = Deno.env.get("THIRDWEB_CLIENT_ID");
+  return new Response(JSON.stringify({ clientId }), {
+    headers: { "Content-Type": "application/json" }
+  });
 });
 ```
 
-### Auth Page Integration
-The ConnectButton will be placed in the existing "or continue with" section, alongside the Guest Access button. It will:
-- Show wallet options (MetaMask, Coinbase, WalletConnect)
-- Match the dark glass-morphism theme
-- Auto-navigate to /home on successful connection
+### Updated AuthContext Interface
+```typescript
+interface AuthContextType {
+  user: User | null;
+  session: Session | null;
+  walletAddress: string | null;
+  isAuthenticated: boolean;  // NEW: true if user OR wallet
+  loading: boolean;
+  setWalletAddress: (address: string | null) => void;
+}
+```
 
-### Files to Modify
-1. `package.json` - Add thirdweb dependency
-2. `src/lib/thirdweb.ts` - New file for client config
-3. `src/App.tsx` - Add ThirdwebProvider
-4. `src/pages/Auth.tsx` - Add ConnectButton
-5. `supabase/functions/cerebras-research/index.ts` - Fix duplicate vars
-6. `supabase/functions/cerebras-stream/index.ts` - Fix duplicate vars
-7. `supabase/functions/manage-user-secrets/index.ts` - Fix sodium + types
-8. `supabase/functions/connect-print-partner/index.ts` - Fix error type
-9. `supabase/functions/create-print-order/index.ts` - Fix error type
-10. `supabase/functions/get-dashboard-stats/index.ts` - Fix error type
-11. `supabase/functions/get-gig-revenue/index.ts` - Fix error type
+### Auth Page Wallet Connection
+```typescript
+// Use thirdweb hook to detect connection
+const account = useActiveAccount();
+
+useEffect(() => {
+  if (account?.address) {
+    setWalletAddress(account.address);
+    navigate("/home");
+  }
+}, [account]);
+```
 
 ---
 
-## API Key Requirement
-Thirdweb requires a Client ID which can be obtained free from [thirdweb.com/dashboard](https://thirdweb.com/dashboard). You'll need to:
-1. Create a thirdweb account
-2. Create a new project to get a Client ID
-3. Add `VITE_THIRDWEB_CLIENT_ID` to the .env file (this is a public/publishable key, safe to store in code)
+## Files to Create/Modify
+
+| File | Action | Description |
+|------|--------|-------------|
+| `supabase/functions/get-thirdweb-config/index.ts` | Create | Edge function to serve client ID |
+| `src/lib/thirdweb.ts` | Modify | Dynamic client creation with fetched ID |
+| `src/context/AuthContext.tsx` | Modify | Add wallet tracking + isAuthenticated |
+| `src/components/ui/ProtectedRoute.tsx` | Modify | Check isAuthenticated |
+| `src/pages/Auth.tsx` | Modify | Handle wallet connection properly |
+
+---
+
+## Security Notes
+
+- The Thirdweb Client ID is a **public key** (similar to a Supabase anon key) - it's designed to be exposed to the client
+- The edge function adds a layer of configuration management but doesn't add security
+- Wallet authentication is cryptographically secure - the user proves ownership by signing
