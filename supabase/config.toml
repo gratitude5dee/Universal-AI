@@ -50,3 +50,6 @@ verify_jwt = true
 
 [functions.create-print-order]
 verify_jwt = true
+
+[functions.get-thirdweb-config]
+verify_jwt = false

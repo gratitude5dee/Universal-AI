@@ -5,13 +5,19 @@ import { supabase } from '@/integrations/supabase/client';
 interface AuthContextType {
   user: User | null;
   session: Session | null;
+  walletAddress: string | null;
+  isAuthenticated: boolean;
   loading: boolean;
+  setWalletAddress: (address: string | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
+  walletAddress: null,
+  isAuthenticated: false,
   loading: true,
+  setWalletAddress: () => {},
 });
 
 export const useAuth = () => {
@@ -25,7 +31,11 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Computed property: authenticated if user OR wallet connected
+  const isAuthenticated = !!(user || walletAddress);
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -48,7 +58,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, session, loading }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      session, 
+      walletAddress, 
+      isAuthenticated, 
+      loading, 
+      setWalletAddress 
+    }}>
       {children}
     </AuthContext.Provider>
   );
