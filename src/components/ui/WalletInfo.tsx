@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { useWallet } from '@/context/WalletContext';
 import { WalletIcon } from '@/components/ui/icons';
+import { useEvmWallet } from '@/context/EvmWalletContext';
 
 export const WalletInfo = () => {
-  const { address, balance, isLoading, fetchBalance } = useWallet();
+  const { address, nativeBalance, chainMeta, isLoading, refresh } = useEvmWallet();
   
   const shortenAddress = (addr: string) => {
     if (!addr) return '';
@@ -17,16 +17,20 @@ export const WalletInfo = () => {
       variant="ghost" 
       size="sm" 
       className="flex items-center gap-2"
-      onClick={fetchBalance}
+      onClick={refresh}
     >
       <WalletIcon className="h-4 w-4" isGlowing={false} />
       <span>
         {isLoading 
           ? 'Loading...' 
-          : `${balance.toFixed(4)} SOL`
+          : nativeBalance && chainMeta
+            ? `${Number(nativeBalance.formatted).toFixed(4)} ${chainMeta.nativeSymbol}`
+            : '—'
         }
       </span>
-      <span className="text-xs opacity-70">{shortenAddress(address)}</span>
+      <span className="text-xs opacity-70">
+        {chainMeta ? chainMeta.name : 'Unknown'} • {address ? shortenAddress(address) : 'Not connected'}
+      </span>
     </Button>
   );
 };

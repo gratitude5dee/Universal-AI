@@ -1,19 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Plus, X } from "lucide-react";
 import { motion } from "framer-motion";
-import { useWallet } from "@/context/WalletContext";
+import { useEvmWallet } from "@/context/EvmWalletContext";
+import { ConnectWalletButton } from "@/components/web3/ConnectWalletButton";
 
 export const WalletManagement = () => {
-  const { address, balance } = useWallet();
+  const { address, nativeBalance, chainMeta } = useEvmWallet();
 
   const wallets = [
     {
       type: "Ethereum / EVM Chains",
-      address: address || "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0",
-      provider: "MetaMask",
+      address: address || "Not connected",
+      provider: "thirdweb",
       primary: true,
-      balance: `${balance || 2.45} ETH ($${((balance || 2.45) * 1640).toFixed(0)})`,
-      explorer: "https://etherscan.io"
+      balance: nativeBalance && chainMeta ? `${nativeBalance.formatted} ${chainMeta.nativeSymbol}` : "—",
+      explorer: chainMeta?.explorerBaseUrl ?? "https://etherscan.io"
     },
     {
       type: "Solana",
@@ -80,10 +81,9 @@ export const WalletManagement = () => {
           ))}
         </div>
 
-        <Button className="w-full mt-6 bg-[#9b87f5] hover:bg-[#7E69AB] text-white">
-          <Plus className="w-4 h-4 mr-2" />
-          Connect New Wallet
-        </Button>
+        <div className="w-full mt-6 [&_button]:!w-full [&_button]:!h-11 [&_button]:!rounded-lg [&_button]:!bg-[#9b87f5] [&_button]:hover:!bg-[#7E69AB] [&_button]:!text-white">
+          <ConnectWalletButton label="Connect New Wallet" />
+        </div>
       </div>
     </div>
   );

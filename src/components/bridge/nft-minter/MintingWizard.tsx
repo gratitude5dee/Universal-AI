@@ -13,6 +13,15 @@ import { X, Upload, Sparkles, ChevronLeft, ChevronRight, Rocket } from "lucide-r
 import { motion, AnimatePresence } from "framer-motion";
 import { DeploymentProgress } from "./DeploymentProgress";
 import { useToast } from "@/hooks/use-toast";
+import { useWeb3 } from "@/context/Web3Context";
+import { useEvmWallet } from "@/context/EvmWalletContext";
+import { useAuth as useAppAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useActiveAccount } from "thirdweb/react";
+import { defineChain } from "thirdweb/chains";
+import { getContract, sendTransaction } from "thirdweb";
+import { mintTo as mintErc721To } from "thirdweb/extensions/erc721";
+import { mintTo as mintErc1155To } from "thirdweb/extensions/erc1155";
 
 interface MintingWizardProps {
   type: "single" | "collection" | "social";
@@ -24,7 +33,14 @@ export const MintingWizard = ({ type, onClose }: MintingWizardProps) => {
   const [selectedPlatforms, setSelectedPlatforms] = useState<PlatformId[]>([]);
   const [primaryChain, setPrimaryChain] = useState<ChainId>("ethereum");
   const [showDeployment, setShowDeployment] = useState(false);
+  const [mintTxHash, setMintTxHash] = useState<string | null>(null);
+  const [mintChainId, setMintChainId] = useState<number | null>(null);
+  const [isDeploying, setIsDeploying] = useState(false);
   const { toast } = useToast();
+  const { client, config, writesEnabled } = useWeb3();
+  const { address, chainId, switchChain } = useEvmWallet();
+  const { user } = useAppAuth();
+  const account = useActiveAccount() as any;
 
   const totalSteps = 5;
   const progress = (currentStep / totalSteps) * 100;
@@ -47,19 +63,126 @@ export const MintingWizard = ({ type, onClose }: MintingWizardProps) => {
   };
 
   const handleDeploy = () => {
-    if (selectedPlatforms.length === 0) {
-      toast({
-        title: "No platforms selected",
-        description: "Please select at least one platform to deploy to",
-        variant: "destructive"
-      });
-      return;
-    }
-    setShowDeployment(true);
+    void (async () => {
+      if (selectedPlatforms.length === 0) {
+        toast({
+          title: "No platforms selected",
+          description: "Please select at least one platform to deploy to",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (!writesEnabled) {
+        toast({
+          title: "Web3 writes disabled",
+          description: "Set VITE_ENABLE_WEB3_WRITES=true to enable minting.",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (!user) {
+        toast({
+          title: "Sign in required",
+          description: "Please sign in with email/password to mint and persist on-chain actions.",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (!address || !account) {
+        toast({
+          title: "Wallet not connected",
+          description: "Connect your wallet to deploy this NFT.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const chainIdForPrimary = primaryChain === "ethereum" ? 1 : primaryChain === "base" ? 8453 : primaryChain === "polygon" ? 137 : null;
+      if (!chainIdForPrimary) {
+        toast({
+          title: "Unsupported chain",
+          description: `Chain ${primaryChain} is not yet supported for on-chain minting in this flow.`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setIsDeploying(true);
+      try {
+        if (chainId && chainId !== chainIdForPrimary) {
+          await switchChain(chainIdForPrimary);
+        }
+
+        const contracts = config.contractsByChainId?.[chainIdForPrimary] ?? {};
+        const contractAddress =
+          type === "single"
+            ? contracts.nftCollection
+            : contracts.edition;
+
+        if (!contractAddress) {
+          toast({
+            title: "Contracts not configured",
+            description: `Missing contract address for ${type === "single" ? "nftCollection" : "edition"} on chainId ${chainIdForPrimary}.`,
+            variant: "destructive",
+          });
+          return;
+        }
+
+        const chain = defineChain(chainIdForPrimary as any) as any;
+        const contract = getContract({ client, chain, address: contractAddress }) as any;
+
+        const nft = {
+          name: formData.title || "Untitled",
+          description: formData.description || "",
+        };
+
+        const tx =
+          type === "single"
+            ? mintErc721To({ contract, to: address, nft } as any)
+            : mintErc1155To({ contract, to: address, supply: 1, nft } as any);
+
+        const result = await sendTransaction({ transaction: tx, account } as any);
+        const txHash = (result as any)?.transactionHash ?? (result as any)?.hash ?? (result as any)?.receipt?.transactionHash ?? null;
+
+        if (txHash) {
+          setMintTxHash(String(txHash));
+          setMintChainId(chainIdForPrimary);
+        }
+
+        // Persist tx log to Supabase (best-effort)
+        await supabase.from("wallet_transactions").insert({
+          user_id: user.id,
+          wallet_address: address,
+          transaction_type: "mint",
+          amount: 0,
+          asset_symbol: "NFT",
+          status: "submitted",
+          transaction_hash: txHash ? String(txHash) : null,
+          metadata: {
+            contractAddress,
+            chainId: chainIdForPrimary,
+            type: "mint",
+            uiSource: "bridge/nft-minter",
+            mintKind: type,
+            title: nft.name,
+          },
+        } as any);
+
+        setShowDeployment(true);
+      } catch (e: any) {
+        toast({
+          title: "Mint failed",
+          description: e?.message ?? "Failed to mint NFT",
+          variant: "destructive",
+        });
+      } finally {
+        setIsDeploying(false);
+      }
+    })();
   };
 
   if (showDeployment) {
-    return <DeploymentProgress platforms={selectedPlatforms} onComplete={onClose} />;
+    return <DeploymentProgress platforms={selectedPlatforms} onComplete={onClose} mintTxHash={mintTxHash} chainId={mintChainId} />;
   }
 
   const totalCost = selectedPlatforms.reduce((sum, platformId) => {
@@ -349,10 +472,11 @@ export const MintingWizard = ({ type, onClose }: MintingWizardProps) => {
           ) : (
             <Button
               onClick={handleDeploy}
+              disabled={isDeploying}
               className="bg-gradient-to-r from-[#9b87f5] to-[#7E69AB] hover:from-[#7E69AB] hover:to-[#9b87f5] text-white"
             >
               <Rocket className="w-4 h-4 mr-2" />
-              Deploy NFT
+              {isDeploying ? "Deploying..." : "Deploy NFT"}
             </Button>
           )}
         </div>

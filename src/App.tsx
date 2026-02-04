@@ -2,12 +2,18 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import React, { useEffect, useMemo, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThirdwebProvider } from "thirdweb/react";
+import type { ThirdwebClient } from "thirdweb";
+import { defineChain } from "thirdweb/chains";
 import { AuthProvider } from "@/context/AuthContext";
-import { WalletProvider } from "@/context/WalletContext";
 import { OnboardingProvider } from "@/context/OnboardingContext";
 import { ProtectedRoute } from "@/components/ui/ProtectedRoute";
+import { Web3Provider } from "@/context/Web3Context";
+import { EvmWalletProvider } from "@/context/EvmWalletContext";
+import { getWeb3Config, getWeb3ConfigSync, type Web3Config } from "@/lib/web3/config";
+import { createThirdwebClientFromConfig, getThirdwebClientSync } from "@/lib/web3/client";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
@@ -77,16 +83,75 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 function App() {
+  const [web3Config, setWeb3Config] = useState<Web3Config>(() => getWeb3ConfigSync());
+  const [thirdwebClient, setThirdwebClient] = useState<ThirdwebClient | null>(() => getThirdwebClientSync());
+  const [web3Error, setWeb3Error] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const cfg = await getWeb3Config();
+        if (cancelled) return;
+        setWeb3Config(cfg);
+        if (!thirdwebClient) {
+          setThirdwebClient(createThirdwebClientFromConfig(cfg));
+        }
+      } catch (e: any) {
+        if (cancelled) return;
+        setWeb3Error(e?.message ?? "Failed to initialize Web3");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [thirdwebClient]);
+
+  if (web3Error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white p-6">
+        <div className="max-w-lg w-full glass-card p-6 rounded-xl border border-white/10">
+          <h1 className="text-xl font-semibold mb-2">Web3 Initialization Error</h1>
+          <p className="text-white/70 mb-4">{web3Error}</p>
+          <p className="text-white/60 text-sm">
+            Set <code className="font-mono">VITE_THIRDWEB_CLIENT_ID</code> or configure the Supabase edge function{" "}
+            <code className="font-mono">get-thirdweb-config</code>.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!thirdwebClient) {
+    return <div className="min-h-screen flex items-center justify-center text-white">Loading Web3…</div>;
+  }
+
+  const supportedChains = useMemo(
+    () =>
+      [
+        defineChain(1),
+        defineChain(8453),
+        defineChain(137),
+        defineChain(1514),
+        defineChain(11155111),
+        defineChain(84532),
+        defineChain(80002),
+        defineChain(1315),
+      ] as any[],
+    [],
+  );
+
   return (
     <QueryClientProvider client={queryClient}>
-      <ThirdwebProvider>
-        <AuthProvider>
-          <WalletProvider>
-            <OnboardingProvider>
-              <TooltipProvider>
-                <Toaster />
-                <BrowserRouter>
-                <Routes>
+      <ThirdwebProvider client={thirdwebClient as any} supportedChains={supportedChains as any}>
+        <Web3Provider client={thirdwebClient} config={web3Config}>
+          <AuthProvider>
+            <EvmWalletProvider>
+              <OnboardingProvider>
+                <TooltipProvider>
+                  <Toaster />
+                  <BrowserRouter>
+                    <Routes>
                   {/* Public routes */}
                   <Route path="/" element={<FYILanding />} />
                   <Route path="/auth" element={<Auth />} />
@@ -160,8 +225,9 @@ function App() {
                 </BrowserRouter>
               </TooltipProvider>
             </OnboardingProvider>
-          </WalletProvider>
-        </AuthProvider>
+            </EvmWalletProvider>
+          </AuthProvider>
+        </Web3Provider>
       </ThirdwebProvider>
     </QueryClientProvider>
   );

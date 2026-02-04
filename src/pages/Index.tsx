@@ -1,22 +1,22 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@crossmint/client-sdk-react-ui";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { LogOut } from "lucide-react";
 import { AgentIcon, BrainIcon, WalletIcon, DashboardIcon } from "@/components/ui/icons";
 import Ambient from "@/components/ui/ambient";
+import { useAuth as useAppAuth } from "@/context/AuthContext";
 
 export default function Index() {
   const navigate = useNavigate();
-  const { user, login } = useAuth();
+  const { isAuthenticated } = useAppAuth();
 
   React.useEffect(() => {
-    if (user) {
+    if (isAuthenticated) {
       navigate("/home");
     }
-  }, [user, navigate]);
+  }, [isAuthenticated, navigate]);
 
   const handleLogin = async () => {
     try {

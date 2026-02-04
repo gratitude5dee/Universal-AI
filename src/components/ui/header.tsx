@@ -1,17 +1,17 @@
 import React from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useAuth } from "@crossmint/client-sdk-react-ui";
 import { WalletInfo } from "./WalletInfo";
 import { Settings } from "./Settings";
 import logo from "@/assets/universal-ai-logo.png";
+import { useAuth as useAppAuth } from "@/context/AuthContext";
+import { useEvmWallet } from "@/context/EvmWalletContext";
 
 const Header: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const {
-    user
-  } = useAuth();
+  const { user } = useAppAuth();
+  const { address } = useEvmWallet();
 
   // Get the current page title based on the route
   const getPageTitle = () => {
@@ -61,7 +61,7 @@ const Header: React.FC = () => {
       </div>
       
       <div className="flex items-center space-x-3">
-        {user && <WalletInfo />}
+        {(user || address) && <WalletInfo />}
         <Settings />
       </div>
     </motion.header>

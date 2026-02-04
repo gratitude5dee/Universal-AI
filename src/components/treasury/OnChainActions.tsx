@@ -3,12 +3,15 @@ import { Coins, Map, Landmark, Globe, Wallet, Link, Network, ArrowRightLeft } fr
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MntBalanceChecker } from "@/components/treasury/MntBalanceChecker";
+import { SendTokensModal } from "@/components/treasury/SendTokensModal";
 
 const OnChainActions = () => {
   const [activePortal, setActivePortal] = useState("transactions");
+  const [sendOpen, setSendOpen] = useState(false);
 
   return (
     <div className="space-y-6">
+      <SendTokensModal open={sendOpen} onOpenChange={setSendOpen} />
       <div className="glass-card p-6">
         <h2 className="text-xl font-semibold mb-4 flex items-center text-white text-shadow-sm">
           <Landmark className="w-5 h-5 mr-2 text-studio-accent" />
@@ -33,7 +36,12 @@ const OnChainActions = () => {
               <div className="backdrop-blur-md bg-white/10 rounded-xl p-5 border border-white/20 shadow-card-glow hover:bg-white/15 transition-all duration-200">
                 <h3 className="font-medium mb-3 text-white text-shadow-sm">Quick Actions</h3>
                 <div className="grid grid-cols-2 gap-3">
-                  <Button variant="outline" size="sm" className="justify-start bg-white/10 border-white/20 text-white hover:bg-white/20">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="justify-start bg-white/10 border-white/20 text-white hover:bg-white/20"
+                    onClick={() => setSendOpen(true)}
+                  >
                     <Wallet className="mr-2 h-4 w-4" />
                     Send Tokens
                   </Button>

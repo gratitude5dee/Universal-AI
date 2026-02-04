@@ -12,10 +12,24 @@ import {
   AlertCircle, ThumbsUp, ThumbsDown, Play 
 } from 'lucide-react';
 import { MarketplaceListing, AgentReview } from '@/types/marketplace';
+import { useEvmWallet } from '@/context/EvmWalletContext';
+import { useWeb3 } from '@/context/Web3Context';
+import { useAuth as useAppAuth } from '@/context/AuthContext';
+import { useActiveAccount } from 'thirdweb/react';
+import { defineChain } from 'thirdweb/chains';
+import { getContract, sendTransaction } from 'thirdweb';
+import { mintTo as mintErc1155To } from 'thirdweb/extensions/erc1155';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const AgentDetail = () => {
   const { agentId } = useParams();
   const navigate = useNavigate();
+  const { address, chainId } = useEvmWallet();
+  const { client, config, writesEnabled } = useWeb3();
+  const { user } = useAppAuth();
+  const account = useActiveAccount() as any;
+  const [isInstalling, setIsInstalling] = useState(false);
 
   // Mock data - would come from API
   const listing: MarketplaceListing = {
@@ -195,9 +209,65 @@ Perfect for developers who want to:
               </div>
 
               <div className="flex gap-3">
-                <Button size="lg" className="flex-1 md:flex-initial">
+                <Button
+                  size="lg"
+                  className="flex-1 md:flex-initial"
+                  disabled={isInstalling}
+                  onClick={() => {
+                    void (async () => {
+                      if (!writesEnabled) {
+                        toast.error("Web3 writes disabled (set VITE_ENABLE_WEB3_WRITES=true)");
+                        return;
+                      }
+                      if (!user) {
+                        toast.error("Sign in required to install agents");
+                        return;
+                      }
+                      if (!address || !chainId || !account) {
+                        toast.error("Connect your wallet to install");
+                        return;
+                      }
+                      const agentPass = config.contractsByChainId?.[chainId]?.agentPass;
+                      if (!agentPass) {
+                        toast.error("AgentPass contract not configured for this chain");
+                        return;
+                      }
+                      setIsInstalling(true);
+                      try {
+                        const chain = defineChain(chainId as any) as any;
+                        const contract = getContract({ client, chain, address: agentPass }) as any;
+                        const tx = mintErc1155To({
+                          contract,
+                          to: address,
+                          supply: 1,
+                          nft: {
+                            name: `Agent Pass: ${listing.name}`,
+                            description: `On-chain install receipt for ${listing.name} (${listing.version})`,
+                          },
+                        } as any);
+                        const result = await sendTransaction({ transaction: tx, account } as any);
+                        const txHash = (result as any)?.transactionHash ?? (result as any)?.hash ?? null;
+                        await supabase.from("wallet_transactions").insert({
+                          user_id: user.id,
+                          wallet_address: address,
+                          transaction_type: "agent_install",
+                          amount: 0,
+                          asset_symbol: "AGENTPASS",
+                          status: "submitted",
+                          transaction_hash: txHash ? String(txHash) : null,
+                          metadata: { agentId: listing.id, agentName: listing.name, chainId, contractAddress: agentPass },
+                        } as any);
+                        toast.success("Agent installed on-chain");
+                      } catch (e: any) {
+                        toast.error(e?.message ?? "Install failed");
+                      } finally {
+                        setIsInstalling(false);
+                      }
+                    })();
+                  }}
+                >
                   <Download className="w-4 h-4 mr-2" />
-                  Install Now
+                  {isInstalling ? "Installing..." : "Install Now"}
                 </Button>
                 <Button size="lg" variant="outline">
                   <Play className="w-4 h-4 mr-2" />

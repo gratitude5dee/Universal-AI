@@ -53,3 +53,9 @@ verify_jwt = true
 
 [functions.get-thirdweb-config]
 verify_jwt = false
+
+[functions.wallet-link-start]
+verify_jwt = true
+
+[functions.wallet-link-complete]
+verify_jwt = true

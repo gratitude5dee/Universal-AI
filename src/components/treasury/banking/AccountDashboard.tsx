@@ -4,13 +4,13 @@ import AccountSummary from "./AccountSummary";
 import TransactionHistory from "./TransactionHistory";
 import AccountStats from "./AccountStats";
 import { defaultAccountInfo } from "./types";
-import { useWallet } from "@/context/WalletContext";
 import { toast } from "sonner";
 import { RefreshCw, Ban } from "lucide-react";
+import { useEvmWallet } from "@/context/EvmWalletContext";
 
 const AccountDashboard: React.FC = () => {
   const [isPaused, setIsPaused] = useState(false);
-  const { address } = useWallet();
+  const { address } = useEvmWallet();
   
   const togglePause = () => {
     setIsPaused(!isPaused);

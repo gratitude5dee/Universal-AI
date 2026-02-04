@@ -6,13 +6,16 @@ import { Progress } from "@/components/ui/progress";
 import { PlatformId } from "@/types/bridge";
 import { platforms } from "@/data/bridge/platforms";
 import confetti from "canvas-confetti";
+import { toExplorerTxUrl } from "@/lib/web3/chains";
 
 interface DeploymentProgressProps {
   platforms: PlatformId[];
   onComplete: () => void;
+  mintTxHash?: string | null;
+  chainId?: number | null;
 }
 
-export const DeploymentProgress = ({ platforms: selectedPlatforms, onComplete }: DeploymentProgressProps) => {
+export const DeploymentProgress = ({ platforms: selectedPlatforms, onComplete, mintTxHash, chainId }: DeploymentProgressProps) => {
   const [progress, setProgress] = useState<Record<string, number>>({});
   const [statuses, setStatuses] = useState<Record<string, "pending" | "deploying" | "complete" | "failed">>({});
   const [showSuccess, setShowSuccess] = useState(false);
@@ -90,6 +93,19 @@ export const DeploymentProgress = ({ platforms: selectedPlatforms, onComplete }:
 
           <div className="backdrop-blur-md bg-white/5 border border-white/20 rounded-lg p-4 space-y-2">
             <h3 className="font-semibold text-white text-shadow-sm mb-3">Live Links</h3>
+            {mintTxHash && (
+              <div className="p-2 rounded bg-white/5 text-sm text-white/70">
+                On-chain mint tx:{" "}
+                <a
+                  className="text-[#9b87f5] hover:text-[#7E69AB] font-mono"
+                  href={chainId ? (toExplorerTxUrl(chainId, mintTxHash) ?? "#") : "#"}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {mintTxHash.slice(0, 10)}…{mintTxHash.slice(-8)}
+                </a>
+              </div>
+            )}
             {selectedPlatforms.map(platformId => {
               const platform = platforms.find(p => p.id === platformId);
               return (
@@ -123,6 +139,15 @@ export const DeploymentProgress = ({ platforms: selectedPlatforms, onComplete }:
           <h2 className="text-2xl font-bold text-white text-shadow-sm mb-2">Deploying Your NFT</h2>
           <p className="text-white/70 text-shadow-sm">Please keep this window open...</p>
         </div>
+
+        {mintTxHash && (
+          <div className="backdrop-blur-md bg-white/5 border border-white/20 rounded-lg p-4 text-sm text-white/70">
+            Mint submitted:{" "}
+            <span className="font-mono">
+              {mintTxHash.slice(0, 10)}…{mintTxHash.slice(-8)}
+            </span>
+          </div>
+        )}
 
         <div className="space-y-4">
           {selectedPlatforms.map(platformId => {

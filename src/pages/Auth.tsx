@@ -8,11 +8,9 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff, Bot, BarChart3, Coins, Users, Sparkles, Zap, Globe, Wallet } from "lucide-react";
 import CosmicShader from "@/components/ui/shaders/CosmicShader";
 import { toast } from "sonner";
-import { ConnectButton, useActiveAccount } from "thirdweb/react";
-import { getThirdwebClient, initializeThirdwebClient } from "@/lib/thirdweb";
-import { createWallet } from "thirdweb/wallets";
+import { useActiveAccount } from "thirdweb/react";
 import { useAuth } from "@/context/AuthContext";
-import { ThirdwebClient } from "thirdweb";
+import { ConnectWalletButton } from "@/components/web3/ConnectWalletButton";
 
 export default function AuthPage() {
   const navigate = useNavigate();
@@ -23,23 +21,9 @@ export default function AuthPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [thirdwebClient, setThirdwebClient] = useState<ThirdwebClient | null>(null);
   
   // Track wallet connection
   const account = useActiveAccount();
-
-  // Initialize thirdweb client
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const client = await getThirdwebClient();
-        setThirdwebClient(client);
-      } catch (error) {
-        console.error("Failed to initialize thirdweb:", error);
-      }
-    };
-    init();
-  }, []);
 
   // Handle wallet connection - navigate to home
   useEffect(() => {
@@ -307,32 +291,7 @@ export default function AuthPage() {
         }}>
             {/* Thirdweb Wallet Connect */}
             <div className="flex justify-center [&_button]:!w-full [&_button]:!h-12 [&_button]:!rounded-xl [&_button]:!bg-gradient-to-r [&_button]:!from-purple-600 [&_button]:!to-indigo-600 [&_button]:!border-0 [&_button]:!font-medium [&_button]:hover:!opacity-90">
-              {thirdwebClient ? (
-                <ConnectButton
-                  client={thirdwebClient}
-                  wallets={[
-                    createWallet("io.metamask"),
-                    createWallet("com.coinbase.wallet"),
-                    createWallet("walletConnect"),
-                  ]}
-                  connectButton={{
-                    label: "Connect Wallet",
-                  }}
-                  connectModal={{
-                    title: "Connect Your Wallet",
-                    size: "compact",
-                  }}
-                />
-              ) : (
-                <Button 
-                  variant="outline" 
-                  className="w-full h-12 bg-gradient-to-r from-purple-600 to-indigo-600 border-0 text-white"
-                  disabled
-                >
-                  <Wallet className="mr-2 h-5 w-5" />
-                  Loading Wallet...
-                </Button>
-              )}
+              <ConnectWalletButton />
             </div>
             
             <Button onClick={handleGuestAccess} variant="outline" className="w-full h-12 text-base font-medium bg-white/5 border-white/20 hover:bg-white/10 text-white rounded-xl backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">

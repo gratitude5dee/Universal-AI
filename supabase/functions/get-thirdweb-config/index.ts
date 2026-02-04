@@ -13,6 +13,8 @@ serve(async (req) => {
 
   try {
     const clientId = Deno.env.get("THIRDWEB_CLIENT_ID");
+    const contractsJson = Deno.env.get("THIRDWEB_CONTRACTS_JSON") ?? "{}";
+    const paymentTokensJson = Deno.env.get("PAYMENT_TOKENS_JSON") ?? "{}";
     
     if (!clientId) {
       return new Response(
@@ -25,7 +27,12 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ clientId }),
+      JSON.stringify({
+        clientId,
+        // Maps are configured as JSON env vars so we can update without redeploying the frontend.
+        contractsByChainId: JSON.parse(contractsJson),
+        paymentTokensByChainId: JSON.parse(paymentTokensJson),
+      }),
       { 
         status: 200, 
         headers: { ...corsHeaders, "Content-Type": "application/json" } 

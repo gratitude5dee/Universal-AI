@@ -3,9 +3,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ExternalLink, Activity, Droplet } from "lucide-react";
 import { useNetwork, ChainId } from "@/context/NetworkContext";
 import { Button } from "@/components/ui/button";
+import { useEvmWallet } from "@/context/EvmWalletContext";
 
 export const NetworkSwitcher = () => {
   const { currentNetwork, rpcStatus, switchNetwork } = useNetwork();
+  const { switchChain } = useEvmWallet();
   const [isOpen, setIsOpen] = useState(false);
 
   const networks: { chainId: ChainId; label: string }[] = [
@@ -57,6 +59,8 @@ export const NetworkSwitcher = () => {
                     key={network.chainId}
                     onClick={() => {
                       switchNetwork(network.chainId);
+                      // Best-effort: align the connected EVM wallet to the selected Story network.
+                      switchChain(network.chainId).catch(() => {});
                       setIsOpen(false);
                     }}
                     className={`w-full px-3 py-2 rounded-lg text-left transition-all ${

@@ -5,6 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { ConnectWalletButton } from "@/components/web3/ConnectWalletButton";
+import { useEvmWallet } from "@/context/EvmWalletContext";
+import { useWeb3 } from "@/context/Web3Context";
+import { useAuth as useAppAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useActiveAccount } from "thirdweb/react";
+import { defineChain } from "thirdweb/chains";
+import { getContract, sendTransaction } from "thirdweb";
+import { mintTo as mintErc721To, getOwnedNFTs as getOwnedErc721 } from "thirdweb/extensions/erc721";
+import { toast } from "sonner";
 
 interface TicketEvent {
   id: string;
@@ -50,6 +60,39 @@ const mockEvents: TicketEvent[] = [
 export const Web3TicketingInterface = () => {
   const [selectedEvent, setSelectedEvent] = useState<TicketEvent | null>(null);
   const [purchaseStep, setPurchaseStep] = useState<'select' | 'payment' | 'confirmation'>('select');
+  const [isPurchasing, setIsPurchasing] = useState(false);
+  const [myTickets, setMyTickets] = useState<any[]>([]);
+
+  const { address, chainId } = useEvmWallet();
+  const { client, config, writesEnabled } = useWeb3();
+  const { user } = useAppAuth();
+  const account = useActiveAccount() as any;
+
+  React.useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (!address || !chainId) {
+        setMyTickets([]);
+        return;
+      }
+      const ticketContract = config.contractsByChainId?.[chainId]?.ticketCollection;
+      if (!ticketContract) {
+        setMyTickets([]);
+        return;
+      }
+      try {
+        const chain = defineChain(chainId as any) as any;
+        const contract = getContract({ client, chain, address: ticketContract }) as any;
+        const owned = await getOwnedErc721({ contract, owner: address } as any);
+        if (!cancelled) setMyTickets(owned ?? []);
+      } catch {
+        if (!cancelled) setMyTickets([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [address, chainId, client, config.contractsByChainId]);
 
   const handlePurchase = (event: TicketEvent) => {
     setSelectedEvent(event);
@@ -57,7 +100,63 @@ export const Web3TicketingInterface = () => {
   };
 
   const completePurchase = () => {
-    setPurchaseStep('confirmation');
+    void (async () => {
+      if (!writesEnabled) {
+        toast.error("Web3 writes disabled (set VITE_ENABLE_WEB3_WRITES=true)");
+        return;
+      }
+      if (!user) {
+        toast.error("Sign in required to purchase tickets");
+        return;
+      }
+      if (!address || !chainId || !account) {
+        toast.error("Connect your wallet to purchase");
+        return;
+      }
+      const ticketContract = config.contractsByChainId?.[chainId]?.ticketCollection;
+      if (!ticketContract) {
+        toast.error("Ticket contract not configured for this chain");
+        return;
+      }
+      setIsPurchasing(true);
+      try {
+        const chain = defineChain(chainId as any) as any;
+        const contract = getContract({ client, chain, address: ticketContract }) as any;
+        const tx = mintErc721To({
+          contract,
+          to: address,
+          nft: {
+            name: selectedEvent?.title ?? "Event Ticket",
+            description: selectedEvent ? `${selectedEvent.title} • ${selectedEvent.date}` : "UniversalAI Ticket",
+          },
+        } as any);
+        const result = await sendTransaction({ transaction: tx, account } as any);
+        const txHash = (result as any)?.transactionHash ?? (result as any)?.hash ?? null;
+
+        await supabase.from("wallet_transactions").insert({
+          user_id: user.id,
+          wallet_address: address,
+          transaction_type: "ticket_mint",
+          amount: 0,
+          asset_symbol: "TICKET",
+          status: "submitted",
+          transaction_hash: txHash ? String(txHash) : null,
+          metadata: {
+            eventId: selectedEvent?.id,
+            eventTitle: selectedEvent?.title,
+            chainId,
+            contractAddress: ticketContract,
+            uiSource: "distribution/ticketing",
+          },
+        } as any);
+
+        setPurchaseStep("confirmation");
+      } catch (e: any) {
+        toast.error(e?.message ?? "Ticket mint failed");
+      } finally {
+        setIsPurchasing(false);
+      }
+    })();
   };
 
   return (
@@ -138,8 +237,25 @@ export const Web3TicketingInterface = () => {
           <Card className="p-8 text-center bg-white/5 border border-white/10">
             <QrCode className="w-16 h-16 mx-auto mb-4 text-purple-400" />
             <h4 className="text-lg font-semibold text-white mb-2">Your NFT Tickets</h4>
-            <p className="text-white/70 mb-4">Connect your wallet to view purchased tickets</p>
-            <Button className="bg-studio-accent">Connect Wallet</Button>
+            <p className="text-white/70 mb-4">
+              {address ? `Found ${myTickets.length} ticket(s) on this chain` : "Connect your wallet to view purchased tickets"}
+            </p>
+            {!address ? (
+              <div className="[&_button]:!w-full [&_button]:!h-11 [&_button]:!rounded-lg">
+                <ConnectWalletButton />
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {myTickets.slice(0, 5).map((t, idx) => (
+                  <div key={idx} className="p-3 rounded-lg bg-white/5 border border-white/10 text-left">
+                    <div className="text-sm font-medium text-white">{(t as any)?.metadata?.name ?? "Ticket"}</div>
+                    <div className="text-xs text-white/60 font-mono">
+                      Token: {(t as any)?.id ?? (t as any)?.tokenId ?? "—"}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </Card>
         </TabsContent>
 
@@ -189,9 +305,10 @@ export const Web3TicketingInterface = () => {
             <div className="flex gap-2">
               <Button 
                 onClick={completePurchase}
+                disabled={isPurchasing}
                 className="flex-1 bg-gradient-to-r from-purple-500 to-blue-600"
               >
-                Confirm Purchase
+                {isPurchasing ? "Minting..." : "Confirm Purchase"}
               </Button>
               <Button 
                 variant="outline"
