@@ -34,7 +34,7 @@ const getCryptoKey = async () => {
 
   return crypto.subtle.importKey(
     'raw',
-    rawKey,
+    rawKey.buffer as ArrayBuffer,
     { name: 'AES-GCM' },
     false,
     ['encrypt', 'decrypt']

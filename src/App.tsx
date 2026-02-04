@@ -126,24 +126,9 @@ function App() {
     return <div className="min-h-screen flex items-center justify-center text-white">Loading Web3…</div>;
   }
 
-  const supportedChains = useMemo(
-    () =>
-      [
-        defineChain(1),
-        defineChain(8453),
-        defineChain(137),
-        defineChain(1514),
-        defineChain(11155111),
-        defineChain(84532),
-        defineChain(80002),
-        defineChain(1315),
-      ] as any[],
-    [],
-  );
-
   return (
     <QueryClientProvider client={queryClient}>
-      <ThirdwebProvider client={thirdwebClient as any} supportedChains={supportedChains as any}>
+      <ThirdwebProvider>
         <Web3Provider client={thirdwebClient} config={web3Config}>
           <AuthProvider>
             <EvmWalletProvider>
