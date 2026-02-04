@@ -1,132 +1,128 @@
 
-# Plan: Thirdweb Auth with Supabase Secrets + Home Navigation
+# Plan: Fix Build Errors for Thirdweb Client
 
 ## Overview
-This plan updates the Thirdweb authentication to use the client ID from Supabase secrets and ensures users are properly redirected to the home page after wallet connection.
+The Thirdweb client is **already** configured to load from Supabase secrets via the `get-thirdweb-config` edge function. The current build errors need to be fixed for it to work properly.
 
 ---
 
-## The Challenge
-
-Currently, there are two issues:
-1. The Thirdweb client ID is hardcoded or uses `VITE_` env variables
-2. After wallet connection, users can't access `/home` because `ProtectedRoute` only checks for Supabase auth - not wallet connections
-
----
-
-## Solution Architecture
+## Current Architecture (Already Correct)
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
-│                      Auth Page                               │
-├─────────────────────────────────────────────────────────────┤
-│  ┌─────────────────┐     ┌─────────────────┐                │
-│  │  Supabase Auth  │ OR  │  Wallet Connect │                │
-│  └────────┬────────┘     └────────┬────────┘                │
-│           │                       │                          │
-│           ▼                       ▼                          │
-│  ┌─────────────────────────────────────────┐                │
-│  │         AuthContext (Updated)           │                │
-│  │  - Tracks Supabase user                 │                │
-│  │  - Tracks wallet address (NEW)          │                │
-│  │  - isAuthenticated = user OR wallet     │                │
-│  └─────────────────┬───────────────────────┘                │
-│                    │                                         │
-│                    ▼                                         │
-│           Navigate to /home                                  │
+│               Supabase Edge Function                        │
+│         get-thirdweb-config/index.ts                        │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  Reads THIRDWEB_CLIENT_ID from Supabase secrets     │   │
+│  │  Returns { clientId, contractsByChainId, ... }      │   │
+│  └─────────────────────────────────────────────────────┘   │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│               Frontend: src/lib/web3/config.ts              │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  getWeb3Config() fetches from edge function         │   │
+│  │  Falls back to VITE_* env vars if fetch fails       │   │
+│  └─────────────────────────────────────────────────────┘   │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│               App.tsx                                       │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  Creates ThirdwebClient from config                 │   │
+│  │  Wraps app in ThirdwebProvider                      │   │
+│  └─────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────┘
+```
+
+**The secret `THIRDWEB_CLIENT_ID` already exists in Supabase.** The architecture is correct - we just need to fix build errors.
+
+---
+
+## Build Errors to Fix
+
+### Error 1: ThirdwebProvider Props (App.tsx)
+**Problem**: The `ThirdwebProvider` from thirdweb v5 SDK does not accept `client` or `supportedChains` props directly. The v5 API changed - it uses a connectionManager pattern.
+
+**Solution**: Remove the invalid props from `ThirdwebProvider`. The thirdweb v5 provider doesn't need these props - the `ConnectButton` component handles the client internally.
+
+**File**: `src/App.tsx` (Line 146)
+```typescript
+// Before (broken):
+<ThirdwebProvider client={thirdwebClient} supportedChains={supportedChains}>
+
+// After (fixed):
+<ThirdwebProvider>
+```
+
+### Error 2: Uint8Array Type Incompatibility (manage-user-secrets)
+**Problem**: TypeScript strict mode complains about `Uint8Array<ArrayBufferLike>` not matching `BufferSource`.
+
+**Solution**: Convert `Uint8Array` to proper `ArrayBuffer` format for crypto operations:
+
+**File**: `supabase/functions/manage-user-secrets/index.ts`
+```typescript
+// Fix line 35-41: Use .buffer property with proper type
+return crypto.subtle.importKey(
+  'raw',
+  rawKey.buffer as ArrayBuffer,
+  { name: 'AES-GCM' },
+  false,
+  ['encrypt', 'decrypt']
+);
+
+// Fix line 125: Cast iv to BufferSource
+{ name: 'AES-GCM', iv: iv.buffer as ArrayBuffer }
+```
+
+### Error 3: bun:test Import Errors (Test Files)
+**Problem**: Test files import from `bun:test` which doesn't exist in this environment.
+
+**Solution**: Convert tests to use Vitest (already in the project) or Deno test conventions:
+
+**Files**: `src/lib/web3/gating.test.ts`, `src/lib/web3/idempotency.test.ts`
+```typescript
+// Before:
+import { describe, expect, test } from "bun:test";
+
+// After (Vitest):
+import { describe, expect, test } from "vitest";
 ```
 
 ---
 
-## Implementation Steps
+## Files to Modify
 
-### Step 1: Create Edge Function for Client ID
-Create `supabase/functions/get-thirdweb-config/index.ts`:
-- Reads `THIRDWEB_CLIENT_ID` from Supabase secrets
-- Returns it as JSON (this is a public key, safe to expose)
-- No authentication required
-
-### Step 2: Update Thirdweb Client Library
-Update `src/lib/thirdweb.ts`:
-- Export a function to create the client dynamically
-- Fetch client ID from edge function on first use
-- Cache the result
-
-### Step 3: Update AuthContext
-Modify `src/context/AuthContext.tsx`:
-- Add `walletAddress` state to track connected wallet
-- Add `isAuthenticated` computed property (true if user OR wallet connected)
-- Export a `setWalletAddress` function for wallet connections
-
-### Step 4: Update ProtectedRoute
-Modify `src/components/ui/ProtectedRoute.tsx`:
-- Check for `isAuthenticated` instead of just `user`
-- Allow access if user has Supabase auth OR wallet connection
-
-### Step 5: Update Auth Page
-Modify `src/pages/Auth.tsx`:
-- Import `useActiveAccount` from thirdweb/react to detect wallet connection
-- On wallet connect, update AuthContext with wallet address
-- Navigate to `/home` after successful connection
+| File | Change |
+|------|--------|
+| `src/App.tsx` | Remove `client` and `supportedChains` props from ThirdwebProvider |
+| `supabase/functions/manage-user-secrets/index.ts` | Fix Uint8Array to ArrayBuffer conversions |
+| `src/lib/web3/gating.test.ts` | Change import from `bun:test` to `vitest` |
+| `src/lib/web3/idempotency.test.ts` | Change import from `bun:test` to `vitest` |
 
 ---
 
 ## Technical Details
 
-### Edge Function: get-thirdweb-config
-```typescript
-// Returns { clientId: "..." }
-// Public endpoint - no auth needed
-Deno.serve(async () => {
-  const clientId = Deno.env.get("THIRDWEB_CLIENT_ID");
-  return new Response(JSON.stringify({ clientId }), {
-    headers: { "Content-Type": "application/json" }
-  });
-});
-```
+### Thirdweb v5 Provider Pattern
+In thirdweb v5, the provider doesn't require client props. The `ConnectButton` and other components receive the client from the `Web3Context` we've set up. Our custom `Web3Provider` already passes the client via context.
 
-### Updated AuthContext Interface
+### Crypto Buffer Fix
+The Deno runtime has strict typing for Web Crypto API. Using `.buffer as ArrayBuffer` ensures type compatibility:
 ```typescript
-interface AuthContextType {
-  user: User | null;
-  session: Session | null;
-  walletAddress: string | null;
-  isAuthenticated: boolean;  // NEW: true if user OR wallet
-  loading: boolean;
-  setWalletAddress: (address: string | null) => void;
-}
-```
-
-### Auth Page Wallet Connection
-```typescript
-// Use thirdweb hook to detect connection
-const account = useActiveAccount();
-
-useEffect(() => {
-  if (account?.address) {
-    setWalletAddress(account.address);
-    navigate("/home");
-  }
-}, [account]);
+const rawKey = toUint8Array(secret);
+// rawKey.buffer gives us the underlying ArrayBuffer
+crypto.subtle.importKey('raw', rawKey.buffer as ArrayBuffer, ...)
 ```
 
 ---
 
-## Files to Create/Modify
+## Verification
 
-| File | Action | Description |
-|------|--------|-------------|
-| `supabase/functions/get-thirdweb-config/index.ts` | Create | Edge function to serve client ID |
-| `src/lib/thirdweb.ts` | Modify | Dynamic client creation with fetched ID |
-| `src/context/AuthContext.tsx` | Modify | Add wallet tracking + isAuthenticated |
-| `src/components/ui/ProtectedRoute.tsx` | Modify | Check isAuthenticated |
-| `src/pages/Auth.tsx` | Modify | Handle wallet connection properly |
-
----
-
-## Security Notes
-
-- The Thirdweb Client ID is a **public key** (similar to a Supabase anon key) - it's designed to be exposed to the client
-- The edge function adds a layer of configuration management but doesn't add security
-- Wallet authentication is cryptographically secure - the user proves ownership by signing
+After these fixes:
+1. The app will load without TypeScript errors
+2. Wallet connection will fetch the client ID from `get-thirdweb-config`
+3. The edge function reads `THIRDWEB_CLIENT_ID` from Supabase secrets
+4. On successful wallet connection, users navigate to `/home`
