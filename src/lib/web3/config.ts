@@ -59,7 +59,8 @@ export function getWeb3ConfigSync(): Web3Config {
 }
 
 export async function getWeb3Config(): Promise<Web3Config> {
-  if (cachedConfig) return cachedConfig;
+  // Only use cache if it has a valid clientId
+  if (cachedConfig?.clientId) return cachedConfig;
 
   const envFallback = getEnvConfig();
 
