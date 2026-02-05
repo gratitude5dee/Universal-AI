@@ -1,94 +1,56 @@
 
-# Plan: Fix Build Errors for Thirdweb Client
 
-## Overview
-The Thirdweb client is **already** configured to load from Supabase secrets via the `get-thirdweb-config` edge function. The current build errors need to be fixed for it to work properly.
+# Plan: Fix Web3 Config Caching Bug
 
----
+## Root Cause Analysis
 
-## Current Architecture (Already Correct)
+The edge function **is working** - it returns a valid clientId:
+```json
+{
+  "clientId": "f3a41a11153f2f75d55056f08c1d36d4",
+  "contractsByChainId": {},
+  "paymentTokensByChainId": {}
+}
+```
+
+But the frontend never reaches it because of a **caching bug**:
 
 ```text
-┌─────────────────────────────────────────────────────────────┐
-│               Supabase Edge Function                        │
-│         get-thirdweb-config/index.ts                        │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │  Reads THIRDWEB_CLIENT_ID from Supabase secrets     │   │
-│  │  Returns { clientId, contractsByChainId, ... }      │   │
-│  └─────────────────────────────────────────────────────┘   │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│               Frontend: src/lib/web3/config.ts              │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │  getWeb3Config() fetches from edge function         │   │
-│  │  Falls back to VITE_* env vars if fetch fails       │   │
-│  └─────────────────────────────────────────────────────┘   │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────────┐
-│               App.tsx                                       │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │  Creates ThirdwebClient from config                 │   │
-│  │  Wraps app in ThirdwebProvider                      │   │
-│  └─────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
+App.tsx loads
+     │
+     ├─► getWeb3ConfigSync() called
+     │        │
+     │        └─► Sets cachedConfig = { clientId: "", ... }  (empty - no env var)
+     │
+     └─► useEffect runs getWeb3Config()
+              │
+              └─► Checks: if (cachedConfig) return cachedConfig
+                       │
+                       └─► Returns EMPTY cached config ❌
+                           (Never fetches from edge function!)
 ```
-
-**The secret `THIRDWEB_CLIENT_ID` already exists in Supabase.** The architecture is correct - we just need to fix build errors.
 
 ---
 
-## Build Errors to Fix
+## The Fix
 
-### Error 1: ThirdwebProvider Props (App.tsx)
-**Problem**: The `ThirdwebProvider` from thirdweb v5 SDK does not accept `client` or `supportedChains` props directly. The v5 API changed - it uses a connectionManager pattern.
+Modify `src/lib/web3/config.ts` to only use the cache if it has a valid `clientId`. If the cached config has an empty `clientId`, still try fetching from the edge function.
 
-**Solution**: Remove the invalid props from `ThirdwebProvider`. The thirdweb v5 provider doesn't need these props - the `ConnectButton` component handles the client internally.
-
-**File**: `src/App.tsx` (Line 146)
+### Before (Broken)
 ```typescript
-// Before (broken):
-<ThirdwebProvider client={thirdwebClient} supportedChains={supportedChains}>
-
-// After (fixed):
-<ThirdwebProvider>
+export async function getWeb3Config(): Promise<Web3Config> {
+  if (cachedConfig) return cachedConfig;  // ❌ Returns empty config
+  // ... fetch logic never runs
+}
 ```
 
-### Error 2: Uint8Array Type Incompatibility (manage-user-secrets)
-**Problem**: TypeScript strict mode complains about `Uint8Array<ArrayBufferLike>` not matching `BufferSource`.
-
-**Solution**: Convert `Uint8Array` to proper `ArrayBuffer` format for crypto operations:
-
-**File**: `supabase/functions/manage-user-secrets/index.ts`
+### After (Fixed)
 ```typescript
-// Fix line 35-41: Use .buffer property with proper type
-return crypto.subtle.importKey(
-  'raw',
-  rawKey.buffer as ArrayBuffer,
-  { name: 'AES-GCM' },
-  false,
-  ['encrypt', 'decrypt']
-);
-
-// Fix line 125: Cast iv to BufferSource
-{ name: 'AES-GCM', iv: iv.buffer as ArrayBuffer }
-```
-
-### Error 3: bun:test Import Errors (Test Files)
-**Problem**: Test files import from `bun:test` which doesn't exist in this environment.
-
-**Solution**: Convert tests to use Vitest (already in the project) or Deno test conventions:
-
-**Files**: `src/lib/web3/gating.test.ts`, `src/lib/web3/idempotency.test.ts`
-```typescript
-// Before:
-import { describe, expect, test } from "bun:test";
-
-// After (Vitest):
-import { describe, expect, test } from "vitest";
+export async function getWeb3Config(): Promise<Web3Config> {
+  // Only use cache if it has a valid clientId
+  if (cachedConfig && cachedConfig.clientId) return cachedConfig;
+  // ... fetch logic now runs when clientId is empty
+}
 ```
 
 ---
@@ -97,32 +59,38 @@ import { describe, expect, test } from "vitest";
 
 | File | Change |
 |------|--------|
-| `src/App.tsx` | Remove `client` and `supportedChains` props from ThirdwebProvider |
-| `supabase/functions/manage-user-secrets/index.ts` | Fix Uint8Array to ArrayBuffer conversions |
-| `src/lib/web3/gating.test.ts` | Change import from `bun:test` to `vitest` |
-| `src/lib/web3/idempotency.test.ts` | Change import from `bun:test` to `vitest` |
+| `src/lib/web3/config.ts` | Fix cache check to require valid `clientId` before returning cached config |
 
 ---
 
-## Technical Details
+## Code Change
 
-### Thirdweb v5 Provider Pattern
-In thirdweb v5, the provider doesn't require client props. The `ConnectButton` and other components receive the client from the `Web3Context` we've set up. Our custom `Web3Provider` already passes the client via context.
+**File: `src/lib/web3/config.ts`**
 
-### Crypto Buffer Fix
-The Deno runtime has strict typing for Web Crypto API. Using `.buffer as ArrayBuffer` ensures type compatibility:
+Line 62 - Change from:
 ```typescript
-const rawKey = toUint8Array(secret);
-// rawKey.buffer gives us the underlying ArrayBuffer
-crypto.subtle.importKey('raw', rawKey.buffer as ArrayBuffer, ...)
+if (cachedConfig) return cachedConfig;
 ```
+
+To:
+```typescript
+// Only use cache if it has a valid clientId
+if (cachedConfig?.clientId) return cachedConfig;
+```
+
+This ensures:
+1. On first load, `getWeb3ConfigSync()` returns empty config (app shows loading)
+2. `useEffect` calls `getWeb3Config()` which now fetches from edge function since cache has no `clientId`
+3. Edge function returns real `clientId`, config is cached properly
+4. App re-renders with valid thirdweb client
 
 ---
 
 ## Verification
 
-After these fixes:
-1. The app will load without TypeScript errors
-2. Wallet connection will fetch the client ID from `get-thirdweb-config`
-3. The edge function reads `THIRDWEB_CLIENT_ID` from Supabase secrets
-4. On successful wallet connection, users navigate to `/home`
+After this fix:
+1. The app will fetch the client ID from `get-thirdweb-config` edge function
+2. The thirdweb client will be created with `clientId: "f3a41a11153f2f75d55056f08c1d36d4"`
+3. The Web3 Initialization Error will be resolved
+4. Wallet connection will work properly
+
