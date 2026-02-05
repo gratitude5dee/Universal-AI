@@ -3523,6 +3523,63 @@ export type Database = {
           },
         ]
       }
+      mog_agent_profiles: {
+        Row: {
+          api_key: string
+          avatar_url: string | null
+          created_at: string | null
+          description: string | null
+          follower_count: number | null
+          following_count: number | null
+          id: string
+          is_active: boolean | null
+          is_verified: boolean | null
+          karma: number | null
+          last_active_at: string | null
+          moltbook_id: string
+          name: string
+          post_count: number | null
+          updated_at: string | null
+          wallet_address: string
+        }
+        Insert: {
+          api_key?: string
+          avatar_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          follower_count?: number | null
+          following_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          karma?: number | null
+          last_active_at?: string | null
+          moltbook_id: string
+          name: string
+          post_count?: number | null
+          updated_at?: string | null
+          wallet_address: string
+        }
+        Update: {
+          api_key?: string
+          avatar_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          follower_count?: number | null
+          following_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          karma?: number | null
+          last_active_at?: string | null
+          moltbook_id?: string
+          name?: string
+          post_count?: number | null
+          updated_at?: string | null
+          wallet_address?: string
+        }
+        Relationships: []
+      }
       mog_bookmarks: {
         Row: {
           created_at: string | null
@@ -3732,6 +3789,41 @@ export type Database = {
             columns: ["audio_id"]
             isOneToOne: false
             referencedRelation: "music_tracks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mog_rate_limits: {
+        Row: {
+          action_count: number | null
+          action_type: string
+          agent_id: string | null
+          created_at: string | null
+          id: string
+          window_start: string | null
+        }
+        Insert: {
+          action_count?: number | null
+          action_type: string
+          agent_id?: string | null
+          created_at?: string | null
+          id?: string
+          window_start?: string | null
+        }
+        Update: {
+          action_count?: number | null
+          action_type?: string
+          agent_id?: string | null
+          created_at?: string | null
+          id?: string
+          window_start?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mog_rate_limits_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "mog_agent_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -7442,6 +7534,57 @@ export type Database = {
         }
         Relationships: []
       }
+      user_karma: {
+        Row: {
+          actions_given: number | null
+          actions_received: number | null
+          bookmarks_earned: number | null
+          comments_earned: number | null
+          created_at: string | null
+          karma: number | null
+          last_action_at: string | null
+          likes_earned: number | null
+          shares_earned: number | null
+          total_earned: number | null
+          total_spent: number | null
+          updated_at: string | null
+          views_earned: number | null
+          wallet_address: string
+        }
+        Insert: {
+          actions_given?: number | null
+          actions_received?: number | null
+          bookmarks_earned?: number | null
+          comments_earned?: number | null
+          created_at?: string | null
+          karma?: number | null
+          last_action_at?: string | null
+          likes_earned?: number | null
+          shares_earned?: number | null
+          total_earned?: number | null
+          total_spent?: number | null
+          updated_at?: string | null
+          views_earned?: number | null
+          wallet_address: string
+        }
+        Update: {
+          actions_given?: number | null
+          actions_received?: number | null
+          bookmarks_earned?: number | null
+          comments_earned?: number | null
+          created_at?: string | null
+          karma?: number | null
+          last_action_at?: string | null
+          likes_earned?: number | null
+          shares_earned?: number | null
+          total_earned?: number | null
+          total_spent?: number | null
+          updated_at?: string | null
+          views_earned?: number | null
+          wallet_address?: string
+        }
+        Relationships: []
+      }
       user_preferences: {
         Row: {
           artists: string[] | null
@@ -8331,6 +8474,18 @@ export type Database = {
         }[]
       }
       get_waitlist_count: { Args: never; Returns: number }
+      increment_mog_post_comments: {
+        Args: { increment_by?: number; post_id: string }
+        Returns: undefined
+      }
+      increment_mog_post_likes: {
+        Args: { increment_by?: number; post_id: string }
+        Returns: undefined
+      }
+      increment_mog_post_views: {
+        Args: { increment_by?: number; post_id: string }
+        Returns: undefined
+      }
       is_authenticated_user: {
         Args: { requested_user_id: string }
         Returns: boolean
