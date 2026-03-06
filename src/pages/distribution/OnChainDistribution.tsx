@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { 
   Link, ArrowUpDown, Coins, ArrowRight, Settings, 
   BarChart, Calendar, Plus, Users, Rocket, Music, Headphones, 
@@ -11,8 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { NotificationCenter } from "@/components/on-chain/shared/NotificationCenter";
 import { Toaster } from "sonner";
-import PlatformSelector from "@/components/launchpad/PlatformSelector";
-import UnifiedLaunchForm from "@/components/launchpad/UnifiedLaunchForm";
+import { LaunchProviderWorkbench } from "@/components/launchpad/LaunchProviderWorkbench";
 import { AudioPlayer } from "@/components/distribution/music/AudioPlayer";
 import { MusicNFTMinter } from "@/components/distribution/music/MusicNFTMinter";
 import { ArtistDashboard } from "@/components/distribution/music/ArtistDashboard";
@@ -31,11 +29,8 @@ import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 
 const OnChainDistribution = () => {
-  const navigate = useNavigate();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("tokenize");
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
-  const [launchpadTab, setLaunchpadTab] = useState("platforms");
   const [selectedAssetType, setSelectedAssetType] = useState<AssetType | null>(null);
   const [wizardActive, setWizardActive] = useState(false);
   const [showAgentWizard, setShowAgentWizard] = useState(false);
@@ -95,7 +90,7 @@ const OnChainDistribution = () => {
     console.log('Deployment config:', config);
     toast({
       title: "Deployment Initiated",
-      description: `${config.name} is being deployed to ${config.selectedChains.length} chain(s) and ${config.selectedPlatforms.length} platform(s).`,
+      description: `${config.name} is being prepared for ${config.selectedChains.length} chain(s) across ${config.selectedPlatforms.length} supported provider flow(s).`,
     });
     setWizardActive(false);
     setSelectedAssetType(null);
@@ -105,8 +100,8 @@ const OnChainDistribution = () => {
     <>
       <Toaster position="top-right" richColors />
       <DistributionLayout
-        title="Universal RWA Tokenization & Trading Platform"
-        subtitle="Tokenize anything, trade everywhere, optimize everything - powered by AI across 5+ chains"
+        title="UniversalAI Onchain Launch & Distribution"
+        subtitle="Creator launch flows are now split by provider boundary: thirdweb for EVM wallet UX, Clanker for Base launch, Bags for Solana launch, and Bankr for advanced automation."
       >
       {/* Notification Center - Top Right */}
       <div className="absolute top-4 right-4 z-50">
@@ -606,87 +601,14 @@ const OnChainDistribution = () => {
                   <Rocket className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-3xl font-bold text-white">Social Token Launchpad</h3>
-                  <p className="text-white/70 text-lg">Create and deploy social tokens across multiple Web3 platforms</p>
+                  <h3 className="text-3xl font-bold text-white">Provider-Aware Launchpad</h3>
+                  <p className="text-white/70 text-lg">
+                    Base launch runs through thirdweb + Clanker, Solana launch runs through Bags, and Bankr stays optional for advanced automation only.
+                  </p>
                 </div>
               </div>
 
-              <Tabs value={launchpadTab} onValueChange={setLaunchpadTab} className="w-full">
-                <TabsList className="bg-white/10 border border-white/20 rounded-lg mb-6">
-                  <TabsTrigger 
-                    value="platforms" 
-                    className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary"
-                  >
-                    1. Select Platforms
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="launch" 
-                    className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary"
-                    disabled={selectedPlatforms.length === 0}
-                  >
-                    2. Configure & Launch
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="manage" 
-                    className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary"
-                  >
-                    3. Manage Tokens
-                  </TabsTrigger>
-                </TabsList>
-
-                <motion.div
-                  key={launchpadTab}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <TabsContent value="platforms" className="mt-0">
-                    <PlatformSelector />
-                    {selectedPlatforms.length > 0 && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="mt-6 text-center"
-                      >
-                        <Button
-                          onClick={() => setLaunchpadTab("launch")}
-                          className="bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700"
-                        >
-                          Continue to Launch →
-                        </Button>
-                      </motion.div>
-                    )}
-                  </TabsContent>
-
-                  <TabsContent value="launch" className="mt-0">
-                    <UnifiedLaunchForm 
-                      selectedPlatforms={selectedPlatforms}
-                      onLaunchComplete={() => setLaunchpadTab("manage")}
-                    />
-                  </TabsContent>
-
-                  <TabsContent value="manage" className="mt-0">
-                    <div className="glass-card rounded-xl p-12 border border-white/10 backdrop-blur-md text-center">
-                      <div className="text-6xl mb-4">🎉</div>
-                      <h4 className="text-white text-2xl font-bold mb-2">Token Management Dashboard</h4>
-                      <p className="text-white/70 mb-6">
-                        Your tokens have been successfully launched! Access advanced management features here.
-                      </p>
-                      <div className="flex flex-wrap justify-center gap-4">
-                        <Button variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20">
-                          View Analytics
-                        </Button>
-                        <Button variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20">
-                          Manage Community
-                        </Button>
-                        <Button variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20">
-                          Create Rewards
-                        </Button>
-                      </div>
-                    </div>
-                  </TabsContent>
-                </motion.div>
-              </Tabs>
+              <LaunchProviderWorkbench />
             </div>
           </TabsContent>
         </motion.div>

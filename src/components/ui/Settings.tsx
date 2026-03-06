@@ -2,20 +2,24 @@
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@crossmint/client-sdk-react-ui";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { LogOut, User } from "lucide-react";
 import { SettingsIcon } from "@/components/ui/icons";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth as useAppAuth } from "@/context/AuthContext";
+import { useEvmWallet } from "@/context/EvmWalletContext";
+import { ConnectWalletButton } from "@/components/web3/ConnectWalletButton";
 
 export const Settings = () => {
   const [open, setOpen] = React.useState(false);
-  const { user, logout } = useAuth();
+  const { user } = useAppAuth();
+  const { address, chainMeta } = useEvmWallet();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await supabase.auth.signOut();
       setOpen(false);
       navigate('/', { replace: true });
       toast("Success", {
@@ -56,6 +60,21 @@ export const Settings = () => {
               </div>
             </div>
           )}
+
+          {/* Wallet section */}
+          <div className="p-3 bg-muted rounded-lg space-y-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium">Wallet</p>
+                <p className="text-xs text-muted-foreground">
+                  {address ? `${address.slice(0, 6)}...${address.slice(-4)}${chainMeta ? ` • ${chainMeta.name}` : ""}` : "Not connected"}
+                </p>
+              </div>
+            </div>
+            <div className="[&_button]:!w-full [&_button]:!h-10 [&_button]:!rounded-lg">
+              <ConnectWalletButton />
+            </div>
+          </div>
           
           {user && (
             <Button 

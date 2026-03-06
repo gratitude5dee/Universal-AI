@@ -5,7 +5,7 @@ The UniversalAI MCP package exposes the Agents Commerce Protocol (x402) toolchai
 ## Requirements
 
 - Node.js 18+
-- npm or bun (tests use `bun test`)
+- npm
 - Supabase project (URL, anon/service keys)
 - Crossmint API credentials for live wallet operations
 
@@ -13,8 +13,6 @@ The UniversalAI MCP package exposes the Agents Commerce Protocol (x402) toolchai
 
 ```bash
 npm install
-# or
-bun install
 ```
 
 ## Environment Variables
@@ -122,7 +120,7 @@ await searchKb();
 ## Testing
 
 ```bash
-bun test mcp/tests
+npx vitest run mcp/tests/*.spec.ts
 ```
 
 The suite covers schema validation, allowlists, and idempotency behavior.

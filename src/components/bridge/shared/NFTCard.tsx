@@ -17,6 +17,7 @@ interface NFTCardProps {
     sales: number;
     revenue: number;
     status: string;
+    externalUrl?: string;
   };
 }
 
@@ -25,7 +26,7 @@ export const NFTCard = ({ nft }: NFTCardProps) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(`https://opensea.io/assets/${nft.id}`);
+    navigator.clipboard.writeText(nft.externalUrl ?? nft.id);
     setCopied(true);
     toast({ title: "Link copied!" });
     setTimeout(() => setCopied(false), 2000);
@@ -89,6 +90,10 @@ export const NFTCard = ({ nft }: NFTCardProps) => {
             variant="outline"
             size="sm"
             className="border-white/20 text-white hover:bg-white/10"
+            onClick={() => {
+              if (nft.externalUrl) window.open(nft.externalUrl, "_blank", "noreferrer");
+            }}
+            disabled={!nft.externalUrl}
           >
             <ExternalLink className="w-4 h-4" />
           </Button>

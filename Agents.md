@@ -211,7 +211,7 @@ create index on agent_memory_chunks (creator_id, agent_id, created_at desc);
   - Treasury: mock transfer with confirmation token.
   - Distribution: schedule multi-channel drop with compliance check.
   - Analytics: produce weekly performance summary with citations.
-- **Regression:** nightly Bun test suite + Supabase sandbox simulation.
+- **Regression:** nightly Vitest suite + Supabase sandbox simulation.
 - **Live A/B:** compare agent plan variants (control vs autoplan) measuring completion rate & latency.
 
 ## 11. Performance & Cost
@@ -227,7 +227,7 @@ create index on agent_memory_chunks (creator_id, agent_id, created_at desc);
 - **Secrets:** Vercel/Netlify encrypted envs; rotate Crossmint keys quarterly.
 - **Migrations:** Supabase SQL migrations via `supabase db push`; embed table changes behind feature flags.
 - **Rollback:** Git-based rollback + Supabase point-in-time recovery (PITR) for Postgres.
-- **CI/CD:** GitHub Actions running lint, bun test, manifest validation, diagram lint.
+- **CI/CD:** GitHub Actions running lint, npm run test, manifest validation, diagram lint.
 
 ## 13. Glossary & Naming
 - **ACP/x402:** Agents Commerce Protocol.

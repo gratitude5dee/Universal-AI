@@ -2,11 +2,11 @@
 import React from "react";
 import { BarChart3 } from "lucide-react";
 import TransactionHistory from "./TransactionHistory";
-import { useWallet } from "@/context/WalletContext";
 import { Button } from "@/components/ui/button";
+import { useEvmWallet } from "@/context/EvmWalletContext";
 
 const ActivityTab: React.FC = () => {
-  const { address, balance, isLoading, fetchBalance } = useWallet();
+  const { address, nativeBalance, chainMeta, isLoading, refresh } = useEvmWallet();
 
   return (
     <div className="glass-card p-6">
@@ -17,7 +17,7 @@ const ActivityTab: React.FC = () => {
         <div className="p-4 bg-white/5 rounded-lg">
           <div className="flex items-center justify-between mb-2">
             <h4 className="font-medium">Wallet Information</h4>
-            <Button variant="ghost" size="sm" onClick={() => fetchBalance()}>
+            <Button variant="ghost" size="sm" onClick={() => refresh()}>
               Refresh
             </Button>
           </div>
@@ -28,7 +28,13 @@ const ActivityTab: React.FC = () => {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Balance:</span>
-              <span>{isLoading ? 'Loading...' : `${balance.toFixed(8)} SOL`}</span>
+              <span>
+                {isLoading
+                  ? "Loading..."
+                  : nativeBalance && chainMeta
+                    ? `${nativeBalance.formatted} ${chainMeta.nativeSymbol}`
+                    : "—"}
+              </span>
             </div>
           </div>
         </div>

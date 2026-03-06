@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Wallet, AlertTriangle, ExternalLink, TrendingUp, Droplet } from "lucide-react";
-import { useWallet } from "@/context/WalletContext";
 import { useNetwork } from "@/context/NetworkContext";
 import { Button } from "@/components/ui/button";
+import { useEvmWallet } from "@/context/EvmWalletContext";
+import { ConnectWalletButton } from "@/components/web3/ConnectWalletButton";
 
 export const WalletStatusPanel = () => {
-  const { address, balance } = useWallet();
+  const { address, chainMeta } = useEvmWallet();
   const { currentNetwork } = useNetwork();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -22,10 +23,9 @@ export const WalletStatusPanel = () => {
 
   if (!address) {
     return (
-      <Button variant="outline" size="sm" className="border-white/20">
-        <Wallet className="w-4 h-4 mr-2" />
-        Connect Wallet
-      </Button>
+      <div className="[&_button]:!h-9 [&_button]:!rounded-lg [&_button]:!px-3">
+        <ConnectWalletButton label="Connect Wallet" />
+      </div>
     );
   }
 
@@ -142,7 +142,7 @@ export const WalletStatusPanel = () => {
               {/* Quick Actions */}
               <div className="border-t border-white/10 pt-4 mt-4 space-y-2">
                 <a
-                  href={`${currentNetwork.explorerUrl}/address/${address}`}
+                  href={`${(chainMeta?.explorerBaseUrl ?? currentNetwork.explorerUrl)}/address/${address}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white/5 transition-all group"

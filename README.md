@@ -9,13 +9,13 @@
 
 UniversalAI ✨ — Cultivate your Creator, Make Magic Real Again
 
-Welcome to UniversalAI, a next-generation creator hub where intelligent agents and blockchain infrastructure co-create alongside you. Spin up specialized AI companions, orchestrate smart workflows, and manage every asset—from NFT collections to revenue streams—inside a single, secure command center. Dive into Agents.md for deep architectural diagrams that unpack how each agent collaborates across Supabase, Crossmint, and pgvector-backed knowledge stores.
+Welcome to UniversalAI, a next-generation creator hub where intelligent agents and blockchain infrastructure co-create alongside you. Spin up specialized AI companions, orchestrate smart workflows, and manage every asset—from NFT collections to revenue streams—inside a single, secure command center. Dive into Agents.md for deep architectural diagrams that unpack how each agent collaborates across Supabase, thirdweb, Crossmint custody flows, and pgvector-backed knowledge stores.
 
 Why creators choose UniversalAI
 
 AI-Powered Creation — Launch and customize marketplace agents, unlock WZRD Studio for AI-assisted production, and automate tedious loops so you can focus on storytelling.
 
-Blockchain & Security — Protect IP with Solana’s speed, Crossmint’s wallet fabric, and decentralized storage that keeps digital work tamper-resistant and verifiable.
+Blockchain & Security — Protect IP with Solana’s speed, thirdweb-powered EVM wallet UX, Crossmint custodial treasury flows, and decentralized storage that keeps digital work tamper-resistant and verifiable.
 
 Creator Economy Ops — Manage treasury flows, diversify monetization channels, and track performance with analytics tuned for creator-led organizations.
 
@@ -37,7 +37,8 @@ Creative Asset Suite — Catalog every render, collection, and licensing agreeme
 
 ### Blockchain & Web3
 - **Solana** - High-performance blockchain platform
-- **Crossmint SDK** - Seamless wallet and authentication integration
+- **thirdweb** - Primary EVM wallet, contract reads/writes, and creator-facing onchain UX
+- **Crossmint** - Custodial wallet creation and guarded treasury execution
 - **Web3.js** - Ethereum and multi-chain blockchain interactions
 
 ### State & Data Management
@@ -80,13 +81,13 @@ Before you begin, ensure you have the following installed:
    ```
 
 3. **Set up environment variables**
-   Create a `.env.local` file in the project root and define the required Vite variables:
+   Copy `.env.example` to `.env.local` and define the required Vite variables:
    ```env
-   VITE_CROSSMINT_CLIENT_KEY=your_crossmint_client_key_here
    VITE_SUPABASE_URL=your_supabase_url
    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   VITE_THIRDWEB_CLIENT_ID=your_thirdweb_client_id
    ```
-   *Note: You can reference the Crossmint Developer Console for client keys and the Supabase dashboard (Project Settings → API) for your Supabase URL and anon key when filling in these values.*
+   *Note: The frontend uses thirdweb for creator-facing EVM wallet UX. `VITE_SUPABASE_ANON_KEY` can also be mirrored into `VITE_SUPABASE_PUBLISHABLE_KEY` for components that expect that name.*
 
 4. **Start the development server**
    ```bash
@@ -119,23 +120,37 @@ docker run -p 5173:5173 universalai
 Create a `.env.local` file in the root directory with the following variables:
 
 ```env
-# Crossmint Configuration (Required for blockchain features)
-VITE_CROSSMINT_CLIENT_KEY=your_crossmint_client_key_here
-
 # Supabase Configuration (Required for backend services)
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
+
+# thirdweb Configuration (Required for creator-facing EVM features)
+VITE_THIRDWEB_CLIENT_ID=your_thirdweb_client_id
+
+# Optional: enable browser wallet writes in development
+VITE_ENABLE_WEB3_WRITES=false
+
+# Optional: local fallback contract and token maps
+VITE_THIRDWEB_CONTRACTS_JSON={}
+VITE_PAYMENT_TOKENS_JSON={}
 
 # Optional: Development/Production Mode
 NODE_ENV=development
 ```
 
+### thirdweb Setup
+
+1. Visit the thirdweb dashboard and create or select a project
+2. Copy your client ID
+3. Add `VITE_THIRDWEB_CLIENT_ID` to `.env.local`
+4. Optionally configure `get-thirdweb-config` in Supabase to serve client and contract metadata dynamically
+
 ### Crossmint Setup
 
-1. Visit [Crossmint Developer Console](https://crossmint.com/console)
-2. Create a new project
-3. Copy your client key (starts with `ck_`)
-4. Add the key to your `.env.local` file
+1. Configure Crossmint server credentials only for custodial wallet and treasury flows
+2. Keep Crossmint keys in Supabase env or MCP env, not in frontend Vite env
+3. Use `create-wallet` and `transfer-sol` only for custodial/operator flows
 
 ### Supabase Setup (Optional)
 
@@ -144,10 +159,18 @@ For full blockchain functionality:
 1. Create a [Supabase](https://supabase.com/) project
 2. Deploy the provided serverless functions:
    ```bash
+   supabase functions deploy get-thirdweb-config
+   supabase functions deploy wallet-link-start
+   supabase functions deploy wallet-link-complete
+   supabase functions deploy launch-clanker-preflight
+   supabase functions deploy launch-bags-session
+   supabase functions deploy bankr-automation-session
+   supabase functions deploy engine-admin-execute
    supabase functions deploy create-wallet
    supabase functions deploy transfer-sol
    ```
-3. Add your Supabase credentials to `.env.local`
+3. Apply database migrations, including the provider-boundary migration in `supabase/migrations/20260306123000_provider_boundary_foundation.sql`
+4. Add your Supabase credentials to `.env.local`
 
 ### MCP Server Setup Overview
 
@@ -205,22 +228,25 @@ export function CustomCreatorTool() {
 }
 ```
 
-**Using the Wallet Context:**
+**Using the EVM Wallet Context:**
 ```tsx
-import { useWallet } from "@/context/WalletContext";
+import { useEvmWallet } from "@/context/EvmWalletContext";
+import { ConnectWalletButton } from "@/components/web3/ConnectWalletButton";
 
 export function WalletDisplay() {
-  const { walletAddress, connectWallet, disconnect } = useWallet();
+  const { address, nativeBalance, chainMeta } = useEvmWallet();
   
   return (
     <div>
-      {walletAddress ? (
+      {address ? (
         <div>
-          <p>Connected: {walletAddress}</p>
-          <button onClick={disconnect}>Disconnect</button>
+          <p>Connected: {address}</p>
+          <p>
+            Balance: {nativeBalance?.formatted} {chainMeta?.nativeSymbol}
+          </p>
         </div>
       ) : (
-        <button onClick={connectWallet}>Connect Wallet</button>
+        <ConnectWalletButton />
       )}
     </div>
   );
@@ -234,20 +260,13 @@ export function WalletDisplay() {
 ### Running Tests
 
 ```bash
-# Run all tests with Bun (recommended)
-bun test
-
-# Or use the npm script
+# Run the UniversalAI-owned test suite
 npm run test
 
 # Run tests in watch mode
-bun test --watch
-# or
 npm run test:watch
 
 # Run tests with coverage reporting
-bun test --coverage
-# or
 npm run test:coverage
 ```
 
@@ -282,7 +301,16 @@ npm run preview
 
 **Deploy to Lovable (Recommended):**
 1. Visit [Lovable](https://lovable.dev/projects/b8353fa8-16e6-4fe2-9f52-00d0a7a9630c)
-2. Click "Share" → "Publish"
+2. Configure preview or production env vars before publishing:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+   - `VITE_THIRDWEB_CLIENT_ID`
+   - optional `VITE_ENABLE_WEB3_WRITES`
+   - optional `VITE_SUPABASE_PUBLISHABLE_KEY` if you do not want it to alias the anon key
+3. Confirm the build command is `npm run build`
+4. Confirm the output directory is `dist`
+5. Publish only after preview verifies the launchpad and integrations routes
+6. Click "Share" → "Publish"
 
 **Deploy to Netlify:**
 ```bash
@@ -366,10 +394,15 @@ npm install
 npm run dev -- --force
 ```
 
-**Issue: Crossmint authentication not working**
-- Verify your `VITE_CROSSMINT_CLIENT_KEY` is correct
-- Check that the key includes "development", "staging", or "production"
-- Ensure the key starts with "ck_"
+**Issue: thirdweb initialization not working**
+- Verify `VITE_THIRDWEB_CLIENT_ID` is set, or that the Supabase edge function `get-thirdweb-config` is deployed
+- Check the browser console for `Web3 Initialization Error`
+- Confirm preview env vars were added in Lovable before publishing
+
+**Issue: custodial wallet flow not working**
+- Verify the Supabase functions `create-wallet` and `transfer-sol` are deployed
+- Verify Crossmint server credentials are configured in Supabase or MCP env
+- Confirm you are testing a treasury/operator flow, not the primary creator wallet flow
 
 **Issue: Three.js performance issues**
 - Check if hardware acceleration is enabled in your browser

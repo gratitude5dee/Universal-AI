@@ -1,10 +1,9 @@
-
 import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -22,11 +21,11 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
 
-  // If no user and not loading, redirect to auth
-  if (!user) {
+  // If not authenticated (no user AND no wallet), redirect to auth
+  if (!isAuthenticated) {
     return <Navigate to="/auth" replace />;
   }
 
-  // User is authenticated, render the protected content
+  // User is authenticated (Supabase OR wallet), render the protected content
   return <>{children}</>;
 };

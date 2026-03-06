@@ -7,8 +7,10 @@ import AccountDashboard from "@/components/treasury/banking/AccountDashboard";
 import BankingControls from "@/components/treasury/banking/BankingControls";
 import ActivityTab from "@/components/treasury/banking/ActivityTab";
 import ApiIntegration from "@/components/treasury/banking/ApiIntegration";
-import { Landmark } from "lucide-react";
+import { Landmark, ShieldCheck, Sparkles, Wallet } from "lucide-react";
 import { toast } from "sonner";
+import { ProviderBadge } from "@/components/providers/ProviderBadge";
+import { PROVIDER_CAPABILITIES } from "@/lib/provider-capabilities";
 
 const AgentBanking: React.FC = () => {
   const [hasAccount, setHasAccount] = useState(true);
@@ -33,8 +35,41 @@ const AgentBanking: React.FC = () => {
       <div className="mb-5">
         <h2 className="text-2xl font-bold mb-1 text-shadow-sm">Agent Banking Portal</h2>
         <p className="text-blue-lightest">
-          Empower your AI agents with autonomous financial capabilities
+          Custodial treasury stays isolated from creator wallets. Crossmint handles custody, thirdweb handles creator EVM UX, and Bankr stays optional for advanced automation.
         </p>
+      </div>
+
+      <div className="mb-6 grid gap-4 md:grid-cols-3">
+        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <Wallet className="h-5 w-5 text-white" />
+            <ProviderBadge label={PROVIDER_CAPABILITIES.thirdweb.label} maturity={PROVIDER_CAPABILITIES.thirdweb.maturity} />
+          </div>
+          <p className="font-medium text-white">Creator funds boundary</p>
+          <p className="mt-2 text-sm text-white/60">
+            User-facing wallet actions remain on the thirdweb side and do not share custody semantics with this portal.
+          </p>
+        </div>
+        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <ShieldCheck className="h-5 w-5 text-white" />
+            <ProviderBadge label={PROVIDER_CAPABILITIES.crossmint.label} maturity={PROVIDER_CAPABILITIES.crossmint.maturity} />
+          </div>
+          <p className="font-medium text-white">Custodial treasury</p>
+          <p className="mt-2 text-sm text-white/60">
+            Agent wallets, guarded Solana transfers, and MCP treasury execution stay in the Crossmint custody lane.
+          </p>
+        </div>
+        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <Sparkles className="h-5 w-5 text-white" />
+            <ProviderBadge label={PROVIDER_CAPABILITIES.bankr.label} maturity={PROVIDER_CAPABILITIES.bankr.maturity} />
+          </div>
+          <p className="font-medium text-white">Advanced automation only</p>
+          <p className="mt-2 text-sm text-white/60">
+            Bankr can automate around treasury intelligence, but it should not replace custody controls or core launch infrastructure.
+          </p>
+        </div>
       </div>
       
       {!hasAccount ? (

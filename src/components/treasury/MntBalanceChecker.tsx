@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { useWallet } from '@/context/WalletContext';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowRight, Wallet, BarChart3, AlertTriangle } from 'lucide-react';
+import { useEvmWallet } from '@/context/EvmWalletContext';
 
 export function MntBalanceChecker() {
-  const { address, balance, isLoading, fetchBalance } = useWallet();
+  const { address, nativeBalance, isLoading, refresh } = useEvmWallet();
   const [mntBalance, setMntBalance] = useState('0.00');
   const [isChecking, setIsChecking] = useState(false);
   const [hasChecked, setHasChecked] = useState(false);

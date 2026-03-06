@@ -2,6 +2,7 @@
 import React, { ReactNode } from "react";
 import Header from "@/components/ui/header";
 import CloudShader from "@/components/ui/shaders/CloudShader";
+import { WalletLinkBanner } from "@/components/web3/WalletLinkBanner";
 
 interface MainContentProps {
   children: ReactNode;
@@ -27,6 +28,9 @@ const MainContent = ({ children }: MainContentProps) => {
       
       {/* Header and content are positioned above the background layers */}
       <Header />
+      <div className="px-6 pt-4 relative z-10">
+        <WalletLinkBanner />
+      </div>
       <div className="flex-grow p-6 relative z-10">
         {children}
       </div>

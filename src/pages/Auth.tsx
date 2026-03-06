@@ -5,17 +5,42 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Bot, BarChart3, Coins, Users, Sparkles, Zap, Globe } from "lucide-react";
+import { Eye, EyeOff, Bot, BarChart3, Coins, Users, Sparkles, Zap, Globe, Wallet } from "lucide-react";
 import CosmicShader from "@/components/ui/shaders/CosmicShader";
 import { toast } from "sonner";
+import { useActiveAccount } from "thirdweb/react";
+import { useAuth } from "@/context/AuthContext";
+import { ConnectWalletButton } from "@/components/web3/ConnectWalletButton";
+
 export default function AuthPage() {
   const navigate = useNavigate();
+  const { setWalletAddress, isAuthenticated } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Track wallet connection
+  const account = useActiveAccount();
+
+  // Handle wallet connection - navigate to home
+  useEffect(() => {
+    if (account?.address) {
+      setWalletAddress(account.address);
+      toast.success("Wallet connected successfully!");
+      navigate("/home");
+    }
+  }, [account, setWalletAddress, navigate]);
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/home");
+    }
+  }, [isAuthenticated, navigate]);
+
   useEffect(() => {
     // Check if user is already logged in
     const checkUser = async () => {
@@ -42,6 +67,7 @@ export default function AuthPage() {
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -87,9 +113,11 @@ export default function AuthPage() {
       setIsLoading(false);
     }
   };
+
   const handleGuestAccess = () => {
     navigate('/wzrd/studio');
   };
+
   return <div className="min-h-screen flex items-center justify-center bg-transparent text-white p-4 relative overflow-hidden">
       <CosmicShader />
       
@@ -251,7 +279,7 @@ export default function AuthPage() {
             <div className="flex-1 h-px bg-gradient-to-l from-transparent to-border" />
           </motion.div>
           
-          <motion.div initial={{
+          <motion.div className="space-y-3" initial={{
           y: 20,
           opacity: 0
         }} animate={{
@@ -261,6 +289,11 @@ export default function AuthPage() {
           delay: 1.3,
           duration: 0.5
         }}>
+            {/* Thirdweb Wallet Connect */}
+            <div className="flex justify-center [&_button]:!w-full [&_button]:!h-12 [&_button]:!rounded-xl [&_button]:!bg-gradient-to-r [&_button]:!from-purple-600 [&_button]:!to-indigo-600 [&_button]:!border-0 [&_button]:!font-medium [&_button]:hover:!opacity-90">
+              <ConnectWalletButton />
+            </div>
+            
             <Button onClick={handleGuestAccess} variant="outline" className="w-full h-12 text-base font-medium bg-white/5 border-white/20 hover:bg-white/10 text-white rounded-xl backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]">
               <div className="flex items-center gap-2">
                 <Zap className="h-5 w-5" />
