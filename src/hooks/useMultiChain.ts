@@ -24,7 +24,7 @@ export const useMultiChain = () => {
   });
 
   useEffect(() => {
-    // Mock initial connection (in real app, integrate with Crossmint + Wagmi)
+    // Mock initial connection. The real architecture uses thirdweb for EVM and route-scoped Solana launch wallets.
     const mockAddresses: Record<ChainId, string | null> = {
       solana: '7xK...mN9',
       ethereum: '0x742...a3f9',

@@ -20,6 +20,13 @@ const EnhancedBookingSearch: React.FC<EnhancedBookingSearchProps> = ({
   onMapToggle,
   showMap
 }) => {
+  const supabaseUrl =
+    import.meta.env.VITE_SUPABASE_URL ??
+    "https://ixkkrousepsiorwlaycp.supabase.co";
+  const supabasePublishableKey =
+    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
+    import.meta.env.VITE_SUPABASE_ANON_KEY ??
+    "";
   const [searchQuery, setSearchQuery] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -43,11 +50,13 @@ const EnhancedBookingSearch: React.FC<EnhancedBookingSearchProps> = ({
     setGeneratedComponents([]);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/venue-ai-search`, {
+      const response = await fetch(`${supabaseUrl}/functions/v1/venue-ai-search`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          ...(supabasePublishableKey
+            ? { Authorization: `Bearer ${supabasePublishableKey}` }
+            : {}),
         },
         body: JSON.stringify({ query: searchQuery }),
       });

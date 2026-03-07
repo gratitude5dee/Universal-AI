@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, expect, it } from "vitest";
 import { createSupabaseQuerySqlTool } from "../tools/supabase_query_sql";
 import { createSupabaseCallRpcTool } from "../tools/supabase_call_rpc";
 import { createStorageGetTool } from "../tools/storage_get";

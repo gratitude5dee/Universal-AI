@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, expect, it } from "vitest";
 import { createWalletTransferTool, createConfirmationToken } from "../tools/wallet_transfer";
 import { createMockConfig, createMockContext } from "./helpers";
 

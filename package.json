@@ -8,14 +8,17 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "test": "bun test",
-    "test:watch": "bun test --watch",
-    "test:coverage": "bun test --coverage",
+    "test": "vitest run src/**/*.test.ts mcp/tests/*.spec.ts",
+    "test:watch": "vitest src/**/*.test.ts mcp/tests/*.spec.ts",
+    "test:coverage": "vitest run --coverage src/**/*.test.ts mcp/tests/*.spec.ts",
     "preview": "vite preview"
+  },
+  "engines": {
+    "node": ">=18 <23",
+    "npm": ">=8"
   },
   "dependencies": {
     "@11labs/react": "^0.1.4",
-    "@crossmint/client-sdk-react-ui": "^1.15.1",
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
@@ -91,6 +94,7 @@
     "@types/node": "^22.5.5",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "@vitest/coverage-v8": "^4.0.18",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.9.0",
