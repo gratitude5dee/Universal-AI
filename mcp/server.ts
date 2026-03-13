@@ -33,9 +33,17 @@ import { createRwaComplianceCheckTool } from "./tools/rwa_compliance_check";
 import { createRwaAuditAppendTool } from "./tools/rwa_audit_append";
 import { createX402InferenceTool } from "./tools/x402_inference";
 import { createKnowledgeResource } from "./resources/kb";
+import { createDashboardSummaryResource } from "./resources/dashboard_summary";
 import { answerWithContextPrompt } from "./prompts/answer_with_context";
 import { summarizeAndCitePrompt } from "./prompts/summarize_and_cite";
 import { mintTransactionPlanPrompt } from "./prompts/mint_transaction_plan";
+import { contentPublishPlanPrompt } from "./prompts/content_publish_plan";
+import { financeReconcilePlanPrompt } from "./prompts/finance_reconcile_plan";
+import { createContentWorkflowTool } from "./tools/content_workflow";
+import { createRightsWorkflowTool } from "./tools/rights_workflow";
+import { createMarketingWorkflowTool } from "./tools/marketing_workflow";
+import { createFinanceWorkflowTool } from "./tools/finance_workflow";
+import { createAgentWorkflowTool } from "./tools/agent_workflow";
 
 interface InvokeRequest {
   tool: string;
@@ -104,18 +112,28 @@ const tools: ToolDefinition[] = [
   createDefiSwapSimulateTool(config),
   createRwaComplianceCheckTool(config),
   createRwaAuditAppendTool(config),
-  createX402InferenceTool(config)
+  createX402InferenceTool(config),
+  createContentWorkflowTool(config),
+  createRightsWorkflowTool(config),
+  createMarketingWorkflowTool(config),
+  createFinanceWorkflowTool(config),
+  createAgentWorkflowTool(config)
 ];
 
 const toolMap = new Map(tools.map((tool) => [tool.name, tool]));
 
-const resources: ResourceDefinition[] = [createKnowledgeResource(config)];
+const resources: ResourceDefinition[] = [
+  createKnowledgeResource(config),
+  createDashboardSummaryResource(config)
+];
 const resourceMap = new Map(resources.map((resource) => [resource.uri, resource]));
 
 const prompts: PromptDefinition[] = [
   answerWithContextPrompt,
   summarizeAndCitePrompt,
-  mintTransactionPlanPrompt
+  mintTransactionPlanPrompt,
+  contentPublishPlanPrompt,
+  financeReconcilePlanPrompt
 ];
 const promptMap = new Map(prompts.map((prompt) => [prompt.name, prompt]));
 

@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, QrCode, Link as LinkIcon, Plus, Check, Edit3, Trash2 } from "lucide-react";
+import { X, Link as LinkIcon, Plus, Check, Edit3, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { QRCodeSVG } from "qrcode.react";
 
 interface Link {
   id: string;
@@ -19,17 +22,44 @@ interface LiquidGlassModalProps {
 
 const LiquidGlassModal: React.FC<LiquidGlassModalProps> = ({ asset, isOpen, onClose }) => {
   const { toast } = useToast();
-  const [links, setLinks] = useState<Link[]>([
-    { id: "1", name: "Spotify", url: "https://spotify.com" },
-    { id: "2", name: "SoundCloud", url: "https://soundcloud.com" },
-    { id: "3", name: "Instagram", url: "https://instagram.com" },
-    { id: "4", name: "X (Twitter)", url: "https://x.com" },
-  ]);
-  
+  const queryClient = useQueryClient();
   const [isAddingLink, setIsAddingLink] = useState(false);
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null);
   const [newLinkName, setNewLinkName] = useState("");
   const [newLinkUrl, setNewLinkUrl] = useState("");
+  const isGuestAsset = asset?.creatorId === "guest";
+
+  const { data: links = [] } = useQuery({
+    queryKey: ["asset-links", asset?.id],
+    enabled: isOpen && Boolean(asset?.id) && !isGuestAsset,
+    queryFn: async (): Promise<Link[]> => {
+      if (!asset?.id) {
+        return [];
+      }
+
+      const { data, error } = await supabase
+        .from("asset_links")
+        .select("id, label, url")
+        .eq("content_item_id", asset.id)
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        throw error;
+      }
+
+      return (data ?? []).map((link) => ({
+        id: String(link.id),
+        name: String(link.label),
+        url: String(link.url),
+      }));
+    },
+  });
+
+  const refreshLinks = async () => {
+    if (!asset?.id || isGuestAsset) return;
+    await queryClient.invalidateQueries({ queryKey: ["asset-links", asset.id] });
+    await queryClient.invalidateQueries({ queryKey: ["content-library-assets"] });
+  };
 
   if (!asset) return null;
 
@@ -43,21 +73,33 @@ const LiquidGlassModal: React.FC<LiquidGlassModalProps> = ({ asset, isOpen, onCl
       return;
     }
 
-    const newLink: Link = {
-      id: Date.now().toString(),
-      name: newLinkName.trim(),
-      url: newLinkUrl.trim(),
-    };
+    void (async () => {
+      const { error } = await supabase.from("asset_links").insert({
+        content_item_id: asset.id,
+        creator_id: asset.creatorId,
+        link_type: "external",
+        label: newLinkName.trim(),
+        url: newLinkUrl.trim(),
+      });
 
-    setLinks([...links, newLink]);
-    setNewLinkName("");
-    setNewLinkUrl("");
-    setIsAddingLink(false);
-    
-    toast({
-      title: "Success",
-      description: `Added ${newLink.name} link successfully!`,
-    });
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setNewLinkName("");
+      setNewLinkUrl("");
+      setIsAddingLink(false);
+      await refreshLinks();
+      toast({
+        title: "Success",
+        description: `Added ${newLinkName.trim()} link successfully!`,
+      });
+    })();
   };
 
   const handleEditLink = (link: Link) => {
@@ -76,28 +118,58 @@ const LiquidGlassModal: React.FC<LiquidGlassModalProps> = ({ asset, isOpen, onCl
       return;
     }
 
-    setLinks(links.map(link => 
-      link.id === editingLinkId 
-        ? { ...link, name: newLinkName.trim(), url: newLinkUrl.trim() }
-        : link
-    ));
-    
-    setEditingLinkId(null);
-    setNewLinkName("");
-    setNewLinkUrl("");
-    
-    toast({
-      title: "Success",
-      description: "Link updated successfully!",
-    });
+    void (async () => {
+      const { error } = await supabase
+        .from("asset_links")
+        .update({
+          label: newLinkName.trim(),
+          url: newLinkUrl.trim(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", editingLinkId);
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setEditingLinkId(null);
+      setNewLinkName("");
+      setNewLinkUrl("");
+      await refreshLinks();
+      toast({
+        title: "Success",
+        description: "Link updated successfully!",
+      });
+    })();
   };
 
   const handleDeleteLink = (linkId: string) => {
-    setLinks(links.filter(link => link.id !== linkId));
-    toast({
-      title: "Success",
-      description: "Link deleted successfully!",
-    });
+    void (async () => {
+      const { error } = await supabase
+        .from("asset_links")
+        .delete()
+        .eq("id", linkId);
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      await refreshLinks();
+      toast({
+        title: "Success",
+        description: "Link deleted successfully!",
+      });
+    })();
   };
 
   const cancelEditing = () => {
@@ -106,6 +178,11 @@ const LiquidGlassModal: React.FC<LiquidGlassModalProps> = ({ asset, isOpen, onCl
     setNewLinkName("");
     setNewLinkUrl("");
   };
+
+  const shareUrl =
+    links[0]?.url ??
+    asset.signedUrl ??
+    (typeof window !== "undefined" ? window.location.href : "https://universalai.local");
 
   return (
     <AnimatePresence>
@@ -140,6 +217,12 @@ const LiquidGlassModal: React.FC<LiquidGlassModalProps> = ({ asset, isOpen, onCl
               </div>
 
               <div className="space-y-3 max-h-60 overflow-y-auto">
+                {isGuestAsset ? (
+                  <div className="rounded-lg border border-dashed border-white/15 bg-white/5 p-3 text-sm text-white/70">
+                    Guest mode demo assets are view-only. Sign in to manage links, rights, and distribution targets.
+                  </div>
+                ) : null}
+
                 {links.map(link => (
                   <motion.div 
                     key={link.id}
@@ -203,7 +286,7 @@ const LiquidGlassModal: React.FC<LiquidGlassModalProps> = ({ asset, isOpen, onCl
                   </motion.div>
                 ))}
                 
-                {isAddingLink ? (
+                {!isGuestAsset && isAddingLink ? (
                   <motion.div 
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -232,7 +315,7 @@ const LiquidGlassModal: React.FC<LiquidGlassModalProps> = ({ asset, isOpen, onCl
                       </Button>
                     </div>
                   </motion.div>
-                ) : (
+                ) : !isGuestAsset ? (
                   <Button 
                     variant="outline" 
                     className="w-full justify-start text-white bg-white/10 hover:bg-white/20 border-white/20 border-dashed transition-all"
@@ -241,12 +324,12 @@ const LiquidGlassModal: React.FC<LiquidGlassModalProps> = ({ asset, isOpen, onCl
                     <Plus className="h-4 w-4 mr-3" />
                     Add New Link
                   </Button>
-                )}
+                ) : null}
               </div>
 
               <div className="mt-8 flex flex-col items-center">
                 <div className="bg-white p-2 rounded-lg">
-                  <QrCode className="h-24 w-24 text-black" />
+                  <QRCodeSVG value={shareUrl} size={96} />
                 </div>
                 <p className="text-white/70 mt-2 text-sm">Scan to share</p>
               </div>

@@ -8,8 +8,12 @@ import { DistributionAnalytics } from "@/components/bridge/analytics/Distributio
 import { Settings } from "@/components/bridge/settings/Settings";
 import { AIAssistant } from "@/components/bridge/ai-assistant/AIAssistant";
 import { EnhancedBridges } from "@/components/bridge/bridges/EnhancedBridges";
+import { usePlatformOverview } from "@/hooks/usePlatformOverview";
 
 const Bridge = () => {
+  const { data: overview } = usePlatformOverview();
+  const bridgeOverview = overview?.bridge ?? {};
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -19,10 +23,10 @@ const Bridge = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <StatCard icon={Rocket} label="Total Deployments" value="1,247" trend={12} trendLabel="vs last month" />
-          <StatCard icon={Sparkles} label="Revenue Generated" value="$45.2K" trend={23} trendLabel="vs last month" iconColor="bg-[#F97316]/20" />
-          <StatCard icon={Link2} label="Active Platforms" value="9" trendLabel="connected" iconColor="bg-[#0EA5E9]/20" />
-          <StatCard icon={BarChart3} label="Success Rate" value="98.5%" trend={2} trendLabel="vs last month" iconColor="bg-[#10B981]/20" />
+          <StatCard icon={Rocket} label="Total Bridge Jobs" value={String(bridgeOverview.total_bridge_jobs ?? 0)} trendLabel="tracked in backend" />
+          <StatCard icon={Sparkles} label="Estimated Fees" value={`$${Number(bridgeOverview.total_estimated_fees ?? 0).toLocaleString()}`} trendLabel="queued + completed" iconColor="bg-[#F97316]/20" />
+          <StatCard icon={Link2} label="Active Jobs" value={String(bridgeOverview.active_bridge_jobs ?? 0)} trendLabel="pending execution" iconColor="bg-[#0EA5E9]/20" />
+          <StatCard icon={BarChart3} label="Completed" value={String(bridgeOverview.completed_bridge_jobs ?? 0)} trendLabel="settled transfers" iconColor="bg-[#10B981]/20" />
         </div>
 
         <Tabs defaultValue="nft-minter" className="w-full">

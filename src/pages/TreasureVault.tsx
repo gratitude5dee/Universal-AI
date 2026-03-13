@@ -14,11 +14,14 @@ import FinancialReports from "@/components/treasury/financials/FinancialReports"
 import MultiChainDashboard from "@/components/treasury/revenue/MultiChainDashboard";
 import AgentBanking from "@/components/treasury/AgentBanking";
 import { RWAWizardHub } from "@/components/rwa/RWAWizardHub";
+import { usePlatformOverview } from "@/hooks/usePlatformOverview";
 
 const TreasureVault = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState("statements");
+  const { data: overview } = usePlatformOverview();
+  const financeOverview = overview?.finance ?? {};
   
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -45,10 +48,10 @@ const TreasureVault = () => {
       >
         {/* Persistent Stat Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <FinanceStatCard title="Total Revenue" value="$29,006.35" subtitle="+12.5% from last quarter" />
-            <FinanceStatCard title="Pending Statements" value="0" subtitle="Awaiting processing" />
-            <FinanceStatCard title="Discrepancies" value="1" subtitle="Requires attention" attention />
-            <FinanceStatCard title="Next Forecast" value="$35,000" subtitle="85% confidence" />
+            <FinanceStatCard title="Total Revenue" value={`$${Number(financeOverview.total_revenue ?? 0).toLocaleString()}`} subtitle="Across invoices, launches, royalties, and licensing" />
+            <FinanceStatCard title="Pending Statements" value={String(financeOverview.pending_statements ?? 0)} subtitle="Awaiting parsing or review" />
+            <FinanceStatCard title="Discrepancies" value={String(financeOverview.discrepancies ?? 0)} subtitle="Requires attention" attention={Number(financeOverview.discrepancies ?? 0) > 0} />
+            <FinanceStatCard title="Portfolio Value" value={`$${Number(financeOverview.portfolio_value_usd ?? 0).toLocaleString()}`} subtitle="Multi-chain treasury positions" />
         </div>
         
         <Tabs value={currentTab} onValueChange={handleTabChange} className="w-full">

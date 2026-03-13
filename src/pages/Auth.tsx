@@ -14,7 +14,7 @@ import { ConnectWalletButton } from "@/components/web3/ConnectWalletButton";
 
 export default function AuthPage() {
   const navigate = useNavigate();
-  const { setWalletAddress, isAuthenticated } = useAuth();
+  const { setWalletAddress, isAuthenticated, enterGuestMode } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -115,7 +115,9 @@ export default function AuthPage() {
   };
 
   const handleGuestAccess = () => {
-    navigate('/wzrd/studio');
+    enterGuestMode();
+    toast.success("Entering guest mode");
+    navigate('/home');
   };
 
   return <div className="min-h-screen flex items-center justify-center bg-transparent text-white p-4 relative overflow-hidden">

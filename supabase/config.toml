@@ -71,3 +71,72 @@ verify_jwt = true
 
 [functions.engine-admin-execute]
 verify_jwt = true
+
+[functions.content-ingest]
+verify_jwt = true
+
+[functions.story-register-asset]
+verify_jwt = true
+
+[functions.story-sync-lineage]
+verify_jwt = true
+
+[functions.agreement-create]
+verify_jwt = true
+
+[functions.license-mint]
+verify_jwt = true
+
+[functions.license-revoke]
+verify_jwt = true
+
+[functions.rights-transfer]
+verify_jwt = true
+
+[functions.bridge-execute]
+verify_jwt = true
+
+[functions.marketplace-publish]
+verify_jwt = true
+
+[functions.campaign-dispatch]
+verify_jwt = true
+
+[functions.campaign-webhook]
+verify_jwt = false
+
+[functions.invoice-pdf]
+verify_jwt = true
+
+[functions.invoice-reminder]
+verify_jwt = true
+
+[functions.royalty-ingest]
+verify_jwt = true
+
+[functions.forecast-refresh]
+verify_jwt = true
+
+[functions.report-export]
+verify_jwt = true
+
+[functions.agent-runner]
+verify_jwt = true
+
+[functions.agent-marketplace-install]
+verify_jwt = true
+
+[functions.integration-oauth-start]
+verify_jwt = true
+
+[functions.integration-oauth-callback]
+verify_jwt = false
+
+[functions.ens-profile-sync]
+verify_jwt = true
+
+[functions.botchan-message-dispatch]
+verify_jwt = true
+
+[functions.hydrex-sync]
+verify_jwt = true

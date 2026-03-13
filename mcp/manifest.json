@@ -24,12 +24,22 @@
     "rwa_audit_append",
     "x402_inference",
     "kb_search",
-    "web_search"
+    "web_search",
+    "content_workflow",
+    "rights_workflow",
+    "marketing_workflow",
+    "finance_workflow",
+    "agent_workflow"
   ],
-  "resources": ["kb://universalai/*"],
+  "resources": [
+    "kb://universalai/*",
+    "dashboard://creator/*"
+  ],
   "prompts": [
     "answer_with_context",
     "summarize_and_cite",
-    "mint_transaction_plan"
+    "mint_transaction_plan",
+    "content_publish_plan",
+    "finance_reconcile_plan"
   ]
 }

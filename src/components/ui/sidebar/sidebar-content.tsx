@@ -7,6 +7,7 @@ import SidebarSubmenu from "./sidebar-submenu";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import logo from "@/assets/universal-ai-logo.png";
+import { useAuth } from "@/context/AuthContext";
 interface SidebarContentProps {
   navItems: {
     name: string;
@@ -39,6 +40,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { exitGuestMode } = useAuth();
   const currentPath = location.pathname;
   const searchParams = new URLSearchParams(location.search);
   const currentTab = searchParams.get("tab");
@@ -97,6 +99,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   }, [isCollapsed, navItems, currentPath, currentTab]);
   const handleLogout = async () => {
     try {
+      exitGuestMode();
       const {
         error
       } = await supabase.auth.signOut();

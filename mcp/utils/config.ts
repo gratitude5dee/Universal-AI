@@ -49,13 +49,51 @@ export function loadConfig(): Config {
 
   const allowlistedSql = parseJsonEnv<Record<string, string>>("MCP_ALLOWLISTED_SQL", {
     list_creator_assets: "select * from creator_assets where creator_id = :creator_id limit :limit",
-    treasury_balances: "select symbol, balance from treasury_balances where creator_id = :creator_id"
+    treasury_balances: "select symbol, balance from treasury_balances where creator_id = :creator_id",
+    content_dashboard_summary: "select * from content_dashboard_overview_v1 where creator_id = :creator_id",
+    marketing_dashboard_summary: "select * from marketing_dashboard_overview_v1 where creator_id = :creator_id",
+    finance_dashboard_summary: "select * from finance_dashboard_overview_v1 where creator_id = :creator_id",
+    bridge_dashboard_summary: "select * from bridge_dashboard_overview_v1 where creator_id = :creator_id",
+    agents_dashboard_summary: "select * from agents_dashboard_overview_v1 where creator_id = :creator_id"
   });
 
   const allowlistedRpcs = parseJsonEnv<Config["allowlistedRpcs"]>("MCP_ALLOWLISTED_RPCS", {
     "create-wallet": { type: "edge", name: "create-wallet" },
     "transfer-sol": { type: "edge", name: "transfer-sol" },
-    log_agent_activity: { type: "postgres", name: "log_agent_activity" }
+    log_agent_activity: { type: "postgres", name: "log_agent_activity" },
+    "content-ingest": { type: "edge", name: "content-ingest" },
+    "story-register-asset": { type: "edge", name: "story-register-asset" },
+    "story-sync-lineage": { type: "edge", name: "story-sync-lineage" },
+    "agreement-create": { type: "edge", name: "agreement-create" },
+    "license-mint": { type: "edge", name: "license-mint" },
+    "license-revoke": { type: "edge", name: "license-revoke" },
+    "rights-transfer": { type: "edge", name: "rights-transfer" },
+    "bridge-execute": { type: "edge", name: "bridge-execute" },
+    "marketplace-publish": { type: "edge", name: "marketplace-publish" },
+    "campaign-dispatch": { type: "edge", name: "campaign-dispatch" },
+    "campaign-webhook": { type: "edge", name: "campaign-webhook" },
+    "invoice-pdf": { type: "edge", name: "invoice-pdf" },
+    "invoice-reminder": { type: "edge", name: "invoice-reminder" },
+    "royalty-ingest": { type: "edge", name: "royalty-ingest" },
+    "forecast-refresh": { type: "edge", name: "forecast-refresh" },
+    "report-export": { type: "edge", name: "report-export" },
+    "agent-runner": { type: "edge", name: "agent-runner" },
+    "agent-marketplace-install": { type: "edge", name: "agent-marketplace-install" },
+    "integration-oauth-start": { type: "edge", name: "integration-oauth-start" },
+    "integration-oauth-callback": { type: "edge", name: "integration-oauth-callback" },
+    "ens-profile-sync": { type: "edge", name: "ens-profile-sync" },
+    "botchan-message-dispatch": { type: "edge", name: "botchan-message-dispatch" },
+    "hydrex-sync": { type: "edge", name: "hydrex-sync" },
+    search_content_library: { type: "postgres", name: "search_content_library" },
+    get_rights_rollup: { type: "postgres", name: "get_rights_rollup" },
+    get_campaign_rollup: { type: "postgres", name: "get_campaign_rollup" },
+    get_touring_stats_v2: { type: "postgres", name: "get_touring_stats_v2" },
+    detect_royalty_discrepancies: { type: "postgres", name: "detect_royalty_discrepancies" },
+    preview_split_sheet_allocations: { type: "postgres", name: "preview_split_sheet_allocations" },
+    request_treasury_transfer: { type: "postgres", name: "request_treasury_transfer" },
+    approve_treasury_transfer_request: { type: "postgres", name: "approve_treasury_transfer_request" },
+    get_agent_install_run_summary: { type: "postgres", name: "get_agent_install_run_summary" },
+    get_platform_overview: { type: "postgres", name: "get_platform_overview" }
   });
 
   const storageBuckets = parseJsonEnv<string[]>("MCP_STORAGE_BUCKETS", [

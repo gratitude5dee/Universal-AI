@@ -1,111 +1,97 @@
-import React, { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Calendar, MapPin, Clock, Filter, Plus } from "lucide-react";
+import { Calendar, MapPin, Clock, Filter, Plus, Route } from "lucide-react";
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, startOfDay } from "date-fns";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday } from "date-fns";
+import { useTouringCalendarEvents } from "@/hooks/useTouringWorkspace";
 
 const TourCalendar = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [viewMode, setViewMode] = useState<'month' | 'list'>('month');
-
-  // Mock events data
-  const events = [
-    {
-      id: 1,
-      title: "Live at The Blue Note",
-      date: new Date(2024, 2, 15),
-      type: "show",
-      venue: "The Blue Note",
-      city: "New York, NY",
-      status: "confirmed"
-    },
-    {
-      id: 2,
-      title: "Sound Check",
-      date: new Date(2024, 2, 15),
-      type: "rehearsal",
-      venue: "The Blue Note",
-      city: "New York, NY",
-      status: "confirmed"
-    },
-    {
-      id: 3,
-      title: "Travel Day - NYC to Boston",
-      date: new Date(2024, 2, 16),
-      type: "travel",
-      venue: "Transportation",
-      city: "NYC → Boston",
-      status: "confirmed"
-    },
-    {
-      id: 4,
-      title: "House of Blues Show",
-      date: new Date(2024, 2, 18),
-      type: "show",
-      venue: "House of Blues",
-      city: "Boston, MA",
-      status: "pending"
-    }
-  ];
+  const navigate = useNavigate();
+  const [currentDate, setCurrentDate] = useState(() => startOfDay(new Date()));
+  const [viewMode, setViewMode] = useState<"month" | "list">("month");
+  const { data: events = [], isLoading } = useTouringCalendarEvents();
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
+  const eventSummary = useMemo(
+    () => ({
+      shows: events.filter((event) => event.type === "show").length,
+      routes: events.filter((event) => event.type === "route").length,
+    }),
+    [events],
+  );
+
   const getEventTypeColor = (type: string) => {
     switch (type) {
-      case 'show': return 'bg-studio-accent/20 text-studio-accent border-studio-accent/30';
-      case 'travel': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-      case 'rehearsal': return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'promo': return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
-      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+      case "show":
+        return "bg-studio-accent/20 text-studio-accent border-studio-accent/30";
+      case "route":
+        return "bg-blue-500/20 text-blue-400 border-blue-500/30";
+      default:
+        return "bg-gray-500/20 text-gray-400 border-gray-500/30";
     }
   };
 
-  const getEventsForDay = (day: Date) => {
-    return events.filter(event => isSameDay(event.date, day));
-  };
+  const getEventsForDay = (day: Date) =>
+    events.filter((event) => isSameDay(new Date(event.date), day));
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <div key={index} className="h-24 animate-pulse rounded-xl bg-white/5" />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {/* Header Controls */}
-      <Card className="backdrop-blur-md bg-white/10 border border-white/20 shadow-card-glow">
+      <Card className="border border-white/20 bg-white/10 backdrop-blur-md shadow-card-glow">
         <CardHeader>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <CardTitle className="text-xl font-semibold text-white flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
-              Tour Calendar
-            </CardTitle>
-            
+          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-xl font-semibold text-white">
+                <Calendar className="h-5 w-5" />
+                Tour Calendar
+              </CardTitle>
+              <p className="mt-2 text-sm text-white/60">
+                {eventSummary.shows} show dates and {eventSummary.routes} route plans currently persisted.
+              </p>
+            </div>
+
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1 bg-white/5 rounded-lg p-1">
+              <div className="rounded-lg bg-white/5 p-1">
                 <Button
                   size="sm"
-                  variant={viewMode === 'month' ? 'default' : 'ghost'}
-                  onClick={() => setViewMode('month')}
-                  className={viewMode === 'month' ? 'bg-studio-accent hover:bg-studio-accent/80' : 'text-white hover:bg-white/10'}
+                  variant={viewMode === "month" ? "default" : "ghost"}
+                  onClick={() => setViewMode("month")}
+                  className={viewMode === "month" ? "bg-studio-accent hover:bg-studio-accent/80" : "text-white hover:bg-white/10"}
                 >
                   Month
                 </Button>
                 <Button
                   size="sm"
-                  variant={viewMode === 'list' ? 'default' : 'ghost'}
-                  onClick={() => setViewMode('list')}
-                  className={viewMode === 'list' ? 'bg-studio-accent hover:bg-studio-accent/80' : 'text-white hover:bg-white/10'}
+                  variant={viewMode === "list" ? "default" : "ghost"}
+                  onClick={() => setViewMode("list")}
+                  className={viewMode === "list" ? "bg-studio-accent hover:bg-studio-accent/80" : "text-white hover:bg-white/10"}
                 >
                   List
                 </Button>
               </div>
-              
-              <Button size="sm" variant="outline" className="border-white/20 text-white hover:bg-white/10">
-                <Filter className="h-4 w-4 mr-2" />
-                Filter
+
+              <Button size="sm" variant="outline" className="border-white/20 text-white hover:bg-white/10" onClick={() => navigate("/touring?tab=gigs")}>
+                <Filter className="mr-2 h-4 w-4" />
+                Open Gigs
               </Button>
-              
-              <Button size="sm" className="bg-studio-accent hover:bg-studio-accent/80">
-                <Plus className="h-4 w-4 mr-2" />
+
+              <Button size="sm" className="bg-studio-accent hover:bg-studio-accent/80" onClick={() => navigate("/event-toolkit/gigs/create")}>
+                <Plus className="mr-2 h-4 w-4" />
                 Add Event
               </Button>
             </div>
@@ -113,35 +99,27 @@ const TourCalendar = () => {
         </CardHeader>
       </Card>
 
-      {viewMode === 'month' ? (
-        /* Monthly Calendar View */
-        <Card className="backdrop-blur-md bg-white/10 border border-white/20 shadow-card-glow">
+      {viewMode === "month" ? (
+        <Card className="border border-white/20 bg-white/10 backdrop-blur-md shadow-card-glow">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-white">
-                {format(currentDate, 'MMMM yyyy')}
-              </h2>
+              <h2 className="text-lg font-semibold text-white">{format(currentDate, "MMMM yyyy")}</h2>
               <div className="flex items-center gap-2">
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - 1)))}
+                  onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))}
                   className="border-white/20 text-white hover:bg-white/10"
                 >
                   Previous
                 </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setCurrentDate(new Date())}
-                  className="border-white/20 text-white hover:bg-white/10"
-                >
+                <Button size="sm" variant="outline" onClick={() => setCurrentDate(new Date())} className="border-white/20 text-white hover:bg-white/10">
                   Today
                 </Button>
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + 1)))}
+                  onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1))}
                   className="border-white/20 text-white hover:bg-white/10"
                 >
                   Next
@@ -150,50 +128,36 @@ const TourCalendar = () => {
             </div>
           </CardHeader>
           <CardContent>
-            {/* Calendar Grid */}
-            <div className="grid grid-cols-7 gap-2 mb-4">
-              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+            <div className="mb-4 grid grid-cols-7 gap-2">
+              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
                 <div key={day} className="p-2 text-center text-sm font-medium text-white/70">
                   {day}
                 </div>
               ))}
             </div>
-            
+
             <div className="grid grid-cols-7 gap-2">
-              {days.map((day, index) => {
+              {days.map((day) => {
                 const dayEvents = getEventsForDay(day);
                 const isCurrentDay = isToday(day);
-                
+
                 return (
                   <motion.div
-                    key={index}
+                    key={day.toISOString()}
                     whileHover={{ scale: 1.02 }}
-                    className={`
-                      min-h-[100px] p-2 rounded-lg border transition-all duration-200 cursor-pointer
-                      ${isCurrentDay 
-                        ? 'bg-studio-accent/20 border-studio-accent/50' 
-                        : 'bg-white/5 border-white/10 hover:bg-white/10'
-                      }
-                    `}
+                    className={`min-h-[100px] cursor-pointer rounded-lg border p-2 transition-all duration-200 ${
+                      isCurrentDay ? "border-studio-accent/50 bg-studio-accent/20" : "border-white/10 bg-white/5 hover:bg-white/10"
+                    }`}
                   >
-                    <div className={`text-sm font-medium mb-1 ${isCurrentDay ? 'text-studio-accent' : 'text-white'}`}>
-                      {format(day, 'd')}
-                    </div>
-                    
+                    <div className={`mb-1 text-sm font-medium ${isCurrentDay ? "text-studio-accent" : "text-white"}`}>{format(day, "d")}</div>
+
                     <div className="space-y-1">
-                      {dayEvents.slice(0, 2).map(event => (
-                        <div
-                          key={event.id}
-                          className={`text-xs p-1 rounded border ${getEventTypeColor(event.type)} truncate`}
-                        >
+                      {dayEvents.slice(0, 2).map((event) => (
+                        <div key={event.id} className={`truncate rounded border p-1 text-xs ${getEventTypeColor(event.type)}`}>
                           {event.title}
                         </div>
                       ))}
-                      {dayEvents.length > 2 && (
-                        <div className="text-xs text-white/50">
-                          +{dayEvents.length - 2} more
-                        </div>
-                      )}
+                      {dayEvents.length > 2 ? <div className="text-xs text-white/50">+{dayEvents.length - 2} more</div> : null}
                     </div>
                   </motion.div>
                 );
@@ -202,49 +166,49 @@ const TourCalendar = () => {
           </CardContent>
         </Card>
       ) : (
-        /* List View */
-        <Card className="backdrop-blur-md bg-white/10 border border-white/20 shadow-card-glow">
+        <Card className="border border-white/20 bg-white/10 backdrop-blur-md shadow-card-glow">
           <CardHeader>
             <CardTitle className="text-lg font-semibold text-white">Upcoming Events</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {events.map((event, index) => (
-              <motion.div
-                key={event.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -2 }}
-                className="flex items-center space-x-4 p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-200"
-              >
-                <div className="flex-shrink-0">
-                  <div className={`p-2 rounded-lg ${getEventTypeColor(event.type)}`}>
-                    {event.type === 'show' && <Calendar className="h-4 w-4" />}
-                    {event.type === 'travel' && <MapPin className="h-4 w-4" />}
-                    {event.type === 'rehearsal' && <Clock className="h-4 w-4" />}
+            {events.length === 0 ? (
+              <div className="py-8 text-center text-white/70">
+                <Calendar className="mx-auto mb-4 h-12 w-12 opacity-50" />
+                <p>No touring events scheduled</p>
+                <p className="text-sm">Create a gig or add route planning to populate the calendar.</p>
+              </div>
+            ) : (
+              events.map((event, index) => (
+                <motion.div
+                  key={event.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  whileHover={{ y: -2 }}
+                  className="flex items-center space-x-4 rounded-lg border border-white/10 bg-white/5 p-4 transition-all duration-200 hover:bg-white/10"
+                >
+                  <div className={`rounded-lg p-2 ${getEventTypeColor(event.type)}`}>
+                    {event.type === "show" ? <Calendar className="h-4 w-4" /> : <Route className="h-4 w-4" />}
                   </div>
-                </div>
-                
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-1">
-                    <h3 className="text-white font-medium">{event.title}</h3>
-                    <Badge className={getEventTypeColor(event.type)}>
-                      {event.type}
-                    </Badge>
+
+                  <div className="flex-1">
+                    <div className="mb-1 flex items-center justify-between">
+                      <h3 className="font-medium text-white">{event.title}</h3>
+                      <Badge className={getEventTypeColor(event.type)}>{event.type}</Badge>
+                    </div>
+                    <p className="text-sm text-white/70">
+                      {event.venue} • {event.city}
+                    </p>
+                    <p className="text-xs text-white/50">{format(new Date(event.date), "PPP")}</p>
                   </div>
-                  <p className="text-white/70 text-sm">
-                    {event.venue} • {event.city}
-                  </p>
-                  <p className="text-white/50 text-xs">
-                    {format(event.date, 'PPP')}
-                  </p>
-                </div>
-                
-                <Button size="sm" variant="outline" className="border-white/20 text-white hover:bg-white/10">
-                  Edit
-                </Button>
-              </motion.div>
-            ))}
+
+                  <div className="flex items-center gap-2 text-white/50">
+                    <MapPin className="h-4 w-4" />
+                    <Clock className="h-4 w-4" />
+                  </div>
+                </motion.div>
+              ))
+            )}
           </CardContent>
         </Card>
       )}

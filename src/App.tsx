@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThirdwebProvider } from "thirdweb/react";
 import type { ThirdwebClient } from "thirdweb";
 import { defineChain } from "thirdweb/chains";
-import { AuthProvider } from "@/context/AuthContext";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { OnboardingProvider } from "@/context/OnboardingContext";
 import { ProtectedRoute } from "@/components/ui/ProtectedRoute";
 import { Web3Provider } from "@/context/Web3Context";
@@ -82,6 +82,16 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+const RootRoute = () => {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center text-white">Loading...</div>;
+  }
+
+  return <Navigate to={isAuthenticated ? "/home" : "/auth"} replace />;
+};
+
 function App() {
   const [web3Config, setWeb3Config] = useState<Web3Config>(() => getWeb3ConfigSync());
   const [thirdwebClient, setThirdwebClient] = useState<ThirdwebClient | null>(() => getThirdwebClientSync());
@@ -136,12 +146,13 @@ function App() {
                 <TooltipProvider>
                   <Toaster />
                   <BrowserRouter>
-                    <Routes>
+                  <Routes>
                   {/* Public routes */}
-                  <Route path="/" element={<FYILanding />} />
+                  <Route path="/" element={<RootRoute />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/sign-in" element={<Index />} />
                   <Route path="/landing" element={<Landing />} />
+                  <Route path="/fyi" element={<FYILanding />} />
                   
                   {/* Protected routes */}
                   <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />

@@ -52,7 +52,6 @@ serve(async (req) => {
   }
 
   try {
-    // Get the authorization header from the request
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       return new Response(
@@ -64,10 +63,17 @@ serve(async (req) => {
       );
     }
 
-    // Create supabase client
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+    const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+
+    if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceRoleKey) {
+      throw new Error('Supabase credentials are not fully configured');
+    }
+
+    const authClient = createClient(
+      supabaseUrl,
+      supabaseAnonKey,
       {
         global: {
           headers: { Authorization: authHeader },
@@ -75,8 +81,22 @@ serve(async (req) => {
       }
     );
 
-    // Verify the user is authenticated
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    const adminClient = createClient(
+      supabaseUrl,
+      supabaseServiceRoleKey,
+      {
+        auth: { persistSession: false },
+        global: {
+          headers: {
+            Authorization: `Bearer ${supabaseServiceRoleKey}`,
+            apikey: supabaseServiceRoleKey,
+          },
+        },
+      }
+    );
+
+    const accessToken = authHeader.replace('Bearer ', '').trim();
+    const { data: { user }, error: authError } = await authClient.auth.getUser(accessToken);
 
     if (authError || !user) {
       return new Response(
@@ -94,9 +114,9 @@ serve(async (req) => {
 
     switch (method) {
       case 'GET': {
-        const { data, error } = await supabaseClient
+        const { data, error } = await adminClient
           .from('user_secrets')
-          .select('secret_type, encrypted_value, encryption_iv, created_at, updated_at')
+          .select('secret_type, ciphertext, nonce, key_version, created_at, updated_at')
           .eq('user_id', user.id);
 
         if (error) {
@@ -111,7 +131,7 @@ serve(async (req) => {
 
         const secrets = await Promise.all((data || []).map(async (entry) => {
           try {
-            if (!entry.encrypted_value || !entry.encryption_iv) {
+            if (!entry.ciphertext || !entry.nonce) {
               return {
                 secret_type: entry.secret_type,
                 value: '',
@@ -119,8 +139,8 @@ serve(async (req) => {
                 updated_at: entry.updated_at
               };
             }
-            const iv = toUint8Array(entry.encryption_iv);
-            const cipherBytes = toUint8Array(entry.encrypted_value);
+            const iv = toUint8Array(entry.nonce);
+            const cipherBytes = toUint8Array(entry.ciphertext);
             const decrypted = await crypto.subtle.decrypt(
               { name: 'AES-GCM', iv },
               cryptoKey,
@@ -173,13 +193,14 @@ serve(async (req) => {
         );
         const encryptedValue = new Uint8Array(encryptedBuffer);
 
-        const { error } = await supabaseClient
+        const { error } = await adminClient
           .from('user_secrets')
           .upsert({
             user_id: user.id,
             secret_type,
-            encrypted_value: toBase64(encryptedValue),
-            encryption_iv: toBase64(iv)
+            ciphertext: toBase64(encryptedValue),
+            nonce: toBase64(iv),
+            key_version: 1,
           }, {
             onConflict: 'user_id,secret_type'
           });
@@ -215,7 +236,7 @@ serve(async (req) => {
           );
         }
 
-        const { error } = await supabaseClient
+        const { error } = await adminClient
           .from('user_secrets')
           .delete()
           .eq('user_id', user.id)

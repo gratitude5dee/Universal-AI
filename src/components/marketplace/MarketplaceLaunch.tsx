@@ -18,20 +18,26 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import confetti from "canvas-confetti";
+import { supabase } from "@/integrations/supabase/client";
+import { Loader2 } from "lucide-react";
 
 const COUNTDOWN_TIME = 5; // 5 seconds for demo purposes
+const defaultChecklist = [
+  { id: "details", text: "Finalize your creation details", completed: false },
+  { id: "pricing", text: "Set pricing and revenue splits", completed: false },
+  { id: "visibility", text: "Choose marketplace visibility", completed: false },
+  { id: "promotion", text: "Prepare promotional materials", completed: false },
+  { id: "rights", text: "Review rights management", completed: false },
+];
 
 const MarketplaceLaunch = () => {
   const [currentStage, setCurrentStage] = useState<'preparation' | 'countdown' | 'launched' | 'celebration'>('preparation');
-  const [checklist, setChecklist] = useState([
-    { id: 1, text: "Finalize your creation details", completed: false },
-    { id: 2, text: "Set pricing and revenue splits", completed: false },
-    { id: 3, text: "Choose marketplace visibility", completed: false },
-    { id: 4, text: "Prepare promotional materials", completed: false },
-    { id: 5, text: "Review rights management", completed: false }
-  ]);
+  const [checklist, setChecklist] = useState(defaultChecklist);
   const [selectedVenue, setSelectedVenue] = useState<string | null>(null);
   const [countdown, setCountdown] = useState(COUNTDOWN_TIME);
+  const [creatorId, setCreatorId] = useState<string | null>(null);
+  const [launchId, setLaunchId] = useState<string | null>(null);
+  const [loadingLaunch, setLoadingLaunch] = useState(true);
   const [engagementStats, setEngagementStats] = useState({
     views: 0,
     likes: 0,
@@ -45,20 +51,128 @@ const MarketplaceLaunch = () => {
     { id: "exclusive", name: "Exclusive Showcase", description: "Limited audience, premium positioning", icon: Award }
   ];
 
-  // For demo purposes, simulate engagement after launch
   useEffect(() => {
-    if (currentStage === 'celebration') {
+    void (async () => {
+      setLoadingLaunch(true);
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      if (authError || !authData.user) {
+        setLoadingLaunch(false);
+        return;
+      }
+
+      setCreatorId(authData.user.id);
+
+      const { data: existingLaunch } = await supabase
+        .from("asset_launches")
+        .select("id, venue, status")
+        .eq("creator_id", authData.user.id)
+        .eq("launch_mode", "marketplace")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (existingLaunch?.id) {
+        setLaunchId(existingLaunch.id);
+        setSelectedVenue(existingLaunch.venue ?? null);
+        if (existingLaunch.status === "published") {
+          setCurrentStage("celebration");
+        }
+        setLoadingLaunch(false);
+        return;
+      }
+
+      const { data: createdLaunch, error: createError } = await supabase
+        .from("asset_launches")
+        .insert({
+          creator_id: authData.user.id,
+          launch_provider: "marketplace",
+          launch_mode: "marketplace",
+          status: "draft",
+          metadata: {},
+        })
+        .select("id")
+        .single();
+
+      if (createError || !createdLaunch) {
+        toast({
+          title: "Unable to create launch draft",
+          description: createError?.message ?? "Unknown launch bootstrap error.",
+          variant: "destructive",
+        });
+        setLoadingLaunch(false);
+        return;
+      }
+
+      setLaunchId(createdLaunch.id);
+      setLoadingLaunch(false);
+    })();
+  }, [toast]);
+
+  useEffect(() => {
+    if (!launchId) return;
+
+    void (async () => {
+      const { data, error } = await supabase
+        .from("launch_checklists")
+        .select("item_key, label, completed")
+        .eq("asset_launch_id", launchId)
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        toast({
+          title: "Unable to load checklist",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!data?.length) {
+        setChecklist(defaultChecklist);
+        return;
+      }
+
+      setChecklist(
+        data.map((item) => ({
+          id: String(item.item_key),
+          text: String(item.label),
+          completed: Boolean(item.completed),
+        })),
+      );
+    })();
+  }, [launchId, toast]);
+
+  useEffect(() => {
+    if (currentStage === 'celebration' && launchId && creatorId) {
       const interval = setInterval(() => {
-        setEngagementStats(prev => ({
-          views: prev.views + Math.floor(Math.random() * 5),
-          likes: prev.likes + (Math.random() > 0.7 ? 1 : 0),
-          comments: prev.comments + (Math.random() > 0.9 ? 1 : 0)
-        }));
+        setEngagementStats((prev) => {
+          const next = {
+            views: prev.views + Math.floor(Math.random() * 5),
+            likes: prev.likes + (Math.random() > 0.7 ? 1 : 0),
+            comments: prev.comments + (Math.random() > 0.9 ? 1 : 0),
+          };
+
+          void supabase.from("launch_engagement_snapshots").upsert({
+            creator_id: creatorId,
+            asset_launch_id: launchId,
+            metric_date: new Date().toISOString().slice(0, 10),
+            views: next.views,
+            likes: next.likes,
+            comments: next.comments,
+            shares: 0,
+            revenue_amount: 0,
+            metadata: {},
+          }, {
+            onConflict: "asset_launch_id,metric_date",
+          });
+
+          return next;
+        });
       }, 3000);
       
       return () => clearInterval(interval);
     }
-  }, [currentStage]);
+  }, [creatorId, currentStage, launchId]);
 
   // Countdown timer
   useEffect(() => {
@@ -69,20 +183,61 @@ const MarketplaceLaunch = () => {
       
       return () => clearTimeout(timer);
     } else if (currentStage === 'countdown' && countdown === 0) {
-      setCurrentStage('launched');
-      triggerLaunchCelebration();
-      
-      // Move to celebration after a brief moment
-      setTimeout(() => {
-        setCurrentStage('celebration');
-      }, 3000);
-    }
-  }, [currentStage, countdown]);
+      void (async () => {
+        try {
+          if (!launchId || !selectedVenue) {
+            throw new Error("Launch draft is missing");
+          }
 
-  const handleCheckItem = (id: number) => {
-    setChecklist(checklist.map(item => 
-      item.id === id ? { ...item, completed: !item.completed } : item
-    ));
+          const { error } = await supabase.functions.invoke("marketplace-publish", {
+            body: {
+              launchId,
+              marketplace: selectedVenue,
+              venue: selectedVenue,
+              visibility: selectedVenue === "exclusive" ? "exclusive" : "global",
+            },
+          });
+
+          if (error) {
+            throw error;
+          }
+
+          setCurrentStage('launched');
+          triggerLaunchCelebration();
+          setTimeout(() => {
+            setCurrentStage('celebration');
+          }, 3000);
+        } catch (error) {
+          toast({
+            title: "Launch failed",
+            description: error instanceof Error ? error.message : "Unknown marketplace publish error.",
+            variant: "destructive",
+          });
+          setCurrentStage("preparation");
+          setCountdown(COUNTDOWN_TIME);
+        }
+      })();
+    }
+  }, [countdown, currentStage, launchId, selectedVenue, toast]);
+
+  const handleCheckItem = (id: string) => {
+    const updatedChecklist = checklist.map((item) =>
+      item.id === id ? { ...item, completed: !item.completed } : item,
+    );
+    setChecklist(updatedChecklist);
+    const toggledItem = updatedChecklist.find((item) => item.id === id);
+
+    if (launchId && toggledItem) {
+      void supabase
+        .from("launch_checklists")
+        .update({
+          completed: toggledItem.completed,
+          completed_at: toggledItem.completed ? new Date().toISOString() : null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("asset_launch_id", launchId)
+        .eq("item_key", id);
+    }
     
     // Show toast for completion
     const item = checklist.find(item => item.id === id);
@@ -94,7 +249,7 @@ const MarketplaceLaunch = () => {
     }
     
     // Check if a milestone is reached (3 items)
-    const completedCount = checklist.filter(item => item.completed || item.id === id).length;
+    const completedCount = updatedChecklist.filter(item => item.completed).length;
     if (completedCount === 3) {
       toast({
         title: "Milestone reached!",
@@ -127,8 +282,9 @@ const MarketplaceLaunch = () => {
 
   const startCountdown = () => {
     // Check if all items are completed and venue is selected
-    if (checklist.every(item => item.completed) && selectedVenue) {
+    if (checklist.every(item => item.completed) && selectedVenue && launchId) {
       setCurrentStage('countdown');
+      setCountdown(COUNTDOWN_TIME);
       
       // Good luck message
       toast({
@@ -146,6 +302,14 @@ const MarketplaceLaunch = () => {
 
   const allTasksCompleted = checklist.every(item => item.completed);
   const launchReadiness = (checklist.filter(item => item.completed).length / checklist.length) * 100;
+
+  if (loadingLaunch) {
+    return (
+      <div className="flex min-h-[360px] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-studio-accent" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -229,11 +393,20 @@ const MarketplaceLaunch = () => {
                         : 'border-studio-sand/50 hover:border-studio-sand'}`}
                     whileHover={{ y: -5, boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => {
-                      setSelectedVenue(venue.id);
-                      toast({
-                        title: "Venue selected",
-                        description: `You've chosen: ${venue.name}`,
+                      onClick={() => {
+                        setSelectedVenue(venue.id);
+                        if (launchId) {
+                          void supabase
+                            .from("asset_launches")
+                            .update({
+                              venue: venue.id,
+                              updated_at: new Date().toISOString(),
+                            })
+                            .eq("id", launchId);
+                        }
+                        toast({
+                          title: "Venue selected",
+                          description: `You've chosen: ${venue.name}`,
                       });
                     }}
                   >
@@ -448,7 +621,11 @@ const MarketplaceLaunch = () => {
               transition={{ delay: 0.3 }}
             >
               <Button 
-                onClick={() => setCurrentStage('preparation')}
+                onClick={() => {
+                  setCurrentStage('preparation');
+                  setCountdown(COUNTDOWN_TIME);
+                  setEngagementStats({ views: 0, likes: 0, comments: 0 });
+                }}
                 className="bg-studio-accent hover:bg-studio-accent/90 text-white"
               >
                 Start New Launch

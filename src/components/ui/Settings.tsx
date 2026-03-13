@@ -13,12 +13,13 @@ import { ConnectWalletButton } from "@/components/web3/ConnectWalletButton";
 
 export const Settings = () => {
   const [open, setOpen] = React.useState(false);
-  const { user } = useAppAuth();
+  const { user, guestMode, exitGuestMode } = useAppAuth();
   const { address, chainMeta } = useEvmWallet();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
+      exitGuestMode();
       await supabase.auth.signOut();
       setOpen(false);
       navigate('/', { replace: true });
@@ -45,17 +46,17 @@ export const Settings = () => {
           <DialogTitle>Settings</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4">
-          {user && (
+          {(user || guestMode) && (
             <div className="flex items-center space-x-4 p-3 bg-muted rounded-lg">
               <div className="bg-studio-accent h-10 w-10 rounded-full flex items-center justify-center">
                 <User className="h-5 w-5 text-white" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">
-                  {user.email || "Authenticated User"}
+                  {guestMode ? "Guest Session" : user?.email || "Authenticated User"}
                 </p>
                 <p className="text-xs text-muted-foreground truncate">
-                  {user.id}
+                  {guestMode ? "Local guest access" : user?.id}
                 </p>
               </div>
             </div>
@@ -76,7 +77,7 @@ export const Settings = () => {
             </div>
           </div>
           
-          {user && (
+          {(user || guestMode) && (
             <Button 
               variant="outline" 
               className="w-full flex items-center justify-center space-x-2 text-destructive border-destructive/30 hover:bg-destructive/10"

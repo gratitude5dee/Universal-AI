@@ -1,167 +1,93 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { 
   ArrowUpRight, 
-  ArrowDownLeft, 
-  RefreshCw, 
-  ExternalLink,
-  Zap,
-  TrendingUp,
-  AlertCircle,
+  RefreshCw,
   CheckCircle,
-  Clock
+  Clock,
+  AlertCircle
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
-// Types
-interface ChainBalance {
+interface PositionRow {
+  id: string;
   chain: string;
-  symbol: string;
+  asset_symbol: string;
   balance: number;
-  usdValue: number;
-  change24h: number;
-  icon: string;
-  color: string;
-  gasPrice?: number;
+  usd_value: number;
+  change_24h: number | null;
   status: 'connected' | 'syncing' | 'error';
+  provider_id: string;
+  wallet_address: string | null;
+  synced_at: string;
+  attributed_revenue: number;
 }
 
-interface PlatformRevenue {
-  platform: string;
-  revenue: number;
-  change: number;
-  logo: string;
-  color: string;
-  chains: string[];
+interface RevenueRow {
+  id: string;
+  source_type: string;
+  amount: number;
+  occurred_at: string;
 }
-
-interface GasOptimization {
-  chain: string;
-  currentGas: number;
-  optimalGas: number;
-  savings: number;
-  timeToOptimal: string;
-}
-
-// Mock data
-const chainBalances: ChainBalance[] = [
-  {
-    chain: 'Ethereum',
-    symbol: 'ETH',
-    balance: 15.42,
-    usdValue: 38550.34,
-    change24h: 2.3,
-    icon: '🔷',
-    color: 'from-blue-500 to-blue-600',
-    gasPrice: 45,
-    status: 'connected'
-  },
-  {
-    chain: 'Solana',
-    symbol: 'SOL',
-    balance: 245.67,
-    usdValue: 12283.50,
-    change24h: -1.2,
-    icon: '🟣',
-    color: 'from-purple-500 to-purple-600',
-    gasPrice: 0.00025,
-    status: 'connected'
-  },
-  {
-    chain: 'Polygon',
-    symbol: 'MATIC',
-    balance: 8924.33,
-    usdValue: 5354.60,
-    change24h: 4.1,
-    icon: '🟠',
-    color: 'from-orange-500 to-orange-600',
-    gasPrice: 0.002,
-    status: 'syncing'
-  },
-  {
-    chain: 'Arbitrum',
-    symbol: 'ETH',
-    balance: 7.89,
-    usdValue: 19724.10,
-    change24h: 1.8,
-    icon: '🔵',
-    color: 'from-cyan-500 to-cyan-600',
-    gasPrice: 0.15,
-    status: 'connected'
-  }
-];
-
-const platformRevenues: PlatformRevenue[] = [
-  {
-    platform: 'Audius',
-    revenue: 8234.45,
-    change: 12.3,
-    logo: '🎵',
-    color: 'from-pink-500 to-purple-600',
-    chains: ['Ethereum', 'Solana']
-  },
-  {
-    platform: 'Sound.xyz',
-    revenue: 15642.22,
-    change: 8.7,
-    logo: '🔊',
-    color: 'from-yellow-500 to-orange-600',
-    chains: ['Ethereum']
-  },
-  {
-    platform: 'Nina Protocol',
-    revenue: 4521.67,
-    change: -2.1,
-    logo: '🎶',
-    color: 'from-green-500 to-teal-600',
-    chains: ['Solana']
-  },
-  {
-    platform: 'Royal',
-    revenue: 12834.88,
-    change: 15.4,
-    logo: '👑',
-    color: 'from-indigo-500 to-purple-600',
-    chains: ['Ethereum', 'Polygon']
-  }
-];
-
-const gasOptimizations: GasOptimization[] = [
-  {
-    chain: 'Ethereum',
-    currentGas: 45,
-    optimalGas: 25,
-    savings: 12.34,
-    timeToOptimal: '2h 15m'
-  },
-  {
-    chain: 'Polygon',
-    currentGas: 0.002,
-    optimalGas: 0.001,
-    savings: 0.45,
-    timeToOptimal: '45m'
-  }
-];
 
 const MultiChainDashboard: React.FC = () => {
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState(new Date());
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
-  const totalUsdValue = chainBalances.reduce((sum, chain) => sum + chain.usdValue, 0);
-  const totalPlatformRevenue = platformRevenues.reduce((sum, platform) => sum + platform.revenue, 0);
+  const { data: positions = [] } = useQuery({
+    queryKey: ['multichain-positions'],
+    queryFn: async (): Promise<PositionRow[]> => {
+      const { data, error } = await supabase
+        .from('multichain_dashboard_positions_v1')
+        .select('*')
+        .order('usd_value', { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      return (data ?? []) as PositionRow[];
+    },
+  });
+
+  const { data: revenueSources = [] } = useQuery({
+    queryKey: ['revenue-sources'],
+    queryFn: async (): Promise<RevenueRow[]> => {
+      const { data, error } = await supabase
+        .from('revenue_sources')
+        .select('id, source_type, amount, occurred_at')
+        .order('occurred_at', { ascending: false })
+        .limit(20);
+
+      if (error) {
+        throw error;
+      }
+
+      return (data ?? []) as RevenueRow[];
+    },
+  });
+
+  const totalUsdValue = positions.reduce((sum, position) => sum + Number(position.usd_value ?? 0), 0);
+  const totalRevenue = revenueSources.reduce((sum, row) => sum + Number(row.amount ?? 0), 0);
 
   const handleRefresh = async () => {
-    setIsRefreshing(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setLastUpdated(new Date());
-    setIsRefreshing(false);
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['multichain-positions'] }),
+      queryClient.invalidateQueries({ queryKey: ['revenue-sources'] }),
+    ]);
+
+    toast({
+      title: 'Portfolio refreshed',
+      description: 'Multi-chain balances and revenue sources were reloaded.',
+    });
   };
 
-  const getStatusIcon = (status: ChainBalance['status']) => {
+  const getStatusIcon = (status: PositionRow['status']) => {
     switch (status) {
       case 'connected':
         return <CheckCircle className="h-4 w-4 text-green-500" />;
@@ -174,22 +100,20 @@ const MultiChainDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header with Total Balance */}
       <div className="glass-card rounded-xl p-6 border border-white/10 backdrop-blur-md">
         <div className="flex justify-between items-start mb-4">
           <div>
             <h2 className="text-2xl font-bold text-white mb-1">Multi-Chain Portfolio</h2>
-            <p className="text-white/70">Real-time balances across all networks</p>
+            <p className="text-white/70">Positions and revenue aggregated from the shared finance ledger.</p>
           </div>
           <Button
             onClick={handleRefresh}
             variant="outline"
             size="sm"
-            disabled={isRefreshing}
             className="border-white/20 text-white hover:bg-white/10"
           >
-            <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-            {isRefreshing ? 'Syncing...' : 'Refresh'}
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
           </Button>
         </div>
 
@@ -199,14 +123,14 @@ const MultiChainDashboard: React.FC = () => {
             <p className="text-4xl font-bold text-white">${totalUsdValue.toLocaleString()}</p>
             <p className="text-green-400 text-sm mt-1 flex items-center">
               <ArrowUpRight className="h-4 w-4 mr-1" />
-              +5.2% (24h)
+              {positions.length} tracked positions
             </p>
           </div>
           <div>
-            <p className="text-white/70 text-sm mb-2">Platform Revenue (30d)</p>
-            <p className="text-3xl font-bold text-white">${totalPlatformRevenue.toLocaleString()}</p>
+            <p className="text-white/70 text-sm mb-2">Attributed Revenue</p>
+            <p className="text-3xl font-bold text-white">${totalRevenue.toLocaleString()}</p>
             <p className="text-white/70 text-sm mt-1">
-              Last updated: {lastUpdated.toLocaleTimeString()}
+              Based on the normalized `revenue_sources` ledger
             </p>
           </div>
         </div>
@@ -217,206 +141,55 @@ const MultiChainDashboard: React.FC = () => {
           <TabsTrigger value="balances" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary">
             Chain Balances
           </TabsTrigger>
-          <TabsTrigger value="platforms" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary">
-            Platform Revenue
-          </TabsTrigger>
-          <TabsTrigger value="gas" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary">
-            Gas Optimization
-          </TabsTrigger>
-          <TabsTrigger value="bridge" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary">
-            Cross-Chain Bridge
+          <TabsTrigger value="revenue" className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-primary">
+            Revenue Sources
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="balances" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {chainBalances.map((chain, index) => (
-              <motion.div
-                key={chain.chain}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card className="glass-card border-white/10 backdrop-blur-md">
-                  <CardContent className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-center space-x-3">
-                        <div className={`w-10 h-10 rounded-full bg-gradient-to-r ${chain.color} flex items-center justify-center text-white font-bold`}>
-                          {chain.icon}
-                        </div>
-                        <div>
-                          <h3 className="text-white font-semibold">{chain.chain}</h3>
-                          <div className="flex items-center space-x-2">
-                            {getStatusIcon(chain.status)}
-                            <span className="text-white/70 text-sm capitalize">{chain.status}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <Badge variant="secondary" className="bg-white/10 text-white">
-                        {chain.symbol}
-                      </Badge>
+            {positions.map((position) => (
+              <Card key={position.id} className="glass-card border-white/10 backdrop-blur-md">
+                <CardContent className="p-5">
+                  <div className="mb-3 flex items-center justify-between">
+                    <div>
+                      <p className="text-lg font-semibold text-white">{position.chain}</p>
+                      <p className="text-sm text-white/60">{position.provider_id}</p>
                     </div>
-
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-white/70">Balance</span>
-                        <span className="text-white font-medium">{chain.balance} {chain.symbol}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-white/70">USD Value</span>
-                        <span className="text-white font-medium">${chain.usdValue.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-white/70">24h Change</span>
-                        <span className={`font-medium flex items-center ${chain.change24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          {chain.change24h >= 0 ? <ArrowUpRight className="h-3 w-3 mr-1" /> : <ArrowDownLeft className="h-3 w-3 mr-1" />}
-                          {Math.abs(chain.change24h)}%
-                        </span>
-                      </div>
-                      {chain.gasPrice && (
-                        <div className="flex justify-between">
-                          <span className="text-white/70">Gas Price</span>
-                          <span className="text-white/70 text-sm">{chain.gasPrice} Gwei</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <Button variant="outline" size="sm" className="w-full mt-4 border-white/20 text-white hover:bg-white/10">
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      View Explorer
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                    {getStatusIcon(position.status)}
+                  </div>
+                  <p className="text-2xl font-bold text-white">
+                    {Number(position.balance ?? 0).toLocaleString()} {position.asset_symbol}
+                  </p>
+                  <p className="text-white/70 mt-1">${Number(position.usd_value ?? 0).toLocaleString()}</p>
+                  <div className="mt-3 flex items-center justify-between">
+                    <Badge variant="outline" className="border-white/20 text-white/70">
+                      {position.wallet_address ? `${position.wallet_address.slice(0, 6)}...${position.wallet_address.slice(-4)}` : 'No wallet'}
+                    </Badge>
+                    <p className="text-xs text-white/50">
+                      {new Date(position.synced_at).toLocaleTimeString()}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </TabsContent>
 
-        <TabsContent value="platforms" className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {platformRevenues.map((platform, index) => (
-              <motion.div
-                key={platform.platform}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card className="glass-card border-white/10 backdrop-blur-md">
-                  <CardContent className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-center space-x-3">
-                        <div className={`w-10 h-10 rounded-full bg-gradient-to-r ${platform.color} flex items-center justify-center text-white font-bold`}>
-                          {platform.logo}
-                        </div>
-                        <div>
-                          <h3 className="text-white font-semibold">{platform.platform}</h3>
-                          <div className="flex space-x-1 mt-1">
-                            {platform.chains.map(chain => (
-                              <Badge key={chain} variant="secondary" className="bg-white/10 text-white text-xs">
-                                {chain}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-white/70">30-Day Revenue</span>
-                        <span className="text-white font-medium">${platform.revenue.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-white/70">Growth</span>
-                        <span className={`font-medium flex items-center ${platform.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          {platform.change >= 0 ? <TrendingUp className="h-3 w-3 mr-1" /> : <ArrowDownLeft className="h-3 w-3 mr-1" />}
-                          {Math.abs(platform.change)}%
-                        </span>
-                      </div>
-                    </div>
-
-                    <Button variant="outline" size="sm" className="w-full mt-4 border-white/20 text-white hover:bg-white/10">
-                      View Analytics
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
+        <TabsContent value="revenue" className="mt-6">
+          <div className="space-y-3">
+            {revenueSources.map((row) => (
+              <Card key={row.id} className="glass-card border-white/10 backdrop-blur-md">
+                <CardContent className="p-4 flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-white">{row.source_type}</p>
+                    <p className="text-sm text-white/60">{new Date(row.occurred_at).toLocaleString()}</p>
+                  </div>
+                  <p className="text-lg font-semibold text-white">${Number(row.amount ?? 0).toLocaleString()}</p>
+                </CardContent>
+              </Card>
             ))}
           </div>
-        </TabsContent>
-
-        <TabsContent value="gas" className="mt-6">
-          <div className="space-y-4">
-            <Card className="glass-card border-white/10 backdrop-blur-md">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center">
-                  <Zap className="h-5 w-5 mr-2 text-yellow-400" />
-                  Gas Fee Optimization
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {gasOptimizations.map((opt, index) => (
-                    <div key={opt.chain} className="flex justify-between items-center p-4 rounded-lg bg-white/5">
-                      <div>
-                        <h4 className="text-white font-medium">{opt.chain}</h4>
-                        <p className="text-white/70 text-sm">
-                          Current: {opt.currentGas} Gwei → Optimal: {opt.optimalGas} Gwei
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-green-400 font-medium">${opt.savings} saved</p>
-                        <p className="text-white/70 text-sm">ETA: {opt.timeToOptimal}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <Button className="w-full mt-4 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600">
-                  Enable Auto-Optimization
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="bridge" className="mt-6">
-          <Card className="glass-card border-white/10 backdrop-blur-md">
-            <CardHeader>
-              <CardTitle className="text-white">Cross-Chain Bridge</CardTitle>
-              <p className="text-white/70">Transfer assets between chains</p>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="text-white text-sm font-medium mb-2 block">From Chain</label>
-                  <select className="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white">
-                    <option>Ethereum</option>
-                    <option>Solana</option>
-                    <option>Polygon</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-white text-sm font-medium mb-2 block">To Chain</label>
-                  <select className="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white">
-                    <option>Polygon</option>
-                    <option>Arbitrum</option>
-                    <option>Solana</option>
-                  </select>
-                </div>
-              </div>
-              <div className="mt-4">
-                <label className="text-white text-sm font-medium mb-2 block">Amount</label>
-                <input 
-                  type="number" 
-                  placeholder="0.00"
-                  className="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50"
-                />
-              </div>
-              <Button className="w-full mt-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
-                Bridge Assets
-              </Button>
-            </CardContent>
-          </Card>
         </TabsContent>
       </Tabs>
     </div>
