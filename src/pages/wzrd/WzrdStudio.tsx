@@ -98,7 +98,7 @@ const WzrdStudio = () => {
                   <Button 
                     variant="outline" 
                     className="w-full cursor-interactive bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white hover:text-white transition-all duration-300" 
-                    onClick={() => window.open("https://studio.universal-ai.xyz", "_blank")}
+                    onClick={() => { window.location.href = "https://studio.5-dee.com/home"; }}
                   >
                     <span>Launch Studio</span>
                     <ExternalLink className="ml-2 h-4 w-4" />
