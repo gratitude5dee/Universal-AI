@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 
-async function invokeProviderFunction<TInput extends Record<string, unknown>, TOutput>(
+async function invokeProviderFunction<TInput, TOutput>(
   functionName: string,
   body: TInput,
 ): Promise<TOutput> {

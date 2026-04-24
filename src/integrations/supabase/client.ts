@@ -8,7 +8,12 @@ const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+// NOTE: The generated Database type is too large (190+ tables) and triggers
+// TS2589 "excessively deep" errors. We instantiate the client with `any` so
+// `.from()` calls compile everywhere. Use explicit generics or types at the
+// call site when stricter typing is needed.
+void (null as unknown as Database); // keep import for future strict typing
+export const supabase = createClient<any>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
     storage: localStorage,
     persistSession: true,

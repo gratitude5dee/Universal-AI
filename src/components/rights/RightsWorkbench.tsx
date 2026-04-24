@@ -288,7 +288,7 @@ export const RightsOverviewPane = () => {
             audit.map((entry) => (
               <div key={entry.id} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-4">
                 <div>
-                  <p className="font-medium text-white">{entry.event_type.replaceAll("_", " ")}</p>
+                  <p className="font-medium text-white">{entry.event_type.split("_").join(" ")}</p>
                   <p className="text-sm text-white/60">
                     {entry.subject_type} {entry.subject_id ? `• ${entry.subject_id}` : ""}
                   </p>
