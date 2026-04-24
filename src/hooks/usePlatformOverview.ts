@@ -2,11 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface PlatformOverview {
-  content?: Record<string, unknown>;
-  marketing?: Record<string, unknown>;
-  finance?: Record<string, unknown>;
-  bridge?: Record<string, unknown>;
-  agents?: Record<string, unknown>;
+  content?: Record<string, any>;
+  marketing?: Record<string, any>;
+  finance?: Record<string, any>;
+  bridge?: Record<string, any>;
+  agents?: Record<string, any>;
 }
 
 export function usePlatformOverview() {
