@@ -37,7 +37,7 @@ const serverProviders = [PROVIDER_CAPABILITIES.thirdweb_engine];
 const USER_MANAGED_SECRET_TYPES = new Set(["bags_api_key", "bankr_api_key"]);
 
 function formatFeatureLabel(feature: string) {
-  return feature.replaceAll("_", " ");
+  return feature.split("_").join(" ");
 }
 
 function getProviderStatus(
